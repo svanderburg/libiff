@@ -1,0 +1,2 @@
+./validiff ./hello.TEST
+

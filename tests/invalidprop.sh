@@ -1,0 +1,1 @@
+./invalidiff invalidprop.TEST

@@ -1,0 +1,1 @@
+./validiff ./list.TEST

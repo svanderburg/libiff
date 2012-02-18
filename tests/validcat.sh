@@ -1,0 +1,1 @@
+./validiff ./cat.TEST

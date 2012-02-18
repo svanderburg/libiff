@@ -1,0 +1,1 @@
+./validiff ./validlist-wildcard.TEST

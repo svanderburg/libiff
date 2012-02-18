@@ -1,0 +1,1 @@
+./invalidiff invalidform-prop.TEST

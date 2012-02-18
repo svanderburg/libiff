@@ -1,0 +1,1 @@
+./invalidiff invalidprop-size.TEST

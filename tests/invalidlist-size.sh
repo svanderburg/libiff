@@ -1,0 +1,1 @@
+./invalidiff invalidlist-size.TEST

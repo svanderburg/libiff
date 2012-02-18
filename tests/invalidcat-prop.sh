@@ -1,0 +1,1 @@
+./invalidiff invalidcat-prop.TEST
