@@ -36,6 +36,9 @@ typedef unsigned short IFF_UWord;
 /** A 32-bit signed type */
 typedef int IFF_Long;
 
+/** A 32-bit unsigned type */
+typedef unsigned int IFF_ULong;
+
 /** A 4 byte ID type */
 typedef char IFF_ID[IFF_ID_SIZE];
 

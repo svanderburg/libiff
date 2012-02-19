@@ -127,6 +127,45 @@ int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const 
     }
 }
 
+int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
+{
+    IFF_ULong readValue;
+    
+    if(fread(&readValue, sizeof(readValue), 1, file) == 1)
+    {
+#if IFF_BIG_ENDIAN == 1
+	*value = readValue;
+#else
+	/* Byte swap it */
+	*value = (readValue & 0xff) << 24 | (readValue & 0xff00) << 8 | (readValue & 0xff0000) >> 8 | (readValue & 0xff000000) >> 24;
+#endif
+	return TRUE;
+    }
+    else
+    {
+	IFF_readError(chunkId, attributeName);
+	return FALSE;
+    }
+}
+
+int IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName)
+{
+#if IFF_BIG_ENDIAN == 1
+    IFF_ULong writeValue = value;
+#else
+    /* Byte swap it */
+    IFF_ULong writeValue = (value & 0xff) << 24 | (value & 0xff00) << 8 | (value & 0xff0000) >> 8 | (value & 0xff000000) >> 24;
+#endif
+
+    if(fwrite(&writeValue, sizeof(writeValue), 1, file) == 1)
+	return TRUE;
+    else
+    {
+	IFF_writeError(chunkId, attributeName);
+	return FALSE;
+    }
+}
+
 int IFF_readLong(FILE* file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_Long readValue;

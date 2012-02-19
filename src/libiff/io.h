@@ -92,6 +92,28 @@ int IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *
 int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const char *attributeName);
 
 /**
+ * Reads an unsigned long from a file.
+ *
+ * @param file File descriptor of the file
+ * @param value Value read from the file
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param attributeName The name of the attribute that is examined (used for error reporting)
+ * @return TRUE if the value has been successfully read, else FALSE
+ */
+int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName);
+
+/**
+ * Writes an unsigned long to a file.
+ *
+ * @param file File descriptor of the file
+ * @param value Value read from the file
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param attributeName The name of the attribute that is examined (used for error reporting)
+ * @return TRUE if the value has been successfully written, else FALSE
+ */
+int IFF_writeULong(FILE* file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName);
+
+/**
  * Reads a signed long from a file.
  *
  * @param file File descriptor of the file
