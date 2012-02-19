@@ -28,7 +28,7 @@
 typedef char IFF_Byte;
 
 /** An unsigned byte */
-typedef unsigned char IFF_UByte; 
+typedef unsigned char IFF_UByte;
 
 /** A 16-bit signed type */
 typedef short IFF_Word;
