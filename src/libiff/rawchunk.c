@@ -94,7 +94,7 @@ void IFF_freeRawChunk(IFF_RawChunk *rawChunk)
     free(rawChunk->chunkData);
 }
 
-static void printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
+void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
     unsigned int i;
 	
@@ -108,7 +108,7 @@ static void printText(const IFF_RawChunk *rawChunk, const unsigned int indentLev
     IFF_printIndent(stdout, indentLevel, "';\n");
 }
 
-static void printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
+void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
     unsigned int i;
     IFF_UByte byte;
@@ -140,7 +140,7 @@ static void printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLeve
 void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel)
 {
     if(IFF_compareId(rawChunk->chunkId, "TEXT") == 0)
-	printText(rawChunk, indentLevel);
+	IFF_printText(rawChunk, indentLevel);
     else
-	printRaw(rawChunk, indentLevel);
+	IFF_printRaw(rawChunk, indentLevel);
 }

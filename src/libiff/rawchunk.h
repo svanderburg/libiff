@@ -90,6 +90,22 @@ int IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk);
 void IFF_freeRawChunk(IFF_RawChunk *rawChunk);
 
 /**
+ * Prints the data of the raw chunk as text
+ *
+ * @param rawChunk A raw chunk instance
+ * @param indentLevel Indent level of the textual representation
+ */
+void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel);
+
+/**
+ * Prints the data of the raw chunk as numeric values
+ *
+ * @param rawChunk A raw chunk instance
+ * @param indentLevel Indent level of the textual representation
+ */
+void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel);
+
+/**
  * Displays a textual representation of the raw chunk data on the standard output.
  *
  * @param rawChunk A raw chunk instance
