@@ -194,7 +194,7 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
 	if(formExtension == NULL)
 	    IFF_printRawChunk((IFF_RawChunk*)chunk, indentLevel + 1);
 	else
-	    formExtension->printChunk(chunk, indentLevel);
+	    formExtension->printChunk(chunk, indentLevel + 1);
     }
     
     IFF_printIndent(stdout, indentLevel, "}\n\n");
