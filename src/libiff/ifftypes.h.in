@@ -24,6 +24,9 @@
 
 #define IFF_ID_SIZE 4
 
+/** A signed byte */
+typedef char IFF_Byte;
+
 /** An unsigned byte */
 typedef unsigned char IFF_UByte; 
 
