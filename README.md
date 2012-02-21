@@ -304,13 +304,13 @@ interface of an imaginary TEST file format:
     #define __TEST_H
     #include "chunk.h"
 
-    IFF_Chunk *TEST_read(char *filename);
+    IFF_Chunk *TEST_read(const char *filename);
 
-    int TEST_write(char *filename, IFF_Chunk *chunk);
+    int TEST_write(const char *filename, const IFF_Chunk *chunk);
 
     void TEST_free(IFF_Chunk *chunk);
 
-    void TEST_print(IFF_Chunk *chunk, unsigned int indentLevel);
+    void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
     #endif
 
@@ -347,12 +347,12 @@ The implementation of this interface (`test.c`) may look as follows:
     };
 
     /* The following functions hide the the extension parameters for this application format */
-    IFF_Chunk *TEST_read(char *filename)
+    IFF_Chunk *TEST_read(const char *filename)
     {
         return IFF_read(filename, extension, TEST_NUM_OF_FORM_TYPES);
     }
 
-    int TEST_write(char *filename, IFF_Chunk *chunk)
+    int TEST_write(const char *filename, const IFF_Chunk *chunk)
     {
         return IFF_write(filename, chunk, extension, TEST_NUM_OF_FORM_TYPES);
     }
@@ -362,7 +362,7 @@ The implementation of this interface (`test.c`) may look as follows:
         IFF_free(chunk, NULL, extension, TEST_NUM_OF_FORM_TYPES);
     }
 
-    void TEST_print(IFF_Chunk *chunk, unsigned int indentLevel)
+    void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
     {
         IFF_print(chunk, indentLevel, extension, TEST_NUM_OF_FORM_TYPES);
     }
@@ -410,15 +410,15 @@ this (this example defines `hello.h` to which the previous example refers):
 
     TEST_Hello *TEST_createHello(void);
 
-    IFF_Chunk *TEST_readHello(FILE *file, IFF_Long chunkSize);
+    IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize);
 
-    int TEST_writeHello(FILE *file, IFF_Chunk *chunk);
+    int TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
 
-    int TEST_checkHello(IFF_Chunk *chunk);
+    int TEST_checkHello(const IFF_Chunk *chunk);
 
     void TEST_freeHello(IFF_Chunk *chunk);
 
-    void TEST_printHello(IFF_Chunk *chunk, unsigned int indentLevel);
+    void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
     #endif
 
@@ -431,9 +431,9 @@ same return type and function parameters.
 And the implementation may look as follows:
 
     #include "hello.h"
-    #include "io.h"
-    #include "error.h"
-    #include "util.h"
+    #include <io.h>
+    #include <error.h>
+    #include <util.h>
     #include "test.h"
     
     #define CHUNKID "HELO"
@@ -448,7 +448,7 @@ And the implementation may look as follows:
         return hello;
     }
 
-    IFF_Chunk *TEST_readHello(FILE *file, IFF_Long chunkSize)
+    IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
     {
         TEST_Hello *hello = TEST_createHello();
     
@@ -476,7 +476,7 @@ And the implementation may look as follows:
         return (IFF_Chunk*)hello;
     }
 
-    int TEST_writeHello(FILE *file, IFF_Chunk *chunk)
+    int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
     {
         TEST_Hello *hello = (TEST_Hello*)chunk;
     
@@ -492,7 +492,7 @@ And the implementation may look as follows:
         return TRUE;
     }
 
-    int TEST_checkHello(IFF_Chunk *chunk)
+    int TEST_checkHello(const IFF_Chunk *chunk)
     {
         return TRUE;
     }
@@ -501,7 +501,7 @@ And the implementation may look as follows:
     {
     }
 
-    void TEST_printHello(IFF_Chunk *chunk, unsigned int indentLevel)
+    void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     {
         TEST_Hello *hello = (TEST_Hello*)chunk;
     
