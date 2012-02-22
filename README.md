@@ -334,8 +334,8 @@ The implementation of this interface (`test.c`) may look as follows:
      * that they can be found by a binary search algorithm.
      */
     static IFF_FormExtension testFormExtension[] = {
-        {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye}
-        {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello},
+        {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye},
+        {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello}
     };
 
     /*
