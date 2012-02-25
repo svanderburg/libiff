@@ -21,6 +21,7 @@
 
 #include "rawchunk.h"
 #include <stdlib.h>
+#include <string.h>
 #include "error.h"
 #include "io.h"
 #include "id.h"
@@ -40,6 +41,15 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
 {
     rawChunk->chunkData = chunkData;
     rawChunk->chunkSize = chunkSize;
+}
+
+void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
+{
+    size_t textLength = strlen(text);
+    IFF_UByte *chunkData = (IFF_UByte*)malloc(textLength * sizeof(IFF_UByte));
+    
+    memcpy(chunkData, text, textLength);
+    IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
 IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize)

@@ -64,6 +64,15 @@ IFF_RawChunk *IFF_createRawChunk(const char *chunkId);
 void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize);
 
 /**
+ * Copies the given string into the data of the chunk. Additionally, it makes
+ * the chunk size equal to the given string.
+ *
+ * @param rawChunk A raw chunk
+ * @param text Text to store in the body
+ */
+void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
+
+/**
  * Reads a raw chunk with the given chunk id and chunk size from a file. The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file
