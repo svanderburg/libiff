@@ -77,7 +77,7 @@ Reading IFF files
 To read IFF files, include the `iff.h` header file and call the `IFF_read()`
 function:
 
-    #include <iff.h>
+    #include <libiff/iff.h>
     
     int main(int argc, char *argv[])
     {
@@ -102,10 +102,10 @@ The 'TEST' form contains a 'HELO' chunk containing "abcd", and a 'BYE ' chunk
 containing "1234":
 
     #include <stdlib.h>
-    #include <iff.h>
-    #include <rawchunk.h>
-    #include <form.h>
-    #include <cat.h>
+    #include <libiff/iff.h>
+    #include <libiff/rawchunk.h>
+    #include <libiff/form.h>
+    #include <libiff/cat.h>
     
     #define HELO_BYTES_SIZE 4
     #define BYE_BYTES_SIZE 4
@@ -186,8 +186,8 @@ of a list into account.
 
 The following example shows how these functions can be used:
 
-    #include <chunk.h>
-    #include <form.h>
+    #include <libiff/chunk.h>
+    #include <libiff/form.h>
     
     int main(int argc, char *argv[])
     {
@@ -223,7 +223,7 @@ Writing IFF files
 A composition of chunks can be written as an IFF file by invoking the
 `IFF_write()` function:
 
-    #include <iff.h>
+    #include <libiff/iff.h>
     
     int main(int argc, char *argv[])
     {
@@ -245,7 +245,7 @@ ASCII table. Furthermore, the chunk size of a group chunk must be correct and
 may not be truncated. The `IFF_check()` function can be used to check whether a
 composition of chunks conform to the IFF standard:
 
-    #include <iff.h>
+    #include <libiff/iff.h>
     
     int main(int argc, char *argv[])
     {
@@ -302,7 +302,9 @@ interface of an imaginary TEST file format:
 
     #ifndef __TEST_H
     #define __TEST_H
-    #include "chunk.h"
+    
+    #include <stdio.h>
+    #include <libiff/chunk.h>
 
     IFF_Chunk *TEST_read(const char *filename);
 
@@ -321,7 +323,7 @@ the `extension` and `extensionLength` parameters are removed.
 The implementation of this interface (`test.c`) may look as follows:
 
     #include "test.h"
-    #include "iff.h"
+    #include <libiff/iff.h>
     #include "hello.h"
     #include "bye.h"
 
@@ -389,9 +391,10 @@ this (this example defines `hello.h` to which the previous example refers):
     #ifndef __TEST_HELLO_H
     #define __TEST_HELLO_H
 
-    #include <ifftypes.h>
-    #include <chunk.h>
     #include <stdio.h>
+    #include <libiff/ifftypes.h>
+    #include <libiff/group.h>
+    #include <libiff/chunk.h>
 
     typedef struct
     {
@@ -431,9 +434,8 @@ same return type and function parameters.
 And the implementation may look as follows:
 
     #include "hello.h"
-    #include <io.h>
-    #include <error.h>
-    #include <util.h>
+    #include <libiff/io.h>
+    #include <libiff/util.h>
     #include "test.h"
     
     #define CHUNKID "HELO"
