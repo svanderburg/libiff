@@ -1,5 +1,3 @@
-AM_CPPFLAGS = -ggdb -Wall -ansi -pedantic
-
 check_PROGRAMS = writeform readform writeform-pad readform-pad writecat readcat writelist readlist invalidiff validiff \
     searchforms-simple updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override \
     writeextension readextension checkextension ppextension
