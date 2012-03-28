@@ -131,7 +131,7 @@ int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char
 {
     IFF_ULong readValue;
     
-    if(fread(&readValue, sizeof(readValue), 1, file) == 1)
+    if(fread(&readValue, sizeof(IFF_ULong), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readValue;
@@ -157,7 +157,7 @@ int IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, cons
     IFF_ULong writeValue = (value & 0xff) << 24 | (value & 0xff00) << 8 | (value & 0xff0000) >> 8 | (value & 0xff000000) >> 24;
 #endif
 
-    if(fwrite(&writeValue, sizeof(writeValue), 1, file) == 1)
+    if(fwrite(&writeValue, sizeof(IFF_ULong), 1, file) == 1)
 	return TRUE;
     else
     {
@@ -170,7 +170,7 @@ int IFF_readLong(FILE* file, IFF_Long *value, const IFF_ID chunkId, const char *
 {
     IFF_Long readValue;
     
-    if(fread(&readValue, sizeof(readValue), 1, file) == 1)
+    if(fread(&readValue, sizeof(IFF_Long), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readValue;
@@ -196,7 +196,7 @@ int IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const 
     IFF_Long writeValue = (value & 0xff) << 24 | (value & 0xff00) << 8 | (value & 0xff0000) >> 8 | (value & 0xff000000) >> 24;
 #endif
 
-    if(fwrite(&writeValue, sizeof(writeValue), 1, file) == 1)
+    if(fwrite(&writeValue, sizeof(IFF_Long), 1, file) == 1)
 	return TRUE;
     else
     {
