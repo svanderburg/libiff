@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 		    }
 		    else
 		    {
-			fprintf(stderr, "Size of 'HELO' chunk must be: %d!\n", HELO_BYTES_SIZE);
+			fprintf(stderr, "Size of 'HELO' chunk must be: %u!\n", HELO_BYTES_SIZE);
 			status = 1;
 		    }
 		}
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		    }
 		    else
 		    {
-			fprintf(stderr, "Size of 'BYE ' chunk must be: %d!\n", BYE_BYTES_SIZE);
+			fprintf(stderr, "Size of 'BYE ' chunk must be: %u!\n", BYE_BYTES_SIZE);
 			status = 1;
 		    }
 		}

@@ -509,5 +509,5 @@ And the implementation may look as follows:
     
         IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
         IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
-        IFF_printIndent(stdout, indentLevel, "c = %d;\n", hello->c);
+        IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
     }

@@ -105,5 +105,5 @@ void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     
     IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
     IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
-    IFF_printIndent(stdout, indentLevel, "c = %d;\n", hello->c);
+    IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
 }

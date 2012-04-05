@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-		    fprintf(stderr, "Error: size of helo chunk should be: %d!\n", HELO_BYTES_SIZE);
+		    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
 		    status = 1;
 		}
 	    }
