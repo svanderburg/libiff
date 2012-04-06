@@ -1,5 +1,5 @@
 check_PROGRAMS = writeform readform writeform-pad readform-pad writecat readcat writelist readlist invalidiff validiff \
-    searchforms-simple updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override \
+    searchforms-form searchforms-cat updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override \
     writeextension readextension checkextension ppextension
 
 writeform_SOURCES = writeform.c
@@ -54,9 +54,13 @@ lookupproperty_override_SOURCES = lookupproperty-override.c
 lookupproperty_override_LDADD = ../src/libiff/libiff.la
 lookupproperty_override_CFLAGS  = -I../src/libiff
 
-searchforms_simple_SOURCES = searchforms-simple.c
-searchforms_simple_LDADD = ../src/libiff/libiff.la
-searchforms_simple_CFLAGS = -I../src/libiff
+searchforms_form_SOURCES = searchforms-form.c
+searchforms_form_LDADD = ../src/libiff/libiff.la
+searchforms_form_CFLAGS = -I../src/libiff
+
+searchforms_cat_SOURCES = searchforms-cat.c
+searchforms_cat_LDADD = ../src/libiff/libiff.la
+searchforms_cat_CFLAGS = -I../src/libiff
 
 updatechunksizes_SOURCES = updatechunksizes.c
 updatechunksizes_LDADD = ../src/libiff/libiff.la
@@ -85,7 +89,7 @@ TESTS = writeform readform writeform-pad readform-pad writecat readcat writelist
     invalidcat-raw.sh invalidcat-prop.sh invalidcat-contentstype.sh invalidcat-size.sh \
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
     invalidprop.sh invalidprop-size.sh \
-    pp-text.sh searchforms-simple updatechunksizes \
+    pp-text.sh searchforms-form searchforms-cat updatechunksizes \
     lookupproperty-simple lookupproperty-prop lookupproperty-override \
     join-identical.sh join-different.sh \
     writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh

@@ -21,12 +21,6 @@
 
 #include "util.h"
 #include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include "list.h"
-#include "cat.h"
-#include "id.h"
-#include "error.h"
 
 void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *formatString, ...)
 {
@@ -39,77 +33,4 @@ void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *for
       fprintf(file, "  ");
     
     vfprintf(file, formatString, ap);
-}
-
-static IFF_Form **appendToFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)
-{
-    unsigned int i;
-    unsigned int newLength = *targetLength + sourceLength;
-    
-    target = (IFF_Form**)realloc(target, newLength * sizeof(IFF_Form*));
-    
-    for(i = 0; i < sourceLength; i++)
-	target[i + *targetLength] = source[i];
-    
-    *targetLength = newLength;
-    
-    return target;
-}
-
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength)
-{
-    IFF_Form **forms = NULL;
-    *formsLength = 0;
-
-    if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-    {
-	IFF_Form *form = (IFF_Form*)chunk;
-	
-	if(IFF_compareId(form->formType, formType) == 0)
-	{
-	    forms = (IFF_Form**)realloc(forms, (*formsLength + 1) * sizeof(IFF_Form*));
-	    forms[*formsLength] = form;
-	    *formsLength = *formsLength + 1;
-	}
-	else
-	{
-	    unsigned int i;
-	    
-	    for(i = 0; i < form->chunkLength; i++)
-	    {
-		unsigned int resultLength;
-		IFF_Form **result = IFF_searchForms(form->chunk[i], formType, &resultLength);
-	    
-		forms = appendToFormArray(forms, formsLength, result, resultLength);
-	    }
-	}
-    }
-    else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
-    {
-	unsigned int i;
-	IFF_List *list = (IFF_List*)chunk;
-	
-	for(i = 0; i < list->chunkLength; i++)
-	{
-	    unsigned int resultLength;
-	    IFF_Form **result = IFF_searchForms(list->chunk[i], formType, &resultLength);
-	    
-	    forms = appendToFormArray(forms, formsLength, result, resultLength);
-	}
-    }
-    else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
-    {
-	unsigned int i;
-	IFF_CAT *cat = (IFF_CAT*)chunk;
-	
-	for(i = 0; i < cat->chunkLength; i++)
-	{
-	    unsigned int resultLength;
-	    IFF_Form **result = IFF_searchForms(cat->chunk[i], formType, &resultLength);
-	    
-	    forms = appendToFormArray(forms, formsLength, result, resultLength);
-	}
-    }
-    
-    return forms;
 }

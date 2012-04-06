@@ -200,6 +200,18 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     IFF_printIndent(stdout, indentLevel, "}\n\n");
 }
 
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength)
+{
+    if(IFF_compareId(chunk->chunkId, "FORM") == 0)
+	return IFF_searchFormsInForm((IFF_Form*)chunk, formType, formsLength);
+    else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
+	return IFF_searchFormsInCAT((IFF_CAT*)chunk, formType, formsLength);
+    else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
+	return IFF_searchFormsInList((IFF_List*)chunk, formType, formsLength);
+    else
+	return NULL;
+}
+
 IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
 {
     IFF_Long returnValue = chunkSize + IFF_ID_SIZE + sizeof(IFF_Long) + chunk->chunkSize;

@@ -143,6 +143,37 @@ void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const I
     IFF_printGroup((const IFF_Group*)form, indentLevel, form->formType, FORM_GROUPTYPENAME, extension, extensionLength);
 }
 
+IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)
+{
+    unsigned int i;
+    unsigned int newLength = *targetLength + sourceLength;
+    
+    target = (IFF_Form**)realloc(target, newLength * sizeof(IFF_Form*));
+    
+    for(i = 0; i < sourceLength; i++)
+	target[i + *targetLength] = source[i];
+    
+    *targetLength = newLength;
+    
+    return target;
+}
+
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char *formType, unsigned int *formsLength)
+{
+    if(IFF_compareId(form->formType, formType) == 0) 
+    {
+	/* If the given form is what we look for, return it */
+	
+        IFF_Form **forms = (IFF_Form**)malloc(sizeof(IFF_Form*));
+        forms[0] = form;
+        *formsLength = 1;
+        
+        return forms;
+    }
+    else 
+	return IFF_searchFormsInGroup((IFF_Group*)form, formType, formsLength); /* Search into the nested forms in this form */
+}
+
 void IFF_updateFormChunkSizes(IFF_Form *form)
 {
     IFF_updateGroupChunkSizes((IFF_Group*)form);

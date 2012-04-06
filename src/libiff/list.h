@@ -144,6 +144,16 @@ void IFF_freeList(IFF_List *list, const IFF_Extension *extension, const unsigned
 void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Returns an array of form structs of the given formType, which are recursively retrieved from the given list.
+ *
+ * @param list An instance of a list chunk
+ * @param formType A 4 character form type ID
+ * @param formsLength Returns the length of the resulting array
+ * @return An array of form structs
+ */
+IFF_Form **IFF_searchFormsInList(IFF_List *list, const char *formType, unsigned int *formsLength);
+
+/**
  * Recalculates the chunk size of the given list chunk.
  *
  * @param list An instance of a list chunk

@@ -134,6 +134,27 @@ void IFF_freeForm(IFF_Form *form, const IFF_Extension *extension, const unsigned
 void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Merges two given IFF form arrays in the target array.
+ *
+ * @param target Target form array
+ * @param targetLength Length of the target form array
+ * @param source Source form array
+ * @param sourceLength Length of the source form array
+ * @return A reallocated target form array containing the forms of both the source and target arrays
+ */
+IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength);
+
+/**
+ * Returns an array of form structs of the given formType, which are recursively retrieved from the given form.
+ *
+ * @param form An instance of a form chunk
+ * @param formType A 4 character form type ID
+ * @param formsLength Returns the length of the resulting array
+ * @return An array of form structs
+ */
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char *formType, unsigned int *formsLength);
+
+/**
  * Recalculates the chunk size of the given form chunk.
  *
  * @param form An instance of a form chunk

@@ -137,6 +137,16 @@ void IFF_freeCAT(IFF_CAT *cat, const IFF_Extension *extension, const unsigned in
 void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.
+ *
+ * @param cat An instance of a concatenation chunk
+ * @param formType A 4 character form type ID
+ * @param formsLength Returns the length of the resulting array
+ * @return An array of form structs
+ */
+IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char *formType, unsigned int *formsLength);
+
+/**
  * Recalculates the chunk size of the given concatentation chunk.
  *
  * @param cat An instance of a concatenation chunk

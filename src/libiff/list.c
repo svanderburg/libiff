@@ -187,6 +187,11 @@ void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const I
     IFF_printGroupSubChunks((const IFF_Group *)list, indentLevel, NULL, extension, extensionLength);
 }
 
+IFF_Form **IFF_searchFormsInList(IFF_List *list, const char *formType, unsigned int *formsLength)
+{
+    return IFF_searchFormsInCAT((IFF_CAT*)list, formType, formsLength);
+}
+
 void IFF_updateListChunkSizes(IFF_List *list)
 {
     unsigned int i;

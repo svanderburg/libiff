@@ -28,6 +28,7 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include "ifftypes.h"
 #include "extension.h"
 #include "group.h"
+#include "form.h"
 
 /**
  * @brief An abstract chunk containing the common properties of all chunk types
@@ -108,6 +109,16 @@ void IFF_freeChunk(IFF_Chunk *chunk, const char *formType, const IFF_Extension *
  * @param extensionLength Length of the extension array
  */
 void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
+ * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType A 4 character form identifier
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength);
 
 /**
  * Increments the given chunk size by the size of the given chunk.

@@ -24,7 +24,6 @@
 #include "id.h"
 #include "form.h"
 #include "iff.h"
-#include "util.h"
 
 int main(int argc, char *argv[])
 {

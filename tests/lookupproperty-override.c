@@ -25,7 +25,6 @@
 #include "form.h"
 #include "rawchunk.h"
 #include "iff.h"
-#include "util.h"
 
 #define HELO_BYTES_SIZE 4
 

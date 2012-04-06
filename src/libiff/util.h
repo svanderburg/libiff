@@ -24,7 +24,6 @@
 
 #include <stdio.h>
 #include "ifftypes.h"
-#include "form.h"
 
 /**
  * Prints a formatted string to the given file descriptor using a certain indent
@@ -35,15 +34,5 @@
  * @param formatString A format specifier for fprintf()
  */
 void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *formatString, ...);
-
-/**
- * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
- *
- * @param chunk An IFF chunk hierarchy
- * @param formType A 4 character form identifier
- * @param formsLength An integer in which the length of the resulting array is stored
- * @return An array of forms having the given form type
- */
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength);
 
 #endif

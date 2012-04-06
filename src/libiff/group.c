@@ -216,6 +216,24 @@ void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, cons
     IFF_printGroupSubChunks(group, indentLevel, formType, extension, extensionLength);
 }
 
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsigned int *formsLength)
+{
+    IFF_Form **forms = NULL;
+    unsigned int i;
+    
+    *formsLength = 0;
+    
+    for(i = 0; i < group->chunkLength; i++)
+    {
+        unsigned int resultLength;
+        IFF_Form **result = IFF_searchForms(group->chunk[i], formType, &resultLength);
+	    
+        forms = IFF_mergeFormArray(forms, formsLength, result, resultLength);
+    }
+    
+    return forms;
+}
+
 void IFF_updateGroupChunkSizes(IFF_Group *group)
 {
     unsigned int i;

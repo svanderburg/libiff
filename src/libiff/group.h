@@ -27,6 +27,7 @@ typedef struct IFF_Group IFF_Group;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunk.h"
+#include "form.h"
 
 /**
  * @brief An abstract group chunk, which contains all common properties of the compound chunk types. This chunk type should never be used directly.
@@ -194,6 +195,16 @@ void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLe
  * @param extensionLength Length of the extension array
  */
 void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
+ * Returns an array of form structs of the given formType, which are recursively retrieved from the given group.
+ *
+ * @param group An instance of a group chunk
+ * @param formType A 4 character form type ID
+ * @param formsLength Returns the length of the resulting array
+ * @return An array of form structs
+ */
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given group chunk.
