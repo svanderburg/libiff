@@ -1,5 +1,5 @@
-check_PROGRAMS = writeform readform writeform-pad readform-pad writecat readcat writelist readlist invalidiff validiff \
-    searchforms-form searchforms-cat updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override \
+check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
+    searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override \
     writeextension readextension checkextension ppextension
 
 writeform_SOURCES = writeform.c
@@ -17,6 +17,14 @@ writeform_pad_CFLAGS = -I../src/libiff
 readform_pad_SOURCES = readform-pad.c
 readform_pad_LDADD = ../src/libiff/libiff.la
 readform_pad_CFLAGS = -I../src/libiff
+
+writenestedform_SOURCES = writenestedform.c
+writenestedform_LDADD = ../src/libiff/libiff.la
+writenestedform_CFLAGS = -I../src/libiff
+
+readnestedform_SOURCES = readnestedform.c
+readnestedform_LDADD = ../src/libiff/libiff.la
+readnestedform_CFLAGS = -I../src/libiff
 
 writecat_SOURCES = writecat.c
 writecat_LDADD = ../src/libiff/libiff.la
@@ -62,6 +70,10 @@ searchforms_cat_SOURCES = searchforms-cat.c
 searchforms_cat_LDADD = ../src/libiff/libiff.la
 searchforms_cat_CFLAGS = -I../src/libiff
 
+searchforms_nestedform_SOURCES = searchforms-nestedform.c
+searchforms_nestedform_LDADD = ../src/libiff/libiff.la
+searchforms_nestedform_CFLAGS = -I../src/libiff
+
 updatechunksizes_SOURCES = updatechunksizes.c
 updatechunksizes_LDADD = ../src/libiff/libiff.la
 updatechunksizes_CFLAGS = -I../src/libiff
@@ -82,14 +94,14 @@ ppextension_SOURCES = hello.c bye.c test.c ppextension.c
 ppextension_LDADD = ../src/libiff/libiff.la
 ppextension_CFLAGS = -I../src/libiff
 
-TESTS = writeform readform writeform-pad readform-pad writecat readcat writelist readlist \
+TESTS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     validform.sh validcat.sh validcat-wildcard.sh validlist.sh validlist-wildcard.sh invalidiff.sh \
     invalidid1.sh invalidid2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh \
     invalidform-prop.sh invalidform-size1.sh invalidform-size2.sh \
     invalidcat-raw.sh invalidcat-prop.sh invalidcat-contentstype.sh invalidcat-size.sh \
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
     invalidprop.sh invalidprop-size.sh \
-    pp-text.sh searchforms-form searchforms-cat updatechunksizes \
+    pp-text.sh searchforms-form searchforms-cat searchforms-nestedform updatechunksizes \
     lookupproperty-simple lookupproperty-prop lookupproperty-override \
     join-identical.sh join-different.sh \
     writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh
