@@ -209,7 +209,10 @@ IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int 
     else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
 	return IFF_searchFormsInList((IFF_List*)chunk, formType, formsLength);
     else
+    {
+	*formsLength = 0;
 	return NULL;
+    }
 }
 
 IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)

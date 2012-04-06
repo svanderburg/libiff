@@ -227,7 +227,7 @@ IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsign
     {
         unsigned int resultLength;
         IFF_Form **result = IFF_searchForms(group->chunk[i], formType, &resultLength);
-	    
+	
         forms = IFF_mergeFormArray(forms, formsLength, result, resultLength);
     }
     
