@@ -27,10 +27,11 @@
 #include "iff.h"
 
 #define HELO_BYTES_SIZE 4
+#define BYE_BYTES_SIZE 4
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read("lookupproperty-override.TEST", NULL, 0);
+    IFF_Chunk *chunk = IFF_read("lookupproperty-nested.TEST", NULL, 0);
 
     if(chunk == NULL)
 	return 1;
@@ -42,7 +43,10 @@ int main(int argc, char *argv[])
 	
 	if(formsLength == 2)
 	{
-	    IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], "HELO");
+	    IFF_Form *form = forms[1]; /* We should take the last form (in the inner list) */
+	    
+	    IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, "HELO");
+	    IFF_RawChunk *byeChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, "BYE ");
 	    
 	    if(heloChunk != NULL && IFF_compareId(heloChunk->chunkId, "HELO") == 0)
 	    {
@@ -53,7 +57,7 @@ int main(int argc, char *argv[])
 		       heloChunk->chunkData[2] != '3' ||
 		       heloChunk->chunkData[3] != '4')
 		    {
-			fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
+			fprintf(stderr, "Error: 'HELO' chunk contents should be: '1', '2', '3', '4'!\n");
 			status = 1;
 		    }
 		}
@@ -67,6 +71,26 @@ int main(int argc, char *argv[])
 	    {
 		fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
 		status = 1;
+	    }
+	    
+	    if(byeChunk != NULL && IFF_compareId(byeChunk->chunkId, "BYE ") == 0)
+	    {
+		if(byeChunk->chunkSize == BYE_BYTES_SIZE)
+		{
+		    if(byeChunk->chunkData[0] != 'q' ||
+		       byeChunk->chunkData[1] != 'w' ||
+		       byeChunk->chunkData[2] != 'e' ||
+		       byeChunk->chunkData[3] != 'r')
+		    {
+			fprintf(stderr, "Error: 'BYE ' chunk contents should be: 'q', 'w', 'e', 'r'!\n");
+			status = 1;
+		    }
+		}
+		else
+		{
+		    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", BYE_BYTES_SIZE);
+		    status = 1;
+		}
 	    }
 	}
 	else

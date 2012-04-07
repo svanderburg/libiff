@@ -252,7 +252,7 @@ IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId)
     /* Retrieve the chunk with the given id from the given form */
     IFF_Chunk *chunk = IFF_getDataChunkFromForm(form, chunkId);
     
-    /* If the chunk is not in the form, check whether it is a shared property */
+    /* If the chunk is not in the form, try to find it in a higher located PROP */
     if(chunk == NULL)
 	return searchProperty((IFF_Chunk*)form, form->formType, chunkId);
     else
