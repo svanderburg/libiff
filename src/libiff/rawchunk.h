@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -83,7 +83,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
 IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize);
 
 /**
- * Writes the given raw chunk to a file.
+ * Writes the given raw chunk to a file descriptor.
  *
  * @param file File descriptor of the file
  * @param rawChunk A raw chunk instance

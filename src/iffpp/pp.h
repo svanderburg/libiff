@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -28,7 +28,7 @@
  * Displays a textual representation of the given IFF file.
  *
  * @param filename Path to the IFF file, or NULL to read from the standard input
- * @param options A integer in which bits their represent a number of pretty print options
+ * @param options An integer in which their bits represent a number of pretty print options
  * @return TRUE if the file has been successfully printed, else FALSE
  */
 int IFF_prettyPrint(const char *filename, const int options);

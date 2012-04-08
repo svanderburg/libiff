@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -51,7 +51,7 @@ struct IFF_Chunk
  *
  * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk in bytes
- * @return A raw chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
+ * @return A generic chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
  */
 IFF_Chunk *IFF_allocateChunk(const char *chunkId, const size_t chunkSize);
 

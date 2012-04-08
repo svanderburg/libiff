@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -30,7 +30,7 @@ typedef struct IFF_Extension IFF_Extension;
 #include "chunk.h"
 
 /**
- * @brief Defines how a particular chunk within a FORM should be handled.
+ * @brief Defines how a particular application chunk within a FORM should be handled.
  */
 struct IFF_FormExtension
 {
@@ -54,7 +54,7 @@ struct IFF_FormExtension
 };
 
 /**
- * @brief Defines how chunks in a FORM should be handled.
+ * @brief Defines how application chunks in a FORM with a particular formType should be handled.
  */
 struct IFF_Extension
 {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -133,7 +133,7 @@ int IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSize);
  * Checks whether the group sub chunks are valid
  *
  * @param group An instance of a group chunk
- * @param subChunkCheck Pointer to a function which checks an individual sub chunk for its validity
+ * @param subChunkCheck Pointer to a function, which checks an individual sub chunk for its validity
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks
  * @param extension Extension array which specifies how application file format chunks should be handled
  * @param extensionLength Length of the extension array
@@ -146,7 +146,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (c
  *
  * @param group An instance of a group chunk
  * @param groupTypeCheck Pointer to a function, which checks the groupType for its validity
- * @param subChunkCheck Pointer to a function which checks an individual sub chunk for its validity
+ * @param subChunkCheck Pointer to a function, which checks an individual sub chunk for its validity
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param extension Extension array which specifies how application file format chunks should be handled
  * @param extensionLength Length of the extension array

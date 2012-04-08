@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -47,6 +47,8 @@ int IFF_compareId(const IFF_ID id1, const char* id2);
  *
  * @param file File descriptor of the file
  * @param id A 4 character IFF id
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
 int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
@@ -56,6 +58,8 @@ int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attribut
  *
  * @param file File descriptor of the file
  * @param id A 4 character IFF id
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully written, else FALSE
  */
 int IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName);

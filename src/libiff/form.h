@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,7 +29,7 @@ typedef struct IFF_Form IFF_Form;
 #include "chunk.h"
 
 /**
- * @brief A special group chunk, which contains an arbitrary number of groups chunks and data chunks.
+ * @brief A special group chunk, which contains an arbitrary number of group chunks and data chunks.
  */
 struct IFF_Form
 {
