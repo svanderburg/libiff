@@ -1,3 +1,5 @@
+noinst_HEADERS = bye.h hello.h test.h
+
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     writeextension readextension checkextension ppextension
@@ -109,3 +111,13 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh
+
+EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \
+    invalidform-size2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh invalidid1.sh invalidid2.sh \
+    invalidiff.sh invalidlist-contentstype.sh invalidlist-raw.sh invalidlist-size.sh invalidprop.sh invalidprop-size.sh join-different.sh \
+    join-identical.sh ppextension-c.sh ppextension-otherform.sh pp-text.sh validcat.sh validcat-wildcard.sh validform.sh validlist.sh validlist-wildcard.sh \
+    extension-otherform.TEST invalidcat-contentstype.TEST invalidcat-prop.TEST invalidcat-raw.TEST invalidcat-size.TEST invalidform-prop.TEST \
+    invalidform-size1.TEST invalidform-size2.TEST invalidformtype1.TEST invalidformtype2.TEST invalidformtype3.TEST invalidformtype4.TEST \
+    invalidid1.TEST invalidid2.TEST invalidlist-contentstype.TEST invalidlist-raw.TEST invalidlist-size.TEST invalidprop-size.TEST invalidprop.TEST \
+    lookupproperty-nested.TEST lookupproperty-override.TEST pp-text.TEST validcat-wildcard.TEST validlist-wildcard.TEST \
+    join.HELO join.BYE
