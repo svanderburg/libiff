@@ -19,17 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "iff.h"
-#include "cat.h"
-#include "form.h"
-#include "rawchunk.h"
-#include "id.h"
 #include <stdlib.h>
-
-#define HELO_1_BYTES_SIZE 4
-#define BYE_1_BYTES_SIZE 3
-#define HELO_2_BYTES_SIZE 5
-#define BYE_2_BYTES_SIZE 4
+#include <string.h>
+#include <iff.h>
+#include <cat.h>
+#include <form.h>
+#include <rawchunk.h>
+#include <id.h>
+#include "catdata.h"
 
 int main(int argc, char *argv[])
 {
@@ -40,19 +37,13 @@ int main(int argc, char *argv[])
     int status;
     
     helo1Bytes = (IFF_UByte*)malloc(HELO_1_BYTES_SIZE * sizeof(IFF_UByte));
-    helo1Bytes[0] = 'a';
-    helo1Bytes[1] = 'b';
-    helo1Bytes[2] = 'c';
-    helo1Bytes[3] = 'd';
+    memcpy(helo1Bytes, helo1Data, HELO_1_BYTES_SIZE);
     
     helo1Chunk = IFF_createRawChunk("HELO");
     IFF_setRawChunkData(helo1Chunk, helo1Bytes, HELO_1_BYTES_SIZE);
     
     bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
-    bye1Bytes[0] = 'E';
-    bye1Bytes[1] = 'F';
-    bye1Bytes[2] = 'G';
-    bye1Bytes[3] = 'H';
+    memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
     
     bye1Chunk = IFF_createRawChunk("BYE ");
     IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
@@ -62,20 +53,13 @@ int main(int argc, char *argv[])
     IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
     
     helo2Bytes = (IFF_UByte*)malloc(HELO_2_BYTES_SIZE * sizeof(IFF_UByte));
-    helo2Bytes[0] = 'a';
-    helo2Bytes[1] = 'b';
-    helo2Bytes[2] = 'c';
-    helo2Bytes[3] = 'd';
-    helo2Bytes[4] = 'e';
+    memcpy(helo2Bytes, helo2Data, HELO_2_BYTES_SIZE);
     
     helo2Chunk = IFF_createRawChunk("HELO");
     IFF_setRawChunkData(helo2Chunk, helo2Bytes, HELO_2_BYTES_SIZE);
     
     bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
-    bye2Bytes[0] = 'F';
-    bye2Bytes[1] = 'G';
-    bye2Bytes[2] = 'H';
-    bye2Bytes[3] = 'I';
+    memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
     
     bye2Chunk = IFF_createRawChunk("BYE ");
     IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);

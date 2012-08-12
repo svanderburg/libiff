@@ -1,4 +1,4 @@
-noinst_HEADERS = bye.h hello.h test.h
+noinst_HEADERS = bye.h hello.h test.h formdata.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \

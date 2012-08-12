@@ -19,16 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "iff.h"
-#include "chunk.h"
-#include "form.h"
-#include "rawchunk.h"
-#include "id.h"
-
-#define HELO_1_BYTES_SIZE 4
-#define BYE_1_BYTES_SIZE 3
-#define HELO_2_BYTES_SIZE 5
-#define BYE_2_BYTES_SIZE 4
+#include <stdio.h>
+#include <string.h>
+#include <iff.h>
+#include <chunk.h>
+#include <form.h>
+#include <rawchunk.h>
+#include <id.h>
+#include "nestedformdata.h"
 
 int main(int argc, char *argv[])
 {
@@ -72,12 +70,16 @@ int main(int argc, char *argv[])
 			{
 			    if(heloChunk->chunkSize == HELO_1_BYTES_SIZE)
 			    {
-				if(heloChunk->chunkData[0] != 'a' ||
-				   heloChunk->chunkData[1] != 'b' ||
-				   heloChunk->chunkData[2] != 'c' ||
-				   heloChunk->chunkData[3] != 'd')
+				if(memcmp(heloChunk->chunkData, helo1Data, HELO_1_BYTES_SIZE) != 0)
 				{
-				    fprintf(stderr, "'HELO' body should consists of 'a','b','c','d'\n");
+				    unsigned int i;
+				    
+				    fprintf(stderr, "'HELO' body should consists of '");
+				    
+				    for(i = 0; i < HELO_1_BYTES_SIZE; i++)
+					fprintf(stderr, "%c", helo1Data[i]);
+				    
+				    fprintf(stderr, "'\n");
 				    status = 1;
 				}
 			    }
@@ -97,11 +99,16 @@ int main(int argc, char *argv[])
 			{
 			    if(byeChunk->chunkSize == BYE_1_BYTES_SIZE)
 			    {
-				if(byeChunk->chunkData[0] != 'E' ||
-				   byeChunk->chunkData[1] != 'F' ||
-				   byeChunk->chunkData[2] != 'G')
+				if(memcmp(byeChunk->chunkData, bye1Data, BYE_1_BYTES_SIZE) != 0)
 				{
-				    fprintf(stderr, "'BYE ' body should consists of 'E','F','G'\n");
+				    unsigned int i;
+				    
+				    fprintf(stderr, "'BYE ' body should consists of '");
+				    
+				    for(i = 0; i < BYE_1_BYTES_SIZE; i++)
+					fprintf(stderr, "%c", bye1Data[i]);
+				    
+				    fprintf(stderr, "'\n");
 				    status = 1;
 				}
 			    }
@@ -148,13 +155,16 @@ int main(int argc, char *argv[])
 			{
 			    if(heloChunk->chunkSize == HELO_2_BYTES_SIZE)
 			    {
-				if(heloChunk->chunkData[0] != 'a' ||
-				   heloChunk->chunkData[1] != 'b' ||
-				   heloChunk->chunkData[2] != 'c' ||
-				   heloChunk->chunkData[3] != 'd' ||
-				   heloChunk->chunkData[4] != 'e')
+				if(memcmp(heloChunk->chunkData, helo2Data, HELO_2_BYTES_SIZE) != 0)
 				{
-				    fprintf(stderr, "'HELO' body should consists of 'a','b','c','d','e'\n");
+				    unsigned int i;
+				    
+				    fprintf(stderr, "'HELO' body should consists of '");
+				    
+				    for(i = 0; i < HELO_2_BYTES_SIZE; i++)
+					fprintf(stderr, "%c", helo2Data[i]);
+				    
+				    fprintf(stderr, "'\n");
 				    status = 1;
 				}
 			    }
@@ -174,12 +184,16 @@ int main(int argc, char *argv[])
 			{
 			    if(byeChunk->chunkSize == BYE_2_BYTES_SIZE)
 			    {
-				if(byeChunk->chunkData[0] != 'F' ||
-				   byeChunk->chunkData[1] != 'G' ||
-				   byeChunk->chunkData[2] != 'H' ||
-				   byeChunk->chunkData[3] != 'I')
+				if(memcmp(byeChunk->chunkData, bye2Data, BYE_2_BYTES_SIZE) != 0)
 				{
-				    fprintf(stderr, "'BYE ' body should consists of 'E','F','G','H'\n");
+				    unsigned int i;
+				    
+				    fprintf(stderr, "'BYE ' body should consists of '");
+				    
+				    for(i = 0; i < BYE_2_BYTES_SIZE; i++)
+					fprintf(stderr, "%c", bye2Data[i]);
+				    
+				    fprintf(stderr, "'\n");
 				    status = 1;
 				}
 			    }

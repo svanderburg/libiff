@@ -19,14 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "iff.h"
-#include "form.h"
-#include "rawchunk.h"
-#include "id.h"
 #include <stdio.h>
-
-#define HELO_BYTES_SIZE 4
-#define BYE_BYTES_SIZE 5
+#include <string.h>
+#include <iff.h>
+#include <form.h>
+#include <rawchunk.h>
+#include <id.h>
+#include "formdata-pad.h"
 
 int main(int argc, char *argv[])
 {
@@ -47,23 +46,27 @@ int main(int argc, char *argv[])
 	    
 	    if(form->chunkLength == 2)
 	    {
-		IFF_RawChunk *helloChunk = (IFF_RawChunk*)form->chunk[0];
+		IFF_RawChunk *heloChunk = (IFF_RawChunk*)form->chunk[0];
 		IFF_RawChunk *byeChunk = (IFF_RawChunk*)form->chunk[1];
 		
 		/* Check whether first sub chunk has ID 'HELO' */
 		
-		if(IFF_compareId(helloChunk->chunkId, "HELO") == 0)
+		if(IFF_compareId(heloChunk->chunkId, "HELO") == 0)
 		{
 		    /* Chunk size has to be 4 bytes */
 		    
-		    if(helloChunk->chunkSize == HELO_BYTES_SIZE)
+		    if(heloChunk->chunkSize == HELO_BYTES_SIZE)
 		    {
-			if(helloChunk->chunkData[0] != 'a' ||
-			   helloChunk->chunkData[1] != 'b' ||
-			   helloChunk->chunkData[2] != 'c' ||
-			   helloChunk->chunkData[3] != 'd')
+			if(memcmp(heloChunk->chunkData, heloData, HELO_BYTES_SIZE) != 0)
 			{
-			    fprintf(stderr, "'HELO' chunk body should consist of 'a','b','c','d'\n");
+			    unsigned int i;
+			    
+			    fprintf(stderr, "'HELO' chunk body should consist of '");
+			    
+			    for(i = 0; i < HELO_BYTES_SIZE; i++)
+				fprintf(stderr, "%c", heloData[i]);
+			    
+			    fprintf(stderr, "'\n");
 			    status = 1;
 			}
 		    }
@@ -87,13 +90,16 @@ int main(int argc, char *argv[])
 		    
 		    if(byeChunk->chunkSize == BYE_BYTES_SIZE)
 		    {
-			if(byeChunk->chunkData[0] != 'E' ||
-			   byeChunk->chunkData[1] != 'F' ||
-			   byeChunk->chunkData[2] != 'G' ||
-			   byeChunk->chunkData[3] != 'H' ||
-			   byeChunk->chunkData[4] != 'I')
+			if(memcmp(byeChunk->chunkData, byeData, BYE_BYTES_SIZE) != 0)
 			{
-			    fprintf(stderr, "'BYE ' chunk body should consist of 'E','F','G','H','I'\n");
+			    unsigned int i;
+			    
+			    fprintf(stderr, "'BYE ' chunk body should consist of '");
+			    
+			    for(i = 0; i < BYE_BYTES_SIZE; i++)
+				fprintf(stderr, "%c", byeData[i]);
+			    
+			    fprintf(stderr, "'\n");
 			    status = 1;
 			}
 		    }

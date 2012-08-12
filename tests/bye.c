@@ -21,9 +21,9 @@
 
 #include "bye.h"
 #include <stdlib.h>
-#include "io.h"
-#include "error.h"
-#include "util.h"
+#include <io.h>
+#include <error.h>
+#include <util.h>
 #include "test.h"
 
 #define CHUNKID "BYE "

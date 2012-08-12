@@ -19,13 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "iff.h"
-#include "list.h"
-#include "form.h"
-#include "prop.h"
-#include "rawchunk.h"
-#include "id.h"
 #include <stdlib.h>
+#include <string.h>
+#include <iff.h>
+#include <list.h>
+#include <form.h>
+#include <prop.h>
+#include <rawchunk.h>
+#include <id.h>
+#include "listdata.h"
 
 #define HELO_BYTES_SIZE 4
 #define BYE_1_BYTES_SIZE 4
@@ -41,10 +43,7 @@ int main(int argc, char *argv[])
     int status;
     
     heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
-    heloBytes[0] = 'q';
-    heloBytes[1] = 'w';
-    heloBytes[2] = 'e';
-    heloBytes[3] = 'r';
+    memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
     
     heloChunk = IFF_createRawChunk("HELO");
     IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
@@ -53,10 +52,7 @@ int main(int argc, char *argv[])
     IFF_addToProp(testProp, (IFF_Chunk*)heloChunk);
     
     bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
-    bye1Bytes[0] = 'a';
-    bye1Bytes[1] = 'b';
-    bye1Bytes[2] = 'c';
-    bye1Bytes[3] = 'd';
+    memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
     
     bye1Chunk = IFF_createRawChunk("BYE ");
     IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
@@ -65,10 +61,7 @@ int main(int argc, char *argv[])
     IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
     
     bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
-    bye2Bytes[0] = 'E';
-    bye2Bytes[1] = 'F';
-    bye2Bytes[2] = 'G';
-    bye2Bytes[3] = 'H';
+    memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
     
     bye2Chunk = IFF_createRawChunk("BYE ");
     IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);
