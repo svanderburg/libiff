@@ -197,6 +197,18 @@ void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLe
 void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether the given group chunks' contents is equal to each other.
+ *
+ * @param group1 Group to compare
+ * @param group2 Group to compare
+ * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param extension Extension array which specifies how application file format chunks should be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given groups are equal, else FALSE
+ */
+int IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given group.
  *
  * @param group An instance of a group chunk

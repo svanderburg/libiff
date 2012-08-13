@@ -154,3 +154,8 @@ void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel)
     else
 	IFF_printRaw(rawChunk, indentLevel);
 }
+
+int IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2)
+{
+    return (memcmp(rawChunk1->chunkData, rawChunk2->chunkData, rawChunk1->chunkSize) == 0);
+}

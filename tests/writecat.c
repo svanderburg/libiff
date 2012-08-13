@@ -19,60 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
 #include <iff.h>
-#include <cat.h>
-#include <form.h>
-#include <rawchunk.h>
-#include <id.h>
 #include "catdata.h"
 
 int main(int argc, char *argv[])
 {
-    IFF_Form *test1Form, *test2Form;
-    IFF_CAT *cat;
-    IFF_RawChunk *helo1Chunk, *helo2Chunk, *bye1Chunk, *bye2Chunk;
-    IFF_UByte *helo1Bytes, *helo2Bytes, *bye1Bytes, *bye2Bytes;
-    int status;
-    
-    helo1Bytes = (IFF_UByte*)malloc(HELO_1_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(helo1Bytes, helo1Data, HELO_1_BYTES_SIZE);
-    
-    helo1Chunk = IFF_createRawChunk("HELO");
-    IFF_setRawChunkData(helo1Chunk, helo1Bytes, HELO_1_BYTES_SIZE);
-    
-    bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
-    
-    bye1Chunk = IFF_createRawChunk("BYE ");
-    IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
-    
-    test1Form = IFF_createForm("TEST");
-    IFF_addToForm(test1Form, (IFF_Chunk*)helo1Chunk);
-    IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
-    
-    helo2Bytes = (IFF_UByte*)malloc(HELO_2_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(helo2Bytes, helo2Data, HELO_2_BYTES_SIZE);
-    
-    helo2Chunk = IFF_createRawChunk("HELO");
-    IFF_setRawChunkData(helo2Chunk, helo2Bytes, HELO_2_BYTES_SIZE);
-    
-    bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
-    
-    bye2Chunk = IFF_createRawChunk("BYE ");
-    IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);
-    
-    test2Form = IFF_createForm("TEST");
-    IFF_addToForm(test2Form, (IFF_Chunk*)helo2Chunk);
-    IFF_addToForm(test2Form, (IFF_Chunk*)bye2Chunk);
-    
-    cat = IFF_createCAT("TEST");
-    IFF_addToCAT(cat, (IFF_Chunk*)test1Form);
-    IFF_addToCAT(cat, (IFF_Chunk*)test2Form);
-    
-    status = IFF_write("cat.TEST", (IFF_Chunk*)cat, NULL, 0);
+    IFF_CAT *cat = IFF_createTestCAT();
+    int status = IFF_write("cat.TEST", (IFF_Chunk*)cat, NULL, 0);
     
     IFF_free((IFF_Chunk*)cat, NULL, 0);
     

@@ -187,6 +187,24 @@ void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const I
     IFF_printGroupSubChunks((const IFF_Group *)list, indentLevel, NULL, extension, extensionLength);
 }
 
+int IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(list1->propLength == list2->propLength)
+    {
+	unsigned int i;
+	
+	for(i = 0; i < list1->propLength; i++)
+	{
+	    if(!IFF_compareProp(list1->prop[i], list2->prop[i], extension, extensionLength))
+		return FALSE;
+	}
+	
+	return IFF_compareCAT((const IFF_CAT*)list1, (const IFF_CAT*)list2, extension, extensionLength);
+    }
+    else
+	return FALSE;
+}
+
 IFF_Form **IFF_searchFormsInList(IFF_List *list, const char *formType, unsigned int *formsLength)
 {
     return IFF_searchFormsInCAT((IFF_CAT*)list, formType, formsLength);

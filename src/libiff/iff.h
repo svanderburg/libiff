@@ -96,4 +96,15 @@ int IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsi
  */
 void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
+/**
+ * Checks whether two given IFF files are equal.
+ *
+ * @param chunk1 Chunk hierarchy to compare
+ * @param chunk2 Chunk hierarchy to compare
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given chunk hierarchies are equal, else FALSE
+ */
+int IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength);
+
 #endif

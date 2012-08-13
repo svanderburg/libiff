@@ -82,6 +82,11 @@ void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const I
     IFF_printForm((const IFF_Form *)prop, indentLevel, extension, extensionLength);
 }
 
+int IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    return IFF_compareForm((const IFF_Form*)prop1, (const IFF_Form*)prop2, extension, extensionLength);
+}
+
 void IFF_updatePropChunkSizes(IFF_Prop *prop)
 {
     IFF_updateFormChunkSizes((IFF_Form*)prop);

@@ -144,6 +144,17 @@ void IFF_freeList(IFF_List *list, const IFF_Extension *extension, const unsigned
 void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether the given lists' contents is equal to each other.
+ *
+ * @param list1 List to compare
+ * @param list2 List to compare
+ * @param extension Extension array which specifies how application file format chunks should be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given concatenations are equal, else FALSE
+ */
+int IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given list.
  *
  * @param list An instance of a list chunk

@@ -111,6 +111,18 @@ void IFF_freeChunk(IFF_Chunk *chunk, const char *formType, const IFF_Extension *
 void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether two given chunk hierarchies are equal.
+ *
+ * @param chunk1 Chunk hierarchy to compare
+ * @param chunk2 Chunk hierarchy to compare
+ * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given chunk hierarchies are equal, else FALSE
+ */
+int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
  *
  * @param chunk A chunk hierarchy representing an IFF file

@@ -122,3 +122,8 @@ void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF
 {
     IFF_printChunk(chunk, indentLevel, NULL, extension, extensionLength);
 }
+
+int IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    return IFF_compareChunk(chunk1, chunk2, NULL, extension, extensionLength);
+}

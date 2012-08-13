@@ -4,43 +4,43 @@ check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform r
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     writeextension readextension checkextension ppextension
 
-writeform_SOURCES = writeform.c
+writeform_SOURCES = formdata.c writeform.c
 writeform_LDADD = ../src/libiff/libiff.la
 writeform_CFLAGS = -I../src/libiff
 
-readform_SOURCES = readform.c
+readform_SOURCES = formdata.c readform.c
 readform_LDADD = ../src/libiff/libiff.la
 readform_CFLAGS = -I../src/libiff
 
-writeform_pad_SOURCES = writeform-pad.c
+writeform_pad_SOURCES = formdata-pad.c writeform-pad.c
 writeform_pad_LDADD = ../src/libiff/libiff.la
 writeform_pad_CFLAGS = -I../src/libiff
 
-readform_pad_SOURCES = readform-pad.c
+readform_pad_SOURCES = formdata-pad.c readform-pad.c
 readform_pad_LDADD = ../src/libiff/libiff.la
 readform_pad_CFLAGS = -I../src/libiff
 
-writenestedform_SOURCES = writenestedform.c
+writenestedform_SOURCES = nestedformdata.c writenestedform.c
 writenestedform_LDADD = ../src/libiff/libiff.la
 writenestedform_CFLAGS = -I../src/libiff
 
-readnestedform_SOURCES = readnestedform.c
+readnestedform_SOURCES = nestedformdata.c readnestedform.c
 readnestedform_LDADD = ../src/libiff/libiff.la
 readnestedform_CFLAGS = -I../src/libiff
 
-writecat_SOURCES = writecat.c
+writecat_SOURCES = catdata.c writecat.c
 writecat_LDADD = ../src/libiff/libiff.la
 writecat_CFLAGS = -I../src/libiff
 
-readcat_SOURCES = readcat.c
+readcat_SOURCES = catdata.c readcat.c
 readcat_LDADD = ../src/libiff/libiff.la
 readcat_CFLAGS = -I../src/libiff
 
-writelist_SOURCES = writelist.c
+writelist_SOURCES = listdata.c writelist.c
 writelist_LDADD = ../src/libiff/libiff.la
 writelist_CFLAGS = -I../src/libiff
 
-readlist_SOURCES = readlist.c
+readlist_SOURCES = listdata.c readlist.c
 readlist_LDADD = ../src/libiff/libiff.la
 readlist_CFLAGS = -I../src/libiff
 
@@ -84,11 +84,11 @@ updatechunksizes_SOURCES = updatechunksizes.c
 updatechunksizes_LDADD = ../src/libiff/libiff.la
 updatechunksizes_CFLAGS = -I../src/libiff
 
-writeextension_SOURCES = hello.c bye.c test.c writeextension.c
+writeextension_SOURCES = hello.c bye.c test.c extensiondata.c writeextension.c
 writeextension_LDADD = ../src/libiff/libiff.la
 writeextension_CFLAGS = -I../src/libiff
 
-readextension_SOURCES = hello.c bye.c test.c readextension.c
+readextension_SOURCES = hello.c bye.c test.c extensiondata.c readextension.c
 readextension_LDADD = ../src/libiff/libiff.la
 readextension_CFLAGS = -I../src/libiff
 

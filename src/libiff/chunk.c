@@ -127,13 +127,13 @@ int IFF_checkChunk(const IFF_Chunk *chunk, const char *formType, const IFF_Exten
     else
     {
 	if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	    return IFF_checkForm((IFF_Form*)chunk, extension, extensionLength);
+	    return IFF_checkForm((const IFF_Form*)chunk, extension, extensionLength);
 	else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
-	    return IFF_checkCAT((IFF_CAT*)chunk, extension, extensionLength);
+	    return IFF_checkCAT((const IFF_CAT*)chunk, extension, extensionLength);
 	else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
-	    return IFF_checkList((IFF_List*)chunk, extension, extensionLength);
+	    return IFF_checkList((const IFF_List*)chunk, extension, extensionLength);
 	else if(IFF_compareId(chunk->chunkId, "PROP") == 0)
-	    return IFF_checkProp((IFF_Prop*)chunk, extension, extensionLength);
+	    return IFF_checkProp((const IFF_Prop*)chunk, extension, extensionLength);
 	else
 	{
 	    const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunk->chunkId, extension, extensionLength);
@@ -180,17 +180,17 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     IFF_printIndent(stdout, indentLevel + 1, "chunkSize = %d;\n", chunk->chunkSize);
     
     if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	IFF_printForm((IFF_Form*)chunk, indentLevel + 1, extension, extensionLength);
+	IFF_printForm((const IFF_Form*)chunk, indentLevel + 1, extension, extensionLength);
     else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
-	IFF_printCAT((IFF_CAT*)chunk, indentLevel + 1, extension, extensionLength);
+	IFF_printCAT((const IFF_CAT*)chunk, indentLevel + 1, extension, extensionLength);
     else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
-	IFF_printList((IFF_List*)chunk, indentLevel + 1, extension, extensionLength);
+	IFF_printList((const IFF_List*)chunk, indentLevel + 1, extension, extensionLength);
     else if(IFF_compareId(chunk->chunkId, "PROP") == 0)
-	IFF_printProp((IFF_Prop*)chunk, indentLevel + 1, extension, extensionLength);
+	IFF_printProp((const IFF_Prop*)chunk, indentLevel + 1, extension, extensionLength);
     else
     {
 	const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunk->chunkId, extension, extensionLength);
-	    
+	
 	if(formExtension == NULL)
 	    IFF_printRawChunk((IFF_RawChunk*)chunk, indentLevel + 1);
 	else
@@ -198,6 +198,37 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     }
     
     IFF_printIndent(stdout, indentLevel, "}\n\n");
+}
+
+int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(IFF_compareId(chunk1->chunkId, chunk2->chunkId) == 0)
+    {
+	if(chunk1->chunkSize == chunk2->chunkSize)
+	{
+	    if(IFF_compareId(chunk1->chunkId, "FORM") == 0)
+		return IFF_compareForm((const IFF_Form*)chunk1, (const IFF_Form*)chunk2, extension, extensionLength);
+	    else if(IFF_compareId(chunk1->chunkId, "CAT ") == 0)
+		return IFF_compareCAT((const IFF_CAT*)chunk1, (const IFF_CAT*)chunk2, extension, extensionLength);
+	    else if(IFF_compareId(chunk1->chunkId, "LIST") == 0)
+		return IFF_compareList((const IFF_List*)chunk1, (const IFF_List*)chunk2, extension, extensionLength);
+	    else if(IFF_compareId(chunk1->chunkId, "PROP") == 0)
+		return IFF_compareProp((const IFF_Prop*)chunk1, (const IFF_Prop*)chunk2, extension, extensionLength);
+	    else
+	    {
+		const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunk1->chunkId, extension, extensionLength);
+		
+		if(formExtension == NULL)
+		    return IFF_compareRawChunk((const IFF_RawChunk*)chunk1, (const IFF_RawChunk*)chunk2);
+		else
+		    return formExtension->compareChunk(chunk1, chunk2);
+	    }
+	}
+	else
+	    return FALSE;
+    }
+    else
+	return FALSE;
 }
 
 IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength)

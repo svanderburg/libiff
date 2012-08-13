@@ -19,33 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdlib.h>
-#include "form.h"
 #include "test.h"
-#include "hello.h"
-#include "bye.h"
+#include "extensiondata.h"
 
 int main(int argc, char *argv[])
 {
-    TEST_Hello *hello;
-    TEST_Bye *bye;
-    int status;
-    
-    IFF_Form *form = IFF_createForm("TEST");
-    
-    hello = TEST_createHello();
-    hello->a = 'a';
-    hello->b = 'b';
-    hello->c = 4096;
-    
-    bye = TEST_createBye();
-    bye->one = 1;
-    bye->two = 2;
-    
-    IFF_addToForm(form, (IFF_Chunk*)hello);
-    IFF_addToForm(form, (IFF_Chunk*)bye);
-    
-    status = TEST_write("extension.TEST", (IFF_Chunk*)form);
+    IFF_Form *form = IFF_createTestForm();
+    int status = TEST_write("extension.TEST", (IFF_Chunk*)form);
     
     TEST_free((IFF_Chunk*)form);
     

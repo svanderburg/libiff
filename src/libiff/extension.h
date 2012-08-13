@@ -51,6 +51,9 @@ struct IFF_FormExtension
     
     /** Function responsible for printing the given chunk */
     void (*printChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel);
+    
+    /** Function responsible for comparing the given chunk */
+    int (*compareChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 };
 
 /**

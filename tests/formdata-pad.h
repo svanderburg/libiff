@@ -22,12 +22,8 @@
 #ifndef __FORMDATA_PAD_H
 #define __FORMDATA_PAD_H
 
-#include <ifftypes.h>
+#include <form.h>
 
-#define HELO_BYTES_SIZE 4
-#define BYE_BYTES_SIZE 5
-
-IFF_UByte heloData[] = {'a', 'b', 'c', 'd'};
-IFF_UByte byeData[] = {'E', 'F', 'G', 'H', 'I'};
+IFF_Form *IFF_createTestForm(void);
 
 #endif

@@ -20,11 +20,7 @@
  */
 
 #include <stdio.h>
-#include <string.h>
 #include <iff.h>
-#include <form.h>
-#include <rawchunk.h>
-#include <id.h>
 #include "formdata-pad.h"
 
 int main(int argc, char *argv[])
@@ -32,100 +28,18 @@ int main(int argc, char *argv[])
     IFF_Chunk *chunk = IFF_read("hello-pad.TEST", NULL, 0);
     
     if(chunk == NULL)
+    {
+	fprintf(stderr, "Cannot open 'hello-pad.TEST'\n");
 	return 1;
+    }
     else
     {
-	int status = 0;
+	IFF_Form *form = IFF_createTestForm();
+	int status = IFF_compare(chunk, (IFF_Chunk*)form, NULL, 0);
 	
-	/* Check whether the structure is a FORM */
-	if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	{
-	    IFF_Form *form = (IFF_Form*)chunk;
-	    
-	    /* We need to have 2 sub chunks in the FORM */
-	    
-	    if(form->chunkLength == 2)
-	    {
-		IFF_RawChunk *heloChunk = (IFF_RawChunk*)form->chunk[0];
-		IFF_RawChunk *byeChunk = (IFF_RawChunk*)form->chunk[1];
-		
-		/* Check whether first sub chunk has ID 'HELO' */
-		
-		if(IFF_compareId(heloChunk->chunkId, "HELO") == 0)
-		{
-		    /* Chunk size has to be 4 bytes */
-		    
-		    if(heloChunk->chunkSize == HELO_BYTES_SIZE)
-		    {
-			if(memcmp(heloChunk->chunkData, heloData, HELO_BYTES_SIZE) != 0)
-			{
-			    unsigned int i;
-			    
-			    fprintf(stderr, "'HELO' chunk body should consist of '");
-			    
-			    for(i = 0; i < HELO_BYTES_SIZE; i++)
-				fprintf(stderr, "%c", heloData[i]);
-			    
-			    fprintf(stderr, "'\n");
-			    status = 1;
-			}
-		    }
-		    else
-		    {
-			fprintf(stderr, "Size of 'HELO' chunk must be: %u!\n", HELO_BYTES_SIZE);
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "First chunk has to be of ID: 'HELO'\n");
-		    status = 1;
-		}
-		
-		/* Check whether second sub chunk has ID 'BYE ' */
-		
-		if(IFF_compareId(byeChunk->chunkId, "BYE ") == 0)
-		{
-		    /* Chunk size has to be 5 bytes */
-		    
-		    if(byeChunk->chunkSize == BYE_BYTES_SIZE)
-		    {
-			if(memcmp(byeChunk->chunkData, byeData, BYE_BYTES_SIZE) != 0)
-			{
-			    unsigned int i;
-			    
-			    fprintf(stderr, "'BYE ' chunk body should consist of '");
-			    
-			    for(i = 0; i < BYE_BYTES_SIZE; i++)
-				fprintf(stderr, "%c", byeData[i]);
-			    
-			    fprintf(stderr, "'\n");
-			    status = 1;
-			}
-		    }
-		    else
-		    {
-			fprintf(stderr, "Size of 'BYE ' chunk must be: %u!\n", BYE_BYTES_SIZE);
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "Second chunk has to be of ID: 'BYE '\n");
-		    status = 1;
-		}
-	    }
-	    else
-	    {
-		status = 1;
-		fprintf(stderr, "We need 2 sub chunks in the FORM!\n");
-	    }
-	}
-	else
-	    status = 1;
-	
+	IFF_free((IFF_Chunk*)form, NULL, 0);
 	IFF_free(chunk, NULL, 0);
 	
-	return status;
+	return (!status);
     }
 }

@@ -134,6 +134,17 @@ void IFF_freeForm(IFF_Form *form, const IFF_Extension *extension, const unsigned
 void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether the given forms' contents is equal to each other.
+ *
+ * @param form1 Form to compare
+ * @param form2 Form to compare
+ * @param extension Extension array which specifies how application file format chunks should be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given forms are equal, else FALSE
+ */
+int IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Merges two given IFF form arrays in the target array.
  *
  * @param target Target form array

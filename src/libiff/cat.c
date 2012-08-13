@@ -118,6 +118,11 @@ void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_
     IFF_printGroup((const IFF_Group*)cat, indentLevel, NULL, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
+int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, NULL, extension, extensionLength);
+}
+
 IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char *formType, unsigned int *formsLength)
 {
     return IFF_searchFormsInGroup((IFF_Group*)cat, formType, formsLength);

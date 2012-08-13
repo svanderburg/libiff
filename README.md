@@ -259,6 +259,26 @@ composition of chunks conform to the IFF standard:
             return 1; /* Not a valid IFF file */
     }
 
+Comparing IFF chunk hierarchies
+-------------------------------
+In some cases, it may also be useful to compare IFF chunk hierarchies. For
+example, to check whether to files (or subsets thereof) are identical. These
+hierarchies can be compared by using the `IFF_compare()` function:
+
+    #include <libiff/iff.h>
+    
+    int main(int argc, char *argv[])
+    {
+        IFF_Chunk *chunk1, *chunk2;
+        
+        /* Read or create the chunks here */
+
+        if(IFF_compare(chunk1, chunk2, NULL, 0))
+            return 0; /* Both chunk hierarchies are equal */
+        else
+            return 1; /* Both chunk hierarchies are not equal */
+    }
+
 Command-line utilities
 ======================
 Apart from an API to handle IFF files, this package also includes a number of
@@ -313,6 +333,8 @@ interface of an imaginary TEST file format:
     void TEST_free(IFF_Chunk *chunk);
 
     void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel);
+    
+    int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
     #endif
 
@@ -336,8 +358,8 @@ The implementation of this interface (`test.c`) may look as follows:
      * that they can be found by a binary search algorithm.
      */
     static IFF_FormExtension testFormExtension[] = {
-        {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye},
-        {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello}
+        {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+        {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
     };
 
     /*
@@ -367,6 +389,11 @@ The implementation of this interface (`test.c`) may look as follows:
     void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
     {
         IFF_print(chunk, indentLevel, extension, TEST_NUM_OF_FORM_TYPES);
+    }
+    
+    int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+    {
+        return IFF_compare(chunk1, chunk2, extension, TEST_NUM_OF_FORM_TYPES);
     }
 
 In the code fragment above, an array defining extension chunkIDs and function
@@ -422,6 +449,8 @@ this (this example defines `hello.h` to which the previous example refers):
     void TEST_freeHello(IFF_Chunk *chunk);
 
     void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel);
+    
+    int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
     #endif
 
@@ -480,7 +509,7 @@ And the implementation may look as follows:
 
     int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
     {
-        TEST_Hello *hello = (TEST_Hello*)chunk;
+        const TEST_Hello *hello = (TEST_Hello*)chunk;
     
         if(!IFF_writeUByte(file, hello->a, CHUNKID, "a"))
             return FALSE;
@@ -505,9 +534,26 @@ And the implementation may look as follows:
 
     void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     {
-        TEST_Hello *hello = (TEST_Hello*)chunk;
+        const TEST_Hello *hello = (const TEST_Hello*)chunk;
     
         IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
         IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
         IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
+    }
+    
+    int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+    {
+        const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
+        const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
+    
+        if(hello1->a != hello2->a)
+	    return FALSE;
+
+        if(hello1->b != hello2->b)
+	    return FALSE;
+
+        if(hello1->c != hello2->c)
+	    return FALSE;
+
+        return TRUE;
     }

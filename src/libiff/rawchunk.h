@@ -122,4 +122,13 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel);
  */
 void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel);
 
+/**
+ * Checks whether two given raw chunks are equal.
+ *
+ * @param rawChunk1 Raw chunk to compare
+ * @param rawChunk2 Raw chunk to compare
+ * @return TRUE if the raw chunks are equal, else FALSE
+ */
+int IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2);
+
 #endif

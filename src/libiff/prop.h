@@ -100,6 +100,17 @@ void IFF_freeProp(IFF_Prop *prop, const IFF_Extension *extension, const unsigned
 void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether the given PROP chunks' contents is equal to each other.
+ *
+ * @param prop1 PROP chunk to compare
+ * @param prop2 PROP chunk to compare
+ * @param extension Extension array which specifies how application file format chunks should be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given forms are equal, else FALSE
+ */
+int IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Recalculates the chunk size of the given PROP chunk.
  *
  * @param prop An instance of a PROP chunk

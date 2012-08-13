@@ -216,6 +216,24 @@ void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, cons
     IFF_printGroupSubChunks(group, indentLevel, formType, extension, extensionLength);
 }
 
+int IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if((IFF_compareId(group1->groupType, group2->groupType) == 0) && (group1->chunkLength == group2->chunkLength))
+    {
+	unsigned int i;
+	
+	for(i = 0; i < group1->chunkLength; i++)
+	{
+	    if(!IFF_compareChunk(group1->chunk[i], group2->chunk[i], formType, extension, extensionLength))
+		return FALSE;
+	}
+	
+	return TRUE;
+    }
+    else
+	return FALSE;
+}
+
 IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsigned int *formsLength)
 {
     IFF_Form **forms = NULL;

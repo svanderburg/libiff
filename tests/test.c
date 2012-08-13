@@ -28,8 +28,8 @@
 #define TEST_NUM_OF_EXTENSION_CHUNKS 2
 
 static IFF_FormExtension testFormExtension[] = {
-    {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye},
-    {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello}
+    {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 static IFF_Extension extension[] = {
@@ -59,4 +59,9 @@ int TEST_check(const IFF_Chunk *chunk)
 void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     IFF_print(chunk, indentLevel, extension, TEST_NUM_OF_FORM_TYPES);
+}
+
+int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+{
+    return IFF_compare(chunk1, chunk2, extension, TEST_NUM_OF_FORM_TYPES);
 }

@@ -62,7 +62,7 @@ IFF_Chunk *TEST_readBye(FILE *file, const IFF_Long chunkSize)
 
 int TEST_writeBye(FILE *file, const IFF_Chunk *chunk)
 {
-    TEST_Bye *bye = (TEST_Bye*)chunk;
+    const TEST_Bye *bye = (const TEST_Bye*)chunk;
     
     if(!IFF_writeLong(file, bye->one, CHUNKID, "one"))
 	return FALSE;
@@ -84,8 +84,22 @@ void TEST_freeBye(IFF_Chunk *chunk)
 
 void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    TEST_Bye *bye = (TEST_Bye*)chunk;
+    const TEST_Bye *bye = (const TEST_Bye*)chunk;
     
     IFF_printIndent(stdout, indentLevel, "one = %d;\n", bye->one);
     IFF_printIndent(stdout, indentLevel, "two = %d;\n", bye->two);
+}
+
+int TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+{
+    const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
+    const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;
+
+    if(bye1->one != bye2->one)
+	return FALSE;
+
+    if(bye1->two != bye2->two)
+	return FALSE;
+
+    return TRUE;
 }

@@ -19,10 +19,42 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __FORMDATA_H
-#define __FORMDATA_H
-#include <form.h>
+#include "formdata.h"
+#include <stdlib.h>
+#include <string.h>
+#include <iff.h>
+#include <rawchunk.h>
 
-IFF_Form *IFF_createTestForm(void);
+#define HELO_BYTES_SIZE 4
+#define BYE_BYTES_SIZE 4
 
-#endif
+static IFF_UByte heloData[] = {'a', 'b', 'c', 'd'};
+static IFF_UByte byeData[] = {'E', 'F', 'G', 'H'};
+
+IFF_Form *IFF_createTestForm()
+{
+    IFF_RawChunk *heloChunk, *byeChunk;
+    IFF_UByte *heloBytes, *byeBytes;
+    
+    IFF_Form *form = IFF_createForm("TEST");
+    
+    heloChunk = IFF_createRawChunk("HELO");
+    
+    heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
+    memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
+
+    IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
+    
+    IFF_addToForm(form, (IFF_Chunk*)heloChunk);
+    
+    byeChunk = IFF_createRawChunk("BYE ");
+    
+    byeBytes = (IFF_UByte*)malloc(BYE_BYTES_SIZE * sizeof(IFF_UByte));
+    memcpy(byeBytes, byeData, BYE_BYTES_SIZE);
+    
+    IFF_setRawChunkData(byeChunk, byeBytes, BYE_BYTES_SIZE);
+    
+    IFF_addToForm(form, (IFF_Chunk*)byeChunk);
+    
+    return form;
+}

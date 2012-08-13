@@ -84,7 +84,7 @@ int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
 
 int TEST_checkHello(const IFF_Chunk *chunk)
 {
-    TEST_Hello *hello = (TEST_Hello*)chunk;
+    const TEST_Hello *hello = (const TEST_Hello*)chunk;
     
     if((hello->c < 0) || (hello->c > 1024))
     {
@@ -101,9 +101,26 @@ void TEST_freeHello(IFF_Chunk *chunk)
 
 void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    TEST_Hello *hello = (TEST_Hello*)chunk;
+    const TEST_Hello *hello = (const TEST_Hello*)chunk;
     
     IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
     IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
     IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
+}
+
+int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+{
+    const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
+    const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
+    
+    if(hello1->a != hello2->a)
+	return FALSE;
+
+    if(hello1->b != hello2->b)
+	return FALSE;
+
+    if(hello1->c != hello2->c)
+	return FALSE;
+
+    return TRUE;
 }

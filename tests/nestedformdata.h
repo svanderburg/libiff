@@ -19,8 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __FORMDATA_H
-#define __FORMDATA_H
+#ifndef __NESTEDFORMDATA_H
+#define __NESTEDFORMDATA_H
+
 #include <form.h>
 
 IFF_Form *IFF_createTestForm(void);

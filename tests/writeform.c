@@ -20,39 +20,14 @@
  */
 
 #include <stdlib.h>
-#include <string.h>
 #include <iff.h>
 #include <form.h>
-#include <rawchunk.h>
 #include "formdata.h"
 
 int main(int argc, char *argv[])
 {
-    IFF_RawChunk *heloChunk, *byeChunk;
-    IFF_UByte *heloBytes, *byeBytes;
-    int status;
-    
-    IFF_Form *form = IFF_createForm("TEST");
-    
-    heloChunk = IFF_createRawChunk("HELO");
-    
-    heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
-
-    IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
-    
-    IFF_addToForm(form, (IFF_Chunk*)heloChunk);
-    
-    byeChunk = IFF_createRawChunk("BYE ");
-    
-    byeBytes = (IFF_UByte*)malloc(BYE_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(byeBytes, byeData, BYE_BYTES_SIZE);
-    
-    IFF_setRawChunkData(byeChunk, byeBytes, BYE_BYTES_SIZE);
-    
-    IFF_addToForm(form, (IFF_Chunk*)byeChunk);
-    
-    status = IFF_write("hello.TEST", (IFF_Chunk*)form, NULL, 0);
+    IFF_Form *form = IFF_createTestForm();
+    int status = IFF_write("hello.TEST", (IFF_Chunk*)form, NULL, 0);
     
     IFF_free((IFF_Chunk*)form, NULL, 0);
     

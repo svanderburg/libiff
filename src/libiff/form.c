@@ -143,6 +143,11 @@ void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const I
     IFF_printGroup((const IFF_Group*)form, indentLevel, form->formType, FORM_GROUPTYPENAME, extension, extensionLength);
 }
 
+int IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    return IFF_compareGroup((const IFF_Group*)form1, (const IFF_Group*)form2, form1->formType, extension, extensionLength);
+}
+
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)
 {
     unsigned int i;

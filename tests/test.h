@@ -33,4 +33,6 @@ int TEST_check(const IFF_Chunk *chunk);
 
 void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
+int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+
 #endif

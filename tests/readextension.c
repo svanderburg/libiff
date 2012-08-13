@@ -21,99 +21,25 @@
 
 #include "test.h"
 #include <stdio.h>
-#include "form.h"
-#include "id.h"
-#include "hello.h"
-#include "bye.h"
+#include "extensiondata.h"
 
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = TEST_read("extension.TEST");
     
     if(chunk == NULL)
+    {
+	fprintf(stderr, "Cannot open 'extension.TEST'\n");
 	return 1;
+    }
     else
     {
-	int status = 0;
+	IFF_Form *form = IFF_createTestForm();
+	int status = TEST_compare(chunk, (IFF_Chunk*)form);
 	
-	if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	{
-	    IFF_Form *form = (IFF_Form*)chunk;
-	    
-	    if(IFF_compareId(form->formType, "TEST") == 0)
-	    {
-		if(form->chunkLength == 2)
-		{
-		    if(IFF_compareId(form->chunk[0]->chunkId, "HELO") == 0)
-		    {
-			TEST_Hello *hello = (TEST_Hello*)form->chunk[0];
-		    
-			if(hello->a != 'a')
-			{
-			    fprintf(stderr, "ERROR: 'HELO'.a must be: 'a'\n");
-			    status = 1;
-			}
-		    
-			if(hello->b != 'b')
-			{
-			    fprintf(stderr, "ERROR: 'HELO'.b must be: 'b'\n");
-			    status = 1;
-			}
-		    
-			if(hello->c != 4096)
-			{
-			    fprintf(stderr, "ERROR: 'HELO'.c must be: 4096\n");
-			    status = 1;
-			}
-		    }
-		    else
-		    {
-			fprintf(stderr, "ERROR: First subchunk must be a 'HELO' chunk!\n");
-			status = 1;
-		    }
-		
-		    if(IFF_compareId(form->chunk[1]->chunkId, "BYE ") == 0)
-		    {
-			TEST_Bye *bye = (TEST_Bye*)form->chunk[1];
-		    
-			if(bye->one != 1)
-			{
-			    fprintf(stderr, "ERROR: 'BYE '.one must be: 1\n");
-			    status = 1;
-			}
-		    
-			if(bye->two != 2)
-			{
-			    fprintf(stderr, "ERROR: 'BYE '.two must be: 2\n");
-			    status = 1;
-			}
-		    }
-		    else
-		    {
-			fprintf(stderr, "ERROR: Second subchunk must be a 'BYE ' chunk!\n");
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "ERROR: Form should contain 2 sub chunks!\n");
-		    status = 1;
-		}
-	    }
-	    else
-	    {
-		fprintf(stderr, "ERROR: Form type must be: 'TEST'\n");
-		status = 1;
-	    }
-	}
-	else
-	{
-	    fprintf(stderr, "ERROR: The file must be a FORM!\n");
-	    status = 1;
-	}
-	
+	TEST_free((IFF_Chunk*)form);
 	TEST_free(chunk);
 	
-	return status;
+	return (!status);
     }
 }

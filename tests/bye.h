@@ -50,4 +50,6 @@ void TEST_freeBye(IFF_Chunk *chunk);
 
 void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
+int TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+
 #endif

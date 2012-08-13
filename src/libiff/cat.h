@@ -137,6 +137,17 @@ void IFF_freeCAT(IFF_CAT *cat, const IFF_Extension *extension, const unsigned in
 void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Checks whether the given concatenations' contents is equal to each other.
+ *
+ * @param cat1 Concatenation to compare
+ * @param cat2 Concatenation to compare
+ * @param extension Extension array which specifies how application file format chunks should be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the given concatenations are equal, else FALSE
+ */
+int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.
  *
  * @param cat An instance of a concatenation chunk
