@@ -547,13 +547,13 @@ And the implementation may look as follows:
         const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
     
         if(hello1->a != hello2->a)
-	    return FALSE;
+            return FALSE;
 
         if(hello1->b != hello2->b)
-	    return FALSE;
+            return FALSE;
 
         if(hello1->c != hello2->c)
-	    return FALSE;
+            return FALSE;
 
         return TRUE;
     }
