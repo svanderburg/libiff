@@ -68,7 +68,7 @@ IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
 
 int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
 {
-    TEST_Hello *hello = (TEST_Hello*)chunk;
+    const TEST_Hello *hello = (const TEST_Hello*)chunk;
     
     if(!IFF_writeUByte(file, hello->a, CHUNKID, "a"))
 	return FALSE;
