@@ -52,7 +52,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
 IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Chunk *chunk;
-    FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "rb");
     
     /* Open the IFF file */
     if(file == NULL)
@@ -82,7 +82,7 @@ int IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extensi
 int IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     int status = TRUE;
-    FILE *file = fopen(filename, "w");
+    FILE *file = fopen(filename, "wb");
     
     if(file == NULL)
     {
