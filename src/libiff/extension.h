@@ -29,6 +29,10 @@ typedef struct IFF_Extension IFF_Extension;
 #include "ifftypes.h"
 #include "chunk.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Defines how a particular application chunk within a FORM should be handled.
  */
@@ -81,5 +85,9 @@ struct IFF_Extension
  * @return The form extension that handles the specified chunk or NULL if it does not exists
  */
 const IFF_FormExtension *IFF_findFormExtension(const char *formType, const char *chunkId, const IFF_Extension *extension, const unsigned int extensionLength);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

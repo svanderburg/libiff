@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include "ifftypes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Prints a formatted string to the given file descriptor using a certain indent
  * level.
@@ -34,5 +38,9 @@
  * @param formatString A format specifier for fprintf()
  */
 void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *formatString, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -25,6 +25,10 @@
 #include "ifftypes.h"
 #include "chunk.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Reads an IFF file from a given file descriptor. The resulting chunk must be freed using IFF_free().
  *
@@ -106,5 +110,9 @@ void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
 int IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

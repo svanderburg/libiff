@@ -28,6 +28,10 @@ typedef struct IFF_CAT IFF_CAT;
 #include "ifftypes.h"
 #include "chunk.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks.
  */
@@ -163,5 +167,9 @@ IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char *formType, unsigned int
  * @param cat An instance of a concatenation chunk
  */
 void IFF_updateCATChunkSizes(IFF_CAT *cat);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
