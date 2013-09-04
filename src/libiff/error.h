@@ -25,6 +25,10 @@
 #include <stdarg.h>
 #include "id.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * A function pointer specifying which error callback function should be used.
  */
@@ -67,5 +71,9 @@ void IFF_readError(const IFF_ID chunkId, const char *attributeName);
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  */
 void IFF_writeError(const IFF_ID chunkId, const char *attributeName);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

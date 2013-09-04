@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include "ifftypes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Reads an unsigned byte from a file.
  *
@@ -154,5 +158,9 @@ int IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunk
  * @return TRUE if the byte has been successfully written, else FALSE
  */
 int IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -29,6 +29,10 @@ typedef struct IFF_List IFF_List;
 #include "chunk.h"
 #include "prop.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks and PROP chunks which share common data chunks with the nested group chunks.
  */
@@ -179,5 +183,9 @@ void IFF_updateListChunkSizes(IFF_List *list);
  * @return The requested PROP chunk, or NULL if the PROP chunk does not exists.
  */
 IFF_Prop *IFF_getPropFromList(const IFF_List *list, const char *formType);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

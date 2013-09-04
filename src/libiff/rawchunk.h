@@ -28,6 +28,10 @@ typedef struct IFF_RawChunk IFF_RawChunk;
 #include "ifftypes.h"
 #include "chunk.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief A raw chunk, which contains an arbitrary number of bytes.
  */
@@ -130,5 +134,9 @@ void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel);
  * @return TRUE if the raw chunks are equal, else FALSE
  */
 int IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

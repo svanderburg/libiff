@@ -30,6 +30,10 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include "group.h"
 #include "form.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief An abstract chunk containing the common properties of all chunk types
  */
@@ -148,5 +152,9 @@ IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk
  * @param chunk A chunk hierarchy representing an IFF file
  */
 void IFF_updateChunkSizes(IFF_Chunk *chunk);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

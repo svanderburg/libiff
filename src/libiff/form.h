@@ -28,6 +28,10 @@ typedef struct IFF_Form IFF_Form;
 #include "ifftypes.h"
 #include "chunk.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief A special group chunk, which contains an arbitrary number of group chunks and data chunks.
  */
@@ -202,5 +206,9 @@ IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId);
  * @return An array with pointers to the chunks with the requested chunk ID, or NULL if there can't be any chunk found
  */
 IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const char *chunkId, unsigned int *chunksLength);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
