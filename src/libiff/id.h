@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include "ifftypes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Creates a 4 character ID from a string.
  *
@@ -78,5 +82,9 @@ int IFF_checkId(const IFF_ID id);
  * @param id A 4 character IFF id
  */
 void IFF_printId(const IFF_ID id);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

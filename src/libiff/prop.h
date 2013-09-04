@@ -29,6 +29,10 @@ typedef struct IFF_Form IFF_Prop;
 #include "chunk.h"
 #include "form.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Creates a new PROP chunk instance with the given form type.
  * The resulting chunk must be freed by using IFF_free().
@@ -125,5 +129,9 @@ void IFF_updatePropChunkSizes(IFF_Prop *prop);
  * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
  */
 IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const char *chunkId);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

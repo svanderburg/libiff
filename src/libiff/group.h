@@ -29,6 +29,10 @@ typedef struct IFF_Group IFF_Group;
 #include "chunk.h"
 #include "form.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief An abstract group chunk, which contains all common properties of the compound chunk types. This chunk type should never be used directly.
  */
@@ -224,5 +228,9 @@ IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsign
  * @param group An instance of a group chunk
  */
 void IFF_updateGroupChunkSizes(IFF_Group *group);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
