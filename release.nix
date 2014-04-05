@@ -2,6 +2,8 @@
 , systems ? [ "i686-linux" "x86_64-linux" ]
 , buildForAmiga ? false
 , amigaosenvPath ? <amigaosenv>
+, libiff ? { outPath = ./.; rev = 1234; }
+, officialRelease ? false
 }:
 
 let
@@ -11,10 +13,6 @@ let
   
   jobs = rec {
     tarball =
-      { libiff ? {outPath = ./.; rev = 1234;}
-      , officialRelease ? false
-      }:
-
       with pkgs;
 
       releaseTools.sourceTarball {
@@ -26,8 +24,6 @@ let
       };
       
     build =
-      { tarball ? jobs.tarball {} }:
-      
       (pkgs.lib.genAttrs systems (system:
         with import nixpkgs { inherit system; };
         
