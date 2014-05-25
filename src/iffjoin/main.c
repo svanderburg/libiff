@@ -21,6 +21,8 @@
 
 #if HAVE_GETOPT_H == 1
 #include <getopt.h>
+#elif _MSC_VER
+#include <string.h>
 #else
 #include <unistd.h>
 #endif
@@ -31,15 +33,39 @@
 
 static void printUsage(const char *command)
 {
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "%s [options] file1.IFF file2.IFF ...\n\n", command);
+	fprintf(stderr, "Usage:\n");
+	fprintf(stderr, "%s [options] file1.IFF file2.IFF ...\n\n", command);
+#if _MSC_VER
+	fprintf(stderr, "/o    Specify an output file name\n");
+	fprintf(stderr, "/?    Shows the usage of this command to the user\n");
+#else
     fprintf(stderr, "-o, --output-file    Specify an output file name\n");
     fprintf(stderr, "-h, --help           Shows the usage of this command to the user\n");
+#endif
 }
 
 int main(int argc, char *argv[])
 {
-    /* Declarations */
+	char *outputFilename = NULL;
+
+#if _MSC_VER
+	unsigned int optind = 1;
+	unsigned int i;
+
+	for(i = 1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "/o") == 0)
+		{
+			outputFilename = argv[i];
+			optind++;
+		}
+		else if (strcmp(argv[i], "/?") == 0)
+		{
+			printUsage(argv[0]);
+			return 0;
+		}
+	}
+#else
     int c;
 #if HAVE_GETOPT_H == 1
     int option_index = 0;
@@ -50,7 +76,6 @@ int main(int argc, char *argv[])
 	{0, 0, 0, 0}
     };
 #endif
-    char *outputFilename = NULL;
     
     /* Parse command-line options */
 #if HAVE_GETOPT_H == 1
@@ -71,7 +96,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
     }
-    
+#endif    
     /* Validate non options */
     
     if(optind >= argc)
@@ -80,7 +105,8 @@ int main(int argc, char *argv[])
 	return 1;
     }
     else
-    {
+
+	{
 	unsigned int inputFilenamesLength = argc - optind;
 	char **inputFilenames = (char**)malloc(inputFilenamesLength * sizeof(char*));
 	unsigned int i;

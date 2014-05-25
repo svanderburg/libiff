@@ -21,6 +21,8 @@
 
 #if HAVE_GETOPT_H == 1
 #include <getopt.h>
+#elif _MSC_VER
+#include <string.h>
 #else
 #include <unistd.h>
 #endif
@@ -32,13 +34,38 @@ static void printUsage(const char *command)
 {
     fprintf(stderr, "Usage:\n");
     fprintf(stderr, "%s [options] file.IFF\n\n", command);
-    fprintf(stderr, "-c, --disable-check    Do not check the IFF file for validity\n");
+#if _MSC_VER
+	fprintf(stderr, "/c    Do not check the IFF file for validity\n");
+	fprintf(stderr, "/?    Shows the usage of this command to the user\n");
+#else
+	fprintf(stderr, "-c, --disable-check    Do not check the IFF file for validity\n");
     fprintf(stderr, "-h, --help             Shows the usage of this command to the user\n");
+#endif
 }
 
 int main(int argc, char *argv[])
 {
-    /* Declarations */
+	int options = 0;
+	char *filename;
+
+#if _MSC_VER
+	unsigned int optind = 1;
+	unsigned int i;
+
+	for(i = 1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "/c") == 0)
+		{
+			options |= IFFPP_DISABLE_CHECK;
+			optind++;
+		}
+		else if (strcmp(argv[i], "/?") == 0)
+		{
+			printUsage(argv[0]);
+			return 0;
+		}
+	}
+#else
     int c;
 #if HAVE_GETOPT_H == 1
     int option_index = 0;
@@ -49,9 +76,7 @@ int main(int argc, char *argv[])
 	{0, 0, 0, 0}
     };
 #endif
-    int options = 0;
-    char *filename;
-    
+
     /* Parse command-line options */
     
 #if HAVE_GETOPT_H == 1
@@ -72,7 +97,8 @@ int main(int argc, char *argv[])
 		return 0;
 	}
     }
-    
+
+#endif
     /* Validate non options */
     
     if(optind >= argc)
