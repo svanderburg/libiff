@@ -37,7 +37,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <CustomBuildAfterTargets>BuildLink</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -56,9 +55,6 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>libiff.def</ModuleDefinitionFile>
     </Link>
-    <CustomBuildStep>
-      <Command>md $(OutDir)libiff</Command>
-    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
