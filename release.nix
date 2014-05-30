@@ -33,6 +33,14 @@ let
           src = tarball;
         }
       )) //
+      ({ i686-windows =
+           pkgs.dotnetenv.buildSolution {
+             name = "libiff";
+             src = ./.;
+             baseDir = "src";
+             slnFile = "libiff.sln";
+           };
+        }) //
       (pkgs.lib.optionalAttrs (buildForAmiga)
         (let
           amigaosenv = import amigaosenvPath {

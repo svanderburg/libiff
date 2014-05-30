@@ -1,6 +1,6 @@
 LIBRARY    libiff
 EXPORTS
-    IFF_readFd                @1
+	IFF_readFd                @1
 	IFF_read                  @2
 	IFF_writeFd               @3
 	IFF_write                 @4
