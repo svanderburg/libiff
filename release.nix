@@ -39,6 +39,13 @@ let
              src = ./.;
              baseDir = "src";
              slnFile = "libiff.sln";
+             preBuild = ''
+               sed "s/@IFF_BIG_ENDIAN@/0/" libiff/ifftypes.h.in > libiff/ifftypes.h
+             '';
+             postInstall = ''
+               mkdir -p $out/include/libiff
+               cp -v libiff/*.h $out/include/libiff
+             '';
            };
         }) //
       (pkgs.lib.optionalAttrs (buildForAmiga)
