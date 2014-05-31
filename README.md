@@ -41,10 +41,10 @@ provides additional functions to parse ILBM image chunks by extending this IFF
 parser. You can easily extend the IFF parser yourself to define your own custom
 file format on top of IFF.
 
-Installation
-============
-Compilation and installation of this library is straight forward, by using the
-standard GNU autotools build instructions:
+Installation on Unix-like systems
+=================================
+Compilation and installation of this library on Unix-like systems is straight
+forward, by using the standard GNU autotools build instructions:
 
     $ ./configure
     $ make
@@ -53,6 +53,27 @@ standard GNU autotools build instructions:
 More details about the installation process can be found in the `INSTALL` file
 included in this package.
 
+Building with Visual C++
+========================
+This package can also be built with Visual C++ for Windows platforms. First, you
+must copy `src/libiff/ifftypes.h.in` to `src/libiff/ifftypes.h` and edit the the
+latter file.
+
+Change the line:
+
+    #define IFF_BIG_ENDIAN @IFF_BIG_ENDIAN@
+
+into
+
+    #define IFF_BIG_ENDIAN 0
+
+Then you can open the solution file: `src/libiff.sln` in Visual Studio to edit or
+build it. Alternatively, you can use `MSBuild` to compile it:
+
+    $ MSBuild libiff.sln
+
+The output is produced in the `Debug/` directory.
+
 Portability
 ===========
 Because this package is implemented in ANSI C (with the small exception that the
@@ -60,7 +81,9 @@ command line utilities use `getopt()` ), it should be pretty easy to port this
 package to new platforms. So far it's tested on the following platforms:
 
 * Linux (`i686-linux`, `x86_64-linux`) using GCC
+* Cygwin (`i686-cygwin`, `x86_64-cygwin`) using GCC
 * AmigaOS (`m68k-amigaos`) using EGCS through Geek Gadgets
+* Windows (`i686-windows`) using Visual C++ 2013
 
 License
 =======
