@@ -1,6 +1,7 @@
 { nixpkgs ? <nixpkgs>
 , systems ? [ "i686-linux" "x86_64-linux" ]
 , buildForAmiga ? false
+, buildForWindows ? false
 , amigaosenvPath ? <amigaosenv>
 , libiff ? { outPath = ./.; rev = 1234; }
 , officialRelease ? false
@@ -33,7 +34,7 @@ let
           src = tarball;
         }
       )) //
-      ({ i686-windows =
+      (pkgs.lib.optionalAttrs (buildForWindows) { i686-windows =
            pkgs.dotnetenv.buildSolution {
              name = "libiff";
              src = ./.;
