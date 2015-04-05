@@ -36,14 +36,14 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
     
     if(chunk == NULL)
     {
-	IFF_error("ERROR: cannot open main chunk!\n");
-	return NULL;
+        IFF_error("ERROR: cannot open main chunk!\n");
+        return NULL;
     }
     
     /* We should have reached the EOF now */
     
     if((byte = fgetc(file)) != EOF)
-	IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
+        IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
 
     /* Return the parsed main chunk */
     return chunk;
@@ -57,8 +57,8 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
     /* Open the IFF file */
     if(file == NULL)
     {
-	IFF_error("ERROR: cannot open file: %s\n", filename);
-	return NULL;
+        IFF_error("ERROR: cannot open file: %s\n", filename);
+        return NULL;
     }
 
     /* Parse the main chunk */
@@ -73,28 +73,22 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
 
 int IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    if(IFF_writeChunk(file, chunk, NULL, extension, extensionLength))
-	return TRUE;
-    else
-	return FALSE;
+    return IFF_writeChunk(file, chunk, NULL, extension, extensionLength);
 }
 
 int IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    int status = TRUE;
+    int status;
     FILE *file = fopen(filename, "wb");
     
     if(file == NULL)
     {
-	IFF_error("ERROR: cannot open file: %s\n", filename);
-	return FALSE;
+        IFF_error("ERROR: cannot open file: %s\n", filename);
+        return FALSE;
     }
     
-    if(!IFF_writeFd(file, chunk, extension, extensionLength))
-	status = FALSE;
-    
+    status = IFF_writeFd(file, chunk, extension, extensionLength);
     fclose(file);
-    
     return status;
 }
 
@@ -111,11 +105,11 @@ int IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsi
        IFF_compareId(chunk->chunkId, "CAT ") != 0 &&
        IFF_compareId(chunk->chunkId, "LIST") != 0)
     {
-	IFF_error("Not a valid IFF-85 file: First bytes should start with either: 'FORM', 'CAT ' or 'LIST'\n");
-	return FALSE;
+        IFF_error("Not a valid IFF-85 file: First bytes should start with either: 'FORM', 'CAT ' or 'LIST'\n");
+        return FALSE;
     }
     else
-	return IFF_checkChunk(chunk, NULL, extension, extensionLength);
+        return IFF_checkChunk(chunk, NULL, extension, extensionLength);
 }
 
 void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
