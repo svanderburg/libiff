@@ -8,6 +8,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AM_PROG_CC_C_O
+AC_PATH_PROG(HELP2MAN, help2man, false)
 
 # Checks for headers
 AC_CHECK_HEADER([getopt.h], [HAVE_GETOPT_H=1], [HAVE_GETOPT_H=0])
@@ -16,9 +17,6 @@ AC_SUBST(HAVE_GETOPT_H)
 # Endianness check
 AC_C_BIGENDIAN([IFF_BIG_ENDIAN=1],[IFF_BIG_ENDIAN=0])
 AC_SUBST(IFF_BIG_ENDIAN)
-
-# Checks for external programs
-AC_PATH_PROG(HELP2MAN, help2man, false)
 
 # Output
 
