@@ -33,96 +33,115 @@
 
 static void printUsage(const char *command)
 {
-	fprintf(stderr, "Usage:\n");
-	fprintf(stderr, "%s [options] file1.IFF file2.IFF ...\n\n", command);
+    printf("The command iffjoin joins an aribitrary number of IFF files into a single\n");
+    printf("concatenation IFF file. The result is written to the standard output, or\n");
+    printf("optionally to a given destination file.\n\n");
+    
+    printf("Usage: %s [OPTION] file1.IFF file2.IFF ...\n\n", command);
+    printf("Options:\n");
 #if _MSC_VER
-	fprintf(stderr, "/o    Specify an output file name\n");
-	fprintf(stderr, "/?    Shows the usage of this command to the user\n");
+    printf("  /o    Specify an output file name\n");
+    printf("  /?    Shows the usage of this command to the user\n");
+    printf("  /v    Shows the version of this command to the user\n");
 #else
-    fprintf(stderr, "-o, --output-file    Specify an output file name\n");
-    fprintf(stderr, "-h, --help           Shows the usage of this command to the user\n");
+    printf("  -o, --output-file    Specify an output file name\n");
+    printf("  -h, --help           Shows the usage of this command to the user\n");
+    printf("  -v, --version        Shows the version of this command to the user\n");
 #endif
+}
+
+static void printVersion(const char *command)
+{
+    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
+    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
 }
 
 int main(int argc, char *argv[])
 {
-	char *outputFilename = NULL;
+    char *outputFilename = NULL;
 
 #if _MSC_VER
-	unsigned int optind = 1;
-	unsigned int i;
+    unsigned int optind = 1;
+    unsigned int i;
 
-	for(i = 1; i < argc; i++)
-	{
-		if (strcmp(argv[i], "/o") == 0)
-		{
-			outputFilename = argv[i];
-			optind++;
-		}
-		else if (strcmp(argv[i], "/?") == 0)
-		{
-			printUsage(argv[0]);
-			return 0;
-		}
-	}
+    for(i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "/o") == 0)
+        {
+            outputFilename = argv[i];
+            optind++;
+        }
+        else if (strcmp(argv[i], "/?") == 0)
+        {
+            printUsage(argv[0]);
+            return 0;
+        }
+        else if (strcmp(argv[i], "/v") == 0)
+        {
+            printVersion(argv[0]);
+            return 0;
+        }
+    }
 #else
     int c;
 #if HAVE_GETOPT_H == 1
     int option_index = 0;
     struct option long_options[] =
     {
-	{"output-file", required_argument, 0, 'o'},
-	{"help", no_argument, 0, 'h'},
-	{0, 0, 0, 0}
+        {"output-file", required_argument, 0, 'o'},
+        {"help", no_argument, 0, 'h'},
+        {"version", no_argument, 0, 'v'},
+        {0, 0, 0, 0}
     };
 #endif
     
     /* Parse command-line options */
 #if HAVE_GETOPT_H == 1
-    while((c = getopt_long(argc, argv, "o:h", long_options, &option_index)) != -1)
+    while((c = getopt_long(argc, argv, "o:hv", long_options, &option_index)) != -1)
 #else
-    while((c = getopt(argc, argv, "o:h")) != -1)
+    while((c = getopt(argc, argv, "o:hv")) != -1)
 #endif
     {
-	switch(c)
-	{
-	    case 'o':
-		outputFilename = optarg;
-		break;
-		
-	    case 'h':
-	    case '?':
-		printUsage(argv[0]);
-		return 0;
-	}
+        switch(c)
+        {
+            case 'o':
+                outputFilename = optarg;
+                break;
+            case 'h':
+            case '?':
+                printUsage(argv[0]);
+                return 0;
+            case 'v':
+                printVersion(argv[0]);
+                return 0;
+        }
     }
-#endif    
+#endif
     /* Validate non options */
     
     if(optind >= argc)
     {
-	fprintf(stderr, "ERROR: No IFF input files given!\n");
-	return 1;
+        fprintf(stderr, "ERROR: No IFF input files given!\n");
+        return 1;
     }
     else
-
-	{
-	unsigned int inputFilenamesLength = argc - optind;
-	char **inputFilenames = (char**)malloc(inputFilenamesLength * sizeof(char*));
-	unsigned int i;
-	int status;
-	
-	/* Create an array of input file names */
-	for(i = 0; i < inputFilenamesLength; i++)
-	    inputFilenames[i] = argv[optind + i];
-	
-	/* Join the IFF files */
-	status = IFF_join(inputFilenames, inputFilenamesLength, outputFilename);
-	
-	/* Cleanup */
-	free(inputFilenames);
-	
-	/* Return whether the join has succeeded or not */
-	return status;
+    {
+        unsigned int inputFilenamesLength = argc - optind;
+        char **inputFilenames = (char**)malloc(inputFilenamesLength * sizeof(char*));
+        unsigned int i;
+        int status;
+        
+        /* Create an array of input file names */
+        for(i = 0; i < inputFilenamesLength; i++)
+            inputFilenames[i] = argv[optind + i];
+        
+        /* Join the IFF files */
+        status = IFF_join(inputFilenames, inputFilenamesLength, outputFilename);
+        
+        /* Cleanup */
+        free(inputFilenames);
+        
+        /* Return whether the join has succeeded or not */
+        return status;
     }
 }

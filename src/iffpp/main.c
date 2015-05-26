@@ -32,79 +32,100 @@
 
 static void printUsage(const char *command)
 {
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "%s [options] file.IFF\n\n", command);
+    printf("The command iffpp displays a textual representation of a given IFF file, which\n");
+    printf("can be used for manual inspection of its contents. If no IFF file is specified,\n");
+    printf("it reads an IFF file from the standard input.\n\n");
+    
+    printf("Usage: %s [OPTION] [file.IFF]\n\n", command);
+    printf("Options:\n");
+    
 #if _MSC_VER
-	fprintf(stderr, "/c    Do not check the IFF file for validity\n");
-	fprintf(stderr, "/?    Shows the usage of this command to the user\n");
+    printf("  /c    Do not check the IFF file for validity\n");
+    printf("  /?    Shows the usage of this command to the user\n");
+    printf("  /v    Shows the version of this command to the user\n");
 #else
-	fprintf(stderr, "-c, --disable-check    Do not check the IFF file for validity\n");
-    fprintf(stderr, "-h, --help             Shows the usage of this command to the user\n");
+    printf("  -c, --disable-check    Do not check the IFF file for validity\n");
+    printf("  -h, --help             Shows the usage of this command to the user\n");
+    printf("  -v, --version          Shows the version of this command to the user\n");
 #endif
+}
+
+static void printVersion(const char *command)
+{
+    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
+    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
 }
 
 int main(int argc, char *argv[])
 {
-	int options = 0;
-	char *filename;
+    int options = 0;
+    char *filename;
 
 #if _MSC_VER
-	unsigned int optind = 1;
-	unsigned int i;
+    unsigned int optind = 1;
+    unsigned int i;
 
-	for(i = 1; i < argc; i++)
-	{
-		if (strcmp(argv[i], "/c") == 0)
-		{
-			options |= IFFPP_DISABLE_CHECK;
-			optind++;
-		}
-		else if (strcmp(argv[i], "/?") == 0)
-		{
-			printUsage(argv[0]);
-			return 0;
-		}
-	}
+    for(i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "/c") == 0)
+        {
+            options |= IFFPP_DISABLE_CHECK;
+            optind++;
+        }
+        else if (strcmp(argv[i], "/?") == 0)
+        {
+            printUsage(argv[0]);
+            return 0;
+        }
+        else if (strcmp(argv[i], "/v") == 0)
+        {
+            printVersion(argv[0]);
+            return 0;
+        }
+    }
 #else
     int c;
 #if HAVE_GETOPT_H == 1
     int option_index = 0;
     struct option long_options[] =
     {
-	{"disable-check", no_argument, 0, 'c'},
-	{"help", no_argument, 0, 'h'},
-	{0, 0, 0, 0}
+        {"disable-check", no_argument, 0, 'c'},
+        {"help", no_argument, 0, 'h'},
+        {"version", no_argument, 0, 'v'},
+        {0, 0, 0, 0}
     };
 #endif
 
     /* Parse command-line options */
     
 #if HAVE_GETOPT_H == 1
-    while((c = getopt_long(argc, argv, "ch", long_options, &option_index)) != -1)
+    while((c = getopt_long(argc, argv, "chv", long_options, &option_index)) != -1)
 #else
-    while((c = getopt(argc, argv, "ch")) != -1)
+    while((c = getopt(argc, argv, "chv")) != -1)
 #endif
     {
-	switch(c)
-	{
-	    case 'c':
-		options |= IFFPP_DISABLE_CHECK;
-		break;
-		
-	    case 'h':
-	    case '?':
-		printUsage(argv[0]);
-		return 0;
-	}
+        switch(c)
+        {
+            case 'c':
+                options |= IFFPP_DISABLE_CHECK;
+                break;
+            case 'h':
+            case '?':
+                printUsage(argv[0]);
+                return 0;
+            case 'v':
+                printVersion(argv[0]);
+                return 0;
+        }
     }
 
 #endif
     /* Validate non options */
     
     if(optind >= argc)
-	filename = NULL;
+        filename = NULL;
     else
-	filename = argv[optind];
+        filename = argv[optind];
 
     /* Pretty print the IFF file */
     return IFF_prettyPrint(filename, options);

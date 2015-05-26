@@ -20,8 +20,9 @@ let
         name = "libiff-tarball";
         src = libiff;
         inherit version officialRelease;
+        dontBuild = false;
 
-        buildInputs = [];
+        buildInputs = [ help2man ];
       };
       
     build =

@@ -17,12 +17,14 @@ AC_SUBST(HAVE_GETOPT_H)
 AC_C_BIGENDIAN([IFF_BIG_ENDIAN=1],[IFF_BIG_ENDIAN=0])
 AC_SUBST(IFF_BIG_ENDIAN)
 
+# Checks for external programs
+AC_PATH_PROG(HELP2MAN, help2man, false)
+
 # Output
 
 AC_CONFIG_FILES([
 Makefile
 doc/Makefile
-doc/man/Makefile
 src/Makefile
 src/libiff.pc
 src/libiff/ifftypes.h
