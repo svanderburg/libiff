@@ -33,20 +33,21 @@
 
 static void printUsage(const char *command)
 {
+    printf("Usage: %s [OPTION] file1.IFF file2.IFF ...\n\n", command);
+    
     printf("The command `iffjoin' joins an aribitrary number of IFF files into a single\n");
     printf("concatenation IFF file. The result is written to the standard output, or\n");
     printf("optionally to a given destination file.\n\n");
     
-    printf("Usage: %s [OPTION] file1.IFF file2.IFF ...\n\n", command);
     printf("Options:\n");
 #if _MSC_VER
-    printf("  /o    Specify an output file name\n");
-    printf("  /?    Shows the usage of this command to the user\n");
-    printf("  /v    Shows the version of this command to the user\n");
+    printf("  /o FILE    Specify an output file name\n");
+    printf("  /?         Shows the usage of this command to the user\n");
+    printf("  /v         Shows the version of this command to the user\n");
 #else
-    printf("  -o, --output-file    Specify an output file name\n");
-    printf("  -h, --help           Shows the usage of this command to the user\n");
-    printf("  -v, --version        Shows the version of this command to the user\n");
+    printf("  -o, --output-file=FILE    Specify an output file name\n");
+    printf("  -h, --help                Shows the usage of this command to the user\n");
+    printf("  -v, --version             Shows the version of this command to the user\n");
 #endif
 }
 

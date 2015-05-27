@@ -32,13 +32,13 @@
 
 static void printUsage(const char *command)
 {
+    printf("Usage: %s [OPTION] [file.IFF]\n\n", command);
+
     printf("The command `iffpp' displays a textual representation of a given IFF file, which\n");
     printf("can be used for manual inspection of its contents. If no IFF file is specified,\n");
     printf("it reads an IFF file from the standard input.\n\n");
     
-    printf("Usage: %s [OPTION] [file.IFF]\n\n", command);
     printf("Options:\n");
-    
 #if _MSC_VER
     printf("  /c    Do not check the IFF file for validity\n");
     printf("  /?    Shows the usage of this command to the user\n");
