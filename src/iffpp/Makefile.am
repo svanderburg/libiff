@@ -1,4 +1,4 @@
-iffpp.1:
+iffpp.1: main.c
 	$(HELP2MAN) --output=$@ --no-info --name 'IFF pretty printer' --libtool ./iffpp
 
 AM_CPPFLAGS = -DHAVE_GETOPT_H=$(HAVE_GETOPT_H)

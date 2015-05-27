@@ -33,7 +33,7 @@
 
 static void printUsage(const char *command)
 {
-    printf("The command iffjoin joins an aribitrary number of IFF files into a single\n");
+    printf("The command `iffjoin' joins an aribitrary number of IFF files into a single\n");
     printf("concatenation IFF file. The result is written to the standard output, or\n");
     printf("optionally to a given destination file.\n\n");
     

@@ -32,7 +32,7 @@
 
 static void printUsage(const char *command)
 {
-    printf("The command iffpp displays a textual representation of a given IFF file, which\n");
+    printf("The command `iffpp' displays a textual representation of a given IFF file, which\n");
     printf("can be used for manual inspection of its contents. If no IFF file is specified,\n");
     printf("it reads an IFF file from the standard input.\n\n");
     
