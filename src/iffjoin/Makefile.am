@@ -5,10 +5,10 @@ AM_CPPFLAGS = -DHAVE_GETOPT_H=$(HAVE_GETOPT_H)
 
 bin_PROGRAMS = iffjoin
 noinst_HEADERS = join.h
+man1_MANS = iffjoin.1
 
 iffjoin_SOURCES = main.c join.c
 iffjoin_LDADD = ../libiff/libiff.la
 iffjoin_CFLAGS = -I../libiff
 
-man1_MANS = iffjoin.1
 EXTRA_DIST = iffjoin.1
