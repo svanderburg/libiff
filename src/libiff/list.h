@@ -159,14 +159,15 @@ void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const I
 int IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
- * Returns an array of form structs of the given formType, which are recursively retrieved from the given list.
+ * Returns an array of form structs of the given form types, which are recursively retrieved from the given list.
  *
  * @param list An instance of a list chunk
- * @param formType A 4 character form type ID
+ * @param formTypes An array of 4 character form type IDs
+ * @param formTypesLength Length of the form types array
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInList(IFF_List *list, const char *formType, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInList(IFF_List *list, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given list chunk.

@@ -205,9 +205,9 @@ int IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Exte
 	return FALSE;
 }
 
-IFF_Form **IFF_searchFormsInList(IFF_List *list, const char *formType, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInList(IFF_List *list, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
-    return IFF_searchFormsInCAT((IFF_CAT*)list, formType, formsLength);
+    return IFF_searchFormsInCAT((IFF_CAT*)list, formTypes, formTypesLength, formsLength);
 }
 
 void IFF_updateListChunkSizes(IFF_List *list)

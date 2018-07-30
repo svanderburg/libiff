@@ -123,9 +123,9 @@ int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension
     return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, NULL, extension, extensionLength);
 }
 
-IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char *formType, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
-    return IFF_searchFormsInGroup((IFF_Group*)cat, formType, formsLength);
+    return IFF_searchFormsInGroup((IFF_Group*)cat, formTypes, formTypesLength, formsLength);
 }
 
 void IFF_updateCATChunkSizes(IFF_CAT *cat)

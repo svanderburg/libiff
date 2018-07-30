@@ -213,14 +213,15 @@ void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, cons
 int IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
- * Returns an array of form structs of the given formType, which are recursively retrieved from the given group.
+ * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.
  *
  * @param group An instance of a group chunk
- * @param formType A 4 character form type ID
+ * @param formTypes An array of 4 character form type IDs
+ * @param formTypesLength Length of the form types array
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given group chunk.

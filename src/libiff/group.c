@@ -234,21 +234,21 @@ int IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const cha
 	return FALSE;
 }
 
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char *formType, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
     IFF_Form **forms = NULL;
     unsigned int i;
-    
+
     *formsLength = 0;
-    
+
     for(i = 0; i < group->chunkLength; i++)
     {
         unsigned int resultLength;
-        IFF_Form **result = IFF_searchForms(group->chunk[i], formType, &resultLength);
-	
+        IFF_Form **result = IFF_searchFormsFromArray(group->chunk[i], formTypes, formTypesLength, &resultLength);
+
         forms = IFF_mergeFormArray(forms, formsLength, result, resultLength);
     }
-    
+
     return forms;
 }
 

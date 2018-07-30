@@ -160,14 +160,15 @@ int IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Exte
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength);
 
 /**
- * Returns an array of form structs of the given formType, which are recursively retrieved from the given form.
+ * Returns an array of form structs of the given form types, which are recursively retrieved from the given form.
  *
  * @param form An instance of a form chunk
- * @param formType A 4 character form type ID
+ * @param formTypes An array of 4 character form type IDs
+ * @param formTypesLength Length of the form types array
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char *formType, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given form chunk.

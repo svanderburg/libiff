@@ -163,20 +163,26 @@ IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF
     return target;
 }
 
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char *formType, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
-    if(IFF_compareId(form->formType, formType) == 0) 
+    unsigned int i;
+
+    /* If the given form is what we look for, return it */
+    for(i = 0; i < formTypesLength; i++)
     {
-	/* If the given form is what we look for, return it */
-	
-        IFF_Form **forms = (IFF_Form**)malloc(sizeof(IFF_Form*));
-        forms[0] = form;
-        *formsLength = 1;
-        
-        return forms;
+        const char *formType = formTypes[i];
+
+        if(IFF_compareId(form->formType, formType) == 0)
+        {
+            IFF_Form **forms = (IFF_Form**)malloc(sizeof(IFF_Form*));
+            forms[0] = form;
+            *formsLength = 1;
+
+            return forms;
+        }
     }
-    else 
-	return IFF_searchFormsInGroup((IFF_Group*)form, formType, formsLength); /* Search into the nested forms in this form */
+
+    return IFF_searchFormsInGroup((IFF_Group*)form, formTypes, formTypesLength, formsLength); /* Search into the nested forms in this form */
 }
 
 void IFF_updateFormChunkSizes(IFF_Form *form)

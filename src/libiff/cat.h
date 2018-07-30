@@ -155,11 +155,12 @@ int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.
  *
  * @param cat An instance of a concatenation chunk
- * @param formType A 4 character form type ID
+ * @param formTypes An array of 4 character form type IDs
+ * @param formTypesLength Length of the form types array
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char *formType, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given concatentation chunk.

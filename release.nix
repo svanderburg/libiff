@@ -24,6 +24,7 @@ let
         src = libiff;
         inherit version officialRelease;
         dontBuild = false;
+        CFLAGS = "-ansi -pedantic -Wall";
 
         buildInputs = [ help2man ];
       };

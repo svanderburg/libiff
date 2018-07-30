@@ -231,19 +231,26 @@ int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const cha
 	return FALSE;
 }
 
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
     if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	return IFF_searchFormsInForm((IFF_Form*)chunk, formType, formsLength);
+	return IFF_searchFormsInForm((IFF_Form*)chunk, formTypes, formTypesLength, formsLength);
     else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
-	return IFF_searchFormsInCAT((IFF_CAT*)chunk, formType, formsLength);
+	return IFF_searchFormsInCAT((IFF_CAT*)chunk, formTypes, formTypesLength, formsLength);
     else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
-	return IFF_searchFormsInList((IFF_List*)chunk, formType, formsLength);
+	return IFF_searchFormsInList((IFF_List*)chunk, formTypes, formTypesLength, formsLength);
     else
     {
 	*formsLength = 0;
 	return NULL;
     }
+}
+
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength)
+{
+    const char *formTypes[1];
+    formTypes[0] = formType;
+    return IFF_searchFormsFromArray(chunk, formTypes, 1, formsLength);
 }
 
 IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)

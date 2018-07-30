@@ -127,6 +127,17 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
 int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
+ * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType An array of 4 character form identifiers
+ * @param formTypesLength Length of the form types array
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+
+/**
  * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
  *
  * @param chunk A chunk hierarchy representing an IFF file
@@ -134,6 +145,7 @@ int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const cha
  * @param formsLength An integer in which the length of the resulting array is stored
  * @return An array of forms having the given form type
  */
+
 IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength);
 
 /**
