@@ -130,7 +130,7 @@ int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const cha
  * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType An array of 4 character form identifiers
+ * @param formTypes An array of 4 character form identifiers
  * @param formTypesLength Length of the form types array
  * @param formsLength An integer in which the length of the resulting array is stored
  * @return An array of forms having the given form type
