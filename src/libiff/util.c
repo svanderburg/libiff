@@ -33,4 +33,5 @@ void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *for
       fprintf(file, "  ");
     
     vfprintf(file, formatString, ap);
+    va_end(ap);
 }

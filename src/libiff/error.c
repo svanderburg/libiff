@@ -35,6 +35,7 @@ void IFF_error(const char *formatString, ...)
     
     va_start(ap, formatString);
     IFF_errorCallback(formatString, ap);
+    va_end(ap);
 }
 
 void IFF_errorId(const IFF_ID id)
