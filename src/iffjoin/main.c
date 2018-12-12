@@ -34,27 +34,31 @@
 static void printUsage(const char *command)
 {
     printf("Usage: %s [OPTION] file1.IFF file2.IFF ...\n\n", command);
-    
-    printf("The command `iffjoin' joins an aribitrary number of IFF files into a single\n");
-    printf("concatenation IFF file. The result is written to the standard output, or\n");
-    printf("optionally to a given destination file.\n\n");
-    
-    printf("Options:\n");
+
+    puts(
+    "The command `iffjoin' joins an aribitrary number of IFF files into a single\n"
+    "concatenation IFF file. The result is written to the standard output, or\n"
+    "optionally to a given destination file.\n\n"
+
+    "Options:\n"
 #if _MSC_VER
-    printf("  /o FILE    Specify an output file name\n");
-    printf("  /?         Shows the usage of this command to the user\n");
-    printf("  /v         Shows the version of this command to the user\n");
+    "  /o FILE    Specify an output file name\n"
+    "  /?         Shows the usage of this command to the user\n"
+    "  /v         Shows the version of this command to the user"
 #else
-    printf("  -o, --output-file=FILE    Specify an output file name\n");
-    printf("  -h, --help                Shows the usage of this command to the user\n");
-    printf("  -v, --version             Shows the version of this command to the user\n");
+    "  -o, --output-file=FILE    Specify an output file name\n"
+    "  -h, --help                Shows the usage of this command to the user\n"
+    "  -v, --version             Shows the version of this command to the user"
 #endif
+    );
 }
 
 static void printVersion(const char *command)
 {
-    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
-    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
+    printf(
+    "%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n"
+    "Copyright (C) 2012-2015 Sander van der Burg\n"
+    , command);
 }
 
 int main(int argc, char *argv[])

@@ -34,26 +34,30 @@ static void printUsage(const char *command)
 {
     printf("Usage: %s [OPTION] [file.IFF]\n\n", command);
 
-    printf("The command `iffpp' displays a textual representation of a given IFF file, which\n");
-    printf("can be used for manual inspection of its contents. If no IFF file is specified,\n");
-    printf("it reads an IFF file from the standard input.\n\n");
-    
-    printf("Options:\n");
+    puts(
+    "The command `iffpp' displays a textual representation of a given IFF file, which\n"
+    "can be used for manual inspection of its contents. If no IFF file is specified,\n"
+    "it reads an IFF file from the standard input.\n\n"
+
+    "Options:\n"
 #if _MSC_VER
-    printf("  /c    Do not check the IFF file for validity\n");
-    printf("  /?    Shows the usage of this command to the user\n");
-    printf("  /v    Shows the version of this command to the user\n");
+    "  /c    Do not check the IFF file for validity\n"
+    "  /?    Shows the usage of this command to the user\n"
+    "  /v    Shows the version of this command to the user"
 #else
-    printf("  -c, --disable-check    Do not check the IFF file for validity\n");
-    printf("  -h, --help             Shows the usage of this command to the user\n");
-    printf("  -v, --version          Shows the version of this command to the user\n");
+    "  -c, --disable-check    Do not check the IFF file for validity\n"
+    "  -h, --help             Shows the usage of this command to the user\n"
+    "  -v, --version          Shows the version of this command to the user"
 #endif
+    );
 }
 
 static void printVersion(const char *command)
 {
-    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
-    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
+    printf(
+    "%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n"
+    "Copyright (C) 2012-2015 Sander van der Burg\n"
+    , command);
 }
 
 int main(int argc, char *argv[])
