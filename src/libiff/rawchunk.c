@@ -54,8 +54,12 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
 
 IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize)
 {
-    IFF_UByte *chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
     IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId);
+    IFF_UByte *chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
+
+    if (chunkData == NULL) {
+        return NULL;
+    }
 	
     /* Read remaining bytes verbatim */
 	

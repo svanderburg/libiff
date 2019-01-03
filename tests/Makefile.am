@@ -106,7 +106,7 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     invalidform-prop.sh invalidform-size1.sh invalidform-size2.sh \
     invalidcat-raw.sh invalidcat-prop.sh invalidcat-contentstype.sh invalidcat-size.sh \
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
-    invalidprop.sh invalidprop-size.sh \
+    invalidprop.sh invalidprop-size.sh invalidlist-negsize.sh \
     pp-text.sh searchforms-form searchforms-cat searchforms-nestedform updatechunksizes \
     lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     join-identical.sh join-different.sh \
@@ -120,4 +120,4 @@ EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh inv
     invalidform-size1.TEST invalidform-size2.TEST invalidformtype1.TEST invalidformtype2.TEST invalidformtype3.TEST invalidformtype4.TEST \
     invalidid1.TEST invalidid2.TEST invalidlist-contentstype.TEST invalidlist-raw.TEST invalidlist-size.TEST invalidprop-size.TEST invalidprop.TEST \
     lookupproperty-nested.TEST lookupproperty-override.TEST pp-text.TEST validcat-wildcard.TEST validlist-wildcard.TEST \
-    join.HELO join.BYE
+    join.HELO join.BYE invalidlist-negsize.sh invalidlist-negsize.TEST
