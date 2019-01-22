@@ -114,9 +114,11 @@ int main(int argc, char *argv[])
                 options |= IFFPP_DISABLE_CHECK;
                 break;
             case 'h':
-            case '?':
                 printUsage(argv[0]);
                 return 0;
+            case '?':
+                printUsage(argv[0]);
+                return 1;
             case 'v':
                 printVersion(argv[0]);
                 return 0;
