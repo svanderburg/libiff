@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     /* Read an IFF file */
     IFF_Chunk *chunk = IFF_read("input.IFF", NULL, 0);
     
-    if(chunk == NULL)
+    if(chunk != NULL)
     {
         /* Use the chunk instance for some purpose here */
         
