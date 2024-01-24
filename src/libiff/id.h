@@ -55,7 +55,7 @@ int IFF_compareId(const IFF_ID id1, const char* id2);
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
-int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an IFF id to a file
@@ -66,7 +66,7 @@ int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attribut
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully written, else FALSE
  */
-int IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Checks whether an IFF id is valid
@@ -74,7 +74,7 @@ int IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *a
  * @param id A 4 character IFF id
  * @return TRUE if the IFF id is valid, else FALSE
  */
-int IFF_checkId(const IFF_ID id);
+IFF_Bool IFF_checkId(const IFF_ID id);
 
 /**
  * Prints an IFF id

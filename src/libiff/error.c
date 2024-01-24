@@ -32,7 +32,7 @@ void (*IFF_errorCallback) (const char *formatString, va_list ap) = &IFF_errorCal
 void IFF_error(const char *formatString, ...)
 {
     va_list ap;
-    
+
     va_start(ap, formatString);
     IFF_errorCallback(formatString, ap);
     va_end(ap);
@@ -41,9 +41,9 @@ void IFF_error(const char *formatString, ...)
 void IFF_errorId(const IFF_ID id)
 {
     unsigned int i;
-    
+
     for(i = 0; i < IFF_ID_SIZE; i++)
-	IFF_error("%c", id[i]);
+        IFF_error("%c", id[i]);
 }
 
 void IFF_readError(const IFF_ID chunkId, const char *attributeName)

@@ -22,56 +22,56 @@
 #include "io.h"
 #include "error.h"
 
-int IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
 {
     int byte = fgetc(file);
-    
+
     if(byte == EOF)
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
     else
     {
-	*value = byte;
-	return TRUE;
+        *value = byte;
+        return TRUE;
     }
 }
 
-int IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, const char *attributeName)
 {
     if(fputc(value, file) == EOF)
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
     else
-	return TRUE;
+        return TRUE;
 }
 
-int IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_UWord readUWord;
-    
+
     if(fread(&readUWord, sizeof(IFF_UWord), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
-	*value = readUWord;
+        *value = readUWord;
 #else
-	/* Byte swap it */
-	*value = (readUWord & 0xff) << 8 | (readUWord & 0xff00) >> 8;
+        /* Byte swap it */
+        *value = (readUWord & 0xff) << 8 | (readUWord & 0xff00) >> 8;
 #endif
-	
-	return TRUE;
+
+        return TRUE;
     }
     else
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, const char *attributeName)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_UWord writeUWord = value;
@@ -81,36 +81,36 @@ int IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, cons
 #endif
 
     if(fwrite(&writeUWord, sizeof(IFF_UWord), 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_Word readWord;
-    
+
     if(fread(&readWord, sizeof(IFF_Word), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
-	*value = readWord;
+        *value = readWord;
 #else
-	/* Byte swap it */
-	*value = (readWord & 0xff) << 8 | (readWord & 0xff00) >> 8;
+        /* Byte swap it */
+        *value = (readWord & 0xff) << 8 | (readWord & 0xff00) >> 8;
 #endif
-	return TRUE;
+        return TRUE;
     }
     else
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const char *attributeName)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_Word writeWord = value;
@@ -119,36 +119,36 @@ int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const 
 #endif
 
     if(fwrite(&writeWord, sizeof(IFF_Word), 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_ULong readValue;
-    
+
     if(fread(&readValue, sizeof(IFF_ULong), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
-	*value = readValue;
+        *value = readValue;
 #else
-	/* Byte swap it */
-	*value = (readValue & 0xff) << 24 | (readValue & 0xff00) << 8 | (readValue & 0xff0000) >> 8 | (readValue & 0xff000000) >> 24;
+        /* Byte swap it */
+        *value = (readValue & 0xff) << 24 | (readValue & 0xff00) << 8 | (readValue & 0xff0000) >> 8 | (readValue & 0xff000000) >> 24;
 #endif
-	return TRUE;
+        return TRUE;
     }
     else
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_ULong writeValue = value;
@@ -158,36 +158,36 @@ int IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, cons
 #endif
 
     if(fwrite(&writeValue, sizeof(IFF_ULong), 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_readLong(FILE* file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_Long readValue;
-    
+
     if(fread(&readValue, sizeof(IFF_Long), 1, file) == 1)
     {
 #if IFF_BIG_ENDIAN == 1
-	*value = readValue;
+        *value = readValue;
 #else
-	/* Byte swap it */
-	*value = (readValue & 0xff) << 24 | (readValue & 0xff00) << 8 | (readValue & 0xff0000) >> 8 | (readValue & 0xff000000) >> 24;
+        /* Byte swap it */
+        *value = (readValue & 0xff) << 24 | (readValue & 0xff00) << 8 | (readValue & 0xff0000) >> 8 | (readValue & 0xff000000) >> 24;
 #endif
-	return TRUE;
+        return TRUE;
     }
     else
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_Long writeValue = value;
@@ -197,48 +197,48 @@ int IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const 
 #endif
 
     if(fwrite(&writeValue, sizeof(IFF_Long), 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
+IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
 {
     if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
         int byte = fgetc(file); /* Read padding byte */
-	
+
         if(byte == EOF) /* We shouldn't have reached the EOF yet */
         {
-    	    IFF_error("Unexpected end of file, while reading padding byte of '");
-    	    IFF_errorId(chunkId);
-    	    IFF_error("'\n");
-	    return FALSE;
-	}
-	else if(byte != 0) /* Normally, a padding byte is 0, warn if this is not the case */
-	    IFF_error("WARNING: Padding byte is non-zero!\n");
+            IFF_error("Unexpected end of file, while reading padding byte of '");
+            IFF_errorId(chunkId);
+            IFF_error("'\n");
+            return FALSE;
+        }
+        else if(byte != 0) /* Normally, a padding byte is 0, warn if this is not the case */
+            IFF_error("WARNING: Padding byte is non-zero!\n");
     }
-    
+
     return TRUE;
 }
 
-int IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
+IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
 {
     if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
-	if(fputc('\0', file) == EOF)
-	{
-	    IFF_error("Cannot write padding byte of '");
-	    IFF_errorId(chunkId);
-	    IFF_error("'\n");
-	    return FALSE;
-	}
-	else
-	    return TRUE;
+        if(fputc('\0', file) == EOF)
+        {
+            IFF_error("Cannot write padding byte of '");
+            IFF_errorId(chunkId);
+            IFF_error("'\n");
+            return FALSE;
+        }
+        else
+            return TRUE;
     }
-    
+
     return TRUE;
 }

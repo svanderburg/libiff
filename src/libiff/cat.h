@@ -42,10 +42,10 @@ struct IFF_CAT
 
     /** Contains a 4 character ID of this chunk, which equals to 'CAT ' */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
-    
+
     /**
      * Contains a type ID which hints about the contents of this concatenation.
      * 'JJJJ' is used if this concatenation stores forms of multiple form types.
@@ -53,10 +53,10 @@ struct IFF_CAT
      * should be equal to that form type.
      */
     IFF_ID contentsType;
-    
+
     /** Contains the number of sub chunks stored in this concatenation chunk */
     unsigned int chunkLength;
-    
+
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 };
@@ -100,7 +100,7 @@ IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *
  * @param extensionLength Length of the extension array
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-int IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks a sub chunk in a CAT for its validity.
@@ -109,7 +109,7 @@ int IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension,
  * @param subChunk A sub chunk member of this concatenation chunk
  * @return TRUE if the sub chunk is valid, else FALSE
  */
-int IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk);
+IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk);
 
 /**
  * Checks whether the concatenation chunk and its sub chunks conform to the IFF specification.
@@ -119,7 +119,7 @@ int IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk);
  * @param extensionLength Length of the extension array
  * @return TRUE if the CAT is valid, else FALSE.
  */
-int IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks of the given concatenation chunk.
@@ -149,7 +149,7 @@ void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_
  * @param extensionLength Length of the extension array
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.

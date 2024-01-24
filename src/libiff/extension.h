@@ -40,24 +40,24 @@ struct IFF_FormExtension
 {
     /** A 4 character chunk id */
     const char *chunkId;
-    
+
     /** Function resposible for reading the given chunk */
-    IFF_Chunk* (*readChunk) (FILE *file, const IFF_Long chunkSize);
-    
+    IFF_Chunk *(*readChunk) (FILE *file, const IFF_Long chunkSize);
+
     /** Function resposible for writing the given chunk */
-    int (*writeChunk) (FILE *file, const IFF_Chunk *chunk);
-    
+    IFF_Bool (*writeChunk) (FILE *file, const IFF_Chunk *chunk);
+
     /** Function resposible for checking the given chunk */
-    int (*checkChunk) (const IFF_Chunk *chunk);
-    
+    IFF_Bool (*checkChunk) (const IFF_Chunk *chunk);
+
     /** Function resposible for freeing the given chunk */
     void (*freeChunk) (IFF_Chunk *chunk);
-    
+
     /** Function responsible for printing the given chunk */
     void (*printChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel);
-    
+
     /** Function responsible for comparing the given chunk */
-    int (*compareChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+    IFF_Bool (*compareChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 };
 
 /**
@@ -67,10 +67,10 @@ struct IFF_Extension
 {
     /** A 4 character form type id */
     const char *formType;
-    
+
     /** Specifies the number of application chunks in the form that should be handled by external functions */
     unsigned int formExtensionsLength;
-    
+
     /** An array specifying how application chunks within the form context should be handled */
     IFF_FormExtension *formExtensions;
 };

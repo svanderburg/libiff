@@ -43,17 +43,17 @@ IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *
     return (IFF_CAT*)IFF_readGroup(file, CAT_CHUNKID, chunkSize, CAT_GROUPTYPENAME, FALSE, extension, extensionLength);
 }
 
-int IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_writeGroup(file, (IFF_Group*)cat, NULL, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
-int IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
+IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 {
     IFF_CAT *cat = (IFF_CAT*)group;
-    
+
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
-    
+
     if(IFF_compareId(subChunk->chunkId, "FORM") != 0 &&
        IFF_compareId(subChunk->chunkId, "LIST") != 0 &&
        IFF_compareId(subChunk->chunkId, "CAT ") != 0)
@@ -67,43 +67,43 @@ int IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
     if(IFF_compareId(cat->contentsType, "JJJJ") != 0)
     {
         /* Check whether form type or contents type matches the contents type of the CAT */
-	
+
         if(IFF_compareId(subChunk->chunkId, "FORM") == 0)
         {
-    	    IFF_Form *form = (IFF_Form*)subChunk;
+            IFF_Form *form = (IFF_Form*)subChunk;
 
-    	    if(IFF_compareId(form->formType, cat->contentsType) != 0)
-	    {
-	        IFF_error("Sub form does not match contentsType of the CAT!\n");
-	        return FALSE;
-	    }
-	}
-	else if(IFF_compareId(subChunk->chunkId, "LIST") == 0)
-	{
-	    IFF_List *list = (IFF_List*)subChunk;
-		
-	    if(IFF_compareId(list->contentsType, cat->contentsType) != 0)
-	    {
-	        IFF_error("Sub list does not match contentsType of the CAT!\n");
-	        return FALSE;
-	    }
-	}
-	else if(IFF_compareId(subChunk->chunkId, "CAT ") == 0)
-	{
-	    IFF_CAT *subCat = (IFF_CAT*)subChunk;
-		
-	    if(IFF_compareId(subCat->contentsType, cat->contentsType) != 0)
-	    {
-	        IFF_error("Sub cat does not match contentsType of the CAT!\n");
-	        return FALSE;
-	    }
-	}
+            if(IFF_compareId(form->formType, cat->contentsType) != 0)
+            {
+                IFF_error("Sub form does not match contentsType of the CAT!\n");
+                return FALSE;
+            }
+        }
+        else if(IFF_compareId(subChunk->chunkId, "LIST") == 0)
+        {
+            IFF_List *list = (IFF_List*)subChunk;
+
+            if(IFF_compareId(list->contentsType, cat->contentsType) != 0)
+            {
+                IFF_error("Sub list does not match contentsType of the CAT!\n");
+                return FALSE;
+            }
+        }
+        else if(IFF_compareId(subChunk->chunkId, "CAT ") == 0)
+        {
+            IFF_CAT *subCat = (IFF_CAT*)subChunk;
+
+            if(IFF_compareId(subCat->contentsType, cat->contentsType) != 0)
+            {
+                IFF_error("Sub cat does not match contentsType of the CAT!\n");
+                return FALSE;
+            }
+        }
     }
 
     return TRUE;
 }
 
-int IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_checkGroup((IFF_Group*)cat, &IFF_checkId, &IFF_checkCATSubChunk, NULL, extension, extensionLength);
 }
@@ -118,7 +118,7 @@ void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_
     IFF_printGroup((const IFF_Group*)cat, indentLevel, NULL, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
-int IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, NULL, extension, extensionLength);
 }

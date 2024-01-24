@@ -42,19 +42,19 @@ struct IFF_Form
 
     /** Contains the ID of this chunk, which equals to 'FORM' */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
-    
+
     /**
      * Contains a form type, which is used for most application file formats as an
      * application file format identifier
      */
     IFF_ID formType;
-    
+
     /** Contains the number of sub chunks stored in this form chunk */
     unsigned int chunkLength;
-    
+
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 };
@@ -98,7 +98,7 @@ IFF_Form *IFF_readForm(FILE *file, const IFF_Long chunkSize, const IFF_Extension
  * @param extensionLength Length of the extension array
  * @return TRUE if the FORM has been successfully written, else FALSE
  */
-int IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the given form type conforms to the IFF specification.
@@ -106,7 +106,7 @@ int IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *extensi
  * @param formType A 4 character form identifier
  * @return TRUE if the form type is valid, else FALSE
  */
-int IFF_checkFormType(const IFF_ID formType);
+IFF_Bool IFF_checkFormType(const IFF_ID formType);
 
 /**
  * Checks whether the form chunk and its sub chunks conform to the IFF specification.
@@ -116,7 +116,7 @@ int IFF_checkFormType(const IFF_ID formType);
  * @param extensionLength Length of the extension array
  * @return TRUE if the form is valid, else FALSE.
  */
-int IFF_checkForm(const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkForm(const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks of the given form chunk.
@@ -146,7 +146,7 @@ void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const I
  * @param extensionLength Length of the extension array
  * @return TRUE if the given forms are equal, else FALSE
  */
-int IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Merges two given IFF form arrays in the target array.

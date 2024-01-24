@@ -58,7 +58,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
  * @param extensionLength Length of the extension array
  * @return TRUE if the file has been successfully written, else FALSE
  */
-int IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes an IFF file to a file with the given filename.
@@ -69,7 +69,7 @@ int IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extensi
  * @param extensionLength Length of the extension array
  * @return TRUE if the file has been successfully written, else FALSE
  */
-int IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
@@ -88,7 +88,7 @@ void IFF_free(IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned i
  * @param extensionLength Length of the extension array
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-int IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Displays a textual representation of an IFF file on the standard output.
@@ -109,7 +109,7 @@ void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF
  * @param extensionLength Length of the extension array
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-int IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 #ifdef __cplusplus
 }

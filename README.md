@@ -29,7 +29,8 @@ can be found in: `doc/IFF.asc`, which is included in this package.
 
 Some _application_ file formats using the IFF container are:
 
-* ILBM, used for storing images. Quite often ILBM files are _wrongly_ named as IFF files because ILBM is the most common application format
+* ILBM, used for storing images. Quite often ILBM files are _wrongly_ named as
+  IFF files because ILBM is the most common application format
 * ANIM, an extension to ILBM supporting animations which are delta compressed
 * 8SVX, used for storing 8-bit sound samples
 * SMUS, used for storing musical scores
@@ -46,9 +47,11 @@ Installation on Unix-like systems
 Compilation and installation of this library on Unix-like systems is straight
 forward, by using the standard GNU autotools build instructions:
 
-    $ ./configure
-    $ make
-    $ make install
+```bash
+$ ./configure
+$ make
+$ make install
+```
 
 More details about the installation process can be found in the `INSTALL` file
 included in this package.
@@ -74,7 +77,9 @@ into
 Then you can open the solution file: `src/libiff.sln` in Visual Studio to edit or
 build it. Alternatively, you can use `MSBuild` to compile it:
 
-    $ MSBuild libiff.sln
+```
+$ MSBuild libiff.sln
+```
 
 The output is produced in the `Debug/` directory.
 
@@ -147,44 +152,44 @@ int main(int argc, char *argv[])
     IFF_RawChunk *heloChunk, *byeChunk;
     IFF_Form *form;
     IFF_CAT *cat;
-    
+
     /* Allocate and create data for the 'HELO' chunk */
     heloChunkData = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
     heloChunkData[0] = 'a';
     heloChunkData[1] = 'b';
     heloChunkData[2] = 'c';
     heloChunkData[3] = 'd';
-    
+
     /* Create the actual 'HELO' chunk */
     heloChunk = IFF_createRawChunk("HELO");
-    
+
     /* Attach the chunk data to the 'HELO' chunk */
     IFF_setRawChunkData(heloChunk, heloChunkData, HELO_BYTES_SIZE);
-    
+
     /* Allocate and create data for the 'BYE ' chunk */
     byeChunkData = (IFF_UByte*)malloc(BYE_BYTES_SIZE * sizeof(IFF_UByte));
     byeChunkData[0] = '1';
     byeChunkData[1] = '2';
     byeChunkData[2] = '3';
     byeChunkData[3] = '4';
-    
+
     /* Create the actual 'BYE ' chunk and attach the data to it */
     byeChunk = IFF_createRawChunk("BYE ");
     IFF_setRawChunkData(byeChunk, byeChunkData, BYE_BYTES_SIZE);
-    
+
     /* Create the 'TEST' form chunk */
     form = IFF_createForm("TEST");
-    
+
     /* Attach the 'HELO' and 'BYE ' chunk to the form */
     IFF_addToForm((IFF_Chunk*)heloChunk);
     IFF_addToForm((IFF_Chunk*)byeChunk);
-    
+
     /* Create a concatenation chunk */
     cat = IFF_createCAT("TEST");
-    
+
     /* Attach the form to the concatenation chunk */
     IFF_addToCAT((IFF_Chunk*)form);
-    
+
     return 0;
 }
 ```
@@ -227,26 +232,26 @@ int main(int argc, char *argv[])
     IFF_Chunk *chunk;
     IFF_Form **ilbmForms;
     unsigned int ilbmFormsLength, i;
-    
+
     /* Create or read an IFF file here */
-    
+
     /* Search for all forms having an ILBM form type */
     ilbmForms = IFF_searchForms(chunk, "ILBM", &ilbmFormsLength);
-    
+
     /* Iterate over all ILBM forms in the given IFF file */
-    
+
     for(i = 0; i < ilbmFormsLength; i++)
     {
         IFF_Form *ilbmForm = ilbmForms[i];
         unsigned int colorRangesLength;
-        
+
         /* Retrieve the BMHD data property from the ILBM form */
         IFF_Chunk *bitMapHeader = IFF_getChunkFromForm(ilbmForm, "BMHD");
-        
+
         /* Retrieve all possible CRNG properties from the ILBM form */
         IFF_Chunk **colorRanges = IFF_getChunksFromForm(ilbmForm, "CRNG", &colorRangesLength);
     }
-    
+
     return 0;
 }
 ```
@@ -262,9 +267,9 @@ A composition of chunks can be written as an IFF file by invoking the
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk;
-    
+
     /* Create or read a chunk */
-    
+
     if(IFF_write("output.IFF", chunk, NULL, 0))
         return 0; /* The file has been successfully written */
     else
@@ -286,9 +291,9 @@ composition of chunks conform to the IFF standard:
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk;
-    
+
     /* Create or read a chunk here */
-    
+
     if(IFF_check(chunk, NULL, 0))
         return 0; /* A valid IFF file */
     else
@@ -308,7 +313,7 @@ hierarchies can be compared by using the `IFF_compare()` function:
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk1, *chunk2;
-    
+
     /* Read or create the chunks here */
 
     if(IFF_compare(chunk1, chunk2, NULL, 0))
@@ -368,7 +373,7 @@ interface of an imaginary TEST file format:
 
 IFF_Chunk *TEST_read(const char *filename);
 
-int TEST_write(const char *filename, const IFF_Chunk *chunk);
+IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk);
 
 void TEST_free(IFF_Chunk *chunk);
 
@@ -418,7 +423,7 @@ IFF_Chunk *TEST_read(const char *filename)
     return IFF_read(filename, extension, TEST_NUM_OF_FORM_TYPES);
 }
 
-int TEST_write(const char *filename, const IFF_Chunk *chunk)
+IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk)
 {
     return IFF_write(filename, chunk, extension, TEST_NUM_OF_FORM_TYPES);
 }
@@ -433,7 +438,7 @@ void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
     IFF_print(chunk, indentLevel, extension, TEST_NUM_OF_FORM_TYPES);
 }
 
-int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     return IFF_compare(chunk1, chunk2, extension, TEST_NUM_OF_FORM_TYPES);
 }
@@ -486,15 +491,15 @@ TEST_Hello *TEST_createHello(void);
 
 IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize);
 
-int TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
 
-int TEST_checkHello(const IFF_Chunk *chunk);
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk);
 
 void TEST_freeHello(IFF_Chunk *chunk);
 
 void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif
 ```
@@ -553,7 +558,7 @@ IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
     return (IFF_Chunk*)hello;
 }
 
-int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
 {
     const TEST_Hello *hello = (TEST_Hello*)chunk;
 
@@ -569,7 +574,7 @@ int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
     return TRUE;
 }
 
-int TEST_checkHello(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk)
 {
     return TRUE;
 }
@@ -587,7 +592,7 @@ void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
 }
 
-int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;

@@ -41,10 +41,10 @@ struct IFF_Chunk
 {
     /** Pointer to the parent group chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Group *parent;
-    
+
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
 };
@@ -80,7 +80,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *
  * @param extensionLength Length of the extension array
  * @return TRUE if the file has been successfully written, else FALSE
  */
-int IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
@@ -91,7 +91,7 @@ int IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const char *formType, con
  * @param extensionLength Length of the extension array
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-int IFF_checkChunk(const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
@@ -124,7 +124,7 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
  * @param extensionLength Length of the extension array
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-int IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively searches for all FORMs with the given form types in a chunk hierarchy.

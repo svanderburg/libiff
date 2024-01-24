@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
 #endif
     /* Validate non options */
-    
+
     if(optind >= argc)
         filename = NULL;
     else

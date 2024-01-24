@@ -30,18 +30,18 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
 {
     IFF_Chunk *chunk;
     int byte;
-    
+
     /* Read the chunk */
     chunk = IFF_readChunk(file, NULL, extension, extensionLength);
-    
+
     if(chunk == NULL)
     {
         IFF_error("ERROR: cannot open main chunk!\n");
         return NULL;
     }
-    
+
     /* We should have reached the EOF now */
-    
+
     if((byte = fgetc(file)) != EOF)
         IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
 
@@ -53,7 +53,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
 {
     IFF_Chunk *chunk;
     FILE *file = fopen(filename, "rb");
-    
+
     /* Open the IFF file */
     if(file == NULL)
     {
@@ -63,7 +63,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
 
     /* Parse the main chunk */
     chunk = IFF_readFd(file, extension, extensionLength);
-    
+
     /* Close the file */
     fclose(file);
 
@@ -71,22 +71,22 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
     return chunk;
 }
 
-int IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_writeChunk(file, chunk, NULL, extension, extensionLength);
 }
 
-int IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     int status;
     FILE *file = fopen(filename, "wb");
-    
+
     if(file == NULL)
     {
         IFF_error("ERROR: cannot open file: %s\n", filename);
         return FALSE;
     }
-    
+
     status = IFF_writeFd(file, chunk, extension, extensionLength);
     fclose(file);
     return status;
@@ -97,10 +97,10 @@ void IFF_free(IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned i
     IFF_freeChunk(chunk, NULL, extension, extensionLength);
 }
 
-int IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     /* The main chunk must be of ID: FORM, CAT or LIST */
-    
+
     if(IFF_compareId(chunk->chunkId, "FORM") != 0 &&
        IFF_compareId(chunk->chunkId, "CAT ") != 0 &&
        IFF_compareId(chunk->chunkId, "LIST") != 0)
@@ -117,7 +117,7 @@ void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF
     IFF_printChunk(chunk, indentLevel, NULL, extension, extensionLength);
 }
 
-int IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_compareChunk(chunk1, chunk2, NULL, extension, extensionLength);
 }

@@ -72,7 +72,7 @@ IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension
  * @param extensionLength Length of the extension array
  * @return TRUE if the PROP has been successfully written, else FALSE
  */
-int IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.
@@ -82,7 +82,7 @@ int IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extensi
  * @param extensionLength Length of the extension array
  * @return TRUE if the PROP is valid, else FALSE.
  */
-int IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks of the given PROP chunk.
@@ -112,7 +112,7 @@ void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const I
  * @param extensionLength Length of the extension array
  * @return TRUE if the given forms are equal, else FALSE
  */
-int IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recalculates the chunk size of the given PROP chunk.

@@ -30,10 +30,10 @@
 IFF_RawChunk *IFF_createRawChunk(const char *chunkId)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_allocateChunk(chunkId, sizeof(IFF_RawChunk));
-    
+
     if(rawChunk != NULL)
-	rawChunk->chunkData = NULL;
-    
+        rawChunk->chunkData = NULL;
+
     return rawChunk;
 }
 
@@ -47,7 +47,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
 {
     size_t textLength = strlen(text);
     IFF_UByte *chunkData = (IFF_UByte*)malloc(textLength * sizeof(IFF_UByte));
-    
+
     memcpy(chunkData, text, textLength);
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
@@ -60,46 +60,46 @@ IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long c
     if (chunkData == NULL) {
         return NULL;
     }
-	
+
     /* Read remaining bytes verbatim */
-	
+
     if(fread(chunkData, sizeof(IFF_UByte), chunkSize, file) < chunkSize)
     {
-	IFF_error("Error reading raw chunk body of chunk: '");
-	IFF_errorId(chunkId);
-	IFF_error("'\n");
-	IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
-	return NULL;
+        IFF_error("Error reading raw chunk body of chunk: '");
+        IFF_errorId(chunkId);
+        IFF_error("'\n");
+        IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
+        return NULL;
     }
-	    
+
     /* If the chunk size is odd, we have to read the padding byte */
     if(!IFF_readPaddingByte(file, chunkSize, chunkId))
     {
-	IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
-	return NULL;
+        IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
+        return NULL;
     }
-    
+
     /* Add data to the created chunk */
     IFF_setRawChunkData(rawChunk, chunkData, chunkSize);
-    
+
     /* Return the resulting raw chunk */
     return rawChunk;
 }
 
-int IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk)
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk)
 {
     if(fwrite(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
-	IFF_error("Error writing raw chunk body of chunk '");
-	IFF_errorId(rawChunk->chunkId);
-	IFF_error("'\n");
-	return FALSE;
+        IFF_error("Error writing raw chunk body of chunk '");
+        IFF_errorId(rawChunk->chunkId);
+        IFF_error("'\n");
+        return FALSE;
     }
-	
+
     /* If the chunk size is odd, we have to write the padding byte */
     if(!IFF_writePaddingByte(file, rawChunk->chunkSize, rawChunk->chunkId))
-	return FALSE;
-    
+        return FALSE;
+
     return TRUE;
 }
 
@@ -111,10 +111,10 @@ void IFF_freeRawChunk(IFF_RawChunk *rawChunk)
 void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
     unsigned int i;
-	
+
     IFF_printIndent(stdout, indentLevel, "text = '\n");
     IFF_printIndent(stdout, indentLevel + 1, "");
-	
+
     for(i = 0; i < rawChunk->chunkSize; i++)
         printf("%c", rawChunk->chunkData[i]);
 
@@ -126,27 +126,27 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
     unsigned int i;
     IFF_UByte byte;
-	
+
     IFF_printIndent(stdout, indentLevel, "bytes = \n");
     IFF_printIndent(stdout, indentLevel + 1, "");
-	
+
     for(i = 0; i < rawChunk->chunkSize; i++)
     {
-	if(i > 0 && i % 10 == 0)
-	{
-	    printf("\n");
-	    IFF_printIndent(stdout, indentLevel + 1, "");
-	}
-	    
-	byte = rawChunk->chunkData[i];
-	    
-	/* Print extra 0 for small numbers */
-	if(byte <= 0xf)
-	    printf("0");
-	    
-	printf("%x ", byte);
+        if(i > 0 && i % 10 == 0)
+        {
+            printf("\n");
+            IFF_printIndent(stdout, indentLevel + 1, "");
+        }
+
+        byte = rawChunk->chunkData[i];
+
+        /* Print extra 0 for small numbers */
+        if(byte <= 0xf)
+            printf("0");
+
+        printf("%x ", byte);
     }
-	
+
     printf("\n");
     IFF_printIndent(stdout, indentLevel, ";\n");
 }
@@ -154,12 +154,12 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel)
 {
     if(IFF_compareId(rawChunk->chunkId, "TEXT") == 0)
-	IFF_printText(rawChunk, indentLevel);
+        IFF_printText(rawChunk, indentLevel);
     else
-	IFF_printRaw(rawChunk, indentLevel);
+        IFF_printRaw(rawChunk, indentLevel);
 }
 
-int IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2)
+IFF_Bool IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2)
 {
     return (memcmp(rawChunk1->chunkData, rawChunk2->chunkData, rawChunk1->chunkSize) == 0);
 }

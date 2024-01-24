@@ -28,63 +28,63 @@ void IFF_createId(IFF_ID id, const char *idString)
     strncpy(id, idString, IFF_ID_SIZE);
 }
 
-int IFF_compareId(const IFF_ID id1, const char* id2)
+IFF_Bool IFF_compareId(const IFF_ID id1, const char* id2)
 {
     return strncmp(id1, id2, IFF_ID_SIZE);
 }
 
-int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName)
 {
     if(fread(id, IFF_ID_SIZE, 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_readError(chunkId, attributeName);
-	return FALSE;
+        IFF_readError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName)
 {
     if(fwrite(id, IFF_ID_SIZE, 1, file) == 1)
-	return TRUE;
+        return TRUE;
     else
     {
-	IFF_writeError(chunkId, attributeName);
-	return FALSE;
+        IFF_writeError(chunkId, attributeName);
+        return FALSE;
     }
 }
 
-int IFF_checkId(const IFF_ID id)
+IFF_Bool IFF_checkId(const IFF_ID id)
 {
     unsigned int i;
-    
+
     /* ID characters must be between 0x20 and 0x7e */
-    
+
     for(i = 0; i < IFF_ID_SIZE; i++)
     {
-	if(id[i] < 0x20 || id[i] > 0x7e)
-	{
-	    IFF_error("Illegal character: '%c' in ID!\n", id[i]);
-	    return FALSE;
-	}
+        if(id[i] < 0x20 || id[i] > 0x7e)
+        {
+            IFF_error("Illegal character: '%c' in ID!\n", id[i]);
+            return FALSE;
+        }
     }
-    
+
     /* Spaces may not precede an ID, trailing spaces are ok */
-    
+
     if(id[0] == ' ')
     {
-	IFF_error("Spaces may not precede an ID!\n");
-	return FALSE;
+        IFF_error("Spaces may not precede an ID!\n");
+        return FALSE;
     }
-    
+
     return TRUE;
 }
 
 void IFF_printId(const IFF_ID id)
 {
     unsigned int i;
-    
+
     for(i = 0; i < IFF_ID_SIZE; i++)
-	printf("%c", id[i]);
+        printf("%c", id[i]);
 }

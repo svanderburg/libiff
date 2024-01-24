@@ -39,20 +39,20 @@ struct IFF_RawChunk
 {
     /** Pointer to the parent group chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Group *parent;
-    
+
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
-    
+
     /** An array of bytes representing raw chunk data */
     IFF_UByte *chunkData;
 };
 
 /**
  * Creates a raw chunk with the given chunk ID. The resulting chunk must be freed using IFF_free().
- * 
+ *
  * @param chunkId A 4 character id
  * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
  */
@@ -93,7 +93,7 @@ IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long c
  * @param rawChunk A raw chunk instance
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-int IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk);
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk);
 
 /**
  * Frees the raw chunk data of the given raw chunk.
@@ -133,7 +133,7 @@ void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel);
  * @param rawChunk2 Raw chunk to compare
  * @return TRUE if the raw chunks are equal, else FALSE
  */
-int IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2);
+IFF_Bool IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2);
 
 #ifdef __cplusplus
 }

@@ -45,29 +45,29 @@ IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension
     return (IFF_Prop*)IFF_readGroup(file, PROP_CHUNKID, chunkSize, PROP_GROUPTYPENAME, TRUE, extension, extensionLength);
 }
 
-int IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_writeForm(file, (IFF_Form*)prop, extension, extensionLength);
 }
 
-static int subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
+static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
 {
     if(IFF_compareId(subChunk->chunkId, "FORM") == 0 ||
        IFF_compareId(subChunk->chunkId, "LIST") == 0 ||
        IFF_compareId(subChunk->chunkId, "CAT ") == 0 ||
        IFF_compareId(subChunk->chunkId, "PROP") == 0)
     {
-	IFF_error("ERROR: Element with chunk Id: '");
-	IFF_errorId(subChunk->chunkId);
-	IFF_error("' not allowed in PROP chunk!\n");
+        IFF_error("ERROR: Element with chunk Id: '");
+        IFF_errorId(subChunk->chunkId);
+        IFF_error("' not allowed in PROP chunk!\n");
 
-	return FALSE;
+        return FALSE;
     }
     else
-	return TRUE;
+        return TRUE;
 }
 
-int IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_checkGroup((IFF_Group*)prop, &IFF_checkFormType, &subChunkCheck, prop->formType, extension, extensionLength);
 }
@@ -82,7 +82,7 @@ void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const I
     IFF_printForm((const IFF_Form *)prop, indentLevel, extension, extensionLength);
 }
 
-int IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_compareForm((const IFF_Form*)prop1, (const IFF_Form*)prop2, extension, extensionLength);
 }

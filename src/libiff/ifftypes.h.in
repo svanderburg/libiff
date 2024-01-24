@@ -24,6 +24,9 @@
 
 #define IFF_ID_SIZE 4
 
+/** A boolean type that is an alias for an int */
+typedef int IFF_Bool;
+
 /** A signed byte */
 typedef char IFF_Byte;
 

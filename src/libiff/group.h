@@ -43,16 +43,16 @@ struct IFF_Group
 
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
-    
+
     /** Could be either a formType or a contentsType */
     IFF_ID groupType;
-    
+
     /** Contains the number of sub chunks stored in this group chunk */
     unsigned int chunkLength;
-    
+
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 };
@@ -109,7 +109,7 @@ IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSi
  * @param extensionLength Length of the extension array
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
-int IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a group chunk and its sub chunks to a file.
@@ -122,7 +122,7 @@ int IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char *form
  * @param extensionLength Length of the extension array
  * @return TRUE if the group has been successfully written, else FALSE
  */
-int IFF_writeGroup(FILE *file, const IFF_Group *group, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the given chunk size matches the chunk size of the group
@@ -131,7 +131,7 @@ int IFF_writeGroup(FILE *file, const IFF_Group *group, const char *formType, con
  * @param chunkSize A chunk size
  * @return TRUE if the chunk sizes are equal, else FALSE
  */
-int IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSize);
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSize);
 
 /**
  * Checks whether the group sub chunks are valid
@@ -156,7 +156,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (c
  * @param extensionLength Length of the extension array
  * @return TRUE if the form is valid, else FALSE.
  */
-int IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const char *groupType), int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const char *groupType), int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.
@@ -210,7 +210,7 @@ void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, cons
  * @param extensionLength Length of the extension array
  * @return TRUE if the given groups are equal, else FALSE
  */
-int IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.

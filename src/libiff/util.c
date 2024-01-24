@@ -26,12 +26,12 @@ void IFF_printIndent(FILE *file, const unsigned int indentLevel, const char *for
 {
     va_list ap;
     unsigned int i;
-    
+
     va_start(ap, formatString);
-    
+
     for(i = 0; i < indentLevel; i++)
       fprintf(file, "  ");
-    
+
     vfprintf(file, formatString, ap);
     va_end(ap);
 }

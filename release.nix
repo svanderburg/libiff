@@ -12,9 +12,9 @@
 
 let
   pkgs = import nixpkgs {};
-  
+
   version = builtins.readFile ./version;
-  
+
   jobs = rec {
     tarball =
       with pkgs;
@@ -28,11 +28,11 @@ let
 
         buildInputs = [ help2man ];
       };
-      
+
     build =
       (pkgs.lib.genAttrs systems (system:
         with import nixpkgs { inherit system; };
-        
+
         releaseTools.nixBuild {
           name = "libiff";
           inherit version;
@@ -66,7 +66,7 @@ let
           m68k-amigaos.lib = amigaosenv.mkDerivation {
             name = "libiff-${version}";
             src = "${tarball}/tarballs/libiff-${version}pre1234.tar.gz";
-      
+
             buildCommand = ''
               tar xfvz $src
               cd libiff-${version}pre1234
@@ -75,14 +75,14 @@ let
               make
               make install
             '';
-            
+
             inherit kickstartROMFile baseDiskImage useUAE;
           };
-        
+
           m68k-amigaos.tools = amigaosenv.mkDerivation {
             name = "libiff-${version}";
             src = "${tarball}/tarballs/libiff-${version}pre1234.tar.gz";
-      
+
             buildCommand = ''
               tar xfvz $src
                 cd libiff-${version}pre1234
@@ -91,7 +91,7 @@ let
                make check
                make install
             '';
-            
+
             inherit kickstartROMFile baseDiskImage useUAE;
           };
         }));

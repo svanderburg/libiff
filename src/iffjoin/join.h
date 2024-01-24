@@ -28,7 +28,7 @@
  * @param inputFilenames An array of input IFF file names
  * @param inputFilenamesLength Contains the length of the inputFilenames array
  * @param outputFilename Specifies the name of the output file containing the resulting concatenation chunk. NULL can be used to write the result to the standard output.
- * @return TRUE if the resulting concatenation has been successfully written, else FALSE
+ * @return 0 if the resulting concatenation has been successfully written, else 1
  */
 int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, const char *outputFilename);
 

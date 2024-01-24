@@ -40,13 +40,13 @@ struct IFF_List
 {
     /** Pointer to the parent group chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Group *parent;
-    
+
     /** Contains the ID of this chunk, which equals to 'LIST' */
     IFF_ID chunkId;
-    
+
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
-    
+
     /**
      * Contains a type ID which hints about the contents of this list.
      * 'JJJJ' is used if this concatenation stores forms of multiple form types.
@@ -54,16 +54,16 @@ struct IFF_List
      * should be equal to that form type.
      */
     IFF_ID contentsType;
-    
+
     /** Contains the number of sub chunks stored in this list chunk */
     unsigned int chunkLength;
-    
+
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 
     /** Contains the number of PROP chunks stored in this list chunk */
     unsigned int propLength;
-    
+
     /** An array of chunk pointers referring to the PROP chunks */
     IFF_Prop **prop;
 };
@@ -116,7 +116,7 @@ IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension
  * @param extensionLength Length of the extension array
  * @return TRUE if the list has been successfully written, else FALSE
  */
-int IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.
@@ -126,7 +126,7 @@ int IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extensi
  * @param extensionLength Length of the extension array
  * @return TRUE if the list is valid, else FALSE.
  */
-int IFF_checkList(const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkList(const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks and PROP chunks of the given list chunk.
@@ -156,7 +156,7 @@ void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const I
  * @param extensionLength Length of the extension array
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-int IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given list.

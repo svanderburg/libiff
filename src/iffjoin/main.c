@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     }
 #endif
     /* Validate non options */
-    
+
     if(optind >= argc)
     {
         fprintf(stderr, "ERROR: No IFF input files given!\n");
@@ -137,17 +137,17 @@ int main(int argc, char *argv[])
         char **inputFilenames = (char**)malloc(inputFilenamesLength * sizeof(char*));
         unsigned int i;
         int status;
-        
+
         /* Create an array of input file names */
         for(i = 0; i < inputFilenamesLength; i++)
             inputFilenames[i] = argv[optind + i];
-        
+
         /* Join the IFF files */
         status = IFF_join(inputFilenames, inputFilenamesLength, outputFilename);
-        
+
         /* Cleanup */
         free(inputFilenames);
-        
+
         /* Return whether the join has succeeded or not */
         return status;
     }
