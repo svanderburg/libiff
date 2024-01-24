@@ -51,7 +51,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *
     IFF_Long chunkSize;
 
     /* Read chunk id */
-    if(!IFF_readId(file, chunkId, "", chunkId))
+    if(!IFF_readId(file, chunkId, "    ", ""))
         return NULL;
 
     /* Read chunk size */

@@ -25,7 +25,7 @@
 
 void IFF_createId(IFF_ID id, const char *idString)
 {
-    strncpy(id, idString, IFF_ID_SIZE);
+    memcpy(id, idString, IFF_ID_SIZE);
 }
 
 IFF_Bool IFF_compareId(const IFF_ID id1, const char* id2)
