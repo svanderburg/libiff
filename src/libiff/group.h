@@ -97,7 +97,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param extensionLength Length of the extension array
  * @return The group struct derived from the file, or NULL if an error has occured
  */
-IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const int groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes all sub chunks inside a group to a file.

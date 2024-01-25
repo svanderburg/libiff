@@ -116,11 +116,11 @@ int main(int argc, char *argv[])
 {
     /* Read an IFF file */
     IFF_Chunk *chunk = IFF_read("input.IFF", NULL, 0);
-    
+
     if(chunk != NULL)
     {
         /* Use the chunk instance for some purpose here */
-        
+
         return 0;
     }
     else
@@ -379,7 +379,7 @@ void TEST_free(IFF_Chunk *chunk);
 
 void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif
 ```

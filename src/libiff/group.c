@@ -53,7 +53,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     chunk->parent = group;
 }
 
-IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const int groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_ID groupType;
     IFF_Group *group;
