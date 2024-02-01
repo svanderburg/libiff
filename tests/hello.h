@@ -25,14 +25,17 @@
 #include <ifftypes.h>
 #include <chunk.h>
 #include <stdio.h>
+#include <id.h>
+
+#define TEST_ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 
 typedef struct
 {
     IFF_Group *parent;
-    
+
     IFF_ID chunkId;
     IFF_Long chunkSize;
-    
+
     IFF_UByte a;
     IFF_UByte b;
     IFF_UWord c;
@@ -43,14 +46,14 @@ TEST_Hello *TEST_createHello(void);
 
 IFF_Chunk *TEST_readHello(FILE *file, IFF_Long chunkSize);
 
-int TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
 
-int TEST_checkHello(const IFF_Chunk *chunk);
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk);
 
 void TEST_freeHello(IFF_Chunk *chunk);
 
 void TEST_printHello(const IFF_Chunk *chunk, unsigned int indentLevel);
 
-int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif

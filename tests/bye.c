@@ -26,54 +26,52 @@
 #include <util.h>
 #include "test.h"
 
-#define CHUNKID "BYE "
-
 TEST_Bye *TEST_createBye(void)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_allocateChunk(CHUNKID, sizeof(TEST_Bye));
-    
+    TEST_Bye *bye = (TEST_Bye*)IFF_allocateChunk(TEST_ID_BYE, sizeof(TEST_Bye));
+
     if(bye != NULL)
-	bye->chunkSize = 2 * sizeof(IFF_Long);
-    
+        bye->chunkSize = 2 * sizeof(IFF_Long);
+
     return bye;
 }
 
 IFF_Chunk *TEST_readBye(FILE *file, const IFF_Long chunkSize)
 {
     TEST_Bye *bye = TEST_createBye();
-    
+
     if(bye != NULL)
     {
-	if(!IFF_readLong(file, &bye->one, CHUNKID, "one"))
-	{
-	    TEST_free((IFF_Chunk*)bye);
-	    return NULL;
-	}
-    
-	if(!IFF_readLong(file, &bye->two, CHUNKID, "two"))
-	{
-	    TEST_free((IFF_Chunk*)bye);
-	    return NULL;
-	}
+        if(!IFF_readLong(file, &bye->one, TEST_ID_BYE, "one"))
+        {
+            TEST_free((IFF_Chunk*)bye);
+            return NULL;
+        }
+
+        if(!IFF_readLong(file, &bye->two, TEST_ID_BYE, "two"))
+        {
+            TEST_free((IFF_Chunk*)bye);
+            return NULL;
+        }
     }
-    
+
     return (IFF_Chunk*)bye;
 }
 
-int TEST_writeBye(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
-    
-    if(!IFF_writeLong(file, bye->one, CHUNKID, "one"))
-	return FALSE;
-    
-    if(!IFF_writeLong(file, bye->two, CHUNKID, "two"))
-	return FALSE;
-    
+
+    if(!IFF_writeLong(file, bye->one, TEST_ID_BYE, "one"))
+        return FALSE;
+
+    if(!IFF_writeLong(file, bye->two, TEST_ID_BYE, "two"))
+        return FALSE;
+
     return TRUE;
 }
 
-int TEST_checkBye(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkBye(const IFF_Chunk *chunk)
 {
     return TRUE;
 }
@@ -85,21 +83,21 @@ void TEST_freeBye(IFF_Chunk *chunk)
 void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
-    
+
     IFF_printIndent(stdout, indentLevel, "one = %d;\n", bye->one);
     IFF_printIndent(stdout, indentLevel, "two = %d;\n", bye->two);
 }
 
-int TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
     const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;
 
     if(bye1->one != bye2->one)
-	return FALSE;
+        return FALSE;
 
     if(bye1->two != bye2->two)
-	return FALSE;
+        return FALSE;
 
     return TRUE;
 }

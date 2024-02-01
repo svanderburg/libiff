@@ -29,78 +29,82 @@
 #define HELO_BYTES_SIZE 4
 #define BYE_BYTES_SIZE 4
 
+#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+#define ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
+
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("lookupproperty-nested.TEST", NULL, 0);
 
     if(chunk == NULL)
-	return 1;
+        return 1;
     else
     {
-	int status = 0;
-	unsigned int formsLength;
-	IFF_Form **forms = IFF_searchForms(chunk, "TEST", &formsLength);
-	
-	if(formsLength == 2)
-	{
-	    IFF_Form *form = forms[1]; /* We should take the last form (in the inner list) */
-	    
-	    IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, "HELO");
-	    IFF_RawChunk *byeChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, "BYE ");
-	    
-	    if(heloChunk != NULL && IFF_compareId(heloChunk->chunkId, "HELO") == 0)
-	    {
-		if(heloChunk->chunkSize == HELO_BYTES_SIZE)
-		{
-		    if(heloChunk->chunkData[0] != '1' ||
-		       heloChunk->chunkData[1] != '2' ||
-		       heloChunk->chunkData[2] != '3' ||
-		       heloChunk->chunkData[3] != '4')
-		    {
-			fprintf(stderr, "Error: 'HELO' chunk contents should be: '1', '2', '3', '4'!\n");
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
-		    status = 1;
-		}
-	    }
-	    else
-	    {
-		fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
-		status = 1;
-	    }
-	    
-	    if(byeChunk != NULL && IFF_compareId(byeChunk->chunkId, "BYE ") == 0)
-	    {
-		if(byeChunk->chunkSize == BYE_BYTES_SIZE)
-		{
-		    if(byeChunk->chunkData[0] != 'q' ||
-		       byeChunk->chunkData[1] != 'w' ||
-		       byeChunk->chunkData[2] != 'e' ||
-		       byeChunk->chunkData[3] != 'r')
-		    {
-			fprintf(stderr, "Error: 'BYE ' chunk contents should be: 'q', 'w', 'e', 'r'!\n");
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", BYE_BYTES_SIZE);
-		    status = 1;
-		}
-	    }
-	}
-	else
-	{
-	    fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
-	    status = 1;
-	}
-	
-	IFF_free(chunk, NULL, 0);
-	
-	return status;
+        int status = 0;
+        unsigned int formsLength;
+        IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
+
+        if(formsLength == 2)
+        {
+            IFF_Form *form = forms[1]; /* We should take the last form (in the inner list) */
+
+            IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, ID_HELO);
+            IFF_RawChunk *byeChunk = (IFF_RawChunk*)IFF_getChunkFromForm(form, ID_BYE);
+
+            if(heloChunk != NULL && heloChunk->chunkId == ID_HELO)
+            {
+                if(heloChunk->chunkSize == HELO_BYTES_SIZE)
+                {
+                    if(heloChunk->chunkData[0] != '1' ||
+                       heloChunk->chunkData[1] != '2' ||
+                       heloChunk->chunkData[2] != '3' ||
+                       heloChunk->chunkData[3] != '4')
+                    {
+                        fprintf(stderr, "Error: 'HELO' chunk contents should be: '1', '2', '3', '4'!\n");
+                        status = 1;
+                    }
+                }
+                else
+                {
+                    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
+                    status = 1;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
+                status = 1;
+            }
+
+            if(byeChunk != NULL && byeChunk->chunkId == ID_BYE)
+            {
+                if(byeChunk->chunkSize == BYE_BYTES_SIZE)
+                {
+                    if(byeChunk->chunkData[0] != 'q' ||
+                       byeChunk->chunkData[1] != 'w' ||
+                       byeChunk->chunkData[2] != 'e' ||
+                       byeChunk->chunkData[3] != 'r')
+                    {
+                        fprintf(stderr, "Error: 'BYE ' chunk contents should be: 'q', 'w', 'e', 'r'!\n");
+                        status = 1;
+                    }
+                }
+                else
+                {
+                    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", BYE_BYTES_SIZE);
+                    status = 1;
+                }
+            }
+        }
+        else
+        {
+            fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
+            status = 1;
+        }
+
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

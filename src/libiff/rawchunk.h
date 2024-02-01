@@ -22,6 +22,8 @@
 #ifndef __IFF_RAWCHUNK_H
 #define __IFF_RAWCHUNK_H
 
+#define IFF_ID_TEXT IFF_MAKEID('T', 'E', 'X', 'T')
+
 typedef struct IFF_RawChunk IFF_RawChunk;
 
 #include <stdio.h>
@@ -56,7 +58,7 @@ struct IFF_RawChunk
  * @param chunkId A 4 character id
  * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
  */
-IFF_RawChunk *IFF_createRawChunk(const char *chunkId);
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId);
 
 /**
  * Attaches chunk data to a given chunk. It also increments the chunk size.
@@ -84,7 +86,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
  * @param chunkSize Size of the chunk data
  * @return The raw chunk struct derived from the file, or NULL if an error has occured
  */
-IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize);
+IFF_RawChunk *IFF_readRawChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Writes the given raw chunk to a file descriptor.

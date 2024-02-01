@@ -25,10 +25,15 @@
 #include <form.h>
 #include <prop.h>
 #include <rawchunk.h>
+#include <id.h>
 
 #define HELO_BYTES_SIZE 4
 #define BYE_1_BYTES_SIZE 4
 #define BYE_2_BYTES_SIZE 4
+
+#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+#define ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
 IFF_UByte heloData[] = {'q', 'w', 'e', 'r'};
 IFF_UByte bye1Data[] = {'a', 'b', 'c', 'd'};
@@ -41,38 +46,38 @@ IFF_List *IFF_createTestList()
     IFF_RawChunk *heloChunk, *bye1Chunk, *bye2Chunk;
     IFF_Form *test1Form, *test2Form;
     IFF_List *list;
-    
+
     heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
     memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
-    
-    heloChunk = IFF_createRawChunk("HELO");
+
+    heloChunk = IFF_createRawChunk(ID_HELO);
     IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
-    
-    testProp = IFF_createProp("TEST");
+
+    testProp = IFF_createProp(ID_TEST);
     IFF_addToProp(testProp, (IFF_Chunk*)heloChunk);
-    
+
     bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
     memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
-    
-    bye1Chunk = IFF_createRawChunk("BYE ");
+
+    bye1Chunk = IFF_createRawChunk(ID_BYE);
     IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
-    
-    test1Form = IFF_createForm("TEST");
+
+    test1Form = IFF_createForm(ID_TEST);
     IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
-    
+
     bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
     memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
-    
-    bye2Chunk = IFF_createRawChunk("BYE ");
+
+    bye2Chunk = IFF_createRawChunk(ID_BYE);
     IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);
-    
-    test2Form = IFF_createForm("TEST");
+
+    test2Form = IFF_createForm(ID_TEST);
     IFF_addToForm(test2Form, (IFF_Chunk*)bye2Chunk);
-    
-    list = IFF_createList("TEST");
+
+    list = IFF_createList(ID_TEST);
     IFF_addPropToList(list, testProp);
     IFF_addToList(list, (IFF_Chunk*)test1Form);
     IFF_addToList(list, (IFF_Chunk*)test2Form);
-    
+
     return list;
 }

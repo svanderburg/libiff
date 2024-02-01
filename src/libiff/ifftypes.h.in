@@ -46,7 +46,7 @@ typedef int IFF_Long;
 typedef unsigned int IFF_ULong;
 
 /** A 4 byte ID type */
-typedef char IFF_ID[IFF_ID_SIZE];
+typedef unsigned int IFF_ID;
 
 #define TRUE 1
 #define FALSE 0

@@ -26,72 +26,70 @@
 #include <util.h>
 #include "test.h"
 
-#define CHUNKID "HELO"
-
 TEST_Hello *TEST_createHello(void)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(CHUNKID, sizeof(TEST_Hello));
-    
+    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, sizeof(TEST_Hello));
+
     if(hello != NULL)
-	hello->chunkSize = 2 * sizeof(IFF_UByte) + sizeof(IFF_UWord);
-    
+        hello->chunkSize = 2 * sizeof(IFF_UByte) + sizeof(IFF_UWord);
+
     return hello;
 }
 
 IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
 {
     TEST_Hello *hello = TEST_createHello();
-    
+
     if(hello != NULL)
     {
-	if(!IFF_readUByte(file, &hello->a, CHUNKID, "a"))
-	{
-	    TEST_free((IFF_Chunk*)hello);
-	    return NULL;
-	}
-    
-	if(!IFF_readUByte(file, &hello->b, CHUNKID, "b"))
-	{
-	    TEST_free((IFF_Chunk*)hello);
-	    return NULL;
-	}
-    
-	if(!IFF_readUWord(file, &hello->c, CHUNKID, "c"))
-	{
-	    TEST_free((IFF_Chunk*)hello);
-	    return NULL;
-	}
+        if(!IFF_readUByte(file, &hello->a, TEST_ID_HELO, "a"))
+        {
+            TEST_free((IFF_Chunk*)hello);
+            return NULL;
+        }
+
+        if(!IFF_readUByte(file, &hello->b, TEST_ID_HELO, "b"))
+        {
+            TEST_free((IFF_Chunk*)hello);
+            return NULL;
+        }
+
+        if(!IFF_readUWord(file, &hello->c, TEST_ID_HELO, "c"))
+        {
+            TEST_free((IFF_Chunk*)hello);
+            return NULL;
+        }
     }
-    
+
     return (IFF_Chunk*)hello;
 }
 
-int TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
-    
-    if(!IFF_writeUByte(file, hello->a, CHUNKID, "a"))
-	return FALSE;
-    
-    if(!IFF_writeUByte(file, hello->b, CHUNKID, "b"))
-	return FALSE;
-    
-    if(!IFF_writeUWord(file, hello->c, CHUNKID, "c"))
-	return FALSE;
-    
+
+    if(!IFF_writeUByte(file, hello->a, TEST_ID_HELO, "a"))
+        return FALSE;
+
+    if(!IFF_writeUByte(file, hello->b, TEST_ID_HELO, "b"))
+        return FALSE;
+
+    if(!IFF_writeUWord(file, hello->c, TEST_ID_HELO, "c"))
+        return FALSE;
+
     return TRUE;
 }
 
-int TEST_checkHello(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
-    
+
     if((hello->c < 0) || (hello->c > 1024))
     {
-	IFF_error("'HELO'.c must be between 0 and 1024\n");
-	return FALSE;
+        IFF_error("'HELO'.c must be between 0 and 1024\n");
+        return FALSE;
     }
-    
+
     return TRUE;
 }
 
@@ -102,25 +100,25 @@ void TEST_freeHello(IFF_Chunk *chunk)
 void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
-    
+
     IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
     IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
     IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
 }
 
-int TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
-    
+
     if(hello1->a != hello2->a)
-	return FALSE;
+        return FALSE;
 
     if(hello1->b != hello2->b)
-	return FALSE;
+        return FALSE;
 
     if(hello1->c != hello2->c)
-	return FALSE;
+        return FALSE;
 
     return TRUE;
 }

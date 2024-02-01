@@ -22,6 +22,8 @@
 #ifndef __IFF_PROP_H
 #define __IFF_PROP_H
 
+#define IFF_ID_PROP IFF_MAKEID('P', 'R', 'O', 'P')
+
 typedef struct IFF_Form IFF_Prop;
 
 #include <stdio.h>
@@ -40,7 +42,7 @@ extern "C" {
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Prop *IFF_createProp(const char *formType);
+IFF_Prop *IFF_createProp(const IFF_ID formType);
 
 /**
  * Adds a chunk to the body of the given PROP. This function also increments the
@@ -128,7 +130,7 @@ void IFF_updatePropChunkSizes(IFF_Prop *prop);
  * @param chunkId An arbitrary chunk ID
  * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
  */
-IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const char *chunkId);
+IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }

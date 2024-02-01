@@ -25,35 +25,37 @@
 #include "form.h"
 #include "iff.h"
 
+#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("hello.TEST", NULL, 0);
 
     if(chunk == NULL)
-	return 1;
+        return 1;
     else
     {
-	int status = 0;
-	
-	if(IFF_compareId(chunk->chunkId, "FORM") == 0)
-	{
-	    IFF_Form *form = (IFF_Form*)chunk;
-	    IFF_Chunk *lookupChunk = IFF_getChunkFromForm(form, "HELO");
-	    
-	    if(lookupChunk == NULL || IFF_compareId(lookupChunk->chunkId, "HELO") != 0)
-	    {
-		fprintf(stderr, "HELO chunk can't be obtained from the form!\n");
-		status = 1;
-	    }
-	}
-	else
-	{
-	    fprintf(stderr, "Error: the IFF file must be form!\n");
-	    status = 1;
-	}
-	
-	IFF_free(chunk, NULL, 0);
-	
-	return status;
+        int status = 0;
+
+        if(chunk->chunkId == IFF_ID_FORM)
+        {
+            IFF_Form *form = (IFF_Form*)chunk;
+            IFF_Chunk *lookupChunk = IFF_getChunkFromForm(form, ID_HELO);
+
+            if(lookupChunk == NULL || lookupChunk->chunkId  != ID_HELO)
+            {
+                fprintf(stderr, "HELO chunk can't be obtained from the form!\n");
+                status = 1;
+            }
+        }
+        else
+        {
+            fprintf(stderr, "Error: the IFF file must be form!\n");
+            status = 1;
+        }
+
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

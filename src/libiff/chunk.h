@@ -57,18 +57,18 @@ struct IFF_Chunk
  * @param chunkSize Size of the chunk in bytes
  * @return A generic chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
  */
-IFF_Chunk *IFF_allocateChunk(const char *chunkId, const size_t chunkSize);
+IFF_Chunk *IFF_allocateChunk(const IFF_ID chunkId, const size_t chunkSize);
 
 /**
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()
  *
  * @param file File descriptor of the file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.
@@ -80,7 +80,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *
  * @param extensionLength Length of the extension array
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
@@ -91,7 +91,7 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const char *formType
  * @param extensionLength Length of the extension array
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
@@ -101,7 +101,7 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const char *formType, const IFF_
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
  */
-void IFF_freeChunk(IFF_Chunk *chunk, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Displays a textual representation of an IFF chunk hierarchy on the standard output.
@@ -112,7 +112,7 @@ void IFF_freeChunk(IFF_Chunk *chunk, const char *formType, const IFF_Extension *
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
  */
-void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether two given chunk hierarchies are equal.
@@ -124,7 +124,7 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
  * @param extensionLength Length of the extension array
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
@@ -135,7 +135,7 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
  * @param formsLength An integer in which the length of the resulting array is stored
  * @return An array of forms having the given form type
  */
-IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
@@ -146,7 +146,7 @@ IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const char **formTypes, co
  * @return An array of forms having the given form type
  */
 
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const char *formType, unsigned int *formsLength);
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
 
 /**
  * Increments the given chunk size by the size of the given chunk.

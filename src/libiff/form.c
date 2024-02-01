@@ -25,14 +25,44 @@
 #include "id.h"
 #include "util.h"
 #include "list.h"
+#include "cat.h"
 #include "error.h"
 
-#define FORM_CHUNKID "FORM"
 #define FORM_GROUPTYPENAME "formType"
 
-IFF_Form *IFF_createForm(const char *formType)
+#define ID_FOR1 IFF_MAKEID('F', 'O', 'R', '1')
+#define ID_FOR2 IFF_MAKEID('F', 'O', 'R', '2')
+#define ID_FOR3 IFF_MAKEID('F', 'O', 'R', '3')
+#define ID_FOR4 IFF_MAKEID('F', 'O', 'R', '4')
+#define ID_FOR5 IFF_MAKEID('F', 'O', 'R', '5')
+#define ID_FOR6 IFF_MAKEID('F', 'O', 'R', '6')
+#define ID_FOR7 IFF_MAKEID('F', 'O', 'R', '7')
+#define ID_FOR8 IFF_MAKEID('F', 'O', 'R', '8')
+#define ID_FOR9 IFF_MAKEID('F', 'O', 'R', '9')
+
+#define ID_CAT1 IFF_MAKEID('C', 'A', 'T', '1')
+#define ID_CAT2 IFF_MAKEID('C', 'A', 'T', '2')
+#define ID_CAT3 IFF_MAKEID('C', 'A', 'T', '3')
+#define ID_CAT4 IFF_MAKEID('C', 'A', 'T', '4')
+#define ID_CAT5 IFF_MAKEID('C', 'A', 'T', '5')
+#define ID_CAT6 IFF_MAKEID('C', 'A', 'T', '6')
+#define ID_CAT7 IFF_MAKEID('C', 'A', 'T', '7')
+#define ID_CAT8 IFF_MAKEID('C', 'A', 'T', '8')
+#define ID_CAT9 IFF_MAKEID('C', 'A', 'T', '9')
+
+#define ID_LIS1 IFF_MAKEID('L', 'I', 'S', '1')
+#define ID_LIS2 IFF_MAKEID('L', 'I', 'S', '2')
+#define ID_LIS3 IFF_MAKEID('L', 'I', 'S', '3')
+#define ID_LIS4 IFF_MAKEID('L', 'I', 'S', '4')
+#define ID_LIS5 IFF_MAKEID('L', 'I', 'S', '5')
+#define ID_LIS6 IFF_MAKEID('L', 'I', 'S', '6')
+#define ID_LIS7 IFF_MAKEID('L', 'I', 'S', '7')
+#define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
+#define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
+
+IFF_Form *IFF_createForm(const IFF_ID formType)
 {
-    return (IFF_Form*)IFF_createGroup(FORM_CHUNKID, formType);
+    return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, formType);
 }
 
 void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)
@@ -42,7 +72,7 @@ void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)
 
 IFF_Form *IFF_readForm(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_Form*)IFF_readGroup(file, FORM_CHUNKID, chunkSize, FORM_GROUPTYPENAME, TRUE, extension, extensionLength);
+    return (IFF_Form*)IFF_readGroup(file, IFF_ID_FORM, chunkSize, FORM_GROUPTYPENAME, TRUE, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -53,15 +83,18 @@ IFF_Bool IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *ex
 IFF_Bool IFF_checkFormType(const IFF_ID formType)
 {
     unsigned int i;
+    IFF_ID2 formType2;
 
     /* A form type must be a valid ID */
     if(!IFF_checkId(formType))
         return FALSE;
 
+    IFF_idToString(formType, formType2);
+
     /* A form type is not allowed to have lowercase or puntuaction marks */
     for(i = 0; i < IFF_ID_SIZE; i++)
     {
-        if((formType[i] >= 0x61 && formType[i] <= 0x7a) || formType[i] == '.')
+        if((formType2[i] >= 0x61 && formType2[i] <= 0x7a) || formType2[i] == '.')
         {
             IFF_error("No lowercase characters or punctuation marks allowed in a form type ID!\n");
             return FALSE;
@@ -70,39 +103,39 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType)
 
     /* A form ID is not allowed to be equal to a group chunk ID */
 
-    if(IFF_compareId(formType, "LIST") == 0 ||
-       IFF_compareId(formType, "FORM") == 0 ||
-       IFF_compareId(formType, "PROP") == 0 ||
-       IFF_compareId(formType, "CAT ") == 0 ||
-       IFF_compareId(formType, "JJJJ") == 0 ||
-       IFF_compareId(formType, "LIS1") == 0 ||
-       IFF_compareId(formType, "LIS2") == 0 ||
-       IFF_compareId(formType, "LIS3") == 0 ||
-       IFF_compareId(formType, "LIS4") == 0 ||
-       IFF_compareId(formType, "LIS5") == 0 ||
-       IFF_compareId(formType, "LIS6") == 0 ||
-       IFF_compareId(formType, "LIS7") == 0 ||
-       IFF_compareId(formType, "LIS8") == 0 ||
-       IFF_compareId(formType, "LIS9") == 0 ||
-       IFF_compareId(formType, "FOR1") == 0 ||
-       IFF_compareId(formType, "FOR1") == 0 ||
-       IFF_compareId(formType, "FOR2") == 0 ||
-       IFF_compareId(formType, "FOR3") == 0 ||
-       IFF_compareId(formType, "FOR4") == 0 ||
-       IFF_compareId(formType, "FOR5") == 0 ||
-       IFF_compareId(formType, "FOR6") == 0 ||
-       IFF_compareId(formType, "FOR7") == 0 ||
-       IFF_compareId(formType, "FOR8") == 0 ||
-       IFF_compareId(formType, "FOR9") == 0 ||
-       IFF_compareId(formType, "CAT1") == 0 ||
-       IFF_compareId(formType, "CAT2") == 0 ||
-       IFF_compareId(formType, "CAT3") == 0 ||
-       IFF_compareId(formType, "CAT4") == 0 ||
-       IFF_compareId(formType, "CAT5") == 0 ||
-       IFF_compareId(formType, "CAT6") == 0 ||
-       IFF_compareId(formType, "CAT7") == 0 ||
-       IFF_compareId(formType, "CAT8") == 0 ||
-       IFF_compareId(formType, "CAT9") == 0)
+    if(formType == IFF_ID_LIST ||
+       formType == IFF_ID_FORM ||
+       formType == IFF_ID_PROP ||
+       formType == IFF_ID_CAT ||
+       formType == IFF_ID_JJJJ ||
+       formType == ID_LIS1 ||
+       formType == ID_LIS2 ||
+       formType == ID_LIS3 ||
+       formType == ID_LIS4 ||
+       formType == ID_LIS5 ||
+       formType == ID_LIS6 ||
+       formType == ID_LIS7 ||
+       formType == ID_LIS8 ||
+       formType == ID_LIS9 ||
+       formType == ID_FOR1 ||
+       formType == ID_FOR1 ||
+       formType == ID_FOR2 ||
+       formType == ID_FOR3 ||
+       formType == ID_FOR4 ||
+       formType == ID_FOR5 ||
+       formType == ID_FOR6 ||
+       formType == ID_FOR7 ||
+       formType == ID_FOR8 ||
+       formType == ID_FOR9 ||
+       formType == ID_CAT1 ||
+       formType == ID_CAT2 ||
+       formType == ID_CAT3 ||
+       formType == ID_CAT4 ||
+       formType == ID_CAT5 ||
+       formType == ID_CAT6 ||
+       formType == ID_CAT7 ||
+       formType == ID_CAT8 ||
+       formType == ID_CAT9)
     {
         IFF_error("Form type: '");
         IFF_errorId(formType);
@@ -116,7 +149,7 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType)
 
 static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
 {
-    if(IFF_compareId(subChunk->chunkId, "PROP") == 0)
+    if(subChunk->chunkId == IFF_ID_PROP)
     {
         IFF_error("ERROR: Element with chunk Id: '");
         IFF_errorId(subChunk->chunkId);
@@ -163,16 +196,16 @@ IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF
     return target;
 }
 
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
     unsigned int i;
 
     /* If the given form is what we look for, return it */
     for(i = 0; i < formTypesLength; i++)
     {
-        const char *formType = formTypes[i];
+        const IFF_ID formType = formTypes[i];
 
-        if(IFF_compareId(form->formType, formType) == 0)
+        if(form->formType == formType)
         {
             IFF_Form **forms = (IFF_Form**)malloc(sizeof(IFF_Form*));
             forms[0] = form;
@@ -204,7 +237,7 @@ static IFF_List *searchList(const IFF_Chunk *chunk)
         return NULL;
     else
     {
-        if(IFF_compareId(parent->chunkId, "LIST") == 0)
+        if(parent->chunkId == IFF_ID_LIST)
             return (IFF_List*)parent;
         else
             return searchList((IFF_Chunk*)parent);
@@ -219,7 +252,7 @@ static IFF_List *searchList(const IFF_Chunk *chunk)
  * @param chunkId A 4 character chunk id
  * @return The chunk with the given chunk id, or NULL if the chunk can't be found
  */
-static IFF_Chunk *searchProperty(const IFF_Chunk *chunk, const char *formType, const char *chunkId)
+static IFF_Chunk *searchProperty(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId)
 {
     IFF_List *list = searchList(chunk);
 
@@ -245,20 +278,20 @@ static IFF_Chunk *searchProperty(const IFF_Chunk *chunk, const char *formType, c
     }
 }
 
-IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const char *chunkId)
+IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
 {
     unsigned int i;
 
     for(i = 0; i < form->chunkLength; i++)
     {
-        if(IFF_compareId(form->chunk[i]->chunkId, chunkId) == 0)
+        if(form->chunk[i]->chunkId == chunkId)
             return form->chunk[i];
     }
 
     return NULL;
 }
 
-IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId)
+IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
 {
     /* Retrieve the chunk with the given id from the given form */
     IFF_Chunk *chunk = IFF_getDataChunkFromForm(form, chunkId);
@@ -270,7 +303,7 @@ IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId)
         return chunk;
 }
 
-IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const char *chunkId, unsigned int *chunksLength)
+IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength)
 {
     IFF_Chunk **result = NULL;
     unsigned int i;
@@ -279,7 +312,7 @@ IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const char *chunkId, uns
 
     for(i = 0; i < form->chunkLength; i++)
     {
-        if(IFF_compareId(form->chunk[i]->chunkId, chunkId) == 0)
+        if(form->chunk[i]->chunkId == chunkId)
         {
             result = (IFF_Chunk**)realloc(result, (*chunksLength + 1) * sizeof(IFF_Chunk*));
             result[*chunksLength] = form->chunk[i];

@@ -41,9 +41,12 @@ void IFF_error(const char *formatString, ...)
 void IFF_errorId(const IFF_ID id)
 {
     unsigned int i;
+    IFF_ID2 id2;
+
+    IFF_idToString(id, id2);
 
     for(i = 0; i < IFF_ID_SIZE; i++)
-        IFF_error("%c", id[i]);
+        IFF_error("%c", id2[i]);
 }
 
 void IFF_readError(const IFF_ID chunkId, const char *attributeName)

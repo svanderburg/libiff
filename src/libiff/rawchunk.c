@@ -27,7 +27,7 @@
 #include "id.h"
 #include "util.h"
 
-IFF_RawChunk *IFF_createRawChunk(const char *chunkId)
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_allocateChunk(chunkId, sizeof(IFF_RawChunk));
 
@@ -52,7 +52,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize)
+IFF_RawChunk *IFF_readRawChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize)
 {
     IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId);
     IFF_UByte *chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
@@ -68,14 +68,14 @@ IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long c
         IFF_error("Error reading raw chunk body of chunk: '");
         IFF_errorId(chunkId);
         IFF_error("'\n");
-        IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
+        IFF_freeChunk((IFF_Chunk*)rawChunk, 0, NULL, 0);
         return NULL;
     }
 
     /* If the chunk size is odd, we have to read the padding byte */
     if(!IFF_readPaddingByte(file, chunkSize, chunkId))
     {
-        IFF_freeChunk((IFF_Chunk*)rawChunk, NULL, NULL, 0);
+        IFF_freeChunk((IFF_Chunk*)rawChunk, 0, NULL, 0);
         return NULL;
     }
 
@@ -153,7 +153,7 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 
 void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel)
 {
-    if(IFF_compareId(rawChunk->chunkId, "TEXT") == 0)
+    if(rawChunk->chunkId == IFF_ID_TEXT)
         IFF_printText(rawChunk, indentLevel);
     else
         IFF_printRaw(rawChunk, indentLevel);

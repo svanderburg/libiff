@@ -28,55 +28,58 @@
 
 #define HELO_BYTES_SIZE 4
 
+#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
+
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("lookupproperty-override.TEST", NULL, 0);
 
     if(chunk == NULL)
-	return 1;
+        return 1;
     else
     {
-	int status = 0;
-	unsigned int formsLength;
-	IFF_Form **forms = IFF_searchForms(chunk, "TEST", &formsLength);
-	
-	if(formsLength == 2)
-	{
-	    IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], "HELO");
-	    
-	    if(heloChunk != NULL && IFF_compareId(heloChunk->chunkId, "HELO") == 0)
-	    {
-		if(heloChunk->chunkSize == HELO_BYTES_SIZE)
-		{
-		    if(heloChunk->chunkData[0] != '1' ||
-		       heloChunk->chunkData[1] != '2' ||
-		       heloChunk->chunkData[2] != '3' ||
-		       heloChunk->chunkData[3] != '4')
-		    {
-			fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
-			status = 1;
-		    }
-		}
-		else
-		{
-		    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
-		    status = 1;
-		}
-	    }
-	    else
-	    {
-		fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
-		status = 1;
-	    }
-	}
-	else
-	{
-	    fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
-	    status = 1;
-	}
-	
-	IFF_free(chunk, NULL, 0);
-	
-	return status;
+        int status = 0;
+        unsigned int formsLength;
+        IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
+
+        if(formsLength == 2)
+        {
+            IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], ID_HELO);
+
+            if(heloChunk != NULL && heloChunk->chunkId == ID_HELO)
+            {
+                if(heloChunk->chunkSize == HELO_BYTES_SIZE)
+                {
+                    if(heloChunk->chunkData[0] != '1' ||
+                       heloChunk->chunkData[1] != '2' ||
+                       heloChunk->chunkData[2] != '3' ||
+                       heloChunk->chunkData[3] != '4')
+                    {
+                        fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
+                        status = 1;
+                    }
+                }
+                else
+                {
+                    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
+                    status = 1;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
+                status = 1;
+            }
+        }
+        else
+        {
+            fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
+            status = 1;
+        }
+
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

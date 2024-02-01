@@ -23,27 +23,30 @@
 #include "iff.h"
 #include "chunk.h"
 #include "form.h"
+#include "id.h"
+
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("cat.TEST", NULL, 0);
-    
+
     if(chunk == NULL)
-	return 1;
+        return 1;
     else
     {
-	int status = 0;
-	unsigned int formsLength;
-	IFF_searchForms(chunk, "TEST", &formsLength);
-	
-	if(formsLength != 2)
-	{
-	    fprintf(stderr, "We should be able to find 2 TEST forms!\n");
-	    status = 1;
-	}
-	
-	IFF_free(chunk, NULL, 0);
-	
-	return status;
+        int status = 0;
+        unsigned int formsLength;
+        IFF_searchForms(chunk, ID_TEST, &formsLength);
+
+        if(formsLength != 2)
+        {
+            fprintf(stderr, "We should be able to find 2 TEST forms!\n");
+            status = 1;
+        }
+
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

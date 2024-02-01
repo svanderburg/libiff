@@ -63,7 +63,7 @@ struct IFF_Group
  * @param group A group chunk instance
  * @param groupType A group type ID
  */
-void IFF_initGroup(IFF_Group *group, const char *groupType);
+void IFF_initGroup(IFF_Group *group, const IFF_ID groupType);
 
 /**
  * Creates a new group chunk instance with the chunk id and group type.
@@ -73,7 +73,7 @@ void IFF_initGroup(IFF_Group *group, const char *groupType);
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createGroup(const char *chunkId, const char *groupType);
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, IFF_ID groupType);
 
 /**
  * Adds a chunk to the body of the given group. This function also increments the
@@ -97,7 +97,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param extensionLength Length of the extension array
  * @return The group struct derived from the file, or NULL if an error has occured
  */
-IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes all sub chunks inside a group to a file.
@@ -109,7 +109,7 @@ IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSi
  * @param extensionLength Length of the extension array
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a group chunk and its sub chunks to a file.
@@ -122,7 +122,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char 
  * @param extensionLength Length of the extension array
  * @return TRUE if the group has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const IFF_ID formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the given chunk size matches the chunk size of the group
@@ -143,7 +143,7 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSiz
  * @param extensionLength Length of the extension array
  * @return The size of the sub chunks together, or -1 if a failure has occured
  */
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the group chunk and its sub chunks conform to the IFF specification.
@@ -156,7 +156,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (c
  * @param extensionLength Length of the extension array
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_Bool IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const char *groupType), int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.
@@ -166,7 +166,7 @@ IFF_Bool IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const cha
  * @param extension Extension array which specifies how application file format chunks should be handled
  * @param extensionLength Length of the extension array
  */
-void IFF_freeGroup(IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeGroup(IFF_Group *group, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Displays the group type on the standard output.
@@ -175,7 +175,7 @@ void IFF_freeGroup(IFF_Group *group, const char *formType, const IFF_Extension *
  * @param groupType A group type ID
  * @param indentLevel Indent level of the textual representation
  */
-void IFF_printGroupType(const char *groupTypeName, const char *groupType, const unsigned int indentLevel);
+void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel);
 
 /**
  * Displays a textual representation of the sub chunks on the standard output.
@@ -186,7 +186,7 @@ void IFF_printGroupType(const char *groupTypeName, const char *groupType, const 
  * @param extension Extension array which specifies how application file format chunks should be handled
  * @param extensionLength Length of the extension array
  */
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Displays a textual representation of the group chunk and its sub chunks on the standard output.
@@ -198,7 +198,7 @@ void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLe
  * @param extension Extension array which specifies how application file format chunks should be handled
  * @param extensionLength Length of the extension array
  */
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Checks whether the given group chunks' contents is equal to each other.
@@ -210,7 +210,7 @@ void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, cons
  * @param extensionLength Length of the extension array
  * @return TRUE if the given groups are equal, else FALSE
  */
-IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.
@@ -221,7 +221,7 @@ IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, cons
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given group chunk.

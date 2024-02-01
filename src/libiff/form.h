@@ -22,6 +22,8 @@
 #ifndef __IFF_FORM_H
 #define __IFF_FORM_H
 
+#define IFF_ID_FORM IFF_MAKEID('F', 'O', 'R', 'M')
+
 typedef struct IFF_Form IFF_Form;
 
 #include <stdio.h>
@@ -66,7 +68,7 @@ struct IFF_Form
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createForm(const char *formType);
+IFF_Form *IFF_createForm(const IFF_ID formType);
 
 /**
  * Adds a chunk to the body of the given FORM. This function also increments the
@@ -168,7 +170,7 @@ IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given form chunk.
@@ -184,7 +186,7 @@ void IFF_updateFormChunkSizes(IFF_Form *form);
  * @param chunkId An arbitrary chunk ID
  * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
  */
-IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const char *chunkId);
+IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
 
 /**
  * Retrieves the chunk with the given chunk ID from the given form.
@@ -196,7 +198,7 @@ IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const char *chunkId);
  * @param chunkId An arbitrary chunk ID
  * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
  */
-IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId);
+IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
 
 /**
  * Retrieves all the chunks with the given chunk ID from the given form. The resulting array must be freed by using free().
@@ -206,7 +208,7 @@ IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const char *chunkId);
  * @param chunksLength A pointer to a variable in which the length of the array is stored
  * @return An array with pointers to the chunks with the requested chunk ID, or NULL if there can't be any chunk found
  */
-IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const char *chunkId, unsigned int *chunksLength);
+IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength);
 
 #ifdef __cplusplus
 }

@@ -39,7 +39,7 @@ extern "C" {
 struct IFF_FormExtension
 {
     /** A 4 character chunk id */
-    const char *chunkId;
+    IFF_ID chunkId;
 
     /** Function resposible for reading the given chunk */
     IFF_Chunk *(*readChunk) (FILE *file, const IFF_Long chunkSize);
@@ -66,7 +66,7 @@ struct IFF_FormExtension
 struct IFF_Extension
 {
     /** A 4 character form type id */
-    const char *formType;
+    IFF_ID formType;
 
     /** Specifies the number of application chunks in the form that should be handled by external functions */
     unsigned int formExtensionsLength;
@@ -84,7 +84,7 @@ struct IFF_Extension
  * @param extensionLength Length of the extension array
  * @return The form extension that handles the specified chunk or NULL if it does not exists
  */
-const IFF_FormExtension *IFF_findFormExtension(const char *formType, const char *chunkId, const IFF_Extension *extension, const unsigned int extensionLength);
+const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength);
 
 #ifdef __cplusplus
 }

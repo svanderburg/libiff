@@ -24,15 +24,16 @@
 #include <string.h>
 #include "id.h"
 #include "group.h"
+#include "list.h"
+#include "cat.h"
 #include "util.h"
 #include "error.h"
 
-#define PROP_CHUNKID "PROP"
 #define PROP_GROUPTYPENAME "formType"
 
-IFF_Prop *IFF_createProp(const char *formType)
+IFF_Prop *IFF_createProp(const IFF_ID formType)
 {
-    return (IFF_Prop*)IFF_createGroup(PROP_CHUNKID, formType);
+    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, formType);
 }
 
 void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
@@ -42,7 +43,7 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
 
 IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_Prop*)IFF_readGroup(file, PROP_CHUNKID, chunkSize, PROP_GROUPTYPENAME, TRUE, extension, extensionLength);
+    return (IFF_Prop*)IFF_readGroup(file, IFF_ID_PROP, chunkSize, PROP_GROUPTYPENAME, TRUE, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -52,10 +53,10 @@ IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *ex
 
 static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
 {
-    if(IFF_compareId(subChunk->chunkId, "FORM") == 0 ||
-       IFF_compareId(subChunk->chunkId, "LIST") == 0 ||
-       IFF_compareId(subChunk->chunkId, "CAT ") == 0 ||
-       IFF_compareId(subChunk->chunkId, "PROP") == 0)
+    if(subChunk->chunkId == IFF_ID_FORM ||
+       subChunk->chunkId == IFF_ID_LIST ||
+       subChunk->chunkId == IFF_ID_CAT ||
+       subChunk->chunkId == IFF_ID_PROP)
     {
         IFF_error("ERROR: Element with chunk Id: '");
         IFF_errorId(subChunk->chunkId);
@@ -92,7 +93,7 @@ void IFF_updatePropChunkSizes(IFF_Prop *prop)
     IFF_updateFormChunkSizes((IFF_Form*)prop);
 }
 
-IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const char *chunkId)
+IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const IFF_ID chunkId)
 {
     return IFF_getDataChunkFromForm((IFF_Form*)prop, chunkId);
 }

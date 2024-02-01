@@ -22,6 +22,9 @@
 #ifndef __IFF_CAT_H
 #define __IFF_CAT_H
 
+#define IFF_ID_CAT IFF_MAKEID('C', 'A', 'T', ' ')
+#define IFF_ID_JJJJ IFF_MAKEID('J', 'J', 'J', 'J')
+
 typedef struct IFF_CAT IFF_CAT;
 
 #include <stdio.h>
@@ -68,7 +71,7 @@ struct IFF_CAT
  * @param contentsType Contents type hinting what the contents of the CAT is.
  * @return CAT chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_CAT *IFF_createCAT(const char *contentsType);
+IFF_CAT *IFF_createCAT(const IFF_ID contentsType);
 
 /**
  * Adds a chunk to the body of the given CAT. This function also increments the
@@ -160,7 +163,7 @@ IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Exte
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given concatentation chunk.

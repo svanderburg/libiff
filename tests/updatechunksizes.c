@@ -25,8 +25,12 @@
 #include "form.h"
 #include "cat.h"
 #include "rawchunk.h"
+#include "id.h"
 
 #define ABCD_BYTES_SIZE 4
+
+#define ID_ABCD IFF_MAKEID('A', 'B', 'C', 'D')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
 int main(int argc, char *argv[])
 {
@@ -35,45 +39,45 @@ int main(int argc, char *argv[])
     IFF_Form *form;
     IFF_CAT *cat;
     int status = 0;
-    
+
     chunkData = (IFF_UByte*)malloc(ABCD_BYTES_SIZE * sizeof(IFF_UByte));
     chunkData[0] = 'A';
     chunkData[1] = 'B';
     chunkData[2] = 'C';
     chunkData[3] = 'D';
-    
-    rawChunk = IFF_createRawChunk("ABCD");
+
+    rawChunk = IFF_createRawChunk(ID_ABCD);
     IFF_setRawChunkData(rawChunk, chunkData, ABCD_BYTES_SIZE);
-    
-    form = IFF_createForm("TEST");
+
+    form = IFF_createForm(ID_TEST);
     IFF_addToForm(form, (IFF_Chunk*)rawChunk);
-    
-    cat = IFF_createCAT("TEST");
+
+    cat = IFF_createCAT(ID_TEST);
     IFF_addToCAT(cat, (IFF_Chunk*)form);
-    
+
     /* Intentionally increase the size of the ABCD chunk */
-    
+
     rawChunk->chunkData = (IFF_UByte*)realloc(chunkData, (ABCD_BYTES_SIZE + 1) * sizeof(IFF_UByte));
     rawChunk->chunkSize++;
-    
+
     /* The IFF file should be invalid now as the, form chunk size is too small */
     if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
     {
-	/* Update the chunk sizes */
-	IFF_updateChunkSizes((IFF_Chunk*)rawChunk);
-	
-	/* Now the IFF should be valid */
-	
-	if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
-	    status = 1;
+        /* Update the chunk sizes */
+        IFF_updateChunkSizes((IFF_Chunk*)rawChunk);
+
+        /* Now the IFF should be valid */
+
+        if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
+            status = 1;
     }
     else
     {
-	fprintf(stderr, "The IFF file should be invalid!\n");
-	status = 1;
+        fprintf(stderr, "The IFF file should be invalid!\n");
+        status = 1;
     }
-    
+
     IFF_free((IFF_Chunk*)cat, NULL, 0);
-    
+
     return status;
 }

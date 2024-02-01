@@ -25,14 +25,17 @@
 #include <ifftypes.h>
 #include <chunk.h>
 #include <stdio.h>
+#include <id.h>
+
+#define TEST_ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
 
 typedef struct
 {
     IFF_Group *parent;
-    
+
     IFF_ID chunkId;
     IFF_Long chunkSize;
-    
+
     IFF_Long one;
     IFF_Long two;
 }
@@ -42,14 +45,14 @@ TEST_Bye *TEST_createBye(void);
 
 IFF_Chunk *TEST_readBye(FILE *file, const IFF_Long chunkSize);
 
-int TEST_writeBye(FILE *file, const IFF_Chunk *chunk);
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk);
 
-int TEST_checkBye(const IFF_Chunk *chunk);
+IFF_Bool TEST_checkBye(const IFF_Chunk *chunk);
 
 void TEST_freeBye(IFF_Chunk *chunk);
 
 void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-int TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif

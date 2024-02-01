@@ -21,58 +21,48 @@
 
 #include "id.h"
 #include <string.h>
+#include "io.h"
 #include "error.h"
 
-void IFF_createId(IFF_ID id, const char *idString)
+IFF_Bool IFF_readId(FILE *file, IFF_ID *id, const IFF_ID chunkId, const char *attributeName)
 {
-    memcpy(id, idString, IFF_ID_SIZE);
-}
-
-IFF_Bool IFF_compareId(const IFF_ID id1, const char* id2)
-{
-    return strncmp(id1, id2, IFF_ID_SIZE);
-}
-
-IFF_Bool IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName)
-{
-    if(fread(id, IFF_ID_SIZE, 1, file) == 1)
-        return TRUE;
-    else
-    {
-        IFF_readError(chunkId, attributeName);
-        return FALSE;
-    }
+    return IFF_readULong(file, id, chunkId, attributeName);
 }
 
 IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName)
 {
-    if(fwrite(id, IFF_ID_SIZE, 1, file) == 1)
-        return TRUE;
-    else
-    {
-        IFF_writeError(chunkId, attributeName);
-        return FALSE;
-    }
+    return IFF_writeULong(file, id, chunkId, attributeName);
+}
+
+void IFF_idToString(const IFF_ID id, IFF_ID2 id2)
+{
+    id2[0] = id >> 24;
+    id2[1] = (id & 0xff0000) >> 16;
+    id2[2] = (id & 0xff00) >> 8;
+    id2[3] = id & 0xff;
 }
 
 IFF_Bool IFF_checkId(const IFF_ID id)
 {
+    IFF_ID2 id2;
     unsigned int i;
+
+    IFF_idToString(id, id2);
 
     /* ID characters must be between 0x20 and 0x7e */
 
     for(i = 0; i < IFF_ID_SIZE; i++)
     {
-        if(id[i] < 0x20 || id[i] > 0x7e)
+        if(id2[i] < 0x20 || id2[i] > 0x7e)
         {
-            IFF_error("Illegal character: '%c' in ID!\n", id[i]);
+            IFF_error("Illegal character: '%c' in ID!\n", id2[i]);
             return FALSE;
         }
     }
 
     /* Spaces may not precede an ID, trailing spaces are ok */
 
-    if(id[0] == ' ')
+    if(id2[0] == ' ')
     {
         IFF_error("Spaces may not precede an ID!\n");
         return FALSE;
@@ -83,8 +73,11 @@ IFF_Bool IFF_checkId(const IFF_ID id)
 
 void IFF_printId(const IFF_ID id)
 {
+    IFF_ID2 id2;
     unsigned int i;
 
+    IFF_idToString(id, id2);
+
     for(i = 0; i < IFF_ID_SIZE; i++)
-        printf("%c", id[i]);
+        printf("%c", id2[i]);
 }

@@ -28,10 +28,15 @@ static int compareExtension(const void *a, const void *b)
     const IFF_Extension *l = (IFF_Extension*)a;
     const IFF_Extension *r = (IFF_Extension*)b;
 
-    return IFF_compareId(l->formType, r->formType);
+    if(l->formType < r->formType)
+        return -1;
+    else if(l->formType > r->formType)
+        return 1;
+    else
+        return 0;
 }
 
-const static IFF_FormExtension *getFormExtensions(const char *formType, const IFF_Extension *extension, const unsigned int extensionLength, unsigned int *formExtensionsLength)
+const static IFF_FormExtension *getFormExtensions(const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength, unsigned int *formExtensionsLength)
 {
     IFF_Extension key;
     IFF_Extension *result;
@@ -57,10 +62,15 @@ static int compareFormExtension(const void *a, const void *b)
     const IFF_FormExtension *l = (IFF_FormExtension*)a;
     const IFF_FormExtension *r = (IFF_FormExtension*)b;
 
-    return IFF_compareId(l->chunkId, r->chunkId);
+    if(l->chunkId < r->chunkId)
+        return -1;
+    else if(l->chunkId > r->chunkId)
+        return 1;
+    else
+        return 0;
 }
 
-const static IFF_FormExtension *getFormExtension(const char *chunkId, const IFF_FormExtension *formExtension, const unsigned int formExtensionLength)
+const static IFF_FormExtension *getFormExtension(const IFF_ID chunkId, const IFF_FormExtension *formExtension, const unsigned int formExtensionLength)
 {
     IFF_FormExtension key;
     key.chunkId = chunkId;
@@ -68,9 +78,9 @@ const static IFF_FormExtension *getFormExtension(const char *chunkId, const IFF_
     return bsearch(&key, formExtension, formExtensionLength, sizeof(IFF_FormExtension), &compareFormExtension);
 }
 
-const IFF_FormExtension *IFF_findFormExtension(const char *formType, const char *chunkId, const IFF_Extension *extension, const unsigned int extensionLength)
+const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    if(formType == NULL)
+    if(formType == 0)
         return NULL;
     else
     {

@@ -25,12 +25,11 @@
 #include "list.h"
 #include "error.h"
 
-#define CAT_CHUNKID "CAT "
 #define CAT_GROUPTYPENAME "contentsType"
 
-IFF_CAT *IFF_createCAT(const char *contentsType)
+IFF_CAT *IFF_createCAT(const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createGroup(CAT_CHUNKID, contentsType);
+    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, contentsType);
 }
 
 void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk)
@@ -40,12 +39,12 @@ void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk)
 
 IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_CAT*)IFF_readGroup(file, CAT_CHUNKID, chunkSize, CAT_GROUPTYPENAME, FALSE, extension, extensionLength);
+    return (IFF_CAT*)IFF_readGroup(file, IFF_ID_CAT, chunkSize, CAT_GROUPTYPENAME, FALSE, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return IFF_writeGroup(file, (IFF_Group*)cat, NULL, CAT_GROUPTYPENAME, extension, extensionLength);
+    return IFF_writeGroup(file, (IFF_Group*)cat, 0, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
@@ -54,9 +53,9 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
 
-    if(IFF_compareId(subChunk->chunkId, "FORM") != 0 &&
-       IFF_compareId(subChunk->chunkId, "LIST") != 0 &&
-       IFF_compareId(subChunk->chunkId, "CAT ") != 0)
+    if(subChunk->chunkId != IFF_ID_FORM &&
+       subChunk->chunkId != IFF_ID_LIST &&
+       subChunk->chunkId != IFF_ID_CAT)
     {
         IFF_error("ERROR: Element with chunk Id: '");
         IFF_errorId(subChunk->chunkId);
@@ -64,35 +63,35 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
         return FALSE;
     }
 
-    if(IFF_compareId(cat->contentsType, "JJJJ") != 0)
+    if(cat->contentsType != IFF_ID_JJJJ)
     {
         /* Check whether form type or contents type matches the contents type of the CAT */
 
-        if(IFF_compareId(subChunk->chunkId, "FORM") == 0)
+        if(subChunk->chunkId == IFF_ID_FORM)
         {
             IFF_Form *form = (IFF_Form*)subChunk;
 
-            if(IFF_compareId(form->formType, cat->contentsType) != 0)
+            if(form->formType != cat->contentsType)
             {
                 IFF_error("Sub form does not match contentsType of the CAT!\n");
                 return FALSE;
             }
         }
-        else if(IFF_compareId(subChunk->chunkId, "LIST") == 0)
+        else if(subChunk->chunkId == IFF_ID_LIST)
         {
             IFF_List *list = (IFF_List*)subChunk;
 
-            if(IFF_compareId(list->contentsType, cat->contentsType) != 0)
+            if(list->contentsType != cat->contentsType)
             {
                 IFF_error("Sub list does not match contentsType of the CAT!\n");
                 return FALSE;
             }
         }
-        else if(IFF_compareId(subChunk->chunkId, "CAT ") == 0)
+        else if(subChunk->chunkId == IFF_ID_CAT)
         {
             IFF_CAT *subCat = (IFF_CAT*)subChunk;
 
-            if(IFF_compareId(subCat->contentsType, cat->contentsType) != 0)
+            if(subCat->contentsType != cat->contentsType)
             {
                 IFF_error("Sub cat does not match contentsType of the CAT!\n");
                 return FALSE;
@@ -105,25 +104,25 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
 IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return IFF_checkGroup((IFF_Group*)cat, &IFF_checkId, &IFF_checkCATSubChunk, NULL, extension, extensionLength);
+    return IFF_checkGroup((IFF_Group*)cat, &IFF_checkId, &IFF_checkCATSubChunk, 0, extension, extensionLength);
 }
 
 void IFF_freeCAT(IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_freeGroup((IFF_Group*)cat, NULL, extension, extensionLength);
+    IFF_freeGroup((IFF_Group*)cat, 0, extension, extensionLength);
 }
 
 void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_printGroup((const IFF_Group*)cat, indentLevel, NULL, CAT_GROUPTYPENAME, extension, extensionLength);
+    IFF_printGroup((const IFF_Group*)cat, indentLevel, 0, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, NULL, extension, extensionLength);
+    return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, 0, extension, extensionLength);
 }
 
-IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
     return IFF_searchFormsInGroup((IFF_Group*)cat, formTypes, formTypesLength, formsLength);
 }

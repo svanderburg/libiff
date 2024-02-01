@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
 }
 ```
 
-Programatically creating IFF files
-----------------------------------
+Programmatically creating IFF files
+-----------------------------------
 An IFF file can be created by composing various IFF struct instances together.
 The following example creates a concatenation chunk containing a 'TEST' form.
 The 'TEST' form contains a 'HELO' chunk containing "abcd", and a 'BYE ' chunk
@@ -144,6 +144,10 @@ containing "1234":
 
 #define HELO_BYTES_SIZE 4
 #define BYE_BYTES_SIZE 4
+
+#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+#define ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
 int main(int argc, char *argv[])
 {
@@ -161,7 +165,7 @@ int main(int argc, char *argv[])
     heloChunkData[3] = 'd';
 
     /* Create the actual 'HELO' chunk */
-    heloChunk = IFF_createRawChunk("HELO");
+    heloChunk = IFF_createRawChunk(ID_HELO);
 
     /* Attach the chunk data to the 'HELO' chunk */
     IFF_setRawChunkData(heloChunk, heloChunkData, HELO_BYTES_SIZE);
@@ -174,18 +178,18 @@ int main(int argc, char *argv[])
     byeChunkData[3] = '4';
 
     /* Create the actual 'BYE ' chunk and attach the data to it */
-    byeChunk = IFF_createRawChunk("BYE ");
+    byeChunk = IFF_createRawChunk(ID_BYE);
     IFF_setRawChunkData(byeChunk, byeChunkData, BYE_BYTES_SIZE);
 
     /* Create the 'TEST' form chunk */
-    form = IFF_createForm("TEST");
+    form = IFF_createForm(ID_TEST);
 
     /* Attach the 'HELO' and 'BYE ' chunk to the form */
     IFF_addToForm((IFF_Chunk*)heloChunk);
     IFF_addToForm((IFF_Chunk*)byeChunk);
 
     /* Create a concatenation chunk */
-    cat = IFF_createCAT("TEST");
+    cat = IFF_createCAT(ID_TEST);
 
     /* Attach the form to the concatenation chunk */
     IFF_addToCAT((IFF_Chunk*)form);
@@ -226,6 +230,10 @@ The following example shows how these functions can be used:
 #include <libiff/chunk.h>
 #include <libiff/form.h>
 
+#define ID_ILBM IFF_MAKEID('I', 'L', 'B', 'M')
+#define ID_BMHD IFF_MAKEID('B', 'M', 'H', 'D')
+#define ID_CRNG IFF_MAKEID('C', 'R', 'N', 'G')
+
 int main(int argc, char *argv[])
 {
     /* Declarations */
@@ -236,7 +244,7 @@ int main(int argc, char *argv[])
     /* Create or read an IFF file here */
 
     /* Search for all forms having an ILBM form type */
-    ilbmForms = IFF_searchForms(chunk, "ILBM", &ilbmFormsLength);
+    ilbmForms = IFF_searchForms(chunk, ID_ILBM, &ilbmFormsLength);
 
     /* Iterate over all ILBM forms in the given IFF file */
 
@@ -246,10 +254,10 @@ int main(int argc, char *argv[])
         unsigned int colorRangesLength;
 
         /* Retrieve the BMHD data property from the ILBM form */
-        IFF_Chunk *bitMapHeader = IFF_getChunkFromForm(ilbmForm, "BMHD");
+        IFF_Chunk *bitMapHeader = IFF_getChunkFromForm(ilbmForm, ID_BMHD);
 
         /* Retrieve all possible CRNG properties from the ILBM form */
-        IFF_Chunk **colorRanges = IFF_getChunksFromForm(ilbmForm, "CRNG", &colorRangesLength);
+        IFF_Chunk **colorRanges = IFF_getChunksFromForm(ilbmForm, ID_CRNG, &colorRangesLength);
     }
 
     return 0;
@@ -371,6 +379,8 @@ interface of an imaginary TEST file format:
 #include <stdio.h>
 #include <libiff/chunk.h>
 
+#define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
+
 IFF_Chunk *TEST_read(const char *filename);
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk);
@@ -393,6 +403,7 @@ The implementation of this interface (`test.c`) may look as follows:
 ```C
 #include "test.h"
 #include <libiff/iff.h>
+#include <libiff/id.h>
 #include "hello.h"
 #include "bye.h"
 
@@ -405,8 +416,8 @@ The implementation of this interface (`test.c`) may look as follows:
  * that they can be found by a binary search algorithm.
  */
 static IFF_FormExtension testFormExtension[] = {
-    {"BYE ", &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
-    {"HELO", &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+    {TEST_ID_BYE, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {TEST_ID_HELO, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 /*
@@ -414,7 +425,7 @@ static IFF_FormExtension testFormExtension[] = {
  * Also these form types must be alphabetically sorted.
  */
 static IFF_Extension extension[] = {
-    {"TEST", TEST_NUM_OF_EXTENSION_CHUNKS, testFormExtension}
+    {TEST_ID_TEST, TEST_NUM_OF_EXTENSION_CHUNKS, testFormExtension}
 };
 
 /* The following functions hide the the extension parameters for this application format */
@@ -471,6 +482,9 @@ this (this example defines `hello.h` to which the previous example refers):
 #include <libiff/ifftypes.h>
 #include <libiff/group.h>
 #include <libiff/chunk.h>
+#include <libiff/id.h>
+
+#define TEST_ID_HELO IFF_MAKE('H', 'E', 'L', 'O')
 
 typedef struct
 {
@@ -518,11 +532,9 @@ And the implementation may look as follows:
 #include <libiff/util.h>
 #include "test.h"
 
-#define CHUNKID "HELO"
-
 TEST_Hello *TEST_createHello(void)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(CHUNKID, sizeof(TEST_Hello));
+    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, sizeof(TEST_Hello));
 
     if(hello != NULL)
         hello->chunkSize = 2 * sizeof(IFF_UByte) + sizeof(IFF_UWord);
@@ -536,19 +548,19 @@ IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
 
     if(hello != NULL)
     {
-        if(!IFF_readUByte(file, &hello->a, CHUNKID, "a"))
+        if(!IFF_readUByte(file, &hello->a, TEST_ID_HELO, "a"))
         {
             TEST_free((IFF_Chunk*)hello);
             return NULL;
         }
 
-        if(!IFF_readUByte(file, &hello->b, CHUNKID, "b"))
+        if(!IFF_readUByte(file, &hello->b, TEST_ID_HELO, "b"))
         {
             TEST_free((IFF_Chunk*)hello);
             return NULL;
         }
 
-        if(!IFF_readUWord(file, &hello->c, CHUNKID, "c"))
+        if(!IFF_readUWord(file, &hello->c, TEST_ID_HELO, "c"))
         {
             TEST_free((IFF_Chunk*)hello);
             return NULL;
@@ -562,13 +574,13 @@ IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
 {
     const TEST_Hello *hello = (TEST_Hello*)chunk;
 
-    if(!IFF_writeUByte(file, hello->a, CHUNKID, "a"))
+    if(!IFF_writeUByte(file, hello->a, TEST_ID_HELO, "a"))
         return FALSE;
 
-    if(!IFF_writeUByte(file, hello->b, CHUNKID, "b"))
+    if(!IFF_writeUByte(file, hello->b, TEST_ID_HELO, "b"))
         return FALSE;
 
-    if(!IFF_writeUWord(file, hello->c, CHUNKID, "c"))
+    if(!IFF_writeUWord(file, hello->c, TEST_ID_HELO, "c"))
         return FALSE;
 
     return TRUE;

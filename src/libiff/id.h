@@ -25,26 +25,13 @@
 #include <stdio.h>
 #include "ifftypes.h"
 
+#define IFF_MAKEID(a, b, c, d) ( (a) << 24 | (b) << 16 | (c) << 8 | (d) )
+
+typedef char IFF_ID2[4];
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * Creates a 4 character ID from a string.
- *
- * @param id A 4 character IFF id
- * @param idString String containing a 4 character ID
- */
-void IFF_createId(IFF_ID id, const char *idString);
-
-/**
- * Compares two IFF ids
- *
- * @param id1 An IFF ID to compare
- * @param id2 An IFF ID to compare
- * @return 0 if the IDs are equal, a value lower than 0 if id1 is lower than id2, a value higher than 1 if id1 is higher than id2
- */
-int IFF_compareId(const IFF_ID id1, const char* id2);
 
 /**
  * Reads an IFF id from a file
@@ -55,7 +42,7 @@ int IFF_compareId(const IFF_ID id1, const char* id2);
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
-IFF_Bool IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readId(FILE *file, IFF_ID *id, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an IFF id to a file
@@ -67,6 +54,14 @@ IFF_Bool IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *att
  * @return TRUE if the ID is succesfully written, else FALSE
  */
 IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+
+/**
+ * Converts a given ID to a string representation
+ *
+ * @param id ID to convert
+ * @param id2 A 4-character array containing its string representation
+ */
+void IFF_idToString(const IFF_ID id, IFF_ID2 id2);
 
 /**
  * Checks whether an IFF id is valid

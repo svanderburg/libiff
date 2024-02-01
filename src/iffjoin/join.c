@@ -30,8 +30,8 @@
 
 int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, const char *outputFilename)
 {
-    IFF_CAT *cat = IFF_createCAT("JJJJ");
-    IFF_ID lastType;
+    IFF_CAT *cat = IFF_createCAT(IFF_ID_JJJJ);
+    IFF_ID lastType = 0;
     int sameIds = TRUE;
     unsigned int i;
     int status = 0;
@@ -53,32 +53,32 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
 
             if(sameIds)
             {
-                if(IFF_compareId(chunk->chunkId, "FORM") == 0)
+                if(chunk->chunkId == IFF_ID_FORM)
                 {
                     IFF_Form *form = (IFF_Form*)chunk;
 
-                    if((i > 0) && IFF_compareId(form->formType, lastType) != 0)
+                    if((i > 0) && form->formType != lastType)
                         sameIds = FALSE;
 
-                    IFF_createId(lastType, form->formType);
+                    lastType = form->formType;
                 }
-                else if(IFF_compareId(chunk->chunkId, "CAT ") == 0)
+                else if(chunk->chunkId == IFF_ID_CAT)
                 {
                     IFF_CAT *cat = (IFF_CAT*)chunk;
 
-                    if((i > 0) && IFF_compareId(cat->contentsType, lastType) != 0)
+                    if((i > 0) && cat->contentsType != lastType)
                         sameIds = FALSE;
 
-                    IFF_createId(lastType, cat->contentsType);
+                    lastType = cat->contentsType;
                 }
-                else if(IFF_compareId(chunk->chunkId, "LIST") == 0)
+                else if(chunk->chunkId == IFF_ID_LIST)
                 {
                     IFF_List *list = (IFF_List*)chunk;
 
-                    if((i > 0) && IFF_compareId(list->contentsType, lastType) != 0)
+                    if((i > 0) && list->contentsType != lastType)
                         sameIds = FALSE;
 
-                    IFF_createId(lastType, list->contentsType);
+                    lastType = list->contentsType;
                 }
             }
 
@@ -89,7 +89,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
 
     /* If all form types are the same, then change the contentsType of this CAT to hint about it. Otherwise the contentsType remains 'JJJJ' */
     if(sameIds)
-        IFF_createId(cat->contentsType, lastType);
+        cat->contentsType = lastType;
 
     /* Write the resulting CAT */
 

@@ -23,16 +23,18 @@
 #define __TEST_H
 #include "chunk.h"
 
+#define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
+
 IFF_Chunk *TEST_read(const char *filename);
 
-int TEST_write(const char *filename, const IFF_Chunk *chunk);
+IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk);
 
 void TEST_free(IFF_Chunk *chunk);
 
-int TEST_check(const IFF_Chunk *chunk);
+IFF_Bool TEST_check(const IFF_Chunk *chunk);
 
 void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-int TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif

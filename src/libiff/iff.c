@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "id.h"
+#include "cat.h"
+#include "list.h"
 #include "util.h"
 #include "error.h"
 
@@ -32,7 +34,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
     int byte;
 
     /* Read the chunk */
-    chunk = IFF_readChunk(file, NULL, extension, extensionLength);
+    chunk = IFF_readChunk(file, 0, extension, extensionLength);
 
     if(chunk == NULL)
     {
@@ -73,7 +75,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
 
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return IFF_writeChunk(file, chunk, NULL, extension, extensionLength);
+    return IFF_writeChunk(file, chunk, 0, extension, extensionLength);
 }
 
 IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -94,30 +96,30 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Exten
 
 void IFF_free(IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_freeChunk(chunk, NULL, extension, extensionLength);
+    IFF_freeChunk(chunk, 0, extension, extensionLength);
 }
 
 IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     /* The main chunk must be of ID: FORM, CAT or LIST */
 
-    if(IFF_compareId(chunk->chunkId, "FORM") != 0 &&
-       IFF_compareId(chunk->chunkId, "CAT ") != 0 &&
-       IFF_compareId(chunk->chunkId, "LIST") != 0)
+    if(chunk->chunkId != IFF_ID_FORM &&
+       chunk->chunkId != IFF_ID_CAT &&
+       chunk->chunkId != IFF_ID_LIST)
     {
         IFF_error("Not a valid IFF-85 file: First bytes should start with either: 'FORM', 'CAT ' or 'LIST'\n");
         return FALSE;
     }
     else
-        return IFF_checkChunk(chunk, NULL, extension, extensionLength);
+        return IFF_checkChunk(chunk, 0, extension, extensionLength);
 }
 
 void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_printChunk(chunk, indentLevel, NULL, extension, extensionLength);
+    IFF_printChunk(chunk, indentLevel, 0, extension, extensionLength);
 }
 
 IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return IFF_compareChunk(chunk1, chunk2, NULL, extension, extensionLength);
+    return IFF_compareChunk(chunk1, chunk2, 0, extension, extensionLength);
 }

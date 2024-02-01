@@ -22,6 +22,8 @@
 #ifndef __IFF_LIST_H
 #define __IFF_LIST_H
 
+#define IFF_ID_LIST IFF_MAKEID('L', 'I', 'S', 'T')
+
 typedef struct IFF_List IFF_List;
 
 #include <stdio.h>
@@ -75,7 +77,7 @@ struct IFF_List
  * @param contentsType Contents type hinting what the contents of the list is.
  * @return A list chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_List *IFF_createList(const char *contentsType);
+IFF_List *IFF_createList(const IFF_ID contentsType);
 
 /**
  * Adds a PROP chunk to the body of the given list. This function also increments the
@@ -167,7 +169,7 @@ IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF
  * @param formsLength Returns the length of the resulting array
  * @return An array of form structs
  */
-IFF_Form **IFF_searchFormsInList(IFF_List *list, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Form **IFF_searchFormsInList(IFF_List *list, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given list chunk.
@@ -183,7 +185,7 @@ void IFF_updateListChunkSizes(IFF_List *list);
  * @param formType Form type describing the purpose of the sub chunks.
  * @return The requested PROP chunk, or NULL if the PROP chunk does not exists.
  */
-IFF_Prop *IFF_getPropFromList(const IFF_List *list, const char *formType);
+IFF_Prop *IFF_getPropFromList(const IFF_List *list, const IFF_ID formType);
 
 #ifdef __cplusplus
 }

@@ -25,15 +25,15 @@
 #include "error.h"
 #include "util.h"
 
-void IFF_initGroup(IFF_Group *group, const char *groupType)
+void IFF_initGroup(IFF_Group *group, const IFF_ID groupType)
 {
     group->chunkSize = IFF_ID_SIZE; /* We have the group type */
-    IFF_createId(group->groupType, groupType);
+    group->groupType = groupType;
     group->chunkLength = 0;
     group->chunk = NULL;
 }
 
-IFF_Group *IFF_createGroup(const char *chunkId, const char *groupType)
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_ID groupType)
 {
     IFF_Group *group = (IFF_Group*)IFF_allocateChunk(chunkId, sizeof(IFF_Group));
 
@@ -53,14 +53,14 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     chunk->parent = group;
 }
 
-IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_ID groupType;
     IFF_Group *group;
-    char *formType;
+    IFF_ID formType;
 
     /* Read group type */
-    if(!IFF_readId(file, groupType, chunkId, groupTypeName))
+    if(!IFF_readId(file, &groupType, chunkId, groupTypeName))
         return NULL;
 
     /* Create new group */
@@ -70,7 +70,7 @@ IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSi
     if(groupTypeIsFormType)
         formType = groupType;
     else
-        formType = NULL;
+        formType = 0;
 
     /* Keep parsing sub chunks until we have read all bytes */
 
@@ -101,7 +101,7 @@ IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSi
     return group;
 }
 
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
 
@@ -117,7 +117,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const char 
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const IFF_ID formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     if(!IFF_writeId(file, group->groupType, group->chunkId, groupTypeName))
         return FALSE;
@@ -141,7 +141,7 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSiz
     }
 }
 
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
     IFF_Long chunkSize = 0;
@@ -163,7 +163,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, int (*subChunkCheck) (c
     return chunkSize;
 }
 
-IFF_Bool IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const char *groupType), int (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Long chunkSize;
 
@@ -181,7 +181,7 @@ IFF_Bool IFF_checkGroup(const IFF_Group *group, int (*groupTypeCheck) (const cha
     return TRUE;
 }
 
-void IFF_freeGroup(IFF_Group *group, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_freeGroup(IFF_Group *group, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
 
@@ -191,14 +191,14 @@ void IFF_freeGroup(IFF_Group *group, const char *formType, const IFF_Extension *
     free(group->chunk);
 }
 
-void IFF_printGroupType(const char *groupTypeName, const char *groupType, const unsigned int indentLevel)
+void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
 {
     IFF_printIndent(stdout, indentLevel, "%s = '", groupTypeName);
     IFF_printId(groupType);
     printf("';\n");
 }
 
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
 
@@ -210,15 +210,15 @@ void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLe
     IFF_printIndent(stdout, indentLevel, "];\n");
 }
 
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_printGroupType(groupTypeName, group->groupType, indentLevel);
     IFF_printGroupSubChunks(group, indentLevel, formType, extension, extensionLength);
 }
 
-IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    if((IFF_compareId(group1->groupType, group2->groupType) == 0) && (group1->chunkLength == group2->chunkLength))
+    if((group1->groupType == group2->groupType) && (group1->chunkLength == group2->chunkLength))
     {
         unsigned int i;
 
@@ -234,7 +234,7 @@ IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, cons
         return FALSE;
 }
 
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const char **formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
     IFF_Form **forms = NULL;
     unsigned int i;

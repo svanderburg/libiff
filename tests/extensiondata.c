@@ -29,18 +29,18 @@ IFF_Form *IFF_createTestForm()
 {
     TEST_Hello *hello;
     TEST_Bye *bye;
-    
-    IFF_Form *form = IFF_createForm("TEST");
-    
+
+    IFF_Form *form = IFF_createForm(TEST_ID_TEST);
+
     hello = TEST_createHello();
     hello->a = 'a';
     hello->b = 'b';
     hello->c = 4096;
-    
+
     bye = TEST_createBye();
     bye->one = 1;
     bye->two = 2;
-    
+
     IFF_addToForm(form, (IFF_Chunk*)hello);
     IFF_addToForm(form, (IFF_Chunk*)bye);
 
