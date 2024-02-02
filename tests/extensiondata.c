@@ -25,7 +25,7 @@
 #include "hello.h"
 #include "bye.h"
 
-IFF_Form *IFF_createTestForm()
+IFF_Form *IFF_createTestForm(void)
 {
     TEST_Hello *hello;
     TEST_Bye *bye;

@@ -39,7 +39,7 @@ IFF_UByte heloData[] = {'q', 'w', 'e', 'r'};
 IFF_UByte bye1Data[] = {'a', 'b', 'c', 'd'};
 IFF_UByte bye2Data[] = {'E', 'F', 'G', 'H'};
 
-IFF_List *IFF_createTestList()
+IFF_List *IFF_createTestList(void)
 {
     IFF_Prop *testProp;
     IFF_UByte *heloBytes, *bye1Bytes, *bye2Bytes;

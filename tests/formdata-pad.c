@@ -36,7 +36,7 @@ IFF_UByte byeData[] = {'E', 'F', 'G', 'H', 'I'};
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 #define ID_BYE  IFF_MAKEID('B', 'Y', 'E', ' ')
 
-IFF_Form *IFF_createTestForm()
+IFF_Form *IFF_createTestForm(void)
 {
     IFF_RawChunk *heloChunk, *byeChunk;
     IFF_UByte *heloBytes, *byeBytes;

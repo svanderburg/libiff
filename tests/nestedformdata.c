@@ -40,7 +40,7 @@ IFF_UByte bye1Data[] = {'E', 'F', 'G'};
 IFF_UByte helo2Data[] = {'a', 'b', 'c', 'd', 'e'};
 IFF_UByte bye2Data[] = {'F', 'G', 'H', 'I'};
 
-IFF_Form *IFF_createTestForm()
+IFF_Form *IFF_createTestForm(void)
 {
     IFF_Form *test1Form, *test2Form, *outerForm;
     IFF_RawChunk *helo1Chunk, *helo2Chunk, *bye1Chunk, *bye2Chunk;

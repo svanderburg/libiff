@@ -25,9 +25,7 @@
 int main(int argc, char *argv[])
 {
     IFF_Form *form = IFF_createTestForm();
-    int status = TEST_write("extension.TEST", (IFF_Chunk*)form);
-    
+    int status = !TEST_write("extension.TEST", (IFF_Chunk*)form);
     TEST_free((IFF_Chunk*)form);
-    
-    return (!status);
+    return status;
 }

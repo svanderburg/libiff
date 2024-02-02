@@ -26,20 +26,20 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("list.TEST", NULL, 0);
-    
+
     if(chunk == NULL)
     {
-	fprintf(stderr, "Cannot open 'list.TEST'\n");
-	return 1;
+        fprintf(stderr, "Cannot open 'list.TEST'\n");
+        return 1;
     }
     else
     {
-	IFF_List *list = IFF_createTestList();
-	int status = IFF_compare(chunk, (IFF_Chunk*)list, NULL, 0);
-	
-	IFF_free((IFF_Chunk*)list, NULL, 0);
-	IFF_free(chunk, NULL, 0);
-	
-	return (!status);
+        IFF_List *list = IFF_createTestList();
+        int status = !IFF_compare(chunk, (IFF_Chunk*)list, NULL, 0);
+
+        IFF_free((IFF_Chunk*)list, NULL, 0);
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

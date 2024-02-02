@@ -26,20 +26,20 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("nestedform.TEST", NULL, 0);
-    
+
     if(chunk == NULL)
     {
-	fprintf(stderr, "Cannot open 'nestedform.TEST'\n");
-	return 1;
+        fprintf(stderr, "Cannot open 'nestedform.TEST'\n");
+        return 1;
     }
     else
     {
-	IFF_Form *form = IFF_createTestForm();
-	int status = IFF_compare(chunk, (IFF_Chunk*)form, NULL, 0);
-	
-	IFF_free((IFF_Chunk*)form, NULL, 0);
-	IFF_free(chunk, NULL, 0);
-	
-	return (!status);
+        IFF_Form *form = IFF_createTestForm();
+        int status = !IFF_compare(chunk, (IFF_Chunk*)form, NULL, 0);
+
+        IFF_free((IFF_Chunk*)form, NULL, 0);
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

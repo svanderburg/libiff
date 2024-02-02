@@ -36,7 +36,7 @@
 static IFF_UByte heloData[] = {'a', 'b', 'c', 'd'};
 static IFF_UByte byeData[] = {'E', 'F', 'G', 'H'};
 
-IFF_Form *IFF_createTestForm()
+IFF_Form *IFF_createTestForm(void)
 {
     IFF_RawChunk *heloChunk, *byeChunk;
     IFF_UByte *heloBytes, *byeBytes;

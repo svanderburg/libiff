@@ -25,12 +25,13 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = TEST_read(argv[1]);
-    
+
     if(chunk == NULL)
-	return 1;
+        return 1;
     else
     {
-	TEST_print(chunk, 0);
-	return 0;
+        TEST_print(chunk, 0);
+        TEST_free(chunk);
+        return 0;
     }
 }

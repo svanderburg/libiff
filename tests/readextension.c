@@ -26,20 +26,20 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = TEST_read("extension.TEST");
-    
+
     if(chunk == NULL)
     {
-	fprintf(stderr, "Cannot open 'extension.TEST'\n");
-	return 1;
+        fprintf(stderr, "Cannot open 'extension.TEST'\n");
+        return 1;
     }
     else
     {
-	IFF_Form *form = IFF_createTestForm();
-	int status = TEST_compare(chunk, (IFF_Chunk*)form);
-	
-	TEST_free((IFF_Chunk*)form);
-	TEST_free(chunk);
-	
-	return (!status);
+        IFF_Form *form = IFF_createTestForm();
+        int status = !TEST_compare(chunk, (IFF_Chunk*)form);
+
+        TEST_free((IFF_Chunk*)form);
+        TEST_free(chunk);
+
+        return status;
     }
 }

@@ -25,20 +25,13 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read(argv[1], NULL, 0);
-    
+
     if(chunk == NULL)
-	return 0;
+        return 0; /* May fail */
     else
     {
-	int status;
-	
-	if(IFF_check(chunk, NULL, 0)) /* Should fail */
-	    status = 1;
-	else
-	    status = 0;
-	
-	IFF_free(chunk, NULL, 0);
-	
-	return status;
+        int status = IFF_check(chunk, NULL, 0); /* May fail */
+        IFF_free(chunk, NULL, 0);
+        return status;
     }
 }

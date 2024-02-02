@@ -24,16 +24,14 @@
 
 int main(int argc, char *argv[])
 {
-    int status;
     IFF_Chunk *chunk = TEST_read("extension.TEST");
-    
-    /* The given file should be invalid */
-    if(TEST_check(chunk))
-	status = 1;
+
+    if(chunk == NULL)
+        return 1;
     else
-	status = 0;
-
-    TEST_free(chunk);
-
-    return status;
+    {
+        int status = TEST_check(chunk); /* The given file should be invalid */
+        TEST_free(chunk);
+        return status;
+    }
 }

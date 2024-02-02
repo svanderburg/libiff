@@ -26,20 +26,20 @@
 int main(int argc, char *argv[])
 {
     IFF_Chunk *chunk = IFF_read("cat.TEST", NULL, 0);
-    
+
     if(chunk == NULL)
     {
-	fprintf(stderr, "Cannot open 'cat.TEST'\n");
-	return 1;
+        fprintf(stderr, "Cannot open 'cat.TEST'\n");
+        return 1;
     }
     else
     {
-	IFF_CAT *cat = IFF_createTestCAT();
-	int status = IFF_compare(chunk, (IFF_Chunk*)cat, NULL, 0);
-	
-	IFF_free(chunk, NULL, 0);
-	IFF_free((IFF_Chunk*)cat, NULL, 0);
-	
-	return (!status);
+        IFF_CAT *cat = IFF_createTestCAT();
+        int status = !IFF_compare(chunk, (IFF_Chunk*)cat, NULL, 0);
+
+        IFF_free(chunk, NULL, 0);
+        IFF_free((IFF_Chunk*)cat, NULL, 0);
+
+        return status;
     }
 }
