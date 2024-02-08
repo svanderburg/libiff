@@ -25,24 +25,35 @@
 #include "hello.h"
 #include "bye.h"
 
-IFF_Form *IFF_createTestForm(void)
+static IFF_Chunk *createHelloChunk(void)
 {
-    TEST_Hello *hello;
-    TEST_Bye *bye;
+    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_HELO_DEFAULT_SIZE);
 
-    IFF_Form *form = IFF_createForm(TEST_ID_TEST);
-
-    hello = TEST_createHello();
     hello->a = 'a';
     hello->b = 'b';
     hello->c = 4096;
 
-    bye = TEST_createBye();
+    return (IFF_Chunk*)hello;
+}
+
+static IFF_Chunk *createByeChunk(void)
+{
+    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_BYE_DEFAULT_SIZE);
+
     bye->one = 1;
     bye->two = 2;
 
-    IFF_addToForm(form, (IFF_Chunk*)hello);
-    IFF_addToForm(form, (IFF_Chunk*)bye);
+    return (IFF_Chunk*)bye;
+}
+
+IFF_Form *IFF_createTestForm(void)
+{
+    IFF_Chunk *hello = createHelloChunk();
+    IFF_Chunk *bye = createByeChunk();
+    IFF_Form *form = IFF_createEmptyForm(TEST_ID_TEST);
+
+    IFF_addToForm(form, hello);
+    IFF_addToForm(form, bye);
 
     return form;
 }

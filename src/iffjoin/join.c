@@ -30,9 +30,9 @@
 
 int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, const char *outputFilename)
 {
-    IFF_CAT *cat = IFF_createCAT(IFF_ID_JJJJ);
+    IFF_CAT *cat = IFF_createEmptyCAT(IFF_ID_JJJJ);
     IFF_ID lastType = 0;
-    int sameIds = TRUE;
+    IFF_Bool sameIds = TRUE;
     unsigned int i;
     int status = 0;
 

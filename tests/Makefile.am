@@ -1,8 +1,9 @@
-noinst_HEADERS = bye.h hello.h test.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h
+noinst_HEADERS = bye.h hello.h test.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-extended.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
-    writeextension readextension checkextension ppextension
+    writeextension readextension checkextension ppextension \
+    writeextension-truncated readextension-truncated writeextension-extended readextension-extended
 
 writeform_SOURCES = formdata.c writeform.c
 writeform_LDADD = ../src/libiff/libiff.la
@@ -100,6 +101,22 @@ ppextension_SOURCES = hello.c bye.c test.c ppextension.c
 ppextension_LDADD = ../src/libiff/libiff.la
 ppextension_CFLAGS = -I../src/libiff
 
+writeextension_truncated_SOURCES = hello.c bye.c test.c extensiondata-truncated.c writeextension-truncated.c
+writeextension_truncated_LDADD = ../src/libiff/libiff.la
+writeextension_truncated_CFLAGS = -I../src/libiff
+
+readextension_truncated_SOURCES = hello.c bye.c test.c extensiondata-truncated.c readextension-truncated.c
+readextension_truncated_LDADD = ../src/libiff/libiff.la
+readextension_truncated_CFLAGS = -I../src/libiff
+
+writeextension_extended_SOURCES = hello.c bye.c test.c extensiondata-extended.c writeextension-extended.c
+writeextension_extended_LDADD = ../src/libiff/libiff.la
+writeextension_extended_CFLAGS = -I../src/libiff
+
+readextension_extended_SOURCES = hello.c bye.c test.c extensiondata-extended.c readextension-extended.c
+readextension_extended_LDADD = ../src/libiff/libiff.la
+readextension_extended_CFLAGS = -I../src/libiff
+
 TESTS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     validform.sh validcat.sh validcat-wildcard.sh validlist.sh validlist-wildcard.sh invalidiff.sh \
     invalidid1.sh invalidid2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh \
@@ -110,7 +127,8 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     pp-text.sh searchforms-form searchforms-cat searchforms-nestedform updatechunksizes \
     lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     join-identical.sh join-different.sh \
-    writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh
+    writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh \
+    writeextension-truncated readextension-truncated writeextension-extended readextension-extended
 
 EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \
     invalidform-size2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh invalidid1.sh invalidid2.sh \

@@ -19,42 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __TEST_HELLO_H
-#define __TEST_HELLO_H
+#ifndef __EXTENSIONDATA_EXTENDED_H
+#define __EXTENSIONDATA_EXTENDED_H
+#include <form.h>
 
-#include <ifftypes.h>
-#include <chunk.h>
-#include <stdio.h>
-#include <id.h>
-
-#define TEST_ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
-#define TEST_HELO_DEFAULT_SIZE (2 * sizeof(IFF_UByte) + sizeof(IFF_UWord))
-
-typedef struct
-{
-    IFF_Group *parent;
-
-    IFF_ID chunkId;
-    IFF_Long chunkSize;
-
-    IFF_UByte a;
-    IFF_UByte b;
-    IFF_UWord c;
-}
-TEST_Hello;
-
-IFF_Chunk *TEST_createHello(const IFF_Long chunkSize);
-
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
-
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
-
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk);
-
-void TEST_freeHello(IFF_Chunk *chunk);
-
-void TEST_printHello(const IFF_Chunk *chunk, unsigned int indentLevel);
-
-IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Form *IFF_createTestForm(void);
 
 #endif

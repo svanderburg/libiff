@@ -21,61 +21,55 @@
 
 #include "hello.h"
 #include <stdlib.h>
-#include <io.h>
+#include <field.h>
 #include <error.h>
 #include <util.h>
 #include "test.h"
 
-TEST_Hello *TEST_createHello(void)
+IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, sizeof(TEST_Hello));
-
-    if(hello != NULL)
-        hello->chunkSize = 2 * sizeof(IFF_UByte) + sizeof(IFF_UWord);
-
-    return hello;
-}
-
-IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
-{
-    TEST_Hello *hello = TEST_createHello();
+    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {
-        if(!IFF_readUByte(file, &hello->a, TEST_ID_HELO, "a"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
-
-        if(!IFF_readUByte(file, &hello->b, TEST_ID_HELO, "b"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
-
-        if(!IFF_readUWord(file, &hello->c, TEST_ID_HELO, "c"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
+        hello->a = '\0';
+        hello->b = '\0';
+        hello->c = 0;
     }
 
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+{
+    TEST_Hello *hello = (TEST_Hello*)chunk;
+    IFF_FieldStatus status;
+
+    if((status = IFF_readUByteField(file, &hello->a, chunk, "a", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    if((status = IFF_readUByteField(file, &hello->b, chunk, "b", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    if((status = IFF_readUWordField(file, &hello->c, chunk, "c", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    return TRUE;
+}
+
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
+    IFF_FieldStatus status;
 
-    if(!IFF_writeUByte(file, hello->a, TEST_ID_HELO, "a"))
-        return FALSE;
+    if((status = IFF_writeUByteField(file, hello->a, chunk, "a", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    if(!IFF_writeUByte(file, hello->b, TEST_ID_HELO, "b"))
-        return FALSE;
+    if((status = IFF_writeUByteField(file, hello->b, chunk, "b", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    if(!IFF_writeUWord(file, hello->c, TEST_ID_HELO, "c"))
-        return FALSE;
+    if((status = IFF_writeUWordField(file, hello->c, chunk, "c", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
     return TRUE;
 }

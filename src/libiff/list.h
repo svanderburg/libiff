@@ -71,13 +71,24 @@ struct IFF_List
 };
 
 /**
- * Creates a new list chunk instance with the given contents type.
+ * Creates a new list chunk instance with a given chunk size and contents type.
  * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @param contentsType Contents type hinting what the contents of the list is.
+ * @return A list chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType);
+
+/**
+ * Creates a new list chunk instance with a given contents type.
+ * The resulting chunk must be freed by using IFF_free().
+ * Sub chunks can be added with the IFF_addToList() function.
  *
  * @param contentsType Contents type hinting what the contents of the list is.
  * @return A list chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_List *IFF_createList(const IFF_ID contentsType);
+IFF_List *IFF_createEmptyList(const IFF_ID contentsType);
 
 /**
  * Adds a PROP chunk to the body of the given list. This function also increments the

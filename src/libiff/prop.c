@@ -31,9 +31,14 @@
 
 #define PROP_GROUPTYPENAME "formType"
 
-IFF_Prop *IFF_createProp(const IFF_ID formType)
+IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType)
 {
-    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, formType);
+    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, chunkSize, formType);
+}
+
+IFF_Prop *IFF_createEmptyProp(const IFF_ID formType)
+{
+    return (IFF_Prop*)IFF_createEmptyGroup(IFF_ID_PROP, formType);
 }
 
 void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)

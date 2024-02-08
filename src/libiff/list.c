@@ -26,9 +26,9 @@
 #include "cat.h"
 #include "error.h"
 
-IFF_List *IFF_createList(const IFF_ID contentsType)
+IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    IFF_List *list = (IFF_List*)IFF_allocateChunk(IFF_ID_LIST, sizeof(IFF_List));
+    IFF_List *list = (IFF_List*)IFF_allocateChunk(IFF_ID_LIST, chunkSize, sizeof(IFF_List));
 
     if(list != NULL)
     {
@@ -41,14 +41,23 @@ IFF_List *IFF_createList(const IFF_ID contentsType)
     return list;
 }
 
-void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
+IFF_List *IFF_createEmptyList(const IFF_ID contentsType)
+{
+    return IFF_createList(IFF_ID_SIZE /* We have a contentsType field so it is not 0 */, contentsType);
+}
+
+static void addPropToList(IFF_List *list, IFF_Prop *prop)
 {
     list->prop = (IFF_Prop**)realloc(list->prop, (list->propLength + 1) * sizeof(IFF_Prop*));
     list->prop[list->propLength] = prop;
     list->propLength++;
-    list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)prop);
-
     prop->parent = (IFF_Group*)list;
+}
+
+void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
+{
+    addPropToList(list, prop);
+    list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)prop);
 }
 
 void IFF_addToList(IFF_List *list, IFF_Chunk *chunk)
@@ -60,17 +69,18 @@ IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension
 {
     IFF_ID contentsType;
     IFF_List *list;
+    IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed */
 
     /* Read the contentsType id */
     if(!IFF_readId(file, &contentsType, IFF_ID_LIST, "contentsType"))
         return NULL;
 
     /* Create new list */
-    list = IFF_createList(contentsType);
+    list = IFF_createList(chunkSize, contentsType);
 
     /* Read the remaining nested sub chunks */
 
-    while(list->chunkSize < chunkSize)
+    while(bytesProcessed < list->chunkSize)
     {
         /* Read sub chunk */
         IFF_Chunk *chunk = IFF_readChunk(file, 0, extension, extensionLength);
@@ -84,13 +94,16 @@ IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension
 
         /* Add the prop or chunk */
         if(chunk->chunkId == IFF_ID_PROP)
-            IFF_addPropToList(list, (IFF_Prop*)chunk);
+            addPropToList(list, (IFF_Prop*)chunk);
         else
-            IFF_addToList(list, chunk);
+            IFF_attachToGroup((IFF_Group*)list, chunk);
+
+        /* Increase the bytes processed counter */
+        bytesProcessed = IFF_incrementChunkSize(bytesProcessed, chunk);
     }
 
-    /* Set the chunk size to what we have read */
-    list->chunkSize = chunkSize;
+    if(bytesProcessed > list->chunkSize)
+        IFF_error("WARNING: truncated LIST chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", list->chunkSize, bytesProcessed);
 
     /* Return the resulting list */
     return list;

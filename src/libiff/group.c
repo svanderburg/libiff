@@ -27,15 +27,14 @@
 
 void IFF_initGroup(IFF_Group *group, const IFF_ID groupType)
 {
-    group->chunkSize = IFF_ID_SIZE; /* We have the group type */
     group->groupType = groupType;
     group->chunkLength = 0;
     group->chunk = NULL;
 }
 
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_ID groupType)
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType)
 {
-    IFF_Group *group = (IFF_Group*)IFF_allocateChunk(chunkId, sizeof(IFF_Group));
+    IFF_Group *group = (IFF_Group*)IFF_allocateChunk(chunkId, chunkSize, sizeof(IFF_Group));
 
     if(group != NULL)
         IFF_initGroup(group, groupType);
@@ -43,14 +42,23 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_ID groupType)
     return group;
 }
 
-void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
+IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType)
+{
+    return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType);
+}
+
+void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
     group->chunk = (IFF_Chunk**)realloc(group->chunk, (group->chunkLength + 1) * sizeof(IFF_Chunk*));
     group->chunk[group->chunkLength] = chunk;
     group->chunkLength++;
-    group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
-
     chunk->parent = group;
+}
+
+void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
+{
+    IFF_attachToGroup(group, chunk);
+    group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
 }
 
 IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -58,13 +66,14 @@ IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkS
     IFF_ID groupType;
     IFF_Group *group;
     IFF_ID formType;
+    IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed, so the size is bigger than 0 */
 
     /* Read group type */
     if(!IFF_readId(file, &groupType, chunkId, groupTypeName))
         return NULL;
 
     /* Create new group */
-    group = IFF_createGroup(chunkId, groupType);
+    group = IFF_createGroup(chunkId, chunkSize, groupType);
 
     /* Determine form type */
     if(groupTypeIsFormType)
@@ -74,7 +83,7 @@ IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkS
 
     /* Keep parsing sub chunks until we have read all bytes */
 
-    while(group->chunkSize < chunkSize)
+    while(bytesProcessed < group->chunkSize)
     {
         /* Read sub chunk */
         IFF_Chunk *chunk = IFF_readChunk(file, formType, extension, extensionLength);
@@ -86,16 +95,15 @@ IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkS
             return NULL;
         }
 
-        /* Add chunk to the group */
-        IFF_addToGroup(group, chunk);
+        /* Attach chunk to the group */
+        IFF_attachToGroup(group, chunk);
+
+        /* Increase the bytes processed counter */
+        bytesProcessed = IFF_incrementChunkSize(bytesProcessed, chunk);
     }
 
-    /*
-     * Set the chunk size to what we have read. This is mandatory according to
-     * the IFF specification, because we must respect this even when it's
-     * truncated
-     */
-    group->chunkSize = chunkSize;
+    if(bytesProcessed > group->chunkSize)
+        IFF_error("WARNING: truncated group chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", group->chunkSize, bytesProcessed);
 
     /* Return the resulting group */
     return group;
@@ -250,6 +258,17 @@ IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, con
     }
 
     return forms;
+}
+
+IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
+{
+    IFF_Long returnValue = chunkSize + IFF_ID_SIZE + sizeof(IFF_Long) + chunk->chunkSize;
+
+    /* If the size of the nested chunk size is odd, we have to count the padding byte as well */
+    if(chunk->chunkSize % 2 != 0)
+        returnValue++;
+
+    return returnValue;
 }
 
 void IFF_updateGroupChunkSizes(IFF_Group *group)

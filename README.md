@@ -149,50 +149,48 @@ containing "1234":
 #define ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
+static IFF_Chunk *createHeloChunk(void)
+{
+    IFF_RawChunk *heloChunk = IFF_createRawChunk(HELO_BYTES_SIZE);
+
+    heloChunk->chunkData[0] = 'a';
+    heloChunk->chunkData[1] = 'b';
+    heloChunk->chunkData[2] = 'c';
+    heloChunk->chunkData[3] = 'd';
+
+    return (IFF_Chunk*)heloChunk;
+}
+
+static IFF_Chunk *createByeChunk(void)
+{
+    IFF_RawChunk *byeChunk = IFF_createRawChunk(BYE_BYTES_SIZE);
+
+    byeChunk->chunkData[0] = '1';
+    byeChunk->chunkData[1] = '2';
+    byeChunk->chunkData[2] = '3';
+    byeChunk->chunkData[3] = '4';
+
+    return (IFF_Chunk*)byeChunk;
+}
+
+static IFF_Chunk *createForm(void)
+{
+    IFF_Chunk *heloChunk = createHeloChunk();
+    IFF_Chunk *byeChunk = createByeChunk();
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+
+    IFF_addToForm(heloChunk);
+    IFF_addToForm(byeChunk);
+
+    return (IFF_Chunk*)form;
+}
+
 int main(int argc, char *argv[])
 {
-    /* Declarations */
-    IFF_UByte *heloChunkData, *byteChunkData;
-    IFF_RawChunk *heloChunk, *byeChunk;
-    IFF_Form *form;
-    IFF_CAT *cat;
+    IFF_Chunk *form = createForm();
+    IFF_CAT *cat = IFF_createCAT(ID_TEST);
 
-    /* Allocate and create data for the 'HELO' chunk */
-    heloChunkData = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
-    heloChunkData[0] = 'a';
-    heloChunkData[1] = 'b';
-    heloChunkData[2] = 'c';
-    heloChunkData[3] = 'd';
-
-    /* Create the actual 'HELO' chunk */
-    heloChunk = IFF_createRawChunk(ID_HELO);
-
-    /* Attach the chunk data to the 'HELO' chunk */
-    IFF_setRawChunkData(heloChunk, heloChunkData, HELO_BYTES_SIZE);
-
-    /* Allocate and create data for the 'BYE ' chunk */
-    byeChunkData = (IFF_UByte*)malloc(BYE_BYTES_SIZE * sizeof(IFF_UByte));
-    byeChunkData[0] = '1';
-    byeChunkData[1] = '2';
-    byeChunkData[2] = '3';
-    byeChunkData[3] = '4';
-
-    /* Create the actual 'BYE ' chunk and attach the data to it */
-    byeChunk = IFF_createRawChunk(ID_BYE);
-    IFF_setRawChunkData(byeChunk, byeChunkData, BYE_BYTES_SIZE);
-
-    /* Create the 'TEST' form chunk */
-    form = IFF_createForm(ID_TEST);
-
-    /* Attach the 'HELO' and 'BYE ' chunk to the form */
-    IFF_addToForm((IFF_Chunk*)heloChunk);
-    IFF_addToForm((IFF_Chunk*)byeChunk);
-
-    /* Create a concatenation chunk */
-    cat = IFF_createCAT(ID_TEST);
-
-    /* Attach the form to the concatenation chunk */
-    IFF_addToCAT((IFF_Chunk*)form);
+    IFF_addToCAT(form);
 
     return 0;
 }
@@ -416,8 +414,8 @@ The implementation of this interface (`test.c`) may look as follows:
  * that they can be found by a binary search algorithm.
  */
 static IFF_FormExtension testFormExtension[] = {
-    {TEST_ID_BYE, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
-    {TEST_ID_HELO, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+    {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 /*
@@ -485,6 +483,7 @@ this (this example defines `hello.h` to which the previous example refers):
 #include <libiff/id.h>
 
 #define TEST_ID_HELO IFF_MAKE('H', 'E', 'L', 'O')
+#define TEST_HELO_DEFAULT_SIZE (2 * sizeof(IFF_UByte) + sizeof(IFF_UWord))
 
 typedef struct
 {
@@ -501,11 +500,11 @@ typedef struct
 }
 TEST_Hello;
 
-TEST_Hello *TEST_createHello(void);
+TEST_Hello *TEST_createHello(const IFF_Long chunkSize);
 
-IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize);
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk);
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
 IFF_Bool TEST_checkHello(const IFF_Chunk *chunk);
 
@@ -532,56 +531,50 @@ And the implementation may look as follows:
 #include <libiff/util.h>
 #include "test.h"
 
-TEST_Hello *TEST_createHello(void)
+IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, sizeof(TEST_Hello));
-
-    if(hello != NULL)
-        hello->chunkSize = 2 * sizeof(IFF_UByte) + sizeof(IFF_UWord);
-
-    return hello;
-}
-
-IFF_Chunk *TEST_readHello(FILE *file, const IFF_Long chunkSize)
-{
-    TEST_Hello *hello = TEST_createHello();
+    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {
-        if(!IFF_readUByte(file, &hello->a, TEST_ID_HELO, "a"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
-
-        if(!IFF_readUByte(file, &hello->b, TEST_ID_HELO, "b"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
-
-        if(!IFF_readUWord(file, &hello->c, TEST_ID_HELO, "c"))
-        {
-            TEST_free((IFF_Chunk*)hello);
-            return NULL;
-        }
+        hello->a = '\0';
+        hello->b = '\0';
+        hello->c = 0;
     }
 
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+{
+    TEST_Hello *hello = (TEST_Hello*)chunk;
+    IFF_FieldStatus status;
+
+    if((status = IFF_readUByteField(file, &hello->a, chunk, "a", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    if((status = IFF_readUByteField(file, &hello->b, chunk, "b", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    if((status = IFF_readUWordField(file, &hello->c, chunk, "c", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    return TRUE;
+}
+
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
 {
     const TEST_Hello *hello = (TEST_Hello*)chunk;
+    IFF_FieldStatus status;
 
-    if(!IFF_writeUByte(file, hello->a, TEST_ID_HELO, "a"))
-        return FALSE;
+    if((status = IFF_writeUByteField(file, hello->a, chunk, "a", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    if(!IFF_writeUByte(file, hello->b, TEST_ID_HELO, "b"))
-        return FALSE;
+    if((status = IFF_writeUByteField(file, hello->b, chunk, "b", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    if(!IFF_writeUWord(file, hello->c, TEST_ID_HELO, "c"))
-        return FALSE;
+    if((status = IFF_writeUWordField(file, hello->c, chunk, "c", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
     return TRUE;
 }

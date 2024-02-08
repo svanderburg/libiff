@@ -55,9 +55,10 @@ struct IFF_Chunk
  *
  * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk in bytes
+ * @param structSize The size of the struct that provides the data in bytes
  * @return A generic chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
  */
-IFF_Chunk *IFF_allocateChunk(const IFF_ID chunkId, const size_t chunkSize);
+IFF_Chunk *IFF_allocateChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize);
 
 /**
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()
@@ -145,18 +146,7 @@ IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, c
  * @param formsLength An integer in which the length of the resulting array is stored
  * @return An array of forms having the given form type
  */
-
 IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
-
-/**
- * Increments the given chunk size by the size of the given chunk.
- * Additionally, it takes the padding byte into account if the chunk size is odd.
- *
- * @param chunkSize Chunk size of a group chunk
- * @param chunk A sub chunk
- * @return The incremented chunk size with an optional padding byte
- */
-IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.

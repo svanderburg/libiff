@@ -41,23 +41,26 @@ struct IFF_FormExtension
     /** A 4 character chunk id */
     IFF_ID chunkId;
 
+    /** Function responsible for creating the given chunk */
+    IFF_Chunk *(*createExtensionChunk) (const IFF_Long chunkSize);
+
     /** Function resposible for reading the given chunk */
-    IFF_Chunk *(*readChunk) (FILE *file, const IFF_Long chunkSize);
+    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
     /** Function resposible for writing the given chunk */
-    IFF_Bool (*writeChunk) (FILE *file, const IFF_Chunk *chunk);
+    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
     /** Function resposible for checking the given chunk */
-    IFF_Bool (*checkChunk) (const IFF_Chunk *chunk);
+    IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk);
 
     /** Function resposible for freeing the given chunk */
-    void (*freeChunk) (IFF_Chunk *chunk);
+    void (*freeExtensionChunk) (IFF_Chunk *chunk);
 
     /** Function responsible for printing the given chunk */
-    void (*printChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel);
+    void (*printExtensionChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel);
 
     /** Function responsible for comparing the given chunk */
-    IFF_Bool (*compareChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+    IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 };
 
 /**

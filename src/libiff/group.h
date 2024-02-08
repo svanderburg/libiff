@@ -66,14 +66,34 @@ struct IFF_Group
 void IFF_initGroup(IFF_Group *group, const IFF_ID groupType);
 
 /**
- * Creates a new group chunk instance with the chunk id and group type.
+ * Creates a new group chunk instance with the chunk id, chunk size and group type.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkId A 4 character chunk id.
+ * @param chunkSize Size of the chunk data
+ * @param groupType Type describing the purpose of the sub chunks.
+ * @return Group chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ID groupType);
+
+/**
+ * Creates a new empty group chunk instance with the chunk id and group type.
+ * Sub chunks can be added with the IFF_addToGroup() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param chunkId A 4 character chunk id.
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, IFF_ID groupType);
+IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType);
+
+/**
+ * Attaches a chunk to the body of the given group.
+ *
+ * @param group An instance of a group chunk
+ * @param chunk An arbitrary group or data chunk
+ */
+void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk);
 
 /**
  * Adds a chunk to the body of the given group. This function also increments the
@@ -222,6 +242,16 @@ IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, cons
  * @return An array of form structs
  */
 IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+
+/**
+ * Increments the given chunk size by the size of the given chunk.
+ * Additionally, it takes the padding byte into account if the chunk size is odd.
+ *
+ * @param chunkSize Chunk size of a group chunk
+ * @param chunk A sub chunk
+ * @return The incremented chunk size with an optional padding byte
+ */
+IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
 
 /**
  * Recalculates the chunk size of the given group chunk.

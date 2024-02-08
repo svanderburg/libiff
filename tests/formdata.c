@@ -26,40 +26,42 @@
 #include <rawchunk.h>
 #include <id.h>
 
-#define HELO_BYTES_SIZE 4
-#define BYE_BYTES_SIZE 4
-
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 #define ID_BYE  IFF_MAKEID('B', 'Y', 'E', ' ')
 
+#define HELO_BYTES_SIZE 4
+#define BYE_BYTES_SIZE 4
+
 static IFF_UByte heloData[] = {'a', 'b', 'c', 'd'};
 static IFF_UByte byeData[] = {'E', 'F', 'G', 'H'};
 
+static IFF_Chunk *createTestDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_UByte *data)
+{
+    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
+    IFF_copyDataToRawChunkData(rawChunk, data);
+
+    return (IFF_Chunk*)rawChunk;
+}
+
+static IFF_Chunk *createHelloChunk(void)
+{
+    return createTestDataChunk(ID_HELO, HELO_BYTES_SIZE, heloData);
+}
+
+static IFF_Chunk *createByeChunk(void)
+{
+    return createTestDataChunk(ID_BYE, BYE_BYTES_SIZE, byeData);
+}
+
 IFF_Form *IFF_createTestForm(void)
 {
-    IFF_RawChunk *heloChunk, *byeChunk;
-    IFF_UByte *heloBytes, *byeBytes;
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+    IFF_Chunk *heloChunk = createHelloChunk();
+    IFF_Chunk *byeChunk = createByeChunk();
 
-    IFF_Form *form = IFF_createForm(ID_TEST);
-
-    heloChunk = IFF_createRawChunk(ID_HELO);
-
-    heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
-
-    IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
-
-    IFF_addToForm(form, (IFF_Chunk*)heloChunk);
-
-    byeChunk = IFF_createRawChunk(ID_BYE);
-
-    byeBytes = (IFF_UByte*)malloc(BYE_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(byeBytes, byeData, BYE_BYTES_SIZE);
-
-    IFF_setRawChunkData(byeChunk, byeBytes, BYE_BYTES_SIZE);
-
-    IFF_addToForm(form, (IFF_Chunk*)byeChunk);
+    IFF_addToForm(form, heloChunk);
+    IFF_addToForm(form, byeChunk);
 
     return form;
 }

@@ -53,12 +53,21 @@ struct IFF_RawChunk
 };
 
 /**
- * Creates a raw chunk with the given chunk ID. The resulting chunk must be freed using IFF_free().
+ * Creates a raw chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().
  *
  * @param chunkId A 4 character id
+ * @param chunkSize Length of the bytes array.
  * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
  */
-IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId);
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+
+/**
+ * Copies the given data array to the chunk data
+ *
+ * @param rawChunk A raw chunk
+ * @param data Data to copy. Its size should be at least as big as the chunk size
+ */
+void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data);
 
 /**
  * Attaches chunk data to a given chunk. It also increments the chunk size.
@@ -79,7 +88,18 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
 void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
 
 /**
- * Reads a raw chunk with the given chunk id and chunk size from a file. The resulting chunk must be freed using IFF_free().
+ * Reads the content of a raw chunk.
+ *
+ * @param file File descriptor of the file
+ * @param rawChunk A raw chunk instance
+ * @param bytesProcessed Stores the amount of processed bytes
+ * @return TRUE if the data was successfully read, else FALSE
+ */
+IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed);
+
+/**
+ * Reads a raw chunk with the given chunk id and chunk size from a file.
+ * The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file
  * @param chunkId A 4 character chunk id
@@ -87,6 +107,16 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
  * @return The raw chunk struct derived from the file, or NULL if an error has occured
  */
 IFF_RawChunk *IFF_readRawChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize);
+
+/**
+ * Writes the content of a raw chunk to a file descriptor.
+ *
+ * @param file File descriptor of the file
+ * @param rawChunk A raw chunk instance
+ * @param bytesProcessed Stores the amount of processed bytes
+ * @return TRUE if the chunk has been successfully written, else FALSE
+ */
+IFF_Bool IFF_writeRawChunkData(FILE *file, const IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed);
 
 /**
  * Writes the given raw chunk to a file descriptor.

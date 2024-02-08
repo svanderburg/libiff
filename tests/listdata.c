@@ -39,45 +39,68 @@ IFF_UByte heloData[] = {'q', 'w', 'e', 'r'};
 IFF_UByte bye1Data[] = {'a', 'b', 'c', 'd'};
 IFF_UByte bye2Data[] = {'E', 'F', 'G', 'H'};
 
+static IFF_Chunk *createTestDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_UByte *data)
+{
+    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
+    IFF_copyDataToRawChunkData(rawChunk, data);
+
+    return (IFF_Chunk*)rawChunk;
+}
+
+static IFF_Chunk *createHeloChunk(void)
+{
+    return createTestDataChunk(ID_HELO, HELO_BYTES_SIZE, heloData);
+}
+
+static IFF_Chunk *createBye1Chunk(void)
+{
+    return createTestDataChunk(ID_BYE, BYE_1_BYTES_SIZE, bye1Data);
+}
+
+static IFF_Chunk *createBye2Chunk(void)
+{
+    return createTestDataChunk(ID_BYE, BYE_2_BYTES_SIZE, bye2Data);
+}
+
+static IFF_Prop *createTestProp(void)
+{
+    IFF_Chunk *heloChunk = createHeloChunk();
+    IFF_Prop *testProp = IFF_createEmptyProp(ID_TEST);
+
+    IFF_addToProp(testProp, heloChunk);
+
+    return testProp;
+}
+
+static IFF_Chunk *createTestForm(IFF_Chunk *byeChunk)
+{
+    IFF_Form *testForm = IFF_createEmptyForm(ID_TEST);
+    IFF_addToForm(testForm, byeChunk);
+    return (IFF_Chunk*)testForm;
+}
+
+static IFF_Chunk *createTest1Form(void)
+{
+    IFF_Chunk *bye1Chunk = createBye1Chunk();
+    return createTestForm(bye1Chunk);
+}
+
+static IFF_Chunk *createTest2Form(void)
+{
+    IFF_Chunk *bye2Chunk = createBye2Chunk();
+    return createTestForm(bye2Chunk);
+}
+
 IFF_List *IFF_createTestList(void)
 {
-    IFF_Prop *testProp;
-    IFF_UByte *heloBytes, *bye1Bytes, *bye2Bytes;
-    IFF_RawChunk *heloChunk, *bye1Chunk, *bye2Chunk;
-    IFF_Form *test1Form, *test2Form;
-    IFF_List *list;
+    IFF_Prop *testProp = createTestProp();
+    IFF_Chunk *test1Form = createTest1Form();
+    IFF_Chunk *test2Form = createTest2Form();
+    IFF_List *list = IFF_createEmptyList(ID_TEST);
 
-    heloBytes = (IFF_UByte*)malloc(HELO_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(heloBytes, heloData, HELO_BYTES_SIZE);
-
-    heloChunk = IFF_createRawChunk(ID_HELO);
-    IFF_setRawChunkData(heloChunk, heloBytes, HELO_BYTES_SIZE);
-
-    testProp = IFF_createProp(ID_TEST);
-    IFF_addToProp(testProp, (IFF_Chunk*)heloChunk);
-
-    bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
-
-    bye1Chunk = IFF_createRawChunk(ID_BYE);
-    IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
-
-    test1Form = IFF_createForm(ID_TEST);
-    IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
-
-    bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
-
-    bye2Chunk = IFF_createRawChunk(ID_BYE);
-    IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);
-
-    test2Form = IFF_createForm(ID_TEST);
-    IFF_addToForm(test2Form, (IFF_Chunk*)bye2Chunk);
-
-    list = IFF_createList(ID_TEST);
     IFF_addPropToList(list, testProp);
-    IFF_addToList(list, (IFF_Chunk*)test1Form);
-    IFF_addToList(list, (IFF_Chunk*)test2Form);
+    IFF_addToList(list, test1Form);
+    IFF_addToList(list, test2Form);
 
     return list;
 }

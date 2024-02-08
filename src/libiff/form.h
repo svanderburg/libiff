@@ -62,13 +62,24 @@ struct IFF_Form
 };
 
 /**
- * Creates a new form chunk instance with the given form type.
+ * Creates a new form chunk instance with a given chunk size and form type.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @param formType Form type describing the purpose of the sub chunks.
+ * @return FORM chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
+
+/**
+ * Creates a new empty form chunk instance with a given form type.
+ * Sub chunks can be added with the IFF_addToForm() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createForm(const IFF_ID formType);
+IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
 
 /**
  * Adds a chunk to the body of the given FORM. This function also increments the

@@ -35,14 +35,26 @@ typedef struct IFF_Form IFF_Prop;
 extern "C" {
 #endif
 
+
 /**
- * Creates a new PROP chunk instance with the given form type.
+ * Creates a new PROP chunk instance with a given chunk size and form type.
  * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @param formType Form type describing the purpose of the sub chunks.
+ * @return FORM chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType);
+
+/**
+ * Creates a new empty PROP chunk instance with a given form type.
+ * The resulting chunk must be freed by using IFF_free().
+ * Sub chunks can be added with the IFF_addToProp() function.
  *
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Prop *IFF_createProp(const IFF_ID formType);
+IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
 
 /**
  * Adds a chunk to the body of the given PROP. This function also increments the

@@ -28,6 +28,7 @@
 #include <id.h>
 
 #define TEST_ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
+#define TEST_BYE_DEFAULT_SIZE (2 * sizeof(IFF_Long))
 
 typedef struct
 {
@@ -41,11 +42,11 @@ typedef struct
 }
 TEST_Bye;
 
-TEST_Bye *TEST_createBye(void);
+IFF_Chunk *TEST_createBye(const IFF_Long chunkSize);
 
-IFF_Chunk *TEST_readBye(FILE *file, const IFF_Long chunkSize);
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk);
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
 IFF_Bool TEST_checkBye(const IFF_Chunk *chunk);
 

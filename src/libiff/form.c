@@ -60,9 +60,14 @@
 #define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
 #define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
 
-IFF_Form *IFF_createForm(const IFF_ID formType)
+IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 {
-    return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, formType);
+    return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, chunkSize, formType);
+}
+
+IFF_Form *IFF_createEmptyForm(const IFF_ID formType)
+{
+    return (IFF_Form*)IFF_createEmptyGroup(IFF_ID_FORM, formType);
 }
 
 void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)

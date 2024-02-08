@@ -65,13 +65,24 @@ struct IFF_CAT
 };
 
 /**
- * Creates a new concatentation chunk instance with the given contents type.
+ * Creates a new concatentation chunk instance with a given chunk size and
+ * contents type. The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @param contentsType Contents type hinting what the contents of the CAT is.
+ * @return CAT chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType);
+
+/**
+ * Creates a new empty concatentation chunk instance with a given contents type.
+ * Sub chunks can be added with the IFF_addToCAT() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param contentsType Contents type hinting what the contents of the CAT is.
  * @return CAT chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_CAT *IFF_createCAT(const IFF_ID contentsType);
+IFF_CAT *IFF_createEmptyCAT(const IFF_ID contentsType);
 
 /**
  * Adds a chunk to the body of the given CAT. This function also increments the

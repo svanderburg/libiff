@@ -40,48 +40,68 @@ IFF_UByte bye1Data[] = {'E', 'F', 'G'};
 IFF_UByte helo2Data[] = {'a', 'b', 'c', 'd', 'e'};
 IFF_UByte bye2Data[] = {'F', 'G', 'H', 'I'};
 
-IFF_CAT *IFF_createTestCAT()
+static IFF_Chunk *createTestDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_UByte *data)
 {
-    IFF_Form *test1Form, *test2Form;
-    IFF_CAT *cat;
-    IFF_RawChunk *helo1Chunk, *helo2Chunk, *bye1Chunk, *bye2Chunk;
-    IFF_UByte *helo1Bytes, *helo2Bytes, *bye1Bytes, *bye2Bytes;
+    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
+    IFF_copyDataToRawChunkData(rawChunk, data);
 
-    helo1Bytes = (IFF_UByte*)malloc(HELO_1_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(helo1Bytes, helo1Data, HELO_1_BYTES_SIZE);
+    return (IFF_Chunk*)rawChunk;
+}
 
-    helo1Chunk = IFF_createRawChunk(ID_HELO);
-    IFF_setRawChunkData(helo1Chunk, helo1Bytes, HELO_1_BYTES_SIZE);
+static IFF_Chunk *createHelo1Chunk(void)
+{
+    return createTestDataChunk(ID_HELO, HELO_1_BYTES_SIZE, helo1Data);
+}
 
-    bye1Bytes = (IFF_UByte*)malloc(BYE_1_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye1Bytes, bye1Data, BYE_1_BYTES_SIZE);
+static IFF_Chunk *createBye1Chunk(void)
+{
+    return createTestDataChunk(ID_BYE, BYE_1_BYTES_SIZE, bye1Data);
+}
 
-    bye1Chunk = IFF_createRawChunk(ID_BYE);
-    IFF_setRawChunkData(bye1Chunk, bye1Bytes, BYE_1_BYTES_SIZE);
+static IFF_Chunk *createHelo2Chunk(void)
+{
+    return createTestDataChunk(ID_HELO, HELO_2_BYTES_SIZE, helo2Data);
+}
 
-    test1Form = IFF_createForm(ID_TEST);
-    IFF_addToForm(test1Form, (IFF_Chunk*)helo1Chunk);
-    IFF_addToForm(test1Form, (IFF_Chunk*)bye1Chunk);
+static IFF_Chunk *createBye2Chunk(void)
+{
+    return createTestDataChunk(ID_BYE, BYE_2_BYTES_SIZE, bye2Data);
+}
 
-    helo2Bytes = (IFF_UByte*)malloc(HELO_2_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(helo2Bytes, helo2Data, HELO_2_BYTES_SIZE);
+static IFF_Chunk *createTestForm(IFF_Chunk *heloChunk, IFF_Chunk *byeChunk)
+{
+    IFF_Form *testForm = IFF_createEmptyForm(ID_TEST);
 
-    helo2Chunk = IFF_createRawChunk(ID_HELO);
-    IFF_setRawChunkData(helo2Chunk, helo2Bytes, HELO_2_BYTES_SIZE);
+    IFF_addToForm(testForm, heloChunk);
+    IFF_addToForm(testForm, byeChunk);
 
-    bye2Bytes = (IFF_UByte*)malloc(BYE_2_BYTES_SIZE * sizeof(IFF_UByte));
-    memcpy(bye2Bytes, bye2Data, BYE_2_BYTES_SIZE);
+    return (IFF_Chunk*)testForm;
+}
 
-    bye2Chunk = IFF_createRawChunk(ID_BYE);
-    IFF_setRawChunkData(bye2Chunk, bye2Bytes, BYE_2_BYTES_SIZE);
+static IFF_Chunk *createTest1Form(void)
+{
+    IFF_Chunk *helo1Chunk = createHelo1Chunk();
+    IFF_Chunk *bye1Chunk = createBye1Chunk();
 
-    test2Form = IFF_createForm(ID_TEST);
-    IFF_addToForm(test2Form, (IFF_Chunk*)helo2Chunk);
-    IFF_addToForm(test2Form, (IFF_Chunk*)bye2Chunk);
+    return createTestForm(helo1Chunk, bye1Chunk);
+}
 
-    cat = IFF_createCAT(ID_TEST);
-    IFF_addToCAT(cat, (IFF_Chunk*)test1Form);
-    IFF_addToCAT(cat, (IFF_Chunk*)test2Form);
+static IFF_Chunk *createTest2Form(void)
+{
+    IFF_Chunk *helo2Chunk = createHelo2Chunk();
+    IFF_Chunk *bye2Chunk = createBye2Chunk();
+
+    return createTestForm(helo2Chunk, bye2Chunk);
+}
+
+IFF_CAT *IFF_createTestCAT(void)
+{
+    IFF_Chunk *test1Form = createTest1Form();
+    IFF_Chunk *test2Form = createTest2Form();
+    IFF_CAT *cat = IFF_createEmptyCAT(ID_TEST);
+
+    IFF_addToCAT(cat, test1Form);
+    IFF_addToCAT(cat, test2Form);
 
     return cat;
 }

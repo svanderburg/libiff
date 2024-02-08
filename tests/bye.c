@@ -21,52 +21,48 @@
 
 #include "bye.h"
 #include <stdlib.h>
-#include <io.h>
+#include <field.h>
 #include <error.h>
 #include <util.h>
 #include "test.h"
 
-TEST_Bye *TEST_createBye(void)
+IFF_Chunk *TEST_createBye(const IFF_Long chunkSize)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_allocateChunk(TEST_ID_BYE, sizeof(TEST_Bye));
-
-    if(bye != NULL)
-        bye->chunkSize = 2 * sizeof(IFF_Long);
-
-    return bye;
-}
-
-IFF_Chunk *TEST_readBye(FILE *file, const IFF_Long chunkSize)
-{
-    TEST_Bye *bye = TEST_createBye();
+    TEST_Bye *bye = (TEST_Bye*)IFF_allocateChunk(TEST_ID_BYE, chunkSize, sizeof(TEST_Bye));
 
     if(bye != NULL)
     {
-        if(!IFF_readLong(file, &bye->one, TEST_ID_BYE, "one"))
-        {
-            TEST_free((IFF_Chunk*)bye);
-            return NULL;
-        }
-
-        if(!IFF_readLong(file, &bye->two, TEST_ID_BYE, "two"))
-        {
-            TEST_free((IFF_Chunk*)bye);
-            return NULL;
-        }
+        bye->one = 0;
+        bye->two = 0;
     }
 
     return (IFF_Chunk*)bye;
 }
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk)
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+{
+    TEST_Bye *bye = (TEST_Bye*)chunk;
+    IFF_FieldStatus status;
+
+    if((status = IFF_readLongField(file, &bye->one, chunk, "one", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    if((status = IFF_readLongField(file, &bye->two, chunk, "two", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    return TRUE;
+}
+
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
+    IFF_FieldStatus status;
 
-    if(!IFF_writeLong(file, bye->one, TEST_ID_BYE, "one"))
-        return FALSE;
+    if((status = IFF_writeLongField(file, bye->one, chunk, "one", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    if(!IFF_writeLong(file, bye->two, TEST_ID_BYE, "two"))
-        return FALSE;
+    if((status = IFF_writeLongField(file, bye->two, chunk, "two", bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
     return TRUE;
 }

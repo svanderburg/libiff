@@ -32,39 +32,50 @@
 #define ID_ABCD IFF_MAKEID('A', 'B', 'C', 'D')
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-int main(int argc, char *argv[])
+static IFF_RawChunk *createABCDChunk(void)
 {
-    IFF_UByte *chunkData;
-    IFF_RawChunk *rawChunk;
-    IFF_Form *form;
-    IFF_CAT *cat;
-    int status = 0;
+    IFF_RawChunk *rawChunk = IFF_createRawChunk(ID_ABCD, ABCD_BYTES_SIZE);
 
-    chunkData = (IFF_UByte*)malloc(ABCD_BYTES_SIZE * sizeof(IFF_UByte));
+    IFF_UByte *chunkData = rawChunk->chunkData;
     chunkData[0] = 'A';
     chunkData[1] = 'B';
     chunkData[2] = 'C';
     chunkData[3] = 'D';
 
-    rawChunk = IFF_createRawChunk(ID_ABCD);
-    IFF_setRawChunkData(rawChunk, chunkData, ABCD_BYTES_SIZE);
+    return rawChunk;
+}
 
-    form = IFF_createForm(ID_TEST);
-    IFF_addToForm(form, (IFF_Chunk*)rawChunk);
+static IFF_Chunk *createABCDForm(IFF_RawChunk *abcdChunk)
+{
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+    IFF_addToForm(form, (IFF_Chunk*)abcdChunk);
+    return (IFF_Chunk*)form;
+}
 
-    cat = IFF_createCAT(ID_TEST);
-    IFF_addToCAT(cat, (IFF_Chunk*)form);
+static IFF_CAT *createABCDCAT(IFF_RawChunk *abcdChunk)
+{
+    IFF_Chunk *form = createABCDForm(abcdChunk);
+    IFF_CAT *cat = IFF_createEmptyCAT(ID_TEST);
+    IFF_addToCAT(cat, form);
+    return cat;
+}
+
+int main(int argc, char *argv[])
+{
+    IFF_RawChunk *abcdChunk = createABCDChunk();
+    IFF_CAT *cat = createABCDCAT(abcdChunk);
+    int status = 0;
 
     /* Intentionally increase the size of the ABCD chunk */
 
-    rawChunk->chunkData = (IFF_UByte*)realloc(chunkData, (ABCD_BYTES_SIZE + 1) * sizeof(IFF_UByte));
-    rawChunk->chunkSize++;
+    abcdChunk->chunkData = (IFF_UByte*)realloc(abcdChunk->chunkData, (ABCD_BYTES_SIZE + 1) * sizeof(IFF_UByte));
+    abcdChunk->chunkSize++;
 
     /* The IFF file should be invalid now as the, form chunk size is too small */
     if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
     {
         /* Update the chunk sizes */
-        IFF_updateChunkSizes((IFF_Chunk*)rawChunk);
+        IFF_updateChunkSizes((IFF_Chunk*)abcdChunk);
 
         /* Now the IFF should be valid */
 

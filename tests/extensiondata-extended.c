@@ -19,49 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "formdata-pad.h"
-#include <stdlib.h>
-#include <string.h>
-#include <iff.h>
-#include <rawchunk.h>
-#include <id.h>
-
-#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
-#define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
-#define ID_BYE  IFF_MAKEID('B', 'Y', 'E', ' ')
-
-#define HELO_BYTES_SIZE 4
-#define BYE_BYTES_SIZE 5
-
-IFF_UByte heloData[] = {'a', 'b', 'c', 'd'};
-IFF_UByte byeData[] = {'E', 'F', 'G', 'H', 'I'};
-
-static IFF_Chunk *createTestDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_UByte *data)
-{
-    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
-    IFF_copyDataToRawChunkData(rawChunk, data);
-
-    return (IFF_Chunk*)rawChunk;
-}
+#include "extensiondata-extended.h"
+#include <form.h>
+#include "test.h"
+#include "hello.h"
+#include "bye.h"
 
 static IFF_Chunk *createHelloChunk(void)
 {
-    return createTestDataChunk(ID_HELO, HELO_BYTES_SIZE, heloData);
+    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_HELO_DEFAULT_SIZE + sizeof(IFF_UWord)); /* Another hidden field was added that should be ignored */
+
+    hello->a = 'a';
+    hello->b = 'b';
+
+    return (IFF_Chunk*)hello;
 }
 
 static IFF_Chunk *createByeChunk(void)
 {
-    return createTestDataChunk(ID_BYE, BYE_BYTES_SIZE, byeData);
+    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_BYE_DEFAULT_SIZE + sizeof(IFF_Long)); /* Another hidden field was added that should be ignored */
+
+    bye->one = 1;
+
+    return (IFF_Chunk*)bye;
 }
 
 IFF_Form *IFF_createTestForm(void)
 {
-    IFF_Chunk *heloChunk = createHelloChunk();
-    IFF_Chunk *byeChunk = createByeChunk();
-    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+    IFF_Chunk *hello = createHelloChunk();
+    IFF_Chunk *bye = createByeChunk();
+    IFF_Form *form = IFF_createEmptyForm(TEST_ID_TEST);
 
-    IFF_addToForm(form, heloChunk);
-    IFF_addToForm(form, byeChunk);
+    IFF_addToForm(form, hello);
+    IFF_addToForm(form, bye);
 
     return form;
 }

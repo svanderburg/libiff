@@ -27,9 +27,14 @@
 
 #define CAT_GROUPTYPENAME "contentsType"
 
-IFF_CAT *IFF_createCAT(const IFF_ID contentsType)
+IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, contentsType);
+    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, chunkSize, contentsType);
+}
+
+IFF_CAT *IFF_createEmptyCAT(const IFF_ID contentsType)
+{
+    return (IFF_CAT*)IFF_createEmptyGroup(IFF_ID_CAT, contentsType);
 }
 
 void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk)
