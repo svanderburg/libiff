@@ -80,7 +80,7 @@ IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *ex
 
 IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    int status;
+    IFF_Bool status;
     FILE *file = fopen(filename, "wb");
 
     if(file == NULL)

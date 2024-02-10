@@ -25,36 +25,36 @@
 int IFF_prettyPrint(const char *filename, const int options)
 {
     IFF_Chunk *chunk;
-    
+
     /* Parse the chunk */
     if(filename == NULL)
-	chunk = IFF_readFd(stdin, NULL, 0);
+        chunk = IFF_readFd(stdin, NULL, 0);
     else
-	chunk = IFF_read(filename, NULL, 0);
-    
+        chunk = IFF_read(filename, NULL, 0);
+
     if(chunk == NULL)
     {
-	fprintf(stderr, "Cannot open IFF file!\n");
-	return 1;
+        fprintf(stderr, "Cannot open IFF file!\n");
+        return 1;
     }
     else
     {
-	int status;
-	
-	/* Check the file */
-	if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL, 0))
-	{
-	    /* Print the file */
-	    IFF_print(chunk, 0, NULL, 0);
-	    
-	    status = 0;
-	}
-	else
-	    status = 1;
-	
-	/* Free the chunk structure */
-	IFF_free(chunk, NULL, 0);
-	    
-	return status;
+        int status;
+
+        /* Check the file */
+        if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL, 0))
+        {
+            /* Print the file */
+            IFF_print(chunk, 0, NULL, 0);
+
+            status = 0;
+        }
+        else
+            status = 1;
+
+        /* Free the chunk structure */
+        IFF_free(chunk, NULL, 0);
+
+        return status;
     }
 }

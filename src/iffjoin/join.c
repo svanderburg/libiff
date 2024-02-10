@@ -53,32 +53,14 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
 
             if(sameIds)
             {
-                if(chunk->chunkId == IFF_ID_FORM)
+                if(chunk->chunkId == IFF_ID_FORM || chunk->chunkId == IFF_ID_CAT || chunk->chunkId == IFF_ID_LIST)
                 {
-                    IFF_Form *form = (IFF_Form*)chunk;
+                    IFF_Group *group = (IFF_Group*)chunk;
 
-                    if((i > 0) && form->formType != lastType)
+                    if((i > 0) && group->groupType != lastType)
                         sameIds = FALSE;
 
-                    lastType = form->formType;
-                }
-                else if(chunk->chunkId == IFF_ID_CAT)
-                {
-                    IFF_CAT *cat = (IFF_CAT*)chunk;
-
-                    if((i > 0) && cat->contentsType != lastType)
-                        sameIds = FALSE;
-
-                    lastType = cat->contentsType;
-                }
-                else if(chunk->chunkId == IFF_ID_LIST)
-                {
-                    IFF_List *list = (IFF_List*)chunk;
-
-                    if((i > 0) && list->contentsType != lastType)
-                        sameIds = FALSE;
-
-                    lastType = list->contentsType;
+                    lastType = group->groupType;
                 }
             }
 
