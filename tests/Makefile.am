@@ -1,9 +1,9 @@
-noinst_HEADERS = bye.h hello.h test.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-extended.h
+noinst_HEADERS = bye.h hello.h test.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     writeextension readextension checkextension ppextension \
-    writeextension-truncated readextension-truncated writeextension-extended readextension-extended
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
 
 writeform_SOURCES = formdata.c writeform.c
 writeform_LDADD = ../src/libiff/libiff.la
@@ -109,6 +109,14 @@ readextension_truncated_SOURCES = hello.c bye.c test.c extensiondata-truncated.c
 readextension_truncated_LDADD = ../src/libiff/libiff.la
 readextension_truncated_CFLAGS = -I../src/libiff
 
+writeextension_truncated2_SOURCES = hello.c bye.c test.c extensiondata-truncated2.c writeextension-truncated2.c
+writeextension_truncated2_LDADD = ../src/libiff/libiff.la
+writeextension_truncated2_CFLAGS = -I../src/libiff
+
+readextension_truncated2_SOURCES = hello.c bye.c test.c extensiondata-truncated2.c readextension-truncated2.c
+readextension_truncated2_LDADD = ../src/libiff/libiff.la
+readextension_truncated2_CFLAGS = -I../src/libiff
+
 writeextension_extended_SOURCES = hello.c bye.c test.c extensiondata-extended.c writeextension-extended.c
 writeextension_extended_LDADD = ../src/libiff/libiff.la
 writeextension_extended_CFLAGS = -I../src/libiff
@@ -128,7 +136,7 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension checkextension ppextension-c.sh ppextension-otherform.sh \
-    writeextension-truncated readextension-truncated writeextension-extended readextension-extended
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
 
 EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \
     invalidform-size2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh invalidid1.sh invalidid2.sh \

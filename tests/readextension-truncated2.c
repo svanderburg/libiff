@@ -21,15 +21,15 @@
 
 #include "test.h"
 #include <stdio.h>
-#include "extensiondata-truncated.h"
+#include "extensiondata-truncated2.h"
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST");
+    IFF_Chunk *chunk = TEST_read("extension-truncated2.TEST");
 
     if(chunk == NULL)
     {
-        fprintf(stderr, "Cannot open 'extension-truncated.TEST'\n");
+        fprintf(stderr, "Cannot open 'extension-truncated2.TEST'\n");
         return 1;
     }
     else

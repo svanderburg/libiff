@@ -29,7 +29,7 @@ IFF_Bool IFF_deriveSuccess(const IFF_FieldStatus status)
 
 IFF_FieldStatus IFF_readUByteField(FILE *file, IFF_UByte *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_UByte))
         return IFF_FIELD_LAST;
     else
     {
@@ -45,7 +45,7 @@ IFF_FieldStatus IFF_readUByteField(FILE *file, IFF_UByte *value, const IFF_Chunk
 
 IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_UByte value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_UByte))
         return IFF_FIELD_LAST;
     else
     {
@@ -61,7 +61,7 @@ IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_UByte value, const IFF
 
 IFF_FieldStatus IFF_readUWordField(FILE *file, IFF_UWord *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_UWord))
         return IFF_FIELD_LAST;
     else
     {
@@ -77,7 +77,7 @@ IFF_FieldStatus IFF_readUWordField(FILE *file, IFF_UWord *value, const IFF_Chunk
 
 IFF_FieldStatus IFF_writeUWordField(FILE *file, const IFF_UWord value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_UWord))
         return IFF_FIELD_LAST;
     else
     {
@@ -93,7 +93,7 @@ IFF_FieldStatus IFF_writeUWordField(FILE *file, const IFF_UWord value, const IFF
 
 IFF_FieldStatus IFF_readWordField(FILE *file, IFF_Word *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_Word))
         return IFF_FIELD_LAST;
     else
     {
@@ -109,7 +109,7 @@ IFF_FieldStatus IFF_readWordField(FILE *file, IFF_Word *value, const IFF_Chunk *
 
 IFF_FieldStatus IFF_writeWordField(FILE *file, const IFF_Word value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_Word))
         return IFF_FIELD_LAST;
     else
     {
@@ -125,7 +125,7 @@ IFF_FieldStatus IFF_writeWordField(FILE *file, const IFF_Word value, const IFF_C
 
 IFF_FieldStatus IFF_readULongField(FILE *file, IFF_ULong *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_ULong))
         return IFF_FIELD_LAST;
     else
     {
@@ -141,7 +141,7 @@ IFF_FieldStatus IFF_readULongField(FILE *file, IFF_ULong *value, const IFF_Chunk
 
 IFF_FieldStatus IFF_writeULongField(FILE *file, const IFF_ULong value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_ULong))
         return IFF_FIELD_LAST;
     else
     {
@@ -157,7 +157,7 @@ IFF_FieldStatus IFF_writeULongField(FILE *file, const IFF_ULong value, const IFF
 
 IFF_FieldStatus IFF_readLongField(FILE *file, IFF_Long *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_Long))
         return IFF_FIELD_LAST;
     else
     {
@@ -173,7 +173,7 @@ IFF_FieldStatus IFF_readLongField(FILE *file, IFF_Long *value, const IFF_Chunk *
 
 IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Long value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
 {
-    if(*bytesProcessed >= chunk->chunkSize)
+    if(*bytesProcessed > chunk->chunkSize - sizeof(IFF_Long))
         return IFF_FIELD_LAST;
     else
     {

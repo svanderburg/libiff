@@ -19,27 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "test.h"
-#include <stdio.h>
-#include "extensiondata-truncated.h"
+#ifndef __EXTENSIONDATA_TRUNCATED2_H
+#define __EXTENSIONDATA_TRUNCATED2_H
+#include <form.h>
 
-int main(int argc, char *argv[])
-{
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST");
+IFF_Form *IFF_createTestForm(void);
 
-    if(chunk == NULL)
-    {
-        fprintf(stderr, "Cannot open 'extension-truncated.TEST'\n");
-        return 1;
-    }
-    else
-    {
-        IFF_Form *form = IFF_createTestForm();
-        int status = !TEST_compare(chunk, (IFF_Chunk*)form);
-
-        TEST_free((IFF_Chunk*)form);
-        TEST_free(chunk);
-
-        return status;
-    }
-}
+#endif

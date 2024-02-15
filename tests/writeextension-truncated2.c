@@ -20,26 +20,12 @@
  */
 
 #include "test.h"
-#include <stdio.h>
-#include "extensiondata-truncated.h"
+#include "extensiondata-truncated2.h"
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST");
-
-    if(chunk == NULL)
-    {
-        fprintf(stderr, "Cannot open 'extension-truncated.TEST'\n");
-        return 1;
-    }
-    else
-    {
-        IFF_Form *form = IFF_createTestForm();
-        int status = !TEST_compare(chunk, (IFF_Chunk*)form);
-
-        TEST_free((IFF_Chunk*)form);
-        TEST_free(chunk);
-
-        return status;
-    }
+    IFF_Form *form = IFF_createTestForm();
+    int status = !TEST_write("extension-truncated2.TEST", (IFF_Chunk*)form);
+    TEST_free((IFF_Chunk*)form);
+    return status;
 }

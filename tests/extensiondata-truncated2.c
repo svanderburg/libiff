@@ -19,27 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "extensiondata-truncated2.h"
+#include <form.h>
 #include "test.h"
-#include <stdio.h>
-#include "extensiondata-truncated.h"
+#include "hello.h"
+#include "bye.h"
 
-int main(int argc, char *argv[])
+static IFF_Chunk *createHelloChunk(void)
 {
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST");
+    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_HELO_DEFAULT_SIZE - sizeof(IFF_UByte)); /* Truncated so that the size is in the middle of the last field */
 
-    if(chunk == NULL)
-    {
-        fprintf(stderr, "Cannot open 'extension-truncated.TEST'\n");
-        return 1;
-    }
-    else
-    {
-        IFF_Form *form = IFF_createTestForm();
-        int status = !TEST_compare(chunk, (IFF_Chunk*)form);
+    hello->a = 'a';
+    hello->b = 'b';
 
-        TEST_free((IFF_Chunk*)form);
-        TEST_free(chunk);
+    return (IFF_Chunk*)hello;
+}
 
-        return status;
-    }
+static IFF_Chunk *createByeChunk(void)
+{
+    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_BYE_DEFAULT_SIZE - sizeof(IFF_Word)); /* Truncated so that the size is in the middle of the last field */
+
+    bye->one = 1;
+
+    return (IFF_Chunk*)bye;
+}
+
+IFF_Form *IFF_createTestForm(void)
+{
+    IFF_Chunk *hello = createHelloChunk();
+    IFF_Chunk *bye = createByeChunk();
+    IFF_Form *form = IFF_createEmptyForm(TEST_ID_TEST);
+
+    IFF_addToForm(form, hello);
+    IFF_addToForm(form, bye);
+
+    return form;
 }
