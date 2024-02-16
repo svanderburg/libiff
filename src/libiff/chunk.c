@@ -65,16 +65,23 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_Extension 
 
     /* Read remaining bytes (procedure depends on chunk id type) */
 
-    if(chunkId == IFF_ID_FORM)
-        chunk = (IFF_Chunk*)IFF_readForm(file, chunkSize, extension, extensionLength);
-    else if(chunkId == IFF_ID_CAT)
-        chunk = (IFF_Chunk*)IFF_readCAT(file, chunkSize, extension, extensionLength);
-    else if(chunkId == IFF_ID_LIST)
-        chunk = (IFF_Chunk*)IFF_readList(file, chunkSize, extension, extensionLength);
-    else if(chunkId == IFF_ID_PROP)
-        chunk = (IFF_Chunk*)IFF_readProp(file, chunkSize, extension, extensionLength);
-    else
-        chunk = IFF_readDataChunk(file, chunkId, chunkSize, formType, extension, extensionLength);
+    switch(chunkId)
+    {
+        case IFF_ID_FORM:
+            chunk = (IFF_Chunk*)IFF_readForm(file, chunkSize, extension, extensionLength);
+            break;
+        case IFF_ID_CAT:
+            chunk = (IFF_Chunk*)IFF_readCAT(file, chunkSize, extension, extensionLength);
+            break;
+        case IFF_ID_LIST:
+            chunk = (IFF_Chunk*)IFF_readList(file, chunkSize, extension, extensionLength);
+            break;
+        case IFF_ID_PROP:
+            chunk = (IFF_Chunk*)IFF_readProp(file, chunkSize, extension, extensionLength);
+            break;
+        default:
+            chunk = IFF_readDataChunk(file, chunkId, chunkSize, formType, extension, extensionLength);
+    }
 
     if(chunk == NULL)
         return NULL;
@@ -97,30 +104,27 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formTyp
     if(!IFF_writeLong(file, chunk->chunkSize, chunk->chunkId, "chunkSize"))
         return FALSE;
 
-    if(chunk->chunkId == IFF_ID_FORM)
+    switch(chunk->chunkId)
     {
-        if(!IFF_writeForm(file, (IFF_Form*)chunk, extension, extensionLength))
-            return FALSE;
-    }
-    else if(chunk->chunkId == IFF_ID_CAT)
-    {
-        if(!IFF_writeCAT(file, (IFF_CAT*)chunk, extension, extensionLength))
-            return FALSE;
-    }
-    else if(chunk->chunkId == IFF_ID_LIST)
-    {
-        if(!IFF_writeList(file, (IFF_List*)chunk, extension, extensionLength))
-            return FALSE;
-    }
-    else if(chunk->chunkId == IFF_ID_PROP)
-    {
-        if(!IFF_writeProp(file, (IFF_Prop*)chunk, extension, extensionLength))
-            return FALSE;
-    }
-    else
-    {
-        if(!IFF_writeDataChunk(file, chunk, formType, extension, extensionLength))
-            return FALSE;
+        case IFF_ID_FORM:
+            if(!IFF_writeForm(file, (IFF_Form*)chunk, extension, extensionLength))
+                return FALSE;
+            break;
+        case IFF_ID_CAT:
+            if(!IFF_writeCAT(file, (IFF_CAT*)chunk, extension, extensionLength))
+                return FALSE;
+            break;
+        case IFF_ID_LIST:
+            if(!IFF_writeList(file, (IFF_List*)chunk, extension, extensionLength))
+                return FALSE;
+            break;
+        case IFF_ID_PROP:
+            if(!IFF_writeProp(file, (IFF_Prop*)chunk, extension, extensionLength))
+                return FALSE;
+            break;
+        default:
+            if(!IFF_writeDataChunk(file, chunk, formType, extension, extensionLength))
+                return FALSE;
     }
 
     /* If the chunk size is odd, we have to write the padding byte */
@@ -136,32 +140,42 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF
         return FALSE;
     else
     {
-        if(chunk->chunkId == IFF_ID_FORM)
-            return IFF_checkForm((const IFF_Form*)chunk, extension, extensionLength);
-        else if(chunk->chunkId == IFF_ID_CAT)
-            return IFF_checkCAT((const IFF_CAT*)chunk, extension, extensionLength);
-        else if(chunk->chunkId == IFF_ID_LIST)
-            return IFF_checkList((const IFF_List*)chunk, extension, extensionLength);
-        else if(chunk->chunkId == IFF_ID_PROP)
-            return IFF_checkProp((const IFF_Prop*)chunk, extension, extensionLength);
-        else
-            return IFF_checkDataChunk(chunk, formType, extension, extensionLength);
+        switch(chunk->chunkId)
+        {
+            case IFF_ID_FORM:
+                return IFF_checkForm((const IFF_Form*)chunk, extension, extensionLength);
+            case IFF_ID_CAT:
+                return IFF_checkCAT((const IFF_CAT*)chunk, extension, extensionLength);
+            case IFF_ID_LIST:
+                return IFF_checkList((const IFF_List*)chunk, extension, extensionLength);
+            case IFF_ID_PROP:
+                return IFF_checkProp((const IFF_Prop*)chunk, extension, extensionLength);
+            default:
+                return IFF_checkDataChunk(chunk, formType, extension, extensionLength);
+        }
     }
 }
 
 void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     /* Free nested sub chunks */
-    if(chunk->chunkId == IFF_ID_FORM)
-        IFF_freeForm((IFF_Form*)chunk, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_CAT)
-        IFF_freeCAT((IFF_CAT*)chunk, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_LIST)
-        IFF_freeList((IFF_List*)chunk, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_PROP)
-        IFF_freeProp((IFF_Prop*)chunk, extension, extensionLength);
-    else
-        IFF_freeDataChunk(chunk, formType, extension, extensionLength);
+    switch(chunk->chunkId)
+    {
+        case IFF_ID_FORM:
+            IFF_freeForm((IFF_Form*)chunk, extension, extensionLength);
+            break;
+        case IFF_ID_CAT:
+            IFF_freeCAT((IFF_CAT*)chunk, extension, extensionLength);
+            break;
+        case IFF_ID_LIST:
+            IFF_freeList((IFF_List*)chunk, extension, extensionLength);
+            break;
+        case IFF_ID_PROP:
+            IFF_freeProp((IFF_Prop*)chunk, extension, extensionLength);
+            break;
+        default:
+            IFF_freeDataChunk(chunk, formType, extension, extensionLength);
+    }
 
     /* Free the chunk itself */
     free(chunk);
@@ -175,16 +189,23 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
 
     IFF_printIndent(stdout, indentLevel + 1, "chunkSize = %d;\n", chunk->chunkSize);
 
-    if(chunk->chunkId == IFF_ID_FORM)
-        IFF_printForm((const IFF_Form*)chunk, indentLevel + 1, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_CAT)
-        IFF_printCAT((const IFF_CAT*)chunk, indentLevel + 1, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_LIST)
-        IFF_printList((const IFF_List*)chunk, indentLevel + 1, extension, extensionLength);
-    else if(chunk->chunkId == IFF_ID_PROP)
-        IFF_printProp((const IFF_Prop*)chunk, indentLevel + 1, extension, extensionLength);
-    else
-        IFF_printDataChunk(chunk, indentLevel + 1, formType, extension, extensionLength);
+    switch(chunk->chunkId)
+    {
+        case IFF_ID_FORM:
+            IFF_printForm((const IFF_Form*)chunk, indentLevel + 1, extension, extensionLength);
+            break;
+        case IFF_ID_CAT:
+           IFF_printCAT((const IFF_CAT*)chunk, indentLevel + 1, extension, extensionLength);
+           break;
+        case IFF_ID_LIST:
+            IFF_printList((const IFF_List*)chunk, indentLevel + 1, extension, extensionLength);
+            break;
+        case IFF_ID_PROP:
+            IFF_printProp((const IFF_Prop*)chunk, indentLevel + 1, extension, extensionLength);
+            break;
+        default:
+            IFF_printDataChunk(chunk, indentLevel + 1, formType, extension, extensionLength);
+    }
 
     IFF_printIndent(stdout, indentLevel, "}\n\n");
 }
@@ -193,16 +214,19 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
 {
     if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
     {
-        if(chunk1->chunkId == IFF_ID_FORM)
-            return IFF_compareForm((const IFF_Form*)chunk1, (const IFF_Form*)chunk2, extension, extensionLength);
-        else if(chunk1->chunkId == IFF_ID_CAT)
-            return IFF_compareCAT((const IFF_CAT*)chunk1, (const IFF_CAT*)chunk2, extension, extensionLength);
-        else if(chunk1->chunkId == IFF_ID_LIST)
-            return IFF_compareList((const IFF_List*)chunk1, (const IFF_List*)chunk2, extension, extensionLength);
-        else if(chunk1->chunkId == IFF_ID_PROP)
-            return IFF_compareProp((const IFF_Prop*)chunk1, (const IFF_Prop*)chunk2, extension, extensionLength);
-        else
-            return IFF_compareDataChunk(chunk1, chunk2, formType, extension, extensionLength);
+        switch(chunk1->chunkId)
+        {
+            case IFF_ID_FORM:
+                return IFF_compareForm((const IFF_Form*)chunk1, (const IFF_Form*)chunk2, extension, extensionLength);
+            case IFF_ID_CAT:
+                return IFF_compareCAT((const IFF_CAT*)chunk1, (const IFF_CAT*)chunk2, extension, extensionLength);
+            case IFF_ID_LIST:
+                return IFF_compareList((const IFF_List*)chunk1, (const IFF_List*)chunk2, extension, extensionLength);
+            case IFF_ID_PROP:
+                return IFF_compareProp((const IFF_Prop*)chunk1, (const IFF_Prop*)chunk2, extension, extensionLength);
+            default:
+                return IFF_compareDataChunk(chunk1, chunk2, formType, extension, extensionLength);
+        }
     }
     else
         return FALSE;
@@ -210,16 +234,17 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
 
 IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
 {
-    if(chunk->chunkId == IFF_ID_FORM)
-        return IFF_searchFormsInForm((IFF_Form*)chunk, formTypes, formTypesLength, formsLength);
-    else if(chunk->chunkId == IFF_ID_CAT)
-        return IFF_searchFormsInCAT((IFF_CAT*)chunk, formTypes, formTypesLength, formsLength);
-    else if(chunk->chunkId == IFF_ID_LIST)
-        return IFF_searchFormsInList((IFF_List*)chunk, formTypes, formTypesLength, formsLength);
-    else
+    switch(chunk->chunkId)
     {
-        *formsLength = 0;
-        return NULL;
+        case IFF_ID_FORM:
+            return IFF_searchFormsInForm((IFF_Form*)chunk, formTypes, formTypesLength, formsLength);
+        case IFF_ID_CAT:
+            return IFF_searchFormsInCAT((IFF_CAT*)chunk, formTypes, formTypesLength, formsLength);
+        case IFF_ID_LIST:
+            return IFF_searchFormsInList((IFF_List*)chunk, formTypes, formTypesLength, formsLength);
+        default:
+            *formsLength = 0;
+            return NULL;
     }
 }
 
@@ -233,14 +258,21 @@ IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int
 void IFF_updateChunkSizes(IFF_Chunk *chunk)
 {
     /* Check whether the given chunk is a group chunk and update the sizes */
-    if(chunk->chunkId == IFF_ID_FORM)
-        IFF_updateFormChunkSizes((IFF_Form*)chunk);
-    else if(chunk->chunkId == IFF_ID_PROP)
-        IFF_updatePropChunkSizes((IFF_Prop*)chunk);
-    else if(chunk->chunkId == IFF_ID_CAT)
-        IFF_updateCATChunkSizes((IFF_CAT*)chunk);
-    else if(chunk->chunkId == IFF_ID_LIST)
-        IFF_updateListChunkSizes((IFF_List*)chunk);
+    switch(chunk->chunkId)
+    {
+        case IFF_ID_FORM:
+            IFF_updateFormChunkSizes((IFF_Form*)chunk);
+            break;
+        case IFF_ID_PROP:
+            IFF_updatePropChunkSizes((IFF_Prop*)chunk);
+            break;
+        case IFF_ID_CAT:
+            IFF_updateCATChunkSizes((IFF_CAT*)chunk);
+            break;
+        case IFF_ID_LIST:
+            IFF_updateListChunkSizes((IFF_List*)chunk);
+            break;
+    }
 
     /* If the given type has a parent, recursively update these as well */
     if(chunk->parent != NULL)

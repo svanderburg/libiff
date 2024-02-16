@@ -51,7 +51,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
     return chunk;
 }
 
-IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_readFile(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Chunk *chunk;
     FILE *file = fopen(filename, "rb");
@@ -73,12 +73,20 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const 
     return chunk;
 }
 
+IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(filename == NULL)
+        return IFF_readFd(stdin, extension, extensionLength);
+    else
+        return IFF_readFile(filename, extension, extensionLength);
+}
+
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     return IFF_writeChunk(file, chunk, 0, extension, extensionLength);
 }
 
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Bool status;
     FILE *file = fopen(filename, "wb");
@@ -92,6 +100,14 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Exten
     status = IFF_writeFd(file, chunk, extension, extensionLength);
     fclose(file);
     return status;
+}
+
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(filename == NULL)
+        return IFF_writeFd(stdout, chunk, extension, extensionLength);
+    else
+        return IFF_writeFile(filename, chunk, extension, extensionLength);
 }
 
 void IFF_free(IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)

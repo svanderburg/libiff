@@ -39,7 +39,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     for(i = 0; i < inputFilenamesLength; i++)
     {
         /* Open each input IFF file */
-        IFF_Chunk *chunk = IFF_read(inputFilenames[i], NULL, 0);
+        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], NULL, 0);
 
         /* Check whether the IFF file is valid */
         if(chunk == NULL || !IFF_check(chunk, NULL, 0))
@@ -73,20 +73,9 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     if(sameIds)
         cat->contentsType = lastType;
 
-    /* Write the resulting CAT */
-
-    if(outputFilename == NULL)
-    {
-        /* Write the CAT to the standard output */
-        if(!IFF_writeFd(stdout, (IFF_Chunk*)cat, NULL, 0))
-            status = 1;
-    }
-    else
-    {
-        /* Write the CAT to the specified destination filename */
-        if(!IFF_write(outputFilename, (IFF_Chunk*)cat, NULL, 0))
-            status = 1;
-    }
+    /* Write the resulting CAT to the output file or standard output */
+    if(!IFF_write(outputFilename, (IFF_Chunk*)cat, NULL, 0))
+        status = 1;
 
     /* Free everything */
     IFF_free((IFF_Chunk*)cat, NULL, 0);

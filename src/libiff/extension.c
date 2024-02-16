@@ -43,7 +43,7 @@ const static IFF_FormExtension *getFormExtensions(const IFF_ID formType, const I
 
     key.formType = formType;
 
-    result = bsearch(&key, extension, extensionLength, sizeof(IFF_Extension), &compareExtension);
+    result = (IFF_Extension*)bsearch(&key, extension, extensionLength, sizeof(IFF_Extension), &compareExtension);
 
     if(result == NULL)
     {
@@ -75,7 +75,7 @@ const static IFF_FormExtension *getFormExtension(const IFF_ID chunkId, const IFF
     IFF_FormExtension key;
     key.chunkId = chunkId;
 
-    return bsearch(&key, formExtension, formExtensionLength, sizeof(IFF_FormExtension), &compareFormExtension);
+    return (IFF_FormExtension*)bsearch(&key, formExtension, formExtensionLength, sizeof(IFF_FormExtension), &compareFormExtension);
 }
 
 const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength)

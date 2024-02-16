@@ -70,35 +70,15 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
     if(cat->contentsType != IFF_ID_JJJJ)
     {
-        /* Check whether form type or contents type matches the contents type of the CAT */
+        /* Check whether a group type matches the contents type of the CAT */
 
-        if(subChunk->chunkId == IFF_ID_FORM)
+        if(subChunk->chunkId == IFF_ID_FORM || subChunk->chunkId == IFF_ID_LIST || subChunk->chunkId == IFF_ID_CAT)
         {
-            IFF_Form *form = (IFF_Form*)subChunk;
+            IFF_Group *group = (IFF_Group*)subChunk;
 
-            if(form->formType != cat->contentsType)
+            if(group->groupType != cat->contentsType)
             {
                 IFF_error("Sub form does not match contentsType of the CAT!\n");
-                return FALSE;
-            }
-        }
-        else if(subChunk->chunkId == IFF_ID_LIST)
-        {
-            IFF_List *list = (IFF_List*)subChunk;
-
-            if(list->contentsType != cat->contentsType)
-            {
-                IFF_error("Sub list does not match contentsType of the CAT!\n");
-                return FALSE;
-            }
-        }
-        else if(subChunk->chunkId == IFF_ID_CAT)
-        {
-            IFF_CAT *subCat = (IFF_CAT*)subChunk;
-
-            if(subCat->contentsType != cat->contentsType)
-            {
-                IFF_error("Sub cat does not match contentsType of the CAT!\n");
                 return FALSE;
             }
         }

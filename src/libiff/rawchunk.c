@@ -130,7 +130,7 @@ void IFF_freeRawChunk(IFF_RawChunk *rawChunk)
 
 void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
-    unsigned int i;
+    IFF_Long i;
 
     IFF_printIndent(stdout, indentLevel, "text = '\n");
     IFF_printIndent(stdout, indentLevel + 1, "");
@@ -144,7 +144,7 @@ void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 
 void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
-    unsigned int i;
+    IFF_Long i;
     IFF_UByte byte;
 
     IFF_printIndent(stdout, indentLevel, "bytes = \n");

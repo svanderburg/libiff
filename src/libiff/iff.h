@@ -47,6 +47,17 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
  * @param extensionLength Length of the extension array
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
+IFF_Chunk *IFF_readFile(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
+ * Reads an IFF file from a file with the given filename or from the standard input when no filename was provided.
+ * The resulting chunk must be freed using IFF_free().
+ *
+ * @param filename Filename of the file or NULL to read from the standard input
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
+ */
 IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
@@ -64,6 +75,17 @@ IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *ex
  * Writes an IFF file to a file with the given filename.
  *
  * @param filename Filename of the file
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return TRUE if the file has been successfully written, else FALSE
+ */
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
+ * Writes an IFF file to a file with the given filename or to the standard output if no filename was provided.
+ *
+ * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array

@@ -24,13 +24,8 @@
 
 int IFF_prettyPrint(const char *filename, const int options)
 {
-    IFF_Chunk *chunk;
-
     /* Parse the chunk */
-    if(filename == NULL)
-        chunk = IFF_readFd(stdin, NULL, 0);
-    else
-        chunk = IFF_read(filename, NULL, 0);
+    IFF_Chunk *chunk = IFF_read(filename, NULL, 0);
 
     if(chunk == NULL)
     {
