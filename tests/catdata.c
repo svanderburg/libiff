@@ -98,7 +98,7 @@ IFF_CAT *IFF_createTestCAT(void)
 {
     IFF_Chunk *test1Form = createTest1Form();
     IFF_Chunk *test2Form = createTest2Form();
-    IFF_CAT *cat = IFF_createEmptyCAT(ID_TEST);
+    IFF_CAT *cat = IFF_createEmptyCATWithContentsType(ID_TEST);
 
     IFF_addToCAT(cat, test1Form);
     IFF_addToCAT(cat, test2Form);

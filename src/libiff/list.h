@@ -109,6 +109,17 @@ void IFF_addPropToList(IFF_List *list, IFF_Prop *prop);
 void IFF_addToList(IFF_List *list, IFF_Chunk *chunk);
 
 /**
+ * Adds a chunk to the body of the given list.
+ * If it sees that all sub chunks have the same group type, it adopts it as its contents type.
+ * If there is no uniform group type possible it sets the contents type to: 'JJJJ'.
+ * This function also increments the chunk size and chunk length counter.
+ *
+ * @param list An instance of a list struct
+ * @param chunk A FORM, CAT or LIST chunk
+ */
+void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
+
+/**
  * Reads a list chunk and its sub chunks from a file. The resulting chunk must be
  * freed by using IFF_free().
  *

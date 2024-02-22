@@ -65,6 +65,11 @@ void IFF_addToList(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCAT((IFF_CAT*)list, chunk);
 }
 
+void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
+{
+    IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
+}
+
 IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_ID contentsType;

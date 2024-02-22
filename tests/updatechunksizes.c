@@ -55,7 +55,7 @@ static IFF_Chunk *createABCDForm(IFF_RawChunk *abcdChunk)
 static IFF_CAT *createABCDCAT(IFF_RawChunk *abcdChunk)
 {
     IFF_Chunk *form = createABCDForm(abcdChunk);
-    IFF_CAT *cat = IFF_createEmptyCAT(ID_TEST);
+    IFF_CAT *cat = IFF_createEmptyCATWithContentsType(ID_TEST);
     IFF_addToCAT(cat, form);
     return cat;
 }

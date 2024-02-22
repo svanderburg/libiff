@@ -82,7 +82,16 @@ IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType);
  * @param contentsType Contents type hinting what the contents of the CAT is.
  * @return CAT chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_CAT *IFF_createEmptyCAT(const IFF_ID contentsType);
+IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType);
+
+/**
+ * Creates a new empty concatentation chunk instance using the JJJJ contents type.
+ * Sub chunks can be added with the IFF_addToCAT() function.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @return CAT chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_CAT *IFF_createEmptyCAT(void);
 
 /**
  * Adds a chunk to the body of the given CAT. This function also increments the
@@ -92,6 +101,17 @@ IFF_CAT *IFF_createEmptyCAT(const IFF_ID contentsType);
  * @param chunk A FORM, CAT or LIST chunk
  */
 void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
+
+/**
+ * Adds a chunk to the body of the given CAT and updates the contents type.
+ * If it sees that all sub chunks have the same group type, it adopts it as its contents type.
+ * If there is no uniform group type possible it sets the contents type to: 'JJJJ'.
+ * This function also increments the chunk size and chunk length counter.
+ *
+ * @param cat An instance of a CAT struct
+ * @param chunk A FORM, CAT or LIST chunk
+ */
+void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
 
 /**
  * Reads a concatenation chunk and its sub chunks from a file. The resulting chunk must be
