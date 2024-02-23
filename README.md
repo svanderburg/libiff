@@ -533,7 +533,7 @@ And the implementation may look as follows:
 
 IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_allocateChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
+    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {

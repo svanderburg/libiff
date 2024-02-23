@@ -29,7 +29,7 @@
 
 IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_allocateChunk(chunkId, chunkSize, sizeof(IFF_RawChunk));
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk));
 
     if(rawChunk != NULL)
     {

@@ -19,7 +19,7 @@ EXPORTS
 	IFF_compareCAT            @17
 	IFF_searchFormsInCAT      @18
 	IFF_updateCATChunkSizes   @19
-	IFF_allocateChunk         @20
+	IFF_createChunk           @20
 	IFF_readChunk             @21
 	IFF_writeChunk            @22
 	IFF_checkChunk            @23

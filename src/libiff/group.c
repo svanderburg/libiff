@@ -34,7 +34,7 @@ void IFF_initGroup(IFF_Group *group, const IFF_ID groupType)
 
 IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType)
 {
-    IFF_Group *group = (IFF_Group*)IFF_allocateChunk(chunkId, chunkSize, sizeof(IFF_Group));
+    IFF_Group *group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_Group));
 
     if(group != NULL)
         IFF_initGroup(group, groupType);

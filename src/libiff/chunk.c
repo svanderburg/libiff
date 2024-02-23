@@ -35,7 +35,7 @@
 
 #define ID_EMPTY IFF_MAKEID(' ', ' ', ' ', ' ')
 
-IFF_Chunk *IFF_allocateChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
+IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)malloc(structSize);
 

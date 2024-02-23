@@ -28,7 +28,7 @@
 
 IFF_Chunk *TEST_createBye(const IFF_Long chunkSize)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_allocateChunk(TEST_ID_BYE, chunkSize, sizeof(TEST_Bye));
+    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(TEST_ID_BYE, chunkSize, sizeof(TEST_Bye));
 
     if(bye != NULL)
     {

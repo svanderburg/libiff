@@ -28,7 +28,7 @@
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    IFF_List *list = (IFF_List*)IFF_allocateChunk(IFF_ID_LIST, chunkSize, sizeof(IFF_List));
+    IFF_List *list = (IFF_List*)IFF_createChunk(IFF_ID_LIST, chunkSize, sizeof(IFF_List));
 
     if(list != NULL)
     {
