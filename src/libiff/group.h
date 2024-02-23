@@ -112,12 +112,11 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param chunkId A 4 character chunk id
  * @param chunkSize Size of the chunk data
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
- * @param groupTypeIsFormType Indicates whether the groupType represents a formType
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
  * @return The group struct derived from the file, or NULL if an error has occured
  */
-IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes all sub chunks inside a group to a file.

@@ -48,7 +48,7 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
 
 IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_Prop*)IFF_readGroup(file, IFF_ID_PROP, chunkSize, PROP_GROUPTYPENAME, TRUE, extension, extensionLength);
+    return (IFF_Prop*)IFF_readGroup(file, IFF_ID_PROP, chunkSize, PROP_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)

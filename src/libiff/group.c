@@ -61,39 +61,17 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
 }
 
-IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Bool groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ID groupType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_ID groupType;
-    IFF_Group *group;
-    IFF_ID formType;
     IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed, so the size is bigger than 0 */
-
-    /* Read group type */
-    if(!IFF_readId(file, &groupType, chunkId, groupTypeName))
-        return NULL;
-
-    /* Create new group */
-    group = IFF_createGroup(chunkId, chunkSize, groupType);
-
-    /* Determine form type */
-    if(groupTypeIsFormType)
-        formType = groupType;
-    else
-        formType = 0;
-
-    /* Keep parsing sub chunks until we have read all bytes */
 
     while(bytesProcessed < group->chunkSize)
     {
         /* Read sub chunk */
-        IFF_Chunk *chunk = IFF_readChunk(file, formType, extension, extensionLength);
+        IFF_Chunk *chunk = IFF_readChunk(file, groupType, extension, extensionLength);
 
         if(chunk == NULL)
-        {
-            IFF_error("Error while reading chunk!\n");
-            IFF_freeChunk((IFF_Chunk*)group, formType, extension, extensionLength);
-            return NULL;
-        }
+            return FALSE;
 
         /* Attach chunk to the group */
         IFF_attachToGroup(group, chunk);
@@ -104,6 +82,32 @@ IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkS
 
     if(bytesProcessed > group->chunkSize)
         IFF_error("WARNING: truncated group chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", group->chunkSize, bytesProcessed);
+
+    return TRUE;
+}
+
+IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    IFF_ID groupType;
+    IFF_Group *group;
+
+    /* Read group type */
+    if(!IFF_readId(file, &groupType, chunkId, groupTypeName))
+        return NULL;
+
+    /* Create new group */
+    group = IFF_createGroup(chunkId, chunkSize, groupType);
+
+    if(group == NULL)
+        return NULL;
+
+    /* Keep parsing sub chunks until we have read all bytes */
+    if(!readGroupSubChunks(file, group, groupType, extension, extensionLength))
+    {
+        IFF_error("Error while reading chunk!\n");
+        IFF_freeChunk((IFF_Chunk*)group, groupType, extension, extensionLength);
+        return NULL;
+    }
 
     /* Return the resulting group */
     return group;

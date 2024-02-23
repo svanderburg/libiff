@@ -70,34 +70,19 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ID contentsType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_ID contentsType;
-    IFF_List *list;
     IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed */
-
-    /* Read the contentsType id */
-    if(!IFF_readId(file, &contentsType, IFF_ID_LIST, "contentsType"))
-        return NULL;
-
-    /* Create new list */
-    list = IFF_createList(chunkSize, contentsType);
-
-    /* Read the remaining nested sub chunks */
 
     while(bytesProcessed < list->chunkSize)
     {
         /* Read sub chunk */
-        IFF_Chunk *chunk = IFF_readChunk(file, 0, extension, extensionLength);
+        IFF_Chunk *chunk = IFF_readChunk(file, contentsType, extension, extensionLength);
 
         if(chunk == NULL)
-        {
-            IFF_error("Error reading chunk in list!\n");
-            IFF_freeChunk((IFF_Chunk*)list, 0, extension, extensionLength);
-            return NULL;
-        }
+            return FALSE;
 
-        /* Add the prop or chunk */
+        /* Add the PROP chunk or arbitrary sub chunk */
         if(chunk->chunkId == IFF_ID_PROP)
             addPropToList(list, (IFF_Prop*)chunk);
         else
@@ -110,19 +95,39 @@ IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension
     if(bytesProcessed > list->chunkSize)
         IFF_error("WARNING: truncated LIST chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", list->chunkSize, bytesProcessed);
 
+    return TRUE;
+}
+
+IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    IFF_ID contentsType;
+    IFF_List *list;
+
+    /* Read the contentsType id */
+    if(!IFF_readId(file, &contentsType, IFF_ID_LIST, "contentsType"))
+        return NULL;
+
+    /* Create new list */
+    list = IFF_createList(chunkSize, contentsType);
+
+    if(list == NULL)
+        return NULL;
+
+    /* Read the remaining nested sub chunks */
+    if(!readListSubChunks(file, list, contentsType, extension, extensionLength))
+    {
+        IFF_error("Error reading chunk in list!\n");
+        IFF_freeChunk((IFF_Chunk*)list, 0, extension, extensionLength);
+        return NULL;
+    }
+
     /* Return the resulting list */
     return list;
 }
 
-IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
-
-    if(!IFF_writeId(file, list->contentsType, IFF_ID_LIST, "contentsType"))
-    {
-        IFF_error("Error writing contentsType!\n");
-        return FALSE;
-    }
 
     for(i = 0; i < list->propLength; i++)
     {
@@ -133,15 +138,46 @@ IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *ex
         }
     }
 
+    return TRUE;
+}
+
+IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(!IFF_writeId(file, list->contentsType, IFF_ID_LIST, "contentsType"))
+    {
+        IFF_error("Error writing contentsType!\n");
+        return FALSE;
+    }
+
+    if(!writeListPropChunks(file, list, extension, extensionLength))
+        return FALSE;
+
     if(!IFF_writeGroupSubChunks(file, (IFF_Group*)list, 0, extension, extensionLength))
         return FALSE;
 
     return TRUE;
 }
 
+static IFF_Long checkListPropChunks(const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    IFF_Long chunkSize = 0;
+    unsigned int i;
+
+    for(i = 0; i < list->propLength; i++)
+    {
+        IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
+
+        if(!IFF_checkChunk(propChunk, 0, extension, extensionLength))
+            return -1;
+
+        chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
+    }
+
+    return chunkSize;
+}
+
 IFF_Bool IFF_checkList(const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    unsigned int i;
     IFF_Long chunkSize = IFF_ID_SIZE;
     IFF_Long subChunkSize;
 
@@ -149,16 +185,10 @@ IFF_Bool IFF_checkList(const IFF_List *list, const IFF_Extension *extension, con
         return FALSE;
 
     /* Check validity of PROP chunks */
+    if((subChunkSize = checkListPropChunks(list, extension, extensionLength)) == -1)
+        return FALSE;
 
-    for(i = 0; i < list->propLength; i++)
-    {
-        IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
-
-        if(!IFF_checkChunk(propChunk, 0, extension, extensionLength))
-            return FALSE;
-
-        chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
-    }
+    chunkSize += subChunkSize;
 
     /* Check validity of other sub chunks */
     if((subChunkSize = IFF_checkGroupSubChunks((IFF_Group*)list, &IFF_checkCATSubChunk, 0, extension, extensionLength)) == -1)
@@ -173,37 +203,41 @@ IFF_Bool IFF_checkList(const IFF_List *list, const IFF_Extension *extension, con
     return TRUE;
 }
 
-void IFF_freeList(IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
+static void freeListPropChunks(IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
-
-    IFF_freeCAT((IFF_CAT*)list, extension, extensionLength);
 
     for(i = 0; i < list->propLength; i++)
         IFF_freeChunk((IFF_Chunk*)list->prop[i], 0, extension, extensionLength);
+}
 
+void IFF_freeList(IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    IFF_freeCAT((IFF_CAT*)list, extension, extensionLength);
+    freeListPropChunks(list, extension, extensionLength);
     free(list->prop);
 }
 
-void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+static void printListPropChunks(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     unsigned int i;
 
-    IFF_printGroupType("contentsType", list->contentsType, indentLevel);
-
     IFF_printIndent(stdout, indentLevel, "prop = [\n");
 
-    /* Print shared properties */
     for(i = 0; i < list->propLength; i++)
         IFF_printChunk((IFF_Chunk*)list->prop[i], indentLevel + 1, 0, extension, extensionLength);
 
     IFF_printIndent(stdout, indentLevel, "];\n");
+}
 
-    /* Print sub chunks */
+void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    IFF_printGroupType("contentsType", list->contentsType, indentLevel);
+    printListPropChunks(list, indentLevel, extension, extensionLength);
     IFF_printGroupSubChunks((const IFF_Group *)list, indentLevel, 0, extension, extensionLength);
 }
 
-IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     if(list1->propLength == list2->propLength)
     {
@@ -212,13 +246,24 @@ IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF
         for(i = 0; i < list1->propLength; i++)
         {
             if(!IFF_compareProp(list1->prop[i], list2->prop[i], extension, extensionLength))
-                return FALSE;
+               return FALSE;
         }
 
-        return IFF_compareCAT((const IFF_CAT*)list1, (const IFF_CAT*)list2, extension, extensionLength);
+        return TRUE;
     }
     else
         return FALSE;
+}
+
+IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    if(!compareListPropChunks(list1, list2, extension, extensionLength))
+        return FALSE;
+
+    if(!IFF_compareCAT((const IFF_CAT*)list1, (const IFF_CAT*)list2, extension, extensionLength))
+        return FALSE;
+
+    return TRUE;
 }
 
 IFF_Form **IFF_searchFormsInList(IFF_List *list, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)

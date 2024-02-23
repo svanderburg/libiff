@@ -42,9 +42,14 @@ IFF_CAT *IFF_createEmptyCAT(void)
     return (IFF_CAT*)IFF_createEmptyCATWithContentsType(IFF_ID_JJJJ);
 }
 
+static IFF_Bool checkValidCATSubChunkId(IFF_ID chunkId)
+{
+    return chunkId == IFF_ID_FORM || chunkId == IFF_ID_CAT || chunkId == IFF_ID_LIST;
+}
+
 static void updateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
 {
-    if(chunk->chunkId == IFF_ID_FORM || chunk->chunkId == IFF_ID_CAT || chunk->chunkId == IFF_ID_LIST)
+    if(checkValidCATSubChunkId(chunk->chunkId))
     {
         IFF_Group *group = (IFF_Group*)chunk;
 
@@ -68,7 +73,7 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
 
 IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_CAT*)IFF_readGroup(file, IFF_ID_CAT, chunkSize, CAT_GROUPTYPENAME, FALSE, extension, extensionLength);
+    return (IFF_CAT*)IFF_readGroup(file, IFF_ID_CAT, chunkSize, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -82,9 +87,7 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
 
-    if(subChunk->chunkId != IFF_ID_FORM &&
-       subChunk->chunkId != IFF_ID_LIST &&
-       subChunk->chunkId != IFF_ID_CAT)
+    if(!checkValidCATSubChunkId(subChunk->chunkId))
     {
         IFF_error("ERROR: Element with chunk Id: '");
         IFF_errorId(subChunk->chunkId);
@@ -96,7 +99,7 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
     {
         /* Check whether a group type matches the contents type of the CAT */
 
-        if(subChunk->chunkId == IFF_ID_FORM || subChunk->chunkId == IFF_ID_LIST || subChunk->chunkId == IFF_ID_CAT)
+        if(checkValidCATSubChunkId(subChunk->chunkId))
         {
             IFF_Group *group = (IFF_Group*)subChunk;
 
