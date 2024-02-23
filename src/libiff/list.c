@@ -41,9 +41,14 @@ IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
     return list;
 }
 
-IFF_List *IFF_createEmptyList(const IFF_ID contentsType)
+IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType)
 {
     return IFF_createList(IFF_ID_SIZE /* We have a contentsType field so it is not 0 */, contentsType);
+}
+
+IFF_List *IFF_createEmptyList(void)
+{
+    return IFF_createEmptyListWithContentsType(IFF_ID_JJJJ);
 }
 
 static void addPropToList(IFF_List *list, IFF_Prop *prop)

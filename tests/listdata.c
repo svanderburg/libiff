@@ -96,7 +96,7 @@ IFF_List *IFF_createTestList(void)
     IFF_Prop *testProp = createTestProp();
     IFF_Chunk *test1Form = createTest1Form();
     IFF_Chunk *test2Form = createTest2Form();
-    IFF_List *list = IFF_createEmptyList(ID_TEST);
+    IFF_List *list = IFF_createEmptyListWithContentsType(ID_TEST);
 
     IFF_addPropToList(list, testProp);
     IFF_addToList(list, test1Form);
