@@ -99,14 +99,12 @@ IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *byte
 
 /**
  * Reads a raw chunk with the given chunk id and chunk size from a file.
- * The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file
- * @param chunkId A 4 character chunk id
- * @param chunkSize Size of the chunk data
- * @return The raw chunk struct derived from the file, or NULL if an error has occured
+ * @param rawChunk A raw chunk instance
+ * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_RawChunk *IFF_readRawChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize);
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_RawChunk *rawChunk);
 
 /**
  * Writes the content of a raw chunk to a file descriptor.

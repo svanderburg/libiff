@@ -51,6 +51,11 @@ IFF_List *IFF_createEmptyList(void)
     return IFF_createEmptyListWithContentsType(IFF_ID_JJJJ);
 }
 
+IFF_Chunk *IFF_createUnparsedList(const IFF_Long chunkSize)
+{
+    return (IFF_Chunk*)IFF_createList(chunkSize, 0);
+}
+
 static void addPropToList(IFF_List *list, IFF_Prop *prop)
 {
     list->prop = (IFF_Prop**)realloc(list->prop, (list->propLength + 1) * sizeof(IFF_Prop*));
@@ -75,14 +80,14 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ID contentsType, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed */
 
     while(bytesProcessed < list->chunkSize)
     {
         /* Read sub chunk */
-        IFF_Chunk *chunk = IFF_readChunk(file, contentsType, extension, extensionLength);
+        IFF_Chunk *chunk = IFF_readChunk(file, list->contentsType, extension, extensionLength);
 
         if(chunk == NULL)
             return FALSE;
@@ -103,31 +108,21 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ID conte
     return TRUE;
 }
 
-IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_ID contentsType;
-    IFF_List *list;
-
     /* Read the contentsType id */
-    if(!IFF_readId(file, &contentsType, IFF_ID_LIST, "contentsType"))
-        return NULL;
-
-    /* Create new list */
-    list = IFF_createList(chunkSize, contentsType);
-
-    if(list == NULL)
-        return NULL;
+    if(!IFF_readId(file, &list->contentsType, list->chunkId, "contentsType"))
+        return FALSE;
 
     /* Read the remaining nested sub chunks */
-    if(!readListSubChunks(file, list, contentsType, extension, extensionLength))
+    if(!readListSubChunks(file, list, extension, extensionLength))
     {
         IFF_error("Error reading chunk in list!\n");
-        IFF_freeChunk((IFF_Chunk*)list, 0, extension, extensionLength);
-        return NULL;
+        return FALSE;
     }
 
-    /* Return the resulting list */
-    return list;
+    /* Return the result */
+    return TRUE;
 }
 
 static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength)

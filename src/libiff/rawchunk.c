@@ -65,9 +65,15 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-static IFF_Bool readRawChunkData(FILE *file, IFF_RawChunk *rawChunk)
+IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed)
 {
-    /* Read remaining bytes verbatim */
+    IFF_Bool status = IFF_readRawChunk(file, rawChunk);
+    *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
+    return status;
+}
+
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_RawChunk *rawChunk)
+{
     if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
         IFF_error("Error reading raw chunk body of chunk: '");
@@ -77,30 +83,6 @@ static IFF_Bool readRawChunkData(FILE *file, IFF_RawChunk *rawChunk)
     }
     else
         return TRUE;
-}
-
-IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed)
-{
-    IFF_Bool status = readRawChunkData(file, rawChunk);
-    *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
-    return status;
-}
-
-IFF_RawChunk *IFF_readRawChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize)
-{
-    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
-
-    if(rawChunk != NULL)
-    {
-        if(!readRawChunkData(file, rawChunk))
-        {
-            IFF_freeChunk((IFF_Chunk*)rawChunk, 0, NULL, 0);
-            return NULL;
-        }
-    }
-
-    /* Return the resulting raw chunk */
-    return rawChunk;
 }
 
 IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk)

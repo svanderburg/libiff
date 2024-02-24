@@ -23,14 +23,24 @@
 #include "rawchunk.h"
 #include "extensionchunk.h"
 
-IFF_Chunk *IFF_readDataChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunkId, extension, extensionLength);
 
     if(formExtension == NULL)
-        return (IFF_Chunk*)IFF_readRawChunk(file, chunkId, chunkSize);
+        return (IFF_Chunk*)IFF_createRawChunk(chunkId, chunkSize);
     else
-        return IFF_readExtensionChunk(file, chunkSize, formExtension);
+        return IFF_createExtensionChunk(chunkSize, formExtension);
+}
+
+IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunk->chunkId, extension, extensionLength);
+
+    if(formExtension == NULL)
+        return IFF_readRawChunk(file, (IFF_RawChunk*)chunk);
+    else
+        return IFF_readExtensionChunk(file, chunk, formExtension);
 }
 
 IFF_Bool IFF_writeDataChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)
@@ -38,7 +48,7 @@ IFF_Bool IFF_writeDataChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID for
     const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunk->chunkId, extension, extensionLength);
 
     if(formExtension == NULL)
-        return IFF_writeRawChunk(file, (IFF_RawChunk*)chunk);
+        return IFF_writeRawChunk(file, (const IFF_RawChunk*)chunk);
     else
         return IFF_writeExtensionChunk(file, chunk, formExtension);
 }

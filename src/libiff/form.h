@@ -82,6 +82,16 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
 IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
 
 /**
+ * Creates an empty FORM with no form type specified. This function should not
+ * be directly used to create a FORM.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @return FORM chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createUnparsedForm(const IFF_Long chunkSize);
+
+/**
  * Adds a chunk to the body of the given FORM. This function also increments the
  * chunk size and chunk length counter.
  *
@@ -91,16 +101,15 @@ IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
 void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk);
 
 /**
- * Reads a form chunk and its sub chunks from a file. The resulting chunk must be
- * freed by using IFF_free().
+ * Reads a form chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunkSize Size of the chunk data
+ * @param form An instance of a form chunk
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The form struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the FORM has been successfully read, or FALSE if an error has occured
  */
-IFF_Form *IFF_readForm(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readForm(FILE *file, IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a form chunk and its sub chunks to a file.

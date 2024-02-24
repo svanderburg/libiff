@@ -63,28 +63,68 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_Extension 
     if(!IFF_readLong(file, &chunkSize, chunkId, "chunkSize"))
         return NULL;
 
+    /* Create the chunk */
+
+    switch(chunkId)
+    {
+        case IFF_ID_FORM:
+            chunk = IFF_createUnparsedForm(chunkSize);
+            break;
+        case IFF_ID_CAT:
+            chunk = IFF_createUnparsedCAT(chunkSize);
+            break;
+        case IFF_ID_LIST:
+            chunk = IFF_createUnparsedList(chunkSize);
+            break;
+        case IFF_ID_PROP:
+            chunk = IFF_createUnparsedProp(chunkSize);
+            break;
+        default:
+            chunk = IFF_createDataChunk(chunkId, chunkSize, formType, extension, extensionLength);
+    }
+
+    if(chunk == NULL)
+        return NULL;
+
     /* Read remaining bytes (procedure depends on chunk id type) */
 
     switch(chunkId)
     {
         case IFF_ID_FORM:
-            chunk = (IFF_Chunk*)IFF_readForm(file, chunkSize, extension, extensionLength);
+            if(!IFF_readForm(file, (IFF_Form*)chunk, extension, extensionLength))
+            {
+                IFF_freeChunk(chunk, formType, extension, extensionLength);
+                return NULL;
+            }
             break;
         case IFF_ID_CAT:
-            chunk = (IFF_Chunk*)IFF_readCAT(file, chunkSize, extension, extensionLength);
+            if(!IFF_readCAT(file, (IFF_CAT*)chunk, extension, extensionLength))
+            {
+                IFF_freeChunk(chunk, formType, extension, extensionLength);
+                return NULL;
+            }
             break;
         case IFF_ID_LIST:
-            chunk = (IFF_Chunk*)IFF_readList(file, chunkSize, extension, extensionLength);
+            if(!IFF_readList(file, (IFF_List*)chunk, extension, extensionLength))
+            {
+                IFF_freeChunk(chunk, formType, extension, extensionLength);
+                return NULL;
+            }
             break;
         case IFF_ID_PROP:
-            chunk = (IFF_Chunk*)IFF_readProp(file, chunkSize, extension, extensionLength);
+            if(!IFF_readProp(file, (IFF_Prop*)chunk, extension, extensionLength))
+            {
+                IFF_freeChunk(chunk, formType, extension, extensionLength);
+                return NULL;
+            }
             break;
         default:
-            chunk = IFF_readDataChunk(file, chunkId, chunkSize, formType, extension, extensionLength);
+            if(!IFF_readDataChunk(file, chunk, formType, extension, extensionLength))
+            {
+                IFF_freeChunk(chunk, formType, extension, extensionLength);
+                return NULL;
+            }
     }
-
-    if(chunk == NULL)
-        return NULL;
 
     /* If the chunk size is odd, we have to read the padding byte */
     if(!IFF_readPaddingByte(file, chunkSize, chunk->chunkId))

@@ -47,6 +47,11 @@ IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType)
     return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType);
 }
 
+IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSize)
+{
+    return (IFF_Chunk*)IFF_createGroup(chunkId, chunkSize, 0);
+}
+
 void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
     group->chunk = (IFF_Chunk**)realloc(group->chunk, (group->chunkLength + 1) * sizeof(IFF_Chunk*));
@@ -61,14 +66,14 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ID groupType, const IFF_Extension *extension, const unsigned int extensionLength)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed, so the size is bigger than 0 */
 
     while(bytesProcessed < group->chunkSize)
     {
         /* Read sub chunk */
-        IFF_Chunk *chunk = IFF_readChunk(file, groupType, extension, extensionLength);
+        IFF_Chunk *chunk = IFF_readChunk(file, group->groupType, extension, extensionLength);
 
         if(chunk == NULL)
             return FALSE;
@@ -86,31 +91,17 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ID gr
     return TRUE;
 }
 
-IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readGroup(FILE *file, IFF_Group *group, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    IFF_ID groupType;
-    IFF_Group *group;
-
     /* Read group type */
-    if(!IFF_readId(file, &groupType, chunkId, groupTypeName))
-        return NULL;
-
-    /* Create new group */
-    group = IFF_createGroup(chunkId, chunkSize, groupType);
-
-    if(group == NULL)
-        return NULL;
+    if(!IFF_readId(file, &group->groupType, group->chunkId, groupTypeName))
+        return FALSE;
 
     /* Keep parsing sub chunks until we have read all bytes */
-    if(!readGroupSubChunks(file, group, groupType, extension, extensionLength))
-    {
-        IFF_error("Error while reading chunk!\n");
-        IFF_freeChunk((IFF_Chunk*)group, groupType, extension, extensionLength);
-        return NULL;
-    }
+    if(!readGroupSubChunks(file, group, extension, extensionLength))
+        return FALSE;
 
-    /* Return the resulting group */
-    return group;
+    return TRUE;
 }
 
 IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength)

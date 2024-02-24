@@ -31,17 +31,29 @@ extern "C" {
 #endif
 
 /**
+ * Creates a new data chunk instance.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkId A 4 character id
+ * @param chunkSize Size of the chunk data
+ * @param formType Form type describing the purpose of the sub chunks.
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return A data chunk instance or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Reads a data chunk from a given file descriptor.
  *
  * @param file File descriptor of the file
- * @param chunkId A 4 character id
- * @param chunkSize Size of the chunk in bytes
+ * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The read the data chunk
+ * @return TRUE if the data chunk has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_readDataChunk(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a data chunk to a given file descriptor.

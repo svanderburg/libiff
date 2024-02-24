@@ -42,6 +42,11 @@ IFF_CAT *IFF_createEmptyCAT(void)
     return (IFF_CAT*)IFF_createEmptyCATWithContentsType(IFF_ID_JJJJ);
 }
 
+IFF_Chunk *IFF_createUnparsedCAT(const IFF_Long chunkSize)
+{
+    return IFF_createUnparsedGroup(IFF_ID_CAT, chunkSize);
+}
+
 static IFF_Bool checkValidCATSubChunkId(IFF_ID chunkId)
 {
     return chunkId == IFF_ID_FORM || chunkId == IFF_ID_CAT || chunkId == IFF_ID_LIST;
@@ -71,9 +76,9 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     IFF_addToCAT(cat, chunk);
 }
 
-IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_CAT*)IFF_readGroup(file, IFF_ID_CAT, chunkSize, CAT_GROUPTYPENAME, extension, extensionLength);
+    return IFF_readGroup(file, (IFF_Group*)cat, CAT_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)

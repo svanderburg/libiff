@@ -57,6 +57,16 @@ IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType);
 IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
 
 /**
+ * Creates an empty PROP with no form type specified. This function should not
+ * be directly used to create a PROP.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @return PROP chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createUnparsedProp(const IFF_Long chunkSize);
+
+/**
  * Adds a chunk to the body of the given PROP. This function also increments the
  * chunk size and chunk length counter.
  *
@@ -66,16 +76,15 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
 void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
 
 /**
- * Reads a PROP chunk and its sub chunks from a file. The resulting chunk must be
- * freed by using IFF_free().
+ * Reads a PROP chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunkSize Size of the chunk data
+ * @param prop An instance of a PROP chunk
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The PROP struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the PROP has been successfully read, or FALSE if an error has occured
  */
-IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a PROP chunk and its sub chunks to a file.

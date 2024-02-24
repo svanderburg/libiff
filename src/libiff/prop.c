@@ -41,14 +41,19 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType)
     return (IFF_Prop*)IFF_createEmptyGroup(IFF_ID_PROP, formType);
 }
 
+IFF_Chunk *IFF_createUnparsedProp(const IFF_Long chunkSize)
+{
+    return IFF_createUnparsedGroup(IFF_ID_PROP, chunkSize);
+}
+
 void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
 {
     IFF_addToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
 {
-    return (IFF_Prop*)IFF_readGroup(file, IFF_ID_PROP, chunkSize, PROP_GROUPTYPENAME, extension, extensionLength);
+    return IFF_readGroup(file, (IFF_Group*)prop, PROP_GROUPTYPENAME, extension, extensionLength);
 }
 
 IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)

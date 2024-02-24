@@ -94,6 +94,16 @@ IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType);
 IFF_CAT *IFF_createEmptyCAT(void);
 
 /**
+ * Creates an empty CAT with no contents type specified. This function should not
+ * be directly used to create a CAT.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @return CAT chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createUnparsedCAT(const IFF_Long chunkSize);
+
+/**
  * Adds a chunk to the body of the given CAT. This function also increments the
  * chunk size and chunk length counter.
  *
@@ -114,16 +124,15 @@ void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
 void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
 
 /**
- * Reads a concatenation chunk and its sub chunks from a file. The resulting chunk must be
- * freed by using IFF_free().
+ * Reads a concatenation chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunkSize Size of the chunk data
+ * @param cat An instance of a concatenation chunk
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The concation struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_CAT *IFF_readCAT(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.

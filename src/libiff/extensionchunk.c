@@ -24,16 +24,21 @@
 #include "io.h"
 #include "error.h"
 
-static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Long chunkSize, const IFF_Long bytesProcessed, const IFF_ID chunkId)
+IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_FormExtension *formExtension)
 {
-    if(bytesProcessed < chunkSize)
+    return formExtension->createExtensionChunk(chunkSize);
+}
+
+static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
+{
+    if(bytesProcessed < chunk->chunkSize)
     {
-        long bytesToSkip = chunkSize - bytesProcessed;
+        long bytesToSkip = chunk->chunkSize - bytesProcessed;
 
         if(fseek(file, bytesToSkip, SEEK_CUR) == 0)
         {
             IFF_error("Cannot skip: %d bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunkId);
+            IFF_errorId(chunk->chunkId);
             IFF_error("'\n");
             return TRUE;
         }
@@ -44,36 +49,26 @@ static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Long chunkSize, const IFF
         return TRUE;
 }
 
-IFF_Chunk *IFF_readExtensionChunk(FILE *file, const IFF_Long chunkSize, const IFF_FormExtension *formExtension)
+IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_FormExtension *formExtension)
 {
     IFF_Long bytesProcessed = 0;
-    IFF_Chunk *chunk = formExtension->createExtensionChunk(chunkSize);
 
-    if(chunk != NULL)
-    {
-        if(!formExtension->readExtensionChunkFields(file, chunk, &bytesProcessed) ||
-          !skipUnknownBytes(file, chunkSize, bytesProcessed, chunk->chunkId))
-        {
-            IFF_freeChunk(chunk, 0, NULL, 0);
-            return NULL;
-        }
-    }
-
-    return chunk;
+    return (formExtension->readExtensionChunkFields(file, chunk, &bytesProcessed) &&
+      skipUnknownBytes(file, chunk, bytesProcessed));
 }
 
-static IFF_Bool writeZeroFillerBytes(FILE *file, const IFF_Long chunkSize, const IFF_Long bytesProcessed, const IFF_ID chunkId)
+static IFF_Bool writeZeroFillerBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
 {
-    if(bytesProcessed < chunkSize)
+    if(bytesProcessed < chunk->chunkSize)
     {
-        size_t bytesToSkip = chunkSize - bytesProcessed;
+        size_t bytesToSkip = chunk->chunkSize - bytesProcessed;
         IFF_UByte *emptyData = (IFF_UByte*)calloc(bytesToSkip, sizeof(IFF_UByte));
         IFF_Bool status = fwrite(emptyData, sizeof(IFF_UByte), bytesToSkip, file) == bytesToSkip;
 
         if(!status)
         {
             IFF_error("Cannot write: %u zero bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunkId);
+            IFF_errorId(chunk->chunkId);
             IFF_error("'\n");
         }
 
@@ -91,7 +86,7 @@ IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_F
     if(!formExtension->writeExtensionChunkFields(file, chunk, &bytesProcessed))
         return FALSE;
 
-    if(!writeZeroFillerBytes(file, chunk->chunkSize, bytesProcessed, chunk->chunkId))
+    if(!writeZeroFillerBytes(file, chunk, bytesProcessed))
         return FALSE;
 
     return TRUE;

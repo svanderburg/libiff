@@ -31,14 +31,24 @@ extern "C" {
 #endif
 
 /**
+ * Creates a new instance of an extension chunk.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @param formExtension Extension that refers to the function executing data chunk specific operations
+ * @return The extension chunk instance or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_FormExtension *formExtension);
+
+/**
  * Reads a data chunk by invoking extension functions.
  *
  * @param file File descriptor of the file
- * @param chunkSize Size of the data chunk in bytes
+ * @param chunk A data chunk instance
  * @param formExtension Extension that refers to the function executing data chunk specific operations
- * @return The data chunk struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Chunk *IFF_readExtensionChunk(FILE *file, const IFF_Long chunkSize, const IFF_FormExtension *formExtension);
+IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_FormExtension *formExtension);
 
 /**
  * Writes a given data chunk to a file descriptor by invoking extension functions.

@@ -100,6 +100,16 @@ IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType);
 IFF_List *IFF_createEmptyList(void);
 
 /**
+ * Creates an empty list with no contents type specified. This function should not
+ * be directly used to create a list.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkSize Size of the chunk data
+ * @return List chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createUnparsedList(const IFF_Long chunkSize);
+
+/**
  * Adds a PROP chunk to the body of the given list. This function also increments the
  * chunk size and PROP length counter.
  *
@@ -129,16 +139,15 @@ void IFF_addToList(IFF_List *list, IFF_Chunk *chunk);
 void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
 
 /**
- * Reads a list chunk and its sub chunks from a file. The resulting chunk must be
- * freed by using IFF_free().
+ * Reads a list chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunkSize Size of the chunk data
+ * @param list An instance of a list chunk
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The list struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the list has been successfully read, or FALSE if an error has occured
  */
-IFF_List *IFF_readList(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a list chunk and its sub chunks to a file.

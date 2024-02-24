@@ -88,6 +88,17 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_I
 IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType);
 
 /**
+ * Creates an empty group with no group type specified. This function should not
+ * be directly used to create a group.
+ * The resulting chunk must be freed by using IFF_free().
+ *
+ * @param chunkId A 4 character chunk id
+ * @param chunkSize Size of the chunk data
+ * @return Group chunk or NULL, if the memory for the struct can't be allocated
+ */
+IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSize);
+
+/**
  * Attaches a chunk to the body of the given group.
  *
  * @param group An instance of a group chunk
@@ -105,18 +116,16 @@ void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk);
 void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
 
 /**
- * Reads a group chunk and its sub chunks from a file. The resulting chunk must be
- * freed by using IFF_free().
+ * Reads a group chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunkId A 4 character chunk id
- * @param chunkSize Size of the chunk data
+ * @param group An instance of a group chunk
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param extension Extension array which specifies how application file format chunks can be handled
  * @param extensionLength Length of the extension array
- * @return The group struct derived from the file, or NULL if an error has occured
+ * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Group *IFF_readGroup(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readGroup(FILE *file, IFF_Group *group, const char *groupTypeName, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes all sub chunks inside a group to a file.
