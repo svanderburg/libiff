@@ -24,14 +24,14 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read(argv[1], NULL, 0);
+    IFF_Chunk *chunk = IFF_read(argv[1], NULL);
 
     if(chunk == NULL)
         return 1;
     else
     {
-        int status = !IFF_check(chunk, NULL, 0); /* Should succeed */
-        IFF_free(chunk, NULL, 0);
+        int status = !IFF_check(chunk, NULL); /* Should succeed */
+        IFF_free(chunk, NULL);
         return status;
     }
 }

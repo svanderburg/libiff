@@ -36,24 +36,32 @@ static int compareExtension(const void *a, const void *b)
         return 0;
 }
 
-const static IFF_FormExtension *getFormExtensions(const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength, unsigned int *formExtensionsLength)
+const static IFF_FormExtension *getFormExtensions(const IFF_ID formType, const IFF_ExtensionRegistry *extensionRegistry, unsigned int *formExtensionsLength)
 {
-    IFF_Extension key;
-    IFF_Extension *result;
-
-    key.formType = formType;
-
-    result = (IFF_Extension*)bsearch(&key, extension, extensionLength, sizeof(IFF_Extension), &compareExtension);
-
-    if(result == NULL)
+    if(extensionRegistry == NULL)
     {
         *formExtensionsLength = 0;
         return NULL;
     }
     else
     {
-        *formExtensionsLength = result->formExtensionsLength;
-        return result->formExtensions;
+        IFF_Extension key;
+        IFF_Extension *result;
+
+        key.formType = formType;
+
+        result = (IFF_Extension*)bsearch(&key, extensionRegistry->extensions, extensionRegistry->extensionsLength, sizeof(IFF_Extension), &compareExtension);
+
+        if(result == NULL)
+        {
+            *formExtensionsLength = 0;
+            return NULL;
+        }
+        else
+        {
+            *formExtensionsLength = result->formExtensionsLength;
+            return result->formExtensions;
+        }
     }
 }
 
@@ -78,7 +86,7 @@ const static IFF_FormExtension *getFormExtension(const IFF_ID chunkId, const IFF
     return (IFF_FormExtension*)bsearch(&key, formExtension, formExtensionLength, sizeof(IFF_FormExtension), &compareFormExtension);
 }
 
-const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength)
+const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_ExtensionRegistry *extensionRegistry)
 {
     if(formType == 0)
         return NULL;
@@ -87,7 +95,7 @@ const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_
         unsigned int formExtensionsLength;
 
         /* Search the given form extensions array */
-        const IFF_FormExtension *formExtensions = getFormExtensions(formType, extension, extensionLength, &formExtensionsLength);
+        const IFF_FormExtension *formExtensions = getFormExtensions(formType, extensionRegistry, &formExtensionsLength);
 
         /* Search for the extension that handles the a chunk with the given chunk id */
         const IFF_FormExtension *formExtension = getFormExtension(chunkId, formExtensions, formExtensionsLength);

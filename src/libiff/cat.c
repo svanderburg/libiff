@@ -76,14 +76,14 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     IFF_addToCAT(cat, chunk);
 }
 
-IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_readGroup(file, (IFF_Group*)cat, CAT_GROUPTYPENAME, extension, extensionLength);
+    return IFF_readGroup(file, (IFF_Group*)cat, CAT_GROUPTYPENAME, extensionRegistry);
 }
 
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_writeGroup(file, (IFF_Group*)cat, 0, CAT_GROUPTYPENAME, extension, extensionLength);
+    return IFF_writeGroup(file, (IFF_Group*)cat, 0, CAT_GROUPTYPENAME, extensionRegistry);
 }
 
 IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
@@ -119,24 +119,24 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
     return TRUE;
 }
 
-IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_checkGroup((IFF_Group*)cat, &IFF_checkId, &IFF_checkCATSubChunk, 0, extension, extensionLength);
+    return IFF_checkGroup((IFF_Group*)cat, &IFF_checkId, &IFF_checkCATSubChunk, 0, extensionRegistry);
 }
 
-void IFF_freeCAT(IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_freeCAT(IFF_CAT *cat, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    IFF_freeGroup((IFF_Group*)cat, 0, extension, extensionLength);
+    IFF_freeGroup((IFF_Group*)cat, 0, extensionRegistry);
 }
 
-void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    IFF_printGroup((const IFF_Group*)cat, indentLevel, 0, CAT_GROUPTYPENAME, extension, extensionLength);
+    IFF_printGroup((const IFF_Group*)cat, indentLevel, 0, CAT_GROUPTYPENAME, extensionRegistry);
 }
 
-IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, 0, extension, extensionLength);
+    return IFF_compareGroup((const IFF_Group*)cat1, (const IFF_Group*)cat2, 0, extensionRegistry);
 }
 
 IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)

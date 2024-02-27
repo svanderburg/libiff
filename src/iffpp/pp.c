@@ -25,7 +25,7 @@
 int IFF_prettyPrint(const char *filename, const int options)
 {
     /* Parse the chunk */
-    IFF_Chunk *chunk = IFF_read(filename, NULL, 0);
+    IFF_Chunk *chunk = IFF_read(filename, NULL);
 
     if(chunk == NULL)
     {
@@ -37,10 +37,10 @@ int IFF_prettyPrint(const char *filename, const int options)
         int status;
 
         /* Check the file */
-        if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL, 0))
+        if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL))
         {
             /* Print the file */
-            IFF_print(chunk, 0, NULL, 0);
+            IFF_print(chunk, 0, NULL);
 
             status = 0;
         }
@@ -48,7 +48,7 @@ int IFF_prettyPrint(const char *filename, const int options)
             status = 1;
 
         /* Free the chunk structure */
-        IFF_free(chunk, NULL, 0);
+        IFF_free(chunk, NULL);
 
         return status;
     }

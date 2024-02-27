@@ -51,14 +51,14 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
     IFF_addToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_readGroup(file, (IFF_Group*)prop, PROP_GROUPTYPENAME, extension, extensionLength);
+    return IFF_readGroup(file, (IFF_Group*)prop, PROP_GROUPTYPENAME, extensionRegistry);
 }
 
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_writeForm(file, (IFF_Form*)prop, extension, extensionLength);
+    return IFF_writeForm(file, (IFF_Form*)prop, extensionRegistry);
 }
 
 static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
@@ -78,24 +78,24 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
         return TRUE;
 }
 
-IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_checkGroup((IFF_Group*)prop, &IFF_checkFormType, &subChunkCheck, prop->formType, extension, extensionLength);
+    return IFF_checkGroup((IFF_Group*)prop, &IFF_checkFormType, &subChunkCheck, prop->formType, extensionRegistry);
 }
 
-void IFF_freeProp(IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_freeProp(IFF_Prop *prop, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    IFF_freeForm((IFF_Form*)prop, extension, extensionLength);
+    IFF_freeForm((IFF_Form*)prop, extensionRegistry);
 }
 
-void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    IFF_printForm((const IFF_Form *)prop, indentLevel, extension, extensionLength);
+    IFF_printForm((const IFF_Form *)prop, indentLevel, extensionRegistry);
 }
 
-IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_ExtensionRegistry *extensionRegistry)
 {
-    return IFF_compareForm((const IFF_Form*)prop1, (const IFF_Form*)prop2, extension, extensionLength);
+    return IFF_compareForm((const IFF_Form*)prop1, (const IFF_Form*)prop2, extensionRegistry);
 }
 
 void IFF_updatePropChunkSizes(IFF_Prop *prop)

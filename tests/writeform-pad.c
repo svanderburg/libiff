@@ -25,7 +25,7 @@
 int main(int argc, char *argv[])
 {
     IFF_Form *form = IFF_createTestForm();
-    int status = !IFF_write("hello-pad.TEST", (IFF_Chunk*)form, NULL, 0);
-    IFF_free((IFF_Chunk*)form, NULL, 0);
+    int status = !IFF_write("hello-pad.TEST", (IFF_Chunk*)form, NULL);
+    IFF_free((IFF_Chunk*)form, NULL);
     return status;
 }

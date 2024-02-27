@@ -30,7 +30,7 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read("list.TEST", NULL, 0);
+    IFF_Chunk *chunk = IFF_read("list.TEST", NULL);
 
     if(chunk == NULL)
         return 1;
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
             status = 1;
         }
 
-        IFF_free(chunk, NULL, 0);
+        IFF_free(chunk, NULL);
 
         return status;
     }

@@ -24,6 +24,7 @@
 
 typedef struct IFF_FormExtension IFF_FormExtension;
 typedef struct IFF_Extension IFF_Extension;
+typedef struct IFF_ExtensionRegistry IFF_ExtensionRegistry;
 
 #include <stdio.h>
 #include "ifftypes.h"
@@ -79,15 +80,26 @@ struct IFF_Extension
 };
 
 /**
+ * @brief Defines a registry of extensions per form type
+ */
+struct IFF_ExtensionRegistry
+{
+    /** Specifies the number of forms for which extensions must be provided */
+    unsigned int extensionsLength;
+
+    /** An array specifying extension functions per form type */
+    IFF_Extension *extensions;
+};
+
+/**
  * Searches for a form extension that can deal with a chunk in a given form with a form type and a given chunk id
  *
  * @param formType A 4 character form type id. If the formType is NULL, the function will always return NULL
  * @param chunkId A 4 character chunk id
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param extensionRegistry Registry of extensions that decide how to manage application-specific chunk types
  * @return The form extension that handles the specified chunk or NULL if it does not exists
  */
-const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength);
+const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_ExtensionRegistry *extensionRegistry);
 
 #ifdef __cplusplus
 }
