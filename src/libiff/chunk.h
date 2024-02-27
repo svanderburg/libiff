@@ -26,7 +26,7 @@ typedef struct IFF_Chunk IFF_Chunk;
 
 #include <stdio.h>
 #include "ifftypes.h"
-#include "extension.h"
+#include "chunkregistry.h"
 #include "group.h"
 #include "form.h"
 
@@ -65,11 +65,10 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t stru
  *
  * @param file File descriptor of the file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.
@@ -77,32 +76,29 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_Extension 
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of an IFF chunk hierarchy on the standard output.
@@ -110,10 +106,9 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension 
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given chunk hierarchies are equal.
@@ -121,11 +116,10 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively searches for all FORMs with the given form types in a chunk hierarchy.

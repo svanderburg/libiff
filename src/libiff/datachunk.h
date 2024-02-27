@@ -37,11 +37,10 @@ extern "C" {
  * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk data
  * @param formType Form type describing the purpose of the sub chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A data chunk instance or NULL, if the memory for the struct can't be allocated
  */
-IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Reads a data chunk from a given file descriptor.
@@ -49,11 +48,10 @@ IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, c
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the data chunk has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Writes a data chunk to a given file descriptor.
@@ -61,32 +59,29 @@ IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, 
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeDataChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeDataChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether a data chunk conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_Bool IFF_checkDataChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkDataChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Frees a data chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeDataChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeDataChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of a data chunk hierarchy on the standard output.
@@ -94,10 +89,9 @@ void IFF_freeDataChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_Extens
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printDataChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printDataChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given data chunks are equal.
@@ -105,11 +99,10 @@ void IFF_printDataChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, 
  * @param chunk1 A chunk hierarchy representing an IFF file
  * @param chunk2 A chunk hierarchy representing an IFF file
  * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareDataChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareDataChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

@@ -25,7 +25,7 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read("hello-pad.TEST", NULL, 0);
+    IFF_Chunk *chunk = IFF_read("hello-pad.TEST", NULL);
 
     if(chunk == NULL)
     {
@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
     else
     {
         IFF_Form *form = IFF_createTestForm();
-        int status = !IFF_compare(chunk, (IFF_Chunk*)form, NULL, 0);
+        int status = !IFF_compare(chunk, (IFF_Chunk*)form, NULL);
 
-        IFF_free((IFF_Chunk*)form, NULL, 0);
-        IFF_free(chunk, NULL, 0);
+        IFF_free((IFF_Chunk*)form, NULL);
+        IFF_free(chunk, NULL);
 
         return status;
     }

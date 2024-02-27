@@ -24,9 +24,9 @@
 #include "io.h"
 #include "error.h"
 
-IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_FormExtension *formExtension)
+IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_ChunkType *chunkType)
 {
-    return formExtension->createExtensionChunk(chunkSize);
+    return chunkType->createExtensionChunk(chunkSize);
 }
 
 static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
@@ -49,11 +49,11 @@ static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_L
         return TRUE;
 }
 
-IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_FormExtension *formExtension)
+IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
 {
     IFF_Long bytesProcessed = 0;
 
-    return (formExtension->readExtensionChunkFields(file, chunk, &bytesProcessed) &&
+    return (chunkType->readExtensionChunkFields(file, chunk, &bytesProcessed) &&
       skipUnknownBytes(file, chunk, bytesProcessed));
 }
 
@@ -79,11 +79,11 @@ static IFF_Bool writeZeroFillerBytes(FILE *file, const IFF_Chunk *chunk, const I
         return TRUE;
 }
 
-IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_FormExtension *formExtension)
+IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
 {
     IFF_Long bytesProcessed = 0;
 
-    if(!formExtension->writeExtensionChunkFields(file, chunk, &bytesProcessed))
+    if(!chunkType->writeExtensionChunkFields(file, chunk, &bytesProcessed))
         return FALSE;
 
     if(!writeZeroFillerBytes(file, chunk, bytesProcessed))
@@ -92,22 +92,22 @@ IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_F
     return TRUE;
 }
 
-void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_FormExtension *formExtension)
+void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
 {
-    formExtension->freeExtensionChunk(chunk);
+    chunkType->freeExtensionChunk(chunk);
 }
 
-IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_FormExtension *formExtension)
+IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
 {
-    return formExtension->checkExtensionChunk(chunk);
+    return chunkType->checkExtensionChunk(chunk);
 }
 
-void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_FormExtension *formExtension)
+void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkType *chunkType)
 {
-    formExtension->printExtensionChunk(chunk, indentLevel);
+    chunkType->printExtensionChunk(chunk, indentLevel);
 }
 
-IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_FormExtension *formExtension)
+IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkType *chunkType)
 {
-    return formExtension->compareExtensionChunk(chunk1, chunk2);
+    return chunkType->compareExtensionChunk(chunk1, chunk2);
 }

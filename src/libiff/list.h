@@ -143,62 +143,56 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
  *
  * @param file File descriptor of the file
  * @param list An instance of a list chunk
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Writes a list chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param list An instance of a list chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.
  *
  * @param list An instance of a list chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list is valid, else FALSE.
  */
-IFF_Bool IFF_checkList(const IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkList(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks and PROP chunks of the given list chunk.
  *
  * @param list An instance of a list chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeList(IFF_List *list, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeList(IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the list chunk and its sub chunks on the standard output.
  *
  * @param list An instance of a list chunk
  * @param indentLevel Indent level of the textual representation
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given lists' contents is equal to each other.
  *
  * @param list1 List to compare
  * @param list2 List to compare
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given list.

@@ -28,13 +28,13 @@
 #include "util.h"
 #include "error.h"
 
-IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Chunk *chunk;
     int byte;
 
     /* Read the chunk */
-    chunk = IFF_readChunk(file, 0, extension, extensionLength);
+    chunk = IFF_readChunk(file, 0, chunkRegistry);
 
     if(chunk == NULL)
     {
@@ -51,7 +51,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
     return chunk;
 }
 
-IFF_Chunk *IFF_readFile(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Chunk *chunk;
     FILE *file = fopen(filename, "rb");
@@ -64,7 +64,7 @@ IFF_Chunk *IFF_readFile(const char *filename, const IFF_Extension *extension, co
     }
 
     /* Parse the main chunk */
-    chunk = IFF_readFd(file, extension, extensionLength);
+    chunk = IFF_readFd(file, chunkRegistry);
 
     /* Close the file */
     fclose(file);
@@ -73,20 +73,20 @@ IFF_Chunk *IFF_readFile(const char *filename, const IFF_Extension *extension, co
     return chunk;
 }
 
-IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry)
 {
     if(filename == NULL)
-        return IFF_readFd(stdin, extension, extensionLength);
+        return IFF_readFd(stdin, chunkRegistry);
     else
-        return IFF_readFile(filename, extension, extensionLength);
+        return IFF_readFile(filename, chunkRegistry);
 }
 
-IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_writeChunk(file, chunk, 0, extension, extensionLength);
+    return IFF_writeChunk(file, chunk, 0, chunkRegistry);
 }
 
-IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Bool status;
     FILE *file = fopen(filename, "wb");
@@ -97,25 +97,25 @@ IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_E
         return FALSE;
     }
 
-    status = IFF_writeFd(file, chunk, extension, extensionLength);
+    status = IFF_writeFd(file, chunk, chunkRegistry);
     fclose(file);
     return status;
 }
 
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     if(filename == NULL)
-        return IFF_writeFd(stdout, chunk, extension, extensionLength);
+        return IFF_writeFd(stdout, chunk, chunkRegistry);
     else
-        return IFF_writeFile(filename, chunk, extension, extensionLength);
+        return IFF_writeFile(filename, chunk, chunkRegistry);
 }
 
-void IFF_free(IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeChunk(chunk, 0, extension, extensionLength);
+    IFF_freeChunk(chunk, 0, chunkRegistry);
 }
 
-IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     /* The main chunk must be of ID: FORM, CAT or LIST */
 
@@ -127,15 +127,15 @@ IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_Extension *extension, const
         return FALSE;
     }
     else
-        return IFF_checkChunk(chunk, 0, extension, extensionLength);
+        return IFF_checkChunk(chunk, 0, chunkRegistry);
 }
 
-void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printChunk(chunk, indentLevel, 0, extension, extensionLength);
+    IFF_printChunk(chunk, indentLevel, 0, chunkRegistry);
 }
 
-IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareChunk(chunk1, chunk2, 0, extension, extensionLength);
+    return IFF_compareChunk(chunk1, chunk2, 0, chunkRegistry);
 }

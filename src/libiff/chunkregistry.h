@@ -19,11 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __IFF_EXTENSION_H
-#define __IFF_EXTENSION_H
+#ifndef __IFF_CHUNKREGISTRY_H
+#define __IFF_CHUNKREGISTRY_H
 
-typedef struct IFF_FormExtension IFF_FormExtension;
-typedef struct IFF_Extension IFF_Extension;
+typedef struct IFF_ChunkType IFF_ChunkType;
+typedef struct IFF_FormChunkTypes IFF_FormChunkTypes;
+typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 
 #include <stdio.h>
 #include "ifftypes.h"
@@ -34,9 +35,9 @@ extern "C" {
 #endif
 
 /**
- * @brief Defines how a particular application chunk within a FORM should be handled.
+ * @brief Defines how a particular chunk should be managed
  */
-struct IFF_FormExtension
+struct IFF_ChunkType
 {
     /** A 4 character chunk id */
     IFF_ID chunkId;
@@ -64,30 +65,45 @@ struct IFF_FormExtension
 };
 
 /**
- * @brief Defines how application chunks in a FORM with a particular formType should be handled.
+ * @brief Defines how chunks inside a FORM with a particular formType should be managed.
  */
-struct IFF_Extension
+struct IFF_FormChunkTypes
 {
     /** A 4 character form type id */
     IFF_ID formType;
 
-    /** Specifies the number of application chunks in the form that should be handled by external functions */
-    unsigned int formExtensionsLength;
+    /** Specifies the number of chunk types that have a specific meaning inside a FORM */
+    unsigned int chunkTypesLength;
 
-    /** An array specifying how application chunks within the form context should be handled */
-    IFF_FormExtension *formExtensions;
+    /** An array specifying how chunks within the FORM context should be managed */
+    IFF_ChunkType *chunkTypes;
 };
 
 /**
- * Searches for a form extension that can deal with a chunk in a given form with a form type and a given chunk id
+ * @brief Defines a registry of chunk types that should be managed in a certain way
+ */
+struct IFF_ChunkRegistry
+{
+    /*unsigned int globalChunkTypesLength;
+
+    IFF_ChunkType *globalChunkTypes;*/
+
+    /** Specifies the number of FORM types that have their own chunk types */
+    unsigned int formChunkTypesLength;
+
+    /** An array specifying the types of chunks per FORM type */
+    IFF_FormChunkTypes *formChunkTypes;
+};
+
+/**
+ * Searches for a chunk type that can deal with a chunk in a given form with a form type and a given chunk id
  *
- * @param formType A 4 character form type id. If the formType is NULL, the function will always return NULL
+ * @param formType A 4 character form type id. If the formType is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return The form extension that handles the specified chunk or NULL if it does not exists
  */
-const IFF_FormExtension *IFF_findFormExtension(const IFF_ID formType, const IFF_ID chunkId, const IFF_Extension *extension, const unsigned int extensionLength);
+const IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

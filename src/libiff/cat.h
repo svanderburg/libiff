@@ -128,22 +128,20 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  *
  * @param file File descriptor of the file
  * @param cat An instance of a concatenation chunk
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param cat An instance of a concatenation chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks a sub chunk in a CAT for its validity.
@@ -158,41 +156,37 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
  * Checks whether the concatenation chunk and its sub chunks conform to the IFF specification.
  *
  * @param cat An instance of a concatenation chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT is valid, else FALSE.
  */
-IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks of the given concatenation chunk.
  *
  * @param cat An instance of a concatenation chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeCAT(IFF_CAT *cat, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeCAT(IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the concatenation chunk and its sub chunks on the standard output.
  *
  * @param cat An instance of a concatenation chunk
  * @param indentLevel Indent level of the textual representation
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given concatenations' contents is equal to each other.
  *
  * @param cat1 Concatenation to compare
  * @param cat2 Concatenation to compare
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.

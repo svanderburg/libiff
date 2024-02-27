@@ -115,7 +115,7 @@ function:
 int main(int argc, char *argv[])
 {
     /* Read an IFF file */
-    IFF_Chunk *chunk = IFF_read("input.IFF", NULL, 0);
+    IFF_Chunk *chunk = IFF_read("input.IFF", NULL);
 
     if(chunk != NULL)
     {
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 
     /* Create or read a chunk */
 
-    if(IFF_write("output.IFF", chunk, NULL, 0))
+    if(IFF_write("output.IFF", chunk, NULL))
         return 0; /* The file has been successfully written */
     else
         return 1; /* Some error occured */
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 
     /* Create or read a chunk here */
 
-    if(IFF_check(chunk, NULL, 0))
+    if(IFF_check(chunk, NULL))
         return 0; /* A valid IFF file */
     else
         return 1; /* Not a valid IFF file */
@@ -322,7 +322,7 @@ int main(int argc, char *argv[])
 
     /* Read or create the chunks here */
 
-    if(IFF_compare(chunk1, chunk2, NULL, 0))
+    if(IFF_compare(chunk1, chunk2, NULL))
         return 0; /* Both chunk hierarchies are equal */
     else
         return 1; /* Both chunk hierarchies are not equal */
@@ -353,9 +353,9 @@ To implement a parser for an application format you need to:
 
 Creating an application format interface
 ----------------------------------------
-Every function in the `iff.h` header require at least two parameters, which are
-named `extension` and `extensionLength`. So far, we have omitted these extension
-parameters by specifying a NULL pointer and a 0 length.
+Every function in the `iff.h` header requires at least one parameter named:
+`extensionRegistry`. So far, we have omitted these extension parameters by
+specifying a NULL pointer.
 
 These function parameters can be used to support application format chunks by
 specifying an array of form types pointing to a functions which read, write,
@@ -394,7 +394,7 @@ IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 As you may notice, this header file is almost the same as the `iff.h` header
 file, except that the `IFF_` prefixes are replaced by the `TEST_` prefixes and
-the `extension` and `extensionLength` parameters are removed.
+the `extensionRegistry` parameter is removed.
 
 The implementation of this interface (`test.c`) may look as follows:
 
@@ -405,65 +405,72 @@ The implementation of this interface (`test.c`) may look as follows:
 #include "hello.h"
 #include "bye.h"
 
-#define TEST_NUM_OF_FORM_TYPES 1
-#define TEST_NUM_OF_EXTENSION_CHUNKS 2
+#define TEST_NUM_OF_FORM_CHUNK_TYPES 1
+#define TEST_NUM_OF_CHUNK_TYPES 2
 
 /*
- * Defines the 'HELO' and 'BYE ' extension chunks and referes to the
- * functions that handles them. The chunks must be alphabetically sorted so
- * that they can be found by a binary search algorithm.
+ * Defines how the 'HELO' and 'BYE ' chunks should be managed. The chunks must
+ * be alphabetically sorted so that they can be found by a binary search
+ * algorithm.
  */
-static IFF_FormExtension testFormExtension[] = {
+static IFF_ChunkType chunkTypes[] = {
     {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
     {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 /*
- * Refers to the extension chunk defintions within the TEST form scope.
+ * Refers to the chunk types within the TEST form scope.
  * Also these form types must be alphabetically sorted.
  */
-static IFF_Extension extension[] = {
-    {TEST_ID_TEST, TEST_NUM_OF_EXTENSION_CHUNKS, testFormExtension}
+static IFF_FormChunkTypes formChunkTypes[] = {
+    {TEST_ID_TEST, TEST_NUM_OF_CHUNK_TYPES, chunkTypes}
+};
+
+/*
+ * Represents a registry that specifies how chunks should be managed
+ */
+static IFF_ChunkRegistry chunkRegistry = {
+    TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes
 };
 
 /* The following functions hide the the extension parameters for this application format */
 IFF_Chunk *TEST_read(const char *filename)
 {
-    return IFF_read(filename, extension, TEST_NUM_OF_FORM_TYPES);
+    return IFF_read(filename, &chunkRegistry);
 }
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk)
 {
-    return IFF_write(filename, chunk, extension, TEST_NUM_OF_FORM_TYPES);
+    return IFF_write(filename, chunk, &chunkRegistry);
 }
 
 void TEST_free(IFF_Chunk *chunk)
 {
-    IFF_free(chunk, NULL, extension, TEST_NUM_OF_FORM_TYPES);
+    IFF_free(chunk, NULL, &chunkRegistry);
 }
 
 void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_print(chunk, indentLevel, extension, TEST_NUM_OF_FORM_TYPES);
+    IFF_print(chunk, indentLevel, &chunkRegistry);
 }
 
 IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compare(chunk1, chunk2, extension, TEST_NUM_OF_FORM_TYPES);
+    return IFF_compare(chunk1, chunk2, &chunkRegistry);
 }
 ```
 
 In the code fragment above, an array defining extension chunkIDs and function
-pointers (`testFormExtension`) specifies how to read, write, check, free and
-print each individual application chunk. The other array binds these extension
-chunks into the scope of the TEST form type. This ensures that the TEST.HELO
-property is parsed by our extension function and that a chunk with the same ID
-in a different form type is parsed ABCD.HELO differently (because they are not
-the same).
+pointers (`chunkTypes`) specifies how to read, write, check, free and print each
+individual application chunk. The other array binds these extension chunks into
+the scope of the TEST form type. This ensures that the TEST.HELO property is
+parsed by our extension function and that a chunk with the same ID in a
+different form type is parsed ABCD.HELO differently (because they are not the
+same).
 
 In the remainder of the interface, we simply call all the functions defined in
-`iff.h` with the given `extension` and `extensionLength` parameters dealing with
-application format chunks of the TEST format.
+`iff.h` with the given `chunkRegistry` parameter dealing with application
+format chunks of the TEST format.
 
 Implementing extension chunk modules
 ------------------------------------

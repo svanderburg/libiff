@@ -25,7 +25,7 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read("cat.TEST", NULL, 0);
+    IFF_Chunk *chunk = IFF_read("cat.TEST", NULL);
 
     if(chunk == NULL)
     {
@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
     else
     {
         IFF_CAT *cat = IFF_createTestCAT();
-        int status = !IFF_compare(chunk, (IFF_Chunk*)cat, NULL, 0);
+        int status = !IFF_compare(chunk, (IFF_Chunk*)cat, NULL);
 
-        IFF_free(chunk, NULL, 0);
-        IFF_free((IFF_Chunk*)cat, NULL, 0);
+        IFF_free(chunk, NULL);
+        IFF_free((IFF_Chunk*)cat, NULL);
 
         return status;
     }

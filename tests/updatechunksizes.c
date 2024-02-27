@@ -72,14 +72,14 @@ int main(int argc, char *argv[])
     abcdChunk->chunkSize++;
 
     /* The IFF file should be invalid now as the, form chunk size is too small */
-    if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
+    if(!IFF_check((IFF_Chunk*)cat, NULL))
     {
         /* Update the chunk sizes */
         IFF_updateChunkSizes((IFF_Chunk*)abcdChunk);
 
         /* Now the IFF should be valid */
 
-        if(!IFF_check((IFF_Chunk*)cat, NULL, 0))
+        if(!IFF_check((IFF_Chunk*)cat, NULL))
             status = 1;
     }
     else
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    IFF_free((IFF_Chunk*)cat, NULL, 0);
+    IFF_free((IFF_Chunk*)cat, NULL);
 
     return status;
 }

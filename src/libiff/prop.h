@@ -80,62 +80,56 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
  *
  * @param file File descriptor of the file
  * @param prop An instance of a PROP chunk
- * @param extension Extension array which specifies how application file format chunks can be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Writes a PROP chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param prop An instance of a PROP chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.
  *
  * @param prop An instance of a PROP chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP is valid, else FALSE.
  */
-IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks of the given PROP chunk.
  *
  * @param prop An instance of a PROP chunk
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeProp(IFF_Prop *prop, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_freeProp(IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the PROP chunk and its sub chunks on the standard output.
  *
  * @param prop An instance of a PROP chunk
  * @param indentLevel Indent level of the textual representation
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength);
+void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given PROP chunks' contents is equal to each other.
  *
  * @param prop1 PROP chunk to compare
  * @param prop2 PROP chunk to compare
- * @param extension Extension array which specifies how application file format chunks should be handled
- * @param extensionLength Length of the extension array
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given forms are equal, else FALSE
  */
-IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recalculates the chunk size of the given PROP chunk.

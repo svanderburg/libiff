@@ -80,14 +80,14 @@ void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)
     IFF_addToGroup((IFF_Group*)form, chunk);
 }
 
-IFF_Bool IFF_readForm(FILE *file, IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_readForm(FILE *file, IFF_Form *form, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_readGroup(file, (IFF_Group*)form, FORM_GROUPTYPENAME, extension, extensionLength);
+    return IFF_readGroup(file, (IFF_Group*)form, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
-IFF_Bool IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_writeForm(FILE *file, const IFF_Form *form, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_writeGroup(file, (IFF_Group*)form, form->formType, FORM_GROUPTYPENAME, extension, extensionLength);
+    return IFF_writeGroup(file, (IFF_Group*)form, form->formType, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_checkFormType(const IFF_ID formType)
@@ -171,24 +171,24 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
         return TRUE;
 }
 
-IFF_Bool IFF_checkForm(const IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_checkForm(const IFF_Form *form, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_checkGroup((IFF_Group*)form, &IFF_checkFormType, &subChunkCheck, form->formType, extension, extensionLength);
+    return IFF_checkGroup((IFF_Group*)form, &IFF_checkFormType, &subChunkCheck, form->formType, chunkRegistry);
 }
 
-void IFF_freeForm(IFF_Form *form, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_freeForm(IFF_Form *form, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeGroup((IFF_Group*)form, form->formType, extension, extensionLength);
+    IFF_freeGroup((IFF_Group*)form, form->formType, chunkRegistry);
 }
 
-void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const IFF_Extension *extension, const unsigned int extensionLength)
+void IFF_printForm(const IFF_Form *form, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroup((const IFF_Group*)form, indentLevel, form->formType, FORM_GROUPTYPENAME, extension, extensionLength);
+    IFF_printGroup((const IFF_Group*)form, indentLevel, form->formType, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
-IFF_Bool IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Bool IFF_compareForm(const IFF_Form *form1, const IFF_Form *form2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareGroup((const IFF_Group*)form1, (const IFF_Group*)form2, form1->formType, extension, extensionLength);
+    return IFF_compareGroup((const IFF_Group*)form1, (const IFF_Group*)form2, form1->formType, chunkRegistry);
 }
 
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)
