@@ -98,10 +98,11 @@ IFF_CAT *IFF_createEmptyCAT(void);
  * be directly used to create a CAT.
  * The resulting chunk must be freed by using IFF_free().
  *
+ * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk data
  * @return CAT chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Chunk *IFF_createUnparsedCAT(const IFF_Long chunkSize);
+IFF_Chunk *IFF_createUnparsedCAT(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Adds a chunk to the body of the given CAT. This function also increments the
@@ -127,26 +128,26 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  * Reads a concatenation chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param cat An instance of a concatenation chunk
+ * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readCAT(FILE *file, IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
- * @param cat An instance of a concatenation chunk
+ * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Checks a sub chunk in a CAT for its validity.
  *
- * @param group An instance of a concatenation chunk
+ * @param group An instance of a group chunk
  * @param subChunk A sub chunk member of this concatenation chunk
  * @return TRUE if the sub chunk is valid, else FALSE
  */
@@ -155,38 +156,38 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 /**
  * Checks whether the concatenation chunk and its sub chunks conform to the IFF specification.
  *
- * @param cat An instance of a concatenation chunk
+ * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT is valid, else FALSE.
  */
-IFF_Bool IFF_checkCAT(const IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks of the given concatenation chunk.
  *
- * @param cat An instance of a concatenation chunk
+ * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeCAT(IFF_CAT *cat, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeCAT(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the concatenation chunk and its sub chunks on the standard output.
  *
- * @param cat An instance of a concatenation chunk
+ * @param chunk An instance of a concatenation chunk
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printCAT(const IFF_CAT *cat, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printCAT(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given concatenations' contents is equal to each other.
  *
- * @param cat1 Concatenation to compare
- * @param cat2 Concatenation to compare
+ * @param chunk1 Concatenation to compare
+ * @param chunk2 Concatenation to compare
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-IFF_Bool IFF_compareCAT(const IFF_CAT *cat1, const IFF_CAT *cat2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareCAT(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.

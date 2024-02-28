@@ -24,9 +24,9 @@
 #include "io.h"
 #include "error.h"
 
-IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_ChunkType *chunkType)
+IFF_Chunk *IFF_createExtensionChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkType *chunkType)
 {
-    return chunkType->createExtensionChunk(chunkSize);
+    return chunkType->createExtensionChunk(chunkId, chunkSize);
 }
 
 static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
@@ -49,11 +49,11 @@ static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_L
         return TRUE;
 }
 
-IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
+IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
     IFF_Long bytesProcessed = 0;
 
-    return (chunkType->readExtensionChunkFields(file, chunk, &bytesProcessed) &&
+    return (chunkType->readExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed) &&
       skipUnknownBytes(file, chunk, bytesProcessed));
 }
 
@@ -79,11 +79,11 @@ static IFF_Bool writeZeroFillerBytes(FILE *file, const IFF_Chunk *chunk, const I
         return TRUE;
 }
 
-IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
+IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
     IFF_Long bytesProcessed = 0;
 
-    if(!chunkType->writeExtensionChunkFields(file, chunk, &bytesProcessed))
+    if(!chunkType->writeExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed))
         return FALSE;
 
     if(!writeZeroFillerBytes(file, chunk, bytesProcessed))
@@ -92,22 +92,22 @@ IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_C
     return TRUE;
 }
 
-void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
+void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
-    chunkType->freeExtensionChunk(chunk);
+    chunkType->freeExtensionChunk(chunk, chunkRegistry);
 }
 
-IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkType *chunkType)
+IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
-    return chunkType->checkExtensionChunk(chunk);
+    return chunkType->checkExtensionChunk(chunk, chunkRegistry);
 }
 
-void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkType *chunkType)
+void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
-    chunkType->printExtensionChunk(chunk, indentLevel);
+    chunkType->printExtensionChunk(chunk, indentLevel, chunkRegistry);
 }
 
-IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkType *chunkType)
+IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType)
 {
-    return chunkType->compareExtensionChunk(chunk1, chunk2);
+    return chunkType->compareExtensionChunk(chunk1, chunk2, chunkRegistry);
 }

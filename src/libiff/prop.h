@@ -61,10 +61,11 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
  * be directly used to create a PROP.
  * The resulting chunk must be freed by using IFF_free().
  *
+ * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk data
  * @return PROP chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Chunk *IFF_createUnparsedProp(const IFF_Long chunkSize);
+IFF_Chunk *IFF_createUnparsedProp(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Adds a chunk to the body of the given PROP. This function also increments the
@@ -79,57 +80,57 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
  * Reads a PROP chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param prop An instance of a PROP chunk
+ * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readProp(FILE *file, IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Writes a PROP chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
- * @param prop An instance of a PROP chunk
+ * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.
  *
- * @param prop An instance of a PROP chunk
+ * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP is valid, else FALSE.
  */
-IFF_Bool IFF_checkProp(const IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_checkProp(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks of the given PROP chunk.
  *
- * @param prop An instance of a PROP chunk
+ * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeProp(IFF_Prop *prop, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeProp(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the PROP chunk and its sub chunks on the standard output.
  *
- * @param prop An instance of a PROP chunk
+ * @param chunk An instance of a PROP chunk
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printProp(const IFF_Prop *prop, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printProp(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given PROP chunks' contents is equal to each other.
  *
- * @param prop1 PROP chunk to compare
- * @param prop2 PROP chunk to compare
+ * @param chunk1 PROP chunk to compare
+ * @param chunk2 PROP chunk to compare
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given forms are equal, else FALSE
  */
-IFF_Bool IFF_compareProp(const IFF_Prop *prop1, const IFF_Prop *prop2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareProp(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recalculates the chunk size of the given PROP chunk.

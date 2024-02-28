@@ -26,9 +26,9 @@
 #include <util.h>
 #include "test.h"
 
-IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
+IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
+    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {
@@ -40,7 +40,7 @@ IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     TEST_Hello *hello = (TEST_Hello*)chunk;
     IFF_FieldStatus status;
@@ -57,7 +57,7 @@ IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
     return TRUE;
 }
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
     IFF_FieldStatus status;
@@ -74,7 +74,7 @@ IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProc
     return TRUE;
 }
 
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
@@ -87,11 +87,11 @@ IFF_Bool TEST_checkHello(const IFF_Chunk *chunk)
     return TRUE;
 }
 
-void TEST_freeHello(IFF_Chunk *chunk)
+void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
 }
 
-void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
+void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
@@ -100,7 +100,7 @@ void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
 }
 
-IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;

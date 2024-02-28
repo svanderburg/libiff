@@ -42,18 +42,18 @@ typedef struct
 }
 TEST_Bye;
 
-IFF_Chunk *TEST_createBye(const IFF_Long chunkSize);
+IFF_Chunk *TEST_createBye(const IFF_ID chunkId, const IFF_Long chunkSize);
 
-IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_checkBye(const IFF_Chunk *chunk);
+IFF_Bool TEST_checkBye(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_freeBye(IFF_Chunk *chunk);
+void TEST_freeBye(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel);
+void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 #endif

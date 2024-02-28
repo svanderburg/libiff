@@ -30,10 +30,6 @@ typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 #include "ifftypes.h"
 #include "chunk.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief Defines how a particular chunk should be managed
  */
@@ -43,25 +39,25 @@ struct IFF_ChunkType
     IFF_ID chunkId;
 
     /** Function responsible for creating the given chunk */
-    IFF_Chunk *(*createExtensionChunk) (const IFF_Long chunkSize);
+    IFF_Chunk *(*createExtensionChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
 
     /** Function resposible for reading the given chunk */
-    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
     /** Function resposible for writing the given chunk */
-    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
     /** Function resposible for checking the given chunk */
-    IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk);
+    IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function resposible for freeing the given chunk */
-    void (*freeExtensionChunk) (IFF_Chunk *chunk);
+    void (*freeExtensionChunk) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for printing the given chunk */
-    void (*printExtensionChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel);
+    void (*printExtensionChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for comparing the given chunk */
-    IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+    IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 };
 
 /**
@@ -84,16 +80,20 @@ struct IFF_FormChunkTypes
  */
 struct IFF_ChunkRegistry
 {
-    /*unsigned int globalChunkTypesLength;
-
-    IFF_ChunkType *globalChunkTypes;*/
-
     /** Specifies the number of FORM types that have their own chunk types */
     unsigned int formChunkTypesLength;
 
     /** An array specifying the types of chunks per FORM type */
     IFF_FormChunkTypes *formChunkTypes;
+
+    unsigned int globalChunkTypesLength;
+
+    IFF_ChunkType *globalChunkTypes;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Searches for a chunk type that can deal with a chunk in a given form with a form type and a given chunk id

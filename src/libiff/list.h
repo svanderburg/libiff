@@ -104,10 +104,11 @@ IFF_List *IFF_createEmptyList(void);
  * be directly used to create a list.
  * The resulting chunk must be freed by using IFF_free().
  *
+ * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk data
  * @return List chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Chunk *IFF_createUnparsedList(const IFF_Long chunkSize);
+IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Adds a PROP chunk to the body of the given list. This function also increments the
@@ -142,57 +143,57 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
  * Reads a list chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param list An instance of a list chunk
+ * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Writes a list chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
- * @param list An instance of a list chunk
+ * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.
  *
- * @param list An instance of a list chunk
+ * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list is valid, else FALSE.
  */
-IFF_Bool IFF_checkList(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks and PROP chunks of the given list chunk.
  *
- * @param list An instance of a list chunk
+ * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeList(IFF_List *list, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the list chunk and its sub chunks on the standard output.
  *
- * @param list An instance of a list chunk
+ * @param chunk An instance of a list chunk
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printList(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given lists' contents is equal to each other.
  *
- * @param list1 List to compare
- * @param list2 List to compare
+ * @param chunk1 List to compare
+ * @param chunk2 List to compare
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareList(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given list.

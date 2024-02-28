@@ -34,7 +34,7 @@
 
 static IFF_RawChunk *createABCDChunk(void)
 {
-    IFF_RawChunk *rawChunk = IFF_createRawChunk(ID_ABCD, ABCD_BYTES_SIZE);
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createRawChunk(ID_ABCD, ABCD_BYTES_SIZE);
 
     IFF_UByte *chunkData = rawChunk->chunkData;
     chunkData[0] = 'A';

@@ -26,9 +26,9 @@
 #include <util.h>
 #include "test.h"
 
-IFF_Chunk *TEST_createBye(const IFF_Long chunkSize)
+IFF_Chunk *TEST_createBye(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(TEST_ID_BYE, chunkSize, sizeof(TEST_Bye));
+    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Bye));
 
     if(bye != NULL)
     {
@@ -39,7 +39,7 @@ IFF_Chunk *TEST_createBye(const IFF_Long chunkSize)
     return (IFF_Chunk*)bye;
 }
 
-IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     TEST_Bye *bye = (TEST_Bye*)chunk;
     IFF_FieldStatus status;
@@ -53,7 +53,7 @@ IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
     return TRUE;
 }
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
     IFF_FieldStatus status;
@@ -67,16 +67,16 @@ IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProces
     return TRUE;
 }
 
-IFF_Bool TEST_checkBye(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkBye(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     return TRUE;
 }
 
-void TEST_freeBye(IFF_Chunk *chunk)
+void TEST_freeBye(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
 }
 
-void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel)
+void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
 
@@ -84,7 +84,7 @@ void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel)
     IFF_printIndent(stdout, indentLevel, "two = %d;\n", bye->two);
 }
 
-IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
     const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;

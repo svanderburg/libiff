@@ -27,7 +27,7 @@
 #include "id.h"
 #include "util.h"
 
-IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk));
 
@@ -42,7 +42,7 @@ IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
         }
     }
 
-    return rawChunk;
+    return (IFF_Chunk*)rawChunk;
 }
 
 void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data)
@@ -65,15 +65,10 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    IFF_Bool status = IFF_readRawChunk(file, rawChunk);
-    *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
-    return status;
-}
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
 
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_RawChunk *rawChunk)
-{
     if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
         IFF_error("Error reading raw chunk body of chunk: '");
@@ -82,11 +77,16 @@ IFF_Bool IFF_readRawChunk(FILE *file, IFF_RawChunk *rawChunk)
         return FALSE;
     }
     else
+    {
+        *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
         return TRUE;
+    }
 }
 
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk)
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
+    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+
     if(fwrite(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
         IFF_error("Error writing raw chunk body of chunk '");
@@ -95,23 +95,27 @@ IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk)
         return FALSE;
     }
     else
+    {
+        *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
         return TRUE;
+    }
 }
 
-IFF_Bool IFF_writeRawChunkData(FILE *file, const IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed)
+IFF_Bool IFF_checkRawChunk(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Bool status = IFF_writeRawChunk(file, rawChunk);
-    *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
-    return status;
+    return TRUE;
 }
 
-void IFF_freeRawChunk(IFF_RawChunk *rawChunk)
+void IFF_freeRawChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
     free(rawChunk->chunkData);
 }
 
-void IFF_printText(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
+void IFF_printText(const IFF_RawChunk *chunk, const unsigned int indentLevel)
 {
+    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+
     IFF_Long i;
 
     IFF_printIndent(stdout, indentLevel, "text = '\n");
@@ -153,15 +157,20 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
     IFF_printIndent(stdout, indentLevel, ";\n");
 }
 
-void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel)
+void IFF_printRawChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
+    const IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
+
     if(rawChunk->chunkId == IFF_ID_TEXT)
         IFF_printText(rawChunk, indentLevel);
     else
         IFF_printRaw(rawChunk, indentLevel);
 }
 
-IFF_Bool IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2)
+IFF_Bool IFF_compareRawChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
+    const IFF_RawChunk *rawChunk1 = (const IFF_RawChunk*)chunk1;
+    const IFF_RawChunk *rawChunk2 = (const IFF_RawChunk*)chunk2;
+
     return memcmp(rawChunk1->chunkData, rawChunk2->chunkData, rawChunk1->chunkSize) == 0;
 }

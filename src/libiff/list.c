@@ -51,7 +51,7 @@ IFF_List *IFF_createEmptyList(void)
     return IFF_createEmptyListWithContentsType(IFF_ID_JJJJ);
 }
 
-IFF_Chunk *IFF_createUnparsedList(const IFF_Long chunkSize)
+IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
     return (IFF_Chunk*)IFF_createList(chunkSize, 0);
 }
@@ -80,11 +80,9 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed */
-
-    while(bytesProcessed < list->chunkSize)
+    while(*bytesProcessed < list->chunkSize)
     {
         /* Read sub chunk */
         IFF_Chunk *chunk = IFF_readChunk(file, list->contentsType, chunkRegistry);
@@ -99,23 +97,27 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
             IFF_attachToGroup((IFF_Group*)list, chunk);
 
         /* Increase the bytes processed counter */
-        bytesProcessed = IFF_incrementChunkSize(bytesProcessed, chunk);
+        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, chunk);
     }
 
-    if(bytesProcessed > list->chunkSize)
+    if(*bytesProcessed > list->chunkSize)
         IFF_error("WARNING: truncated LIST chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", list->chunkSize, bytesProcessed);
 
     return TRUE;
 }
 
-IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    /* Read the contentsType id */
+    IFF_List *list = (IFF_List*)chunk;
+
+    /* Read the contentsType id. TODO: use field method */
     if(!IFF_readId(file, &list->contentsType, list->chunkId, "contentsType"))
         return FALSE;
 
+    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
+
     /* Read the remaining nested sub chunks */
-    if(!readListSubChunks(file, list, chunkRegistry))
+    if(!readListSubChunks(file, list, chunkRegistry, bytesProcessed))
     {
         IFF_error("Error reading chunk in list!\n");
         return FALSE;
@@ -125,7 +127,7 @@ IFF_Bool IFF_readList(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunk
     return TRUE;
 }
 
-static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     unsigned int i;
 
@@ -136,23 +138,30 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
             IFF_error("Error writing PROP!\n");
             return FALSE;
         }
+
+        /* Increase the bytes processed counter */
+        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->prop[i]);
     }
 
     return TRUE;
 }
 
-IFF_Bool IFF_writeList(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    if(!IFF_writeId(file, list->contentsType, IFF_ID_LIST, "contentsType"))
+    const IFF_List *list = (const IFF_List *)chunk;
+
+    if(!IFF_writeId(file, list->contentsType, IFF_ID_LIST, "contentsType")) /* TODO: use field */
     {
         IFF_error("Error writing contentsType!\n");
         return FALSE;
     }
 
-    if(!writeListPropChunks(file, list, chunkRegistry))
+    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
+
+    if(!writeListPropChunks(file, list, chunkRegistry, bytesProcessed))
         return FALSE;
 
-    if(!IFF_writeGroupSubChunks(file, (IFF_Group*)list, 0, chunkRegistry))
+    if(!IFF_writeGroupSubChunks(file, (const IFF_Group*)chunk, 0, chunkRegistry, bytesProcessed))
         return FALSE;
 
     return TRUE;
@@ -176,8 +185,10 @@ static IFF_Long checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistr
     return chunkSize;
 }
 
-IFF_Bool IFF_checkList(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
+    const IFF_List *list = (const IFF_List*)chunk;
+
     IFF_Long chunkSize = IFF_ID_SIZE;
     IFF_Long subChunkSize;
 
@@ -211,9 +222,11 @@ static void freeListPropChunks(IFF_List *list, const IFF_ChunkRegistry *chunkReg
         IFF_freeChunk((IFF_Chunk*)list->prop[i], 0, chunkRegistry);
 }
 
-void IFF_freeList(IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeCAT((IFF_CAT*)list, chunkRegistry);
+    IFF_List *list = (IFF_List*)chunk;
+
+    IFF_freeCAT(chunk, chunkRegistry);
     freeListPropChunks(list, chunkRegistry);
     free(list->prop);
 }
@@ -230,8 +243,10 @@ static void printListPropChunks(const IFF_List *list, const unsigned int indentL
     IFF_printIndent(stdout, indentLevel, "];\n");
 }
 
-void IFF_printList(const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printList(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
+    const IFF_List *list = (const IFF_List*)chunk;
+
     IFF_printGroupType("contentsType", list->contentsType, indentLevel);
     printListPropChunks(list, indentLevel, chunkRegistry);
     IFF_printGroupSubChunks((const IFF_Group *)list, indentLevel, 0, chunkRegistry);
@@ -245,7 +260,7 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
 
         for(i = 0; i < list1->propLength; i++)
         {
-            if(!IFF_compareProp(list1->prop[i], list2->prop[i], chunkRegistry))
+            if(!IFF_compareProp((IFF_Chunk*)list1->prop[i], (IFF_Chunk*)list2->prop[i], chunkRegistry))
                return FALSE;
         }
 
@@ -255,12 +270,12 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
         return FALSE;
 }
 
-IFF_Bool IFF_compareList(const IFF_List *list1, const IFF_List *list2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareList(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(!compareListPropChunks(list1, list2, chunkRegistry))
+    if(!compareListPropChunks((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry))
         return FALSE;
 
-    if(!IFF_compareCAT((const IFF_CAT*)list1, (const IFF_CAT*)list2, chunkRegistry))
+    if(!IFF_compareCAT(chunk1, chunk2, chunkRegistry))
         return FALSE;
 
     return TRUE;

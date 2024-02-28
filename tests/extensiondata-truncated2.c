@@ -27,7 +27,7 @@
 
 static IFF_Chunk *createHelloChunk(void)
 {
-    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_HELO_DEFAULT_SIZE - sizeof(IFF_UByte)); /* Truncated so that the size is in the middle of the last field */
+    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_ID_HELO, TEST_HELO_DEFAULT_SIZE - sizeof(IFF_UByte)); /* Truncated so that the size is in the middle of the last field */
 
     hello->a = 'a';
     hello->b = 'b';
@@ -37,7 +37,7 @@ static IFF_Chunk *createHelloChunk(void)
 
 static IFF_Chunk *createByeChunk(void)
 {
-    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_BYE_DEFAULT_SIZE - sizeof(IFF_Word)); /* Truncated so that the size is in the middle of the last field */
+    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_ID_BYE, TEST_BYE_DEFAULT_SIZE - sizeof(IFF_Word)); /* Truncated so that the size is in the middle of the last field */
 
     bye->one = 1;
 

@@ -34,11 +34,12 @@ extern "C" {
  * Creates a new instance of an extension chunk.
  * The resulting chunk must be freed by using IFF_free().
  *
+ * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk data
  * @param chunkType Object that specifies how a chunk should be managed
  * @return The extension chunk instance or NULL, if the memory for the struct can't be allocated
  */
-IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_ChunkType *chunkType);
+IFF_Chunk *IFF_createExtensionChunk(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkType *chunkType);
 
 /**
  * Reads a data chunk by invoking extension functions.
@@ -48,7 +49,7 @@ IFF_Chunk *IFF_createExtensionChunk(const IFF_Long chunkSize, const IFF_ChunkTyp
  * @param chunkType Object that specifies how a chunk should be managed
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkType *chunkType);
+IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 /**
  * Writes a given data chunk to a file descriptor by invoking extension functions.
@@ -58,7 +59,7 @@ IFF_Bool IFF_readExtensionChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkTyp
  * @param chunkType Object that specifies how a chunk should be managed
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkType *chunkType);
+IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 /**
  * Frees the data of the given data chunk by invoking extension functions.
@@ -66,7 +67,7 @@ IFF_Bool IFF_writeExtensionChunk(FILE *file, const IFF_Chunk *chunk, const IFF_C
  * @param chunk A data chunk instance
  * @param chunkType Object that specifies how a chunk should be managed
  */
-void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkType *chunkType);
+void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 /**
  * Checks the fields of a given data chunk by invoking extension functions.
@@ -75,7 +76,7 @@ void IFF_freeExtensionChunk(IFF_Chunk *chunk, const IFF_ChunkType *chunkType);
  * @param chunkType Object that specifies how a chunk should be managed
  * @return TRUE if the fields are valid, else FALSE
  */
-IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkType *chunkType);
+IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 /**
  * Prints the fields of a given data chunk by invoking extension functions.
@@ -84,7 +85,7 @@ IFF_Bool IFF_checkExtensionChunk(const IFF_Chunk *chunk, const IFF_ChunkType *ch
  * @param indentLevel Indent level of the textual representation
  * @param chunkType Object that specifies how a chunk should be managed
  */
-void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkType *chunkType);
+void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 /**
  * Checks whether two given data chunks are equal.
@@ -94,7 +95,7 @@ void IFF_printExtensionChunk(const IFF_Chunk *chunk, unsigned int indentLevel, c
  * @param chunkType Object that specifies how a chunk should be managed
  * @return TRUE if the data chunks are equal, else FALSE
  */
-IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkType *chunkType);
+IFF_Bool IFF_compareExtensionChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkType *chunkType);
 
 #ifdef __cplusplus
 }

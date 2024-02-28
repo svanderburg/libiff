@@ -22,6 +22,9 @@
 #include "chunkregistry.h"
 #include <stdlib.h>
 #include "id.h"
+#include "rawchunk.h"
+
+IFF_ChunkType rawChunkType = {0, &IFF_createRawChunk, &IFF_readRawChunk, &IFF_writeRawChunk, &IFF_checkRawChunk, &IFF_freeRawChunk, &IFF_printRawChunk, &IFF_compareRawChunk};
 
 static int compareFormChunkTypes(const void *a, const void *b)
 {
@@ -62,32 +65,32 @@ static int compareChunkTypes(const void *a, const void *b)
         return 0;
 }
 
-const static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_FormChunkTypes *formChunkTypes)
+const static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkType *chunkTypes, const unsigned int chunkTypesLength)
 {
     IFF_ChunkType key;
     key.chunkId = chunkId;
 
-    return (IFF_ChunkType*)bsearch(&key, formChunkTypes->chunkTypes, formChunkTypes->chunkTypesLength, sizeof(IFF_ChunkType), &compareChunkTypes);
+    return (IFF_ChunkType*)bsearch(&key, chunkTypes, chunkTypesLength, sizeof(IFF_ChunkType), &compareChunkTypes);
 }
 
 const IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(formType == 0)
+    if(chunkRegistry == NULL)
         return NULL;
     else
     {
         /* Search for the requested FORM chunk types */
         const IFF_FormChunkTypes *formChunkTypes = getFormChunkTypes(formType, chunkRegistry);
+        IFF_ChunkType *result;
 
         if(formChunkTypes == NULL)
-            return NULL;
+            result = getChunkType(chunkId, chunkRegistry->globalChunkTypes, chunkRegistry->globalChunkTypesLength); /* Search for the chunk type that handles the a chunk with the given chunk id */
         else
-        {
-            /* Search for the chunk type that handles the a chunk with the given chunk id */
-            const IFF_ChunkType *chunkType = getChunkType(chunkId, formChunkTypes);
+            result = getChunkType(chunkId, formChunkTypes->chunkTypes, formChunkTypes->chunkTypesLength); /* Search for the chunk type that handles the a chunk with the given chunk id */
 
-            /* Return the chunk type we have found */
-            return chunkType;
-        }
+        if(result == NULL)
+            return &rawChunkType;
+        else
+            return result;
     }
 }

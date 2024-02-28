@@ -27,7 +27,7 @@
 
 static IFF_Chunk *createHelloChunk(void)
 {
-    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_HELO_DEFAULT_SIZE);
+    TEST_Hello *hello = (TEST_Hello*)TEST_createHello(TEST_ID_HELO, TEST_HELO_DEFAULT_SIZE); /* TODO: make more convenient constructor */
 
     hello->a = 'a';
     hello->b = 'b';
@@ -38,7 +38,7 @@ static IFF_Chunk *createHelloChunk(void)
 
 static IFF_Chunk *createByeChunk(void)
 {
-    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_BYE_DEFAULT_SIZE);
+    TEST_Bye *bye = (TEST_Bye*)TEST_createBye(TEST_ID_BYE, TEST_BYE_DEFAULT_SIZE); /* TODO: make more convenient constructor */
 
     bye->one = 1;
     bye->two = 2;

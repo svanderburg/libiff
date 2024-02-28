@@ -66,11 +66,9 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    IFF_Long bytesProcessed = IFF_ID_SIZE; /* The groupType field was already processed, so the size is bigger than 0 */
-
-    while(bytesProcessed < group->chunkSize)
+    while(*bytesProcessed < group->chunkSize)
     {
         /* Read sub chunk */
         IFF_Chunk *chunk = IFF_readChunk(file, group->groupType, chunkRegistry);
@@ -82,29 +80,33 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
         IFF_attachToGroup(group, chunk);
 
         /* Increase the bytes processed counter */
-        bytesProcessed = IFF_incrementChunkSize(bytesProcessed, chunk);
+        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, chunk);
     }
 
-    if(bytesProcessed > group->chunkSize)
+    if(*bytesProcessed > group->chunkSize)
         IFF_error("WARNING: truncated group chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", group->chunkSize, bytesProcessed);
 
     return TRUE;
 }
 
-IFF_Bool IFF_readGroup(FILE *file, IFF_Group *group, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    /* Read group type */
+    IFF_Group *group = (IFF_Group*)chunk;
+
+    /* Read group type. TODO: read as field */
     if(!IFF_readId(file, &group->groupType, group->chunkId, groupTypeName))
         return FALSE;
 
+    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
+
     /* Keep parsing sub chunks until we have read all bytes */
-    if(!readGroupSubChunks(file, group, chunkRegistry))
+    if(!readGroupSubChunks(file, group, chunkRegistry, bytesProcessed))
         return FALSE;
 
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     unsigned int i;
 
@@ -115,17 +117,24 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_I
             IFF_error("Error writing chunk!\n");
             return FALSE;
         }
+
+        /* Increase the bytes processed counter */
+        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, group->chunk[i]);
     }
 
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Group *group, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    if(!IFF_writeId(file, group->groupType, group->chunkId, groupTypeName))
+    const IFF_Group *group = (const IFF_Group*)chunk;
+
+    if(!IFF_writeId(file, group->groupType, group->chunkId, groupTypeName)) /* TODO: use field */
         return FALSE;
 
-    if(!IFF_writeGroupSubChunks(file, group, formType, chunkRegistry))
+    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
+
+    if(!IFF_writeGroupSubChunks(file, group, formType, chunkRegistry, bytesProcessed))
         return FALSE;
 
     return TRUE;

@@ -507,7 +507,7 @@ typedef struct
 }
 TEST_Hello;
 
-TEST_Hello *TEST_createHello(const IFF_Long chunkSize);
+TEST_Hello *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
 
@@ -538,9 +538,9 @@ And the implementation may look as follows:
 #include <libiff/util.h>
 #include "test.h"
 
-IFF_Chunk *TEST_createHello(const IFF_Long chunkSize)
+IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(TEST_ID_HELO, chunkSize, sizeof(TEST_Hello));
+    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {

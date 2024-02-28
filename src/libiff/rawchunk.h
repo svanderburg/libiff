@@ -59,7 +59,7 @@ struct IFF_RawChunk
  * @param chunkSize Length of the bytes array.
  * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
  */
-IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Copies the given data array to the chunk data
@@ -88,33 +88,13 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
 void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
 
 /**
- * Reads the content of a raw chunk.
- *
- * @param file File descriptor of the file
- * @param rawChunk A raw chunk instance
- * @param bytesProcessed Stores the amount of processed bytes
- * @return TRUE if the data was successfully read, else FALSE
- */
-IFF_Bool IFF_readRawChunkData(FILE *file, IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed);
-
-/**
  * Reads a raw chunk with the given chunk id and chunk size from a file.
  *
  * @param file File descriptor of the file
- * @param rawChunk A raw chunk instance
+ * @param chunk A raw chunk instance
  * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_RawChunk *rawChunk);
-
-/**
- * Writes the content of a raw chunk to a file descriptor.
- *
- * @param file File descriptor of the file
- * @param rawChunk A raw chunk instance
- * @param bytesProcessed Stores the amount of processed bytes
- * @return TRUE if the chunk has been successfully written, else FALSE
- */
-IFF_Bool IFF_writeRawChunkData(FILE *file, const IFF_RawChunk *rawChunk, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Writes the given raw chunk to a file descriptor.
@@ -123,14 +103,16 @@ IFF_Bool IFF_writeRawChunkData(FILE *file, const IFF_RawChunk *rawChunk, IFF_Lon
  * @param rawChunk A raw chunk instance
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_RawChunk *rawChunk);
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+
+IFF_Bool IFF_checkRawChunk(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Frees the raw chunk data of the given raw chunk.
  *
- * @param rawChunk A raw chunk instance
+ * @param chunk A raw chunk instance
  */
-void IFF_freeRawChunk(IFF_RawChunk *rawChunk);
+void IFF_freeRawChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Prints the data of the raw chunk as text
@@ -151,19 +133,19 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel);
 /**
  * Displays a textual representation of the raw chunk data on the standard output.
  *
- * @param rawChunk A raw chunk instance
+ * @param chunk A raw chunk instance
  * @param indentLevel Indent level of the textual representation
  */
-void IFF_printRawChunk(const IFF_RawChunk *rawChunk, unsigned int indentLevel);
+void IFF_printRawChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given raw chunks are equal.
  *
- * @param rawChunk1 Raw chunk to compare
- * @param rawChunk2 Raw chunk to compare
+ * @param chunk1 Raw chunk to compare
+ * @param chunk2 Raw chunk to compare
  * @return TRUE if the raw chunks are equal, else FALSE
  */
-IFF_Bool IFF_compareRawChunk(const IFF_RawChunk *rawChunk1, const IFF_RawChunk *rawChunk2);
+IFF_Bool IFF_compareRawChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

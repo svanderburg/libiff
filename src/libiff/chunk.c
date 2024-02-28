@@ -35,6 +35,8 @@
 
 #define ID_EMPTY IFF_MAKEID(' ', ' ', ' ', ' ')
 
+#include "rawchunk.h"
+
 IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)malloc(structSize);
@@ -54,6 +56,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
     IFF_ID chunkId;
     IFF_Long chunkSize;
     IFF_Chunk *chunk;
+    IFF_Long bytesProcessed = 0;
 
     /* Read chunk id */
     if(!IFF_readId(file, &chunkId, ID_EMPTY, ""))
@@ -68,16 +71,16 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
     switch(chunkId)
     {
         case IFF_ID_FORM:
-            chunk = IFF_createUnparsedForm(chunkSize);
+            chunk = IFF_createUnparsedForm(chunkId, chunkSize);
             break;
         case IFF_ID_CAT:
-            chunk = IFF_createUnparsedCAT(chunkSize);
+            chunk = IFF_createUnparsedCAT(chunkId, chunkSize);
             break;
         case IFF_ID_LIST:
-            chunk = IFF_createUnparsedList(chunkSize);
+            chunk = IFF_createUnparsedList(chunkId, chunkSize);
             break;
         case IFF_ID_PROP:
-            chunk = IFF_createUnparsedProp(chunkSize);
+            chunk = IFF_createUnparsedProp(chunkId, chunkSize);
             break;
         default:
             chunk = IFF_createDataChunk(chunkId, chunkSize, formType, chunkRegistry);
@@ -91,28 +94,28 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
     switch(chunkId)
     {
         case IFF_ID_FORM:
-            if(!IFF_readForm(file, (IFF_Form*)chunk, chunkRegistry))
+            if(!IFF_readForm(file, chunk, chunkRegistry, &bytesProcessed))
             {
                 IFF_freeChunk(chunk, formType, chunkRegistry);
                 return NULL;
             }
             break;
         case IFF_ID_CAT:
-            if(!IFF_readCAT(file, (IFF_CAT*)chunk, chunkRegistry))
+            if(!IFF_readCAT(file, chunk, chunkRegistry, &bytesProcessed))
             {
                 IFF_freeChunk(chunk, formType, chunkRegistry);
                 return NULL;
             }
             break;
         case IFF_ID_LIST:
-            if(!IFF_readList(file, (IFF_List*)chunk, chunkRegistry))
+            if(!IFF_readList(file, chunk, chunkRegistry, &bytesProcessed))
             {
                 IFF_freeChunk(chunk, formType, chunkRegistry);
                 return NULL;
             }
             break;
         case IFF_ID_PROP:
-            if(!IFF_readProp(file, (IFF_Prop*)chunk, chunkRegistry))
+            if(!IFF_readProp(file, chunk, chunkRegistry, &bytesProcessed))
             {
                 IFF_freeChunk(chunk, formType, chunkRegistry);
                 return NULL;
@@ -138,6 +141,8 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
 
 IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
+    IFF_Long bytesProcessed = 0;
+
     if(!IFF_writeId(file, chunk->chunkId, chunk->chunkId, "chunkId"))
         return FALSE;
 
@@ -147,19 +152,19 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formTyp
     switch(chunk->chunkId)
     {
         case IFF_ID_FORM:
-            if(!IFF_writeForm(file, (IFF_Form*)chunk, chunkRegistry))
+            if(!IFF_writeForm(file, chunk, chunkRegistry, &bytesProcessed))
                 return FALSE;
             break;
         case IFF_ID_CAT:
-            if(!IFF_writeCAT(file, (IFF_CAT*)chunk, chunkRegistry))
+            if(!IFF_writeCAT(file, chunk, chunkRegistry, &bytesProcessed))
                 return FALSE;
             break;
         case IFF_ID_LIST:
-            if(!IFF_writeList(file, (IFF_List*)chunk, chunkRegistry))
+            if(!IFF_writeList(file, chunk, chunkRegistry, &bytesProcessed))
                 return FALSE;
             break;
         case IFF_ID_PROP:
-            if(!IFF_writeProp(file, (IFF_Prop*)chunk, chunkRegistry))
+            if(!IFF_writeProp(file, chunk, chunkRegistry, &bytesProcessed))
                 return FALSE;
             break;
         default:
@@ -183,13 +188,13 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF
         switch(chunk->chunkId)
         {
             case IFF_ID_FORM:
-                return IFF_checkForm((const IFF_Form*)chunk, chunkRegistry);
+                return IFF_checkForm(chunk, chunkRegistry);
             case IFF_ID_CAT:
-                return IFF_checkCAT((const IFF_CAT*)chunk, chunkRegistry);
+                return IFF_checkCAT(chunk, chunkRegistry);
             case IFF_ID_LIST:
-                return IFF_checkList((const IFF_List*)chunk, chunkRegistry);
+                return IFF_checkList(chunk, chunkRegistry);
             case IFF_ID_PROP:
-                return IFF_checkProp((const IFF_Prop*)chunk, chunkRegistry);
+                return IFF_checkProp(chunk, chunkRegistry);
             default:
                 return IFF_checkDataChunk(chunk, formType, chunkRegistry);
         }
@@ -202,16 +207,16 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegis
     switch(chunk->chunkId)
     {
         case IFF_ID_FORM:
-            IFF_freeForm((IFF_Form*)chunk, chunkRegistry);
+            IFF_freeForm(chunk, chunkRegistry);
             break;
         case IFF_ID_CAT:
-            IFF_freeCAT((IFF_CAT*)chunk, chunkRegistry);
+            IFF_freeCAT(chunk, chunkRegistry);
             break;
         case IFF_ID_LIST:
-            IFF_freeList((IFF_List*)chunk, chunkRegistry);
+            IFF_freeList(chunk, chunkRegistry);
             break;
         case IFF_ID_PROP:
-            IFF_freeProp((IFF_Prop*)chunk, chunkRegistry);
+            IFF_freeProp(chunk, chunkRegistry);
             break;
         default:
             IFF_freeDataChunk(chunk, formType, chunkRegistry);
@@ -232,16 +237,16 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     switch(chunk->chunkId)
     {
         case IFF_ID_FORM:
-            IFF_printForm((const IFF_Form*)chunk, indentLevel + 1, chunkRegistry);
+            IFF_printForm(chunk, indentLevel + 1, chunkRegistry);
             break;
         case IFF_ID_CAT:
-           IFF_printCAT((const IFF_CAT*)chunk, indentLevel + 1, chunkRegistry);
+           IFF_printCAT(chunk, indentLevel + 1, chunkRegistry);
            break;
         case IFF_ID_LIST:
-            IFF_printList((const IFF_List*)chunk, indentLevel + 1, chunkRegistry);
+            IFF_printList(chunk, indentLevel + 1, chunkRegistry);
             break;
         case IFF_ID_PROP:
-            IFF_printProp((const IFF_Prop*)chunk, indentLevel + 1, chunkRegistry);
+            IFF_printProp(chunk, indentLevel + 1, chunkRegistry);
             break;
         default:
             IFF_printDataChunk(chunk, indentLevel + 1, formType, chunkRegistry);
@@ -257,13 +262,13 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
         switch(chunk1->chunkId)
         {
             case IFF_ID_FORM:
-                return IFF_compareForm((const IFF_Form*)chunk1, (const IFF_Form*)chunk2, chunkRegistry);
+                return IFF_compareForm(chunk1, chunk2, chunkRegistry);
             case IFF_ID_CAT:
-                return IFF_compareCAT((const IFF_CAT*)chunk1, (const IFF_CAT*)chunk2, chunkRegistry);
+                return IFF_compareCAT(chunk1, chunk2, chunkRegistry);
             case IFF_ID_LIST:
-                return IFF_compareList((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry);
+                return IFF_compareList(chunk1, chunk2, chunkRegistry);
             case IFF_ID_PROP:
-                return IFF_compareProp((const IFF_Prop*)chunk1, (const IFF_Prop*)chunk2, chunkRegistry);
+                return IFF_compareProp(chunk1, chunk2, chunkRegistry);
             default:
                 return IFF_compareDataChunk(chunk1, chunk2, formType, chunkRegistry);
         }

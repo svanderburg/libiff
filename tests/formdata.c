@@ -38,7 +38,7 @@ static IFF_UByte byeData[] = {'E', 'F', 'G', 'H'};
 
 static IFF_Chunk *createTestDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_UByte *data)
 {
-    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createRawChunk(chunkId, chunkSize);
     IFF_copyDataToRawChunkData(rawChunk, data);
 
     return (IFF_Chunk*)rawChunk;

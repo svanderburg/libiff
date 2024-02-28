@@ -28,6 +28,13 @@
 #include "util.h"
 #include "error.h"
 
+static IFF_ChunkType globalChunkTypes[] = {
+    {IFF_ID_CAT, &IFF_createUnparsedCAT, &IFF_readCAT, &IFF_writeCAT, &IFF_checkCAT, &IFF_freeCAT, &IFF_printCAT, &IFF_compareCAT},
+    {IFF_ID_FORM, &IFF_createUnparsedForm, &IFF_readForm, &IFF_writeForm, &IFF_checkForm, &IFF_freeForm, &IFF_printForm, &IFF_compareForm},
+    {IFF_ID_LIST, &IFF_createUnparsedList, &IFF_readList, &IFF_writeList, &IFF_checkList, &IFF_freeList, &IFF_printList, &IFF_compareList},
+    {IFF_ID_PROP, &IFF_createUnparsedProp, &IFF_readProp, &IFF_writeProp, &IFF_checkProp, &IFF_freeProp, &IFF_printProp, &IFF_compareProp}
+};
+
 IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Chunk *chunk;

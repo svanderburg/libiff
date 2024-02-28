@@ -30,27 +30,29 @@ IFF_Chunk *IFF_createDataChunk(const IFF_ID chunkId, const IFF_Long chunkSize, c
     if(chunkType == NULL)
         return (IFF_Chunk*)IFF_createRawChunk(chunkId, chunkSize);
     else
-        return IFF_createExtensionChunk(chunkSize, chunkType);
+        return IFF_createExtensionChunk(chunkId, chunkSize, chunkType);
 }
 
 IFF_Bool IFF_readDataChunk(FILE *file, IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_Long bytesProcessed = 0; /* TODO: remove */
 
     if(chunkType == NULL)
-        return IFF_readRawChunk(file, (IFF_RawChunk*)chunk);
+        return IFF_readRawChunk(file, chunk, chunkRegistry, &bytesProcessed);
     else
-        return IFF_readExtensionChunk(file, chunk, chunkType);
+        return IFF_readExtensionChunk(file, chunk, chunkRegistry, chunkType);
 }
 
 IFF_Bool IFF_writeDataChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_Long bytesProcessed = 0; /* TODO: remove */
 
     if(chunkType == NULL)
-        return IFF_writeRawChunk(file, (const IFF_RawChunk*)chunk);
+        return IFF_writeRawChunk(file, chunk, chunkRegistry, &bytesProcessed);
     else
-        return IFF_writeExtensionChunk(file, chunk, chunkType);
+        return IFF_writeExtensionChunk(file, chunk, chunkRegistry, chunkType);
 }
 
 IFF_Bool IFF_checkDataChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
@@ -60,7 +62,7 @@ IFF_Bool IFF_checkDataChunk(const IFF_Chunk *chunk, const IFF_ID formType, const
     if(chunkType == NULL)
         return TRUE;
     else
-        return IFF_checkExtensionChunk(chunk, chunkType);
+        return IFF_checkExtensionChunk(chunk, chunkRegistry, chunkType);
 }
 
 void IFF_freeDataChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
@@ -68,9 +70,9 @@ void IFF_freeDataChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkR
     const IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
 
     if(chunkType == NULL)
-        IFF_freeRawChunk((IFF_RawChunk*)chunk);
+        IFF_freeRawChunk(chunk, chunkRegistry);
     else
-        IFF_freeExtensionChunk(chunk, chunkType);
+        IFF_freeExtensionChunk(chunk, chunkRegistry, chunkType);
 }
 
 void IFF_printDataChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
@@ -78,9 +80,9 @@ void IFF_printDataChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, 
     const IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
 
     if(chunkType == NULL)
-        IFF_printRawChunk((IFF_RawChunk*)chunk, indentLevel + 1);
+        IFF_printRawChunk(chunk, indentLevel + 1, chunkRegistry);
     else
-        IFF_printExtensionChunk(chunk, indentLevel + 1, chunkType);
+        IFF_printExtensionChunk(chunk, indentLevel + 1, chunkRegistry, chunkType);
 }
 
 IFF_Bool IFF_compareDataChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
@@ -88,7 +90,7 @@ IFF_Bool IFF_compareDataChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, 
     const IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk1->chunkId, chunkRegistry);
 
     if(chunkType == NULL)
-        return IFF_compareRawChunk((const IFF_RawChunk*)chunk1, (const IFF_RawChunk*)chunk2);
+        return IFF_compareRawChunk(chunk1, chunk2, chunkRegistry);
     else
-        return IFF_compareExtensionChunk(chunk1, chunk2, chunkType);
+        return IFF_compareExtensionChunk(chunk1, chunk2, chunkRegistry, chunkType);
 }
