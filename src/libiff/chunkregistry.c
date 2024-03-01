@@ -82,7 +82,7 @@ static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNod
     }
 }
 
-IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry)
+IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId)
 {
     if(chunkRegistry == NULL)
         return NULL;

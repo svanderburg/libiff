@@ -110,12 +110,12 @@ extern "C" {
 /**
  * Searches for a chunk type that can deal with a chunk in a given form with a form type and a given chunk id
  *
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param formType A 4 character form type id. If the formType is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return The chunk type that specifies how a chunk type within a form should be handled
  */
-IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry);
+IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }

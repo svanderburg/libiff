@@ -45,7 +45,7 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_
 
 static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunkId, chunkRegistry);
+    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunkId);
     IFF_Chunk *chunk = chunkType->createExtensionChunk(chunkId, chunkSize);
 
     if(chunk != NULL)
@@ -79,7 +79,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
 
 static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
     IFF_Long bytesProcessed = 0;
 
     return chunkType->writeExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed)
@@ -100,21 +100,21 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF
         return FALSE;
     else
     {
-        IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+        IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
         return chunkType->checkExtensionChunk(chunk, chunkRegistry);
     }
 }
 
 void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
     chunkType->freeExtensionChunk(chunk, chunkRegistry);
     free(chunk);
 }
 
 void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
 
     IFF_printIndent(stdout, indentLevel, "'");
     IFF_printId(chunk->chunkId);
@@ -128,7 +128,7 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
 {
     if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
     {
-        IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk1->chunkId, chunkRegistry);
+        IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk1->chunkId);
         return chunkType->compareExtensionChunk(chunk1, chunk2, chunkRegistry);
     }
     else
