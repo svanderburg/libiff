@@ -29,10 +29,6 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include "chunkregistry.h"
 #include "group.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief An abstract chunk containing the common properties of all chunk types
  */
@@ -47,6 +43,10 @@ struct IFF_Chunk
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Allocates memory for a chunk with the given chunk ID and chunk size.

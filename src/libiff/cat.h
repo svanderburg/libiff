@@ -31,10 +31,6 @@ typedef struct IFF_CAT IFF_CAT;
 #include "ifftypes.h"
 #include "chunk.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks.
  */
@@ -63,6 +59,10 @@ struct IFF_CAT
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a new concatentation chunk instance with a given chunk size and
@@ -130,6 +130,7 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  * @param file File descriptor of the file
  * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
 IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -140,6 +141,7 @@ IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
  * @param file File descriptor of the file
  * @param chunk An instance of a concatenation chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);

@@ -31,10 +31,6 @@ typedef struct IFF_List IFF_List;
 #include "chunk.h"
 #include "prop.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks and PROP chunks which share common data chunks with the nested group chunks.
  */
@@ -69,6 +65,10 @@ struct IFF_List
     /** An array of chunk pointers referring to the PROP chunks */
     IFF_Prop **prop;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a new list chunk instance with a given chunk size and contents type.
@@ -145,6 +145,7 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
  * @param file File descriptor of the file
  * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the list has been successfully read, or FALSE if an error has occured
  */
 IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -155,6 +156,7 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
  * @param file File descriptor of the file
  * @param chunk An instance of a list chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the list has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);

@@ -122,6 +122,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param chunk An instance of a group chunk
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
 IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -132,6 +133,7 @@ IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, 
  * @param file File descriptor of the file
  * @param group An instance of a group chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
 IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -143,6 +145,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
  * @param chunk An instance of a group chunk
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);

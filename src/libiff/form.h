@@ -30,10 +30,6 @@ typedef struct IFF_Form IFF_Form;
 #include "ifftypes.h"
 #include "chunk.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief A special group chunk, which contains an arbitrary number of group chunks and data chunks.
  */
@@ -60,6 +56,10 @@ struct IFF_Form
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunk;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a new form chunk instance with a given chunk size and form type.
@@ -107,6 +107,7 @@ void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk);
  * @param file File descriptor of the file
  * @param chunk An instance of a form chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the FORM has been successfully read, or FALSE if an error has occured
  */
 IFF_Bool IFF_readForm(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -117,6 +118,7 @@ IFF_Bool IFF_readForm(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
  * @param file File descriptor of the file
  * @param chunk An instance of a form chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the FORM has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);

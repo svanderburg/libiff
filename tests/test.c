@@ -38,7 +38,7 @@ static IFF_ChunkTypesNode applicationChunkTypesNode = {
 };
 
 static IFF_FormChunkTypes formChunkTypes[] = {
-    {TEST_ID_TEST, &applicationChunkTypesNode }
+    { TEST_ID_TEST, &applicationChunkTypesNode }
 };
 
 static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);

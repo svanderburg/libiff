@@ -354,7 +354,7 @@ To implement a parser for an application format you need to:
 Creating an application format interface
 ----------------------------------------
 Every function in the `iff.h` header requires at least one parameter named:
-`extensionRegistry`. So far, we have omitted these extension parameters by
+`chunkRegistry`. So far, we have omitted these extension parameters by
 specifying a NULL pointer.
 
 These function parameters can be used to support application format chunks by
@@ -394,7 +394,7 @@ IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 As you may notice, this header file is almost the same as the `iff.h` header
 file, except that the `IFF_` prefixes are replaced by the `TEST_` prefixes and
-the `extensionRegistry` parameter is removed.
+the `chunkRegistry` parameter is removed.
 
 The implementation of this interface (`test.c`) may look as follows:
 
@@ -413,9 +413,16 @@ The implementation of this interface (`test.c`) may look as follows:
  * be alphabetically sorted so that they can be found by a binary search
  * algorithm.
  */
-static IFF_ChunkType chunkTypes[] = {
+static IFF_ChunkType applicationChunkTypes[] = {
     {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
     {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+};
+
+/*
+ * Composes a node for the above array so that it can be added to a linked list
+ */
+static IFF_ChunkTypesNode applicationChunkTypesNode = {
+    TEST_NUM_OF_CHUNK_TYPES, applicationChunkTypes, NULL
 };
 
 /*
@@ -423,8 +430,13 @@ static IFF_ChunkType chunkTypes[] = {
  * Also these form types must be alphabetically sorted.
  */
 static IFF_FormChunkTypes formChunkTypes[] = {
-    {TEST_ID_TEST, TEST_NUM_OF_CHUNK_TYPES, chunkTypes}
+    { TEST_ID_TEST, &applicationChunkTypesNode }
 };
+
+/*
+ * Extends the default chunk registry with our custom form chunk types
+ */
+static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
 
 /*
  * Represents a registry that specifies how chunks should be managed
@@ -461,12 +473,12 @@ IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 ```
 
 In the code fragment above, an array defining extension chunkIDs and function
-pointers (`chunkTypes`) specifies how to read, write, check, free and print each
-individual application chunk. The other array binds these extension chunks into
-the scope of the TEST form type. This ensures that the TEST.HELO property is
-parsed by our extension function and that a chunk with the same ID in a
-different form type is parsed ABCD.HELO differently (because they are not the
-same).
+pointers (`applicationChunkTypes`) specifies how to read, write, check, free and
+print each individual application chunk. The other array binds these extension
+chunks into the scope of the TEST form type. This ensures that the TEST.HELO
+property is parsed by our extension function and that a chunk with the same ID
+in a different form type is parsed ABCD.HELO differently (because they are not
+the same).
 
 In the remainder of the interface, we simply call all the functions defined in
 `iff.h` with the given `chunkRegistry` parameter dealing with application
@@ -509,17 +521,17 @@ TEST_Hello;
 
 TEST_Hello *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize);
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed);
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk);
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_freeHello(IFF_Chunk *chunk);
+void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel);
+void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 #endif
 ```
@@ -552,7 +564,7 @@ IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     TEST_Hello *hello = (TEST_Hello*)chunk;
     IFF_FieldStatus status;
@@ -569,7 +581,7 @@ IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, IFF_Long *bytesProcessed)
     return TRUE;
 }
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     const TEST_Hello *hello = (TEST_Hello*)chunk;
     IFF_FieldStatus status;
@@ -586,16 +598,16 @@ IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, IFF_Long *bytesProc
     return TRUE;
 }
 
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk)
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     return TRUE;
 }
 
-void TEST_freeHello(IFF_Chunk *chunk)
+void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
 }
 
-void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
+void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
@@ -604,7 +616,7 @@ void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel)
     IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
 }
 
-IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;

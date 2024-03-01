@@ -35,7 +35,6 @@ typedef struct IFF_Form IFF_Prop;
 extern "C" {
 #endif
 
-
 /**
  * Creates a new PROP chunk instance with a given chunk size and form type.
  * The resulting chunk must be freed by using IFF_free().
@@ -82,6 +81,7 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
  * @param file File descriptor of the file
  * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the PROP has been successfully read, or FALSE if an error has occured
  */
 IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
@@ -92,6 +92,7 @@ IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
  * @param file File descriptor of the file
  * @param chunk An instance of a PROP chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the PROP has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
