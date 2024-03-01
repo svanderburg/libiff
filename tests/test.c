@@ -29,8 +29,8 @@
 #define TEST_NUM_OF_CHUNK_TYPES 2
 
 static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
-    {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+    {TEST_ID_BYE, &TEST_createByeChunk, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {TEST_ID_HELO, &TEST_createHelloChunk, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 static IFF_ChunkTypesNode applicationChunkTypesNode = {

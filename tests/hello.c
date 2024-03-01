@@ -26,7 +26,7 @@
 #include <util.h>
 #include "test.h"
 
-IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
+IFF_Chunk *TEST_createHelloChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
     TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello));
 
@@ -38,6 +38,11 @@ IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
     }
 
     return (IFF_Chunk*)hello;
+}
+
+TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
+{
+    return (TEST_Hello*)TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
 IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
