@@ -22,18 +22,20 @@
 #include "iff.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "id.h"
+#include "util.h"
+#include "form.h"
 #include "cat.h"
 #include "list.h"
-#include "util.h"
 #include "error.h"
+#include "defaultregistry.h"
 
-static IFF_ChunkType globalChunkTypes[] = {
-    {IFF_ID_CAT, &IFF_createUnparsedCAT, &IFF_readCAT, &IFF_writeCAT, &IFF_checkCAT, &IFF_freeCAT, &IFF_printCAT, &IFF_compareCAT},
-    {IFF_ID_FORM, &IFF_createUnparsedForm, &IFF_readForm, &IFF_writeForm, &IFF_checkForm, &IFF_freeForm, &IFF_printForm, &IFF_compareForm},
-    {IFF_ID_LIST, &IFF_createUnparsedList, &IFF_readList, &IFF_writeList, &IFF_checkList, &IFF_freeList, &IFF_printList, &IFF_compareList},
-    {IFF_ID_PROP, &IFF_createUnparsedProp, &IFF_readProp, &IFF_writeProp, &IFF_checkProp, &IFF_freeProp, &IFF_printProp, &IFF_compareProp}
-};
+static const IFF_ChunkRegistry *selectChunkRegistry(const IFF_ChunkRegistry *chunkRegistry)
+{
+    if(chunkRegistry == NULL)
+        return &IFF_defaultChunkRegistry;
+    else
+        return chunkRegistry;
+}
 
 IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
 {
@@ -41,7 +43,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
     int byte;
 
     /* Read the chunk */
-    chunk = IFF_readChunk(file, 0, chunkRegistry);
+    chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry));
 
     if(chunk == NULL)
     {
@@ -90,7 +92,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry
 
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_writeChunk(file, chunk, 0, chunkRegistry);
+    return IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
 IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
@@ -119,7 +121,7 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Chunk
 
 void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeChunk(chunk, 0, chunkRegistry);
+    IFF_freeChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
 IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
@@ -134,15 +136,15 @@ IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistr
         return FALSE;
     }
     else
-        return IFF_checkChunk(chunk, 0, chunkRegistry);
+        return IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
 void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printChunk(chunk, indentLevel, 0, chunkRegistry);
+    IFF_printChunk(chunk, indentLevel, 0, selectChunkRegistry(chunkRegistry));
 }
 
 IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareChunk(chunk1, chunk2, 0, chunkRegistry);
+    return IFF_compareChunk(chunk1, chunk2, 0, selectChunkRegistry(chunkRegistry));
 }

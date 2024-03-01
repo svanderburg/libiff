@@ -22,7 +22,6 @@
 #include "formdata-pad.h"
 #include <stdlib.h>
 #include <string.h>
-#include <iff.h>
 #include <rawchunk.h>
 #include <id.h>
 

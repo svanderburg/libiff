@@ -22,6 +22,11 @@
 #include "group.h"
 #include <stdlib.h>
 #include "id.h"
+#include "form.h"
+#include "cat.h"
+#include "list.h"
+#include "prop.h"
+#include "field.h"
 #include "error.h"
 #include "util.h"
 
@@ -92,12 +97,11 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
 IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     IFF_Group *group = (IFF_Group*)chunk;
+    IFF_FieldStatus status;
 
-    /* Read group type. TODO: read as field */
-    if(!IFF_readId(file, &group->groupType, group->chunkId, groupTypeName))
-        return FALSE;
-
-    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
+    /* Read group type */
+    if((status = IFF_readIdField(file, &group->groupType, chunk, groupTypeName, bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
     /* Keep parsing sub chunks until we have read all bytes */
     if(!readGroupSubChunks(file, group, chunkRegistry, bytesProcessed))
@@ -106,13 +110,13 @@ IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, 
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     unsigned int i;
 
     for(i = 0; i < group->chunkLength; i++)
     {
-        if(!IFF_writeChunk(file, group->chunk[i], formType, chunkRegistry))
+        if(!IFF_writeChunk(file, group->chunk[i], group->groupType, chunkRegistry))
         {
             IFF_error("Error writing chunk!\n");
             return FALSE;
@@ -125,16 +129,15 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_I
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     const IFF_Group *group = (const IFF_Group*)chunk;
+    IFF_FieldStatus status;
 
-    if(!IFF_writeId(file, group->groupType, group->chunkId, groupTypeName)) /* TODO: use field */
-        return FALSE;
+    if((status = IFF_writeIdField(file, group->groupType, chunk, groupTypeName, bytesProcessed)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
 
-    *bytesProcessed = *bytesProcessed + IFF_ID_SIZE;
-
-    if(!IFF_writeGroupSubChunks(file, group, formType, chunkRegistry, bytesProcessed))
+    if(!IFF_writeGroupSubChunks(file, group, chunkRegistry, bytesProcessed))
         return FALSE;
 
     return TRUE;
@@ -153,7 +156,7 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSiz
     }
 }
 
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
     IFF_Long chunkSize = 0;
@@ -166,7 +169,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkChec
             return -1;
 
         /* Check validity of the sub chunk */
-        if(!IFF_checkChunk(subChunk, formType, chunkRegistry))
+        if(!IFF_checkChunk(subChunk, group->groupType, chunkRegistry))
             return -1;
 
         chunkSize = IFF_incrementChunkSize(chunkSize, subChunk);
@@ -175,14 +178,14 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkChec
     return chunkSize;
 }
 
-IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Long chunkSize;
 
     if(!groupTypeCheck(group->groupType))
         return FALSE;
 
-    if((chunkSize = IFF_checkGroupSubChunks(group, subChunkCheck, formType, chunkRegistry)) == -1)
+    if((chunkSize = IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry)) == -1)
         return FALSE;
 
     chunkSize += IFF_ID_SIZE;
@@ -193,12 +196,12 @@ IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (cons
     return TRUE;
 }
 
-void IFF_freeGroup(IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
     for(i = 0; i < group->chunkLength; i++)
-        IFF_freeChunk(group->chunk[i], formType, chunkRegistry);
+        IFF_freeChunk(group->chunk[i], group->groupType, chunkRegistry);
 
     free(group->chunk);
 }
@@ -210,33 +213,33 @@ void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const
     printf("';\n");
 }
 
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
     IFF_printIndent(stdout, indentLevel, "[\n");
 
     for(i = 0; i < group->chunkLength; i++)
-        IFF_printChunk((IFF_Chunk*)group->chunk[i], indentLevel + 1, formType, chunkRegistry);
+        IFF_printChunk((IFF_Chunk*)group->chunk[i], indentLevel + 1, group->groupType, chunkRegistry);
 
     IFF_printIndent(stdout, indentLevel, "];\n");
 }
 
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_printGroupType(groupTypeName, group->groupType, indentLevel);
-    IFF_printGroupSubChunks(group, indentLevel, formType, chunkRegistry);
+    IFF_printGroupSubChunks(group, indentLevel, chunkRegistry);
 }
 
-IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if((group1->groupType == group2->groupType) && (group1->chunkLength == group2->chunkLength))
+    if(group1->groupType == group2->groupType && group1->chunkLength == group2->chunkLength)
     {
         unsigned int i;
 
         for(i = 0; i < group1->chunkLength; i++)
         {
-            if(!IFF_compareChunk(group1->chunk[i], group2->chunk[i], formType, chunkRegistry))
+            if(!IFF_compareChunk(group1->chunk[i], group2->chunk[i], group1->groupType, chunkRegistry))
                 return FALSE;
         }
 
@@ -283,4 +286,51 @@ void IFF_updateGroupChunkSizes(IFF_Group *group)
 
     for(i = 0; i < group->chunkLength; i++)
         group->chunkSize = IFF_incrementChunkSize(group->chunkSize, group->chunk[i]);
+}
+
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+{
+    switch(chunk->chunkId)
+    {
+        case IFF_ID_FORM:
+            return IFF_searchFormsInForm((IFF_Form*)chunk, formTypes, formTypesLength, formsLength);
+        case IFF_ID_CAT:
+            return IFF_searchFormsInCAT((IFF_CAT*)chunk, formTypes, formTypesLength, formsLength);
+        case IFF_ID_LIST:
+            return IFF_searchFormsInList((IFF_List*)chunk, formTypes, formTypesLength, formsLength);
+        default:
+            *formsLength = 0;
+            return NULL;
+    }
+}
+
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength)
+{
+    IFF_ID formTypes[1];
+    formTypes[0] = formType;
+    return IFF_searchFormsFromArray(chunk, formTypes, 1, formsLength);
+}
+
+void IFF_updateChunkSizes(IFF_Chunk *chunk)
+{
+    /* Check whether the given chunk is a group chunk and update the sizes */
+    switch(chunk->chunkId)
+    {
+        case IFF_ID_FORM:
+            IFF_updateFormChunkSizes((IFF_Form*)chunk);
+            break;
+        case IFF_ID_PROP:
+            IFF_updatePropChunkSizes((IFF_Prop*)chunk);
+            break;
+        case IFF_ID_CAT:
+            IFF_updateCATChunkSizes((IFF_CAT*)chunk);
+            break;
+        case IFF_ID_LIST:
+            IFF_updateListChunkSizes((IFF_List*)chunk);
+            break;
+    }
+
+    /* If the given type has a parent, recursively update these as well */
+    if(chunk->parent != NULL)
+        IFF_updateChunkSizes((IFF_Chunk*)chunk->parent);
 }

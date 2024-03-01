@@ -83,7 +83,7 @@ IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
 
 IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    return IFF_writeGroup(file, chunk, 0, CAT_GROUPTYPENAME, chunkRegistry, bytesProcessed);
+    return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, bytesProcessed);
 }
 
 IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
@@ -121,22 +121,22 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
 IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkId, &IFF_checkCATSubChunk, 0, chunkRegistry);
+    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry);
 }
 
 void IFF_freeCAT(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeGroup((IFF_Group*)chunk, 0, chunkRegistry);
+    IFF_freeGroup((IFF_Group*)chunk, chunkRegistry);
 }
 
 void IFF_printCAT(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroup((const IFF_Group*)chunk, indentLevel, 0, CAT_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroup((const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareCAT(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareGroup((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, 0, chunkRegistry);
+    return IFF_compareGroup((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)

@@ -27,8 +27,6 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunkregistry.h"
-#include "group.h"
-#include "form.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -120,34 +118,6 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
-
-/**
- * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- * @param formTypes An array of 4 character form identifiers
- * @param formTypesLength Length of the form types array
- * @param formsLength An integer in which the length of the resulting array is stored
- * @return An array of forms having the given form type
- */
-IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
-
-/**
- * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- * @param formType A 4 character form identifier
- * @param formsLength An integer in which the length of the resulting array is stored
- * @return An array of forms having the given form type
- */
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
-
-/**
- * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- */
-void IFF_updateChunkSizes(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }

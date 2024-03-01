@@ -21,6 +21,7 @@
 
 #include "field.h"
 #include "io.h"
+#include "id.h"
 
 IFF_Bool IFF_deriveSuccess(const IFF_FieldStatus status)
 {
@@ -179,6 +180,36 @@ IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Long value, const IFF_C
     if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
     else if(IFF_writeLong(file, value, chunk->chunkId, attributeName))
+    {
+        increaseBytesProcessed(bytesProcessed, fieldSize);
+        return IFF_FIELD_MORE;
+    }
+    else
+        return IFF_FIELD_FAILURE;
+}
+
+IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
+{
+    size_t fieldSize = IFF_ID_SIZE;
+
+    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+        return IFF_FIELD_LAST;
+    else if(IFF_readId(file, value, chunk->chunkId, attributeName))
+    {
+        increaseBytesProcessed(bytesProcessed, fieldSize);
+        return IFF_FIELD_MORE;
+    }
+    else
+        return IFF_FIELD_FAILURE;
+}
+
+IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed)
+{
+    size_t fieldSize = IFF_ID_SIZE;
+
+    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+        return IFF_FIELD_LAST;
+    else if(IFF_writeId(file, value, chunk->chunkId, attributeName))
     {
         increaseBytesProcessed(bytesProcessed, fieldSize);
         return IFF_FIELD_MORE;

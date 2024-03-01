@@ -131,23 +131,21 @@ IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, 
  *
  * @param file File descriptor of the file
  * @param group An instance of a group chunk
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Writes a group chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param chunk An instance of a group chunk
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the group has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 /**
  * Checks whether the given chunk size matches the chunk size of the group
@@ -163,11 +161,10 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSiz
  *
  * @param group An instance of a group chunk
  * @param subChunkCheck Pointer to a function, which checks an individual sub chunk for its validity
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return The size of the sub chunks together, or -1 if a failure has occured
  */
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the group chunk and its sub chunks conform to the IFF specification.
@@ -175,20 +172,18 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkChec
  * @param group An instance of a group chunk
  * @param groupTypeCheck Pointer to a function, which checks the groupType for its validity
  * @param subChunkCheck Pointer to a function, which checks an individual sub chunk for its validity
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.
  *
  * @param group An instance of a group chunk
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_freeGroup(IFF_Group *group, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays the group type on the standard output.
@@ -204,32 +199,29 @@ void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const
  *
  * @param group An instance of a group chunk
  * @param indentLevel Indent level of the textual representation
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the group chunk and its sub chunks on the standard output.
  *
  * @param group An instance of a group chunk
  * @param indentLevel Indent level of the textual representation
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const IFF_ID formType, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given group chunks' contents is equal to each other.
  *
  * @param group1 Group to compare
  * @param group2 Group to compare
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given groups are equal, else FALSE
  */
-IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.
@@ -258,6 +250,34 @@ IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk
  * @param group An instance of a group chunk
  */
 void IFF_updateGroupChunkSizes(IFF_Group *group);
+
+/**
+ * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formTypes An array of 4 character form identifiers
+ * @param formTypesLength Length of the form types array
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+
+/**
+ * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType A 4 character form identifier
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
+
+/**
+ * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ */
+void IFF_updateChunkSizes(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }

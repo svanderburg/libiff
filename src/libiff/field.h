@@ -65,6 +65,10 @@ IFF_FieldStatus IFF_readLongField(FILE *file, IFF_Long *value, const IFF_Chunk *
 
 IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Long value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed);
 
+IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed);
+
+IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, const char *attributeName, IFF_Long *bytesProcessed);
+
 #ifdef __cplusplus
 }
 #endif

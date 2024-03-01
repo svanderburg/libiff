@@ -87,8 +87,7 @@ IFF_Bool IFF_readForm(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
 
 IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    return IFF_writeGroup(file, chunk, form->formType, FORM_GROUPTYPENAME, chunkRegistry, bytesProcessed);
+    return IFF_writeGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, bytesProcessed);
 }
 
 IFF_Bool IFF_checkFormType(const IFF_ID formType)
@@ -174,26 +173,22 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
 
 IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkFormType, &subChunkCheck, form->formType, chunkRegistry);
+    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkFormType, &subChunkCheck, chunkRegistry);
 }
 
 void IFF_freeForm(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Form *form = (IFF_Form*)chunk;
-    IFF_freeGroup((IFF_Group*)chunk, form->formType, chunkRegistry);
+    IFF_freeGroup((IFF_Group*)chunk, chunkRegistry);
 }
 
 void IFF_printForm(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Form *form = (IFF_Form*)chunk;
-    IFF_printGroup((const IFF_Group*)chunk, indentLevel, form->formType, FORM_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroup((const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareForm(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form1 = (const IFF_Form*)chunk1;
-    return IFF_compareGroup((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, form1->formType, chunkRegistry);
+    return IFF_compareGroup((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)

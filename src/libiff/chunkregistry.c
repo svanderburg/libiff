@@ -24,8 +24,6 @@
 #include "id.h"
 #include "rawchunk.h"
 
-IFF_ChunkType rawChunkType = {0, &IFF_createRawChunk, &IFF_readRawChunk, &IFF_writeRawChunk, &IFF_checkRawChunk, &IFF_freeRawChunk, &IFF_printRawChunk, &IFF_compareRawChunk};
-
 static int compareFormChunkTypes(const void *a, const void *b)
 {
     const IFF_FormChunkTypes *l = (IFF_FormChunkTypes*)a;
@@ -65,15 +63,26 @@ static int compareChunkTypes(const void *a, const void *b)
         return 0;
 }
 
-const static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkType *chunkTypes, const unsigned int chunkTypesLength)
+static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNode *chunkTypesNode)
 {
-    IFF_ChunkType key;
-    key.chunkId = chunkId;
+    if(chunkTypesNode == NULL)
+        return NULL;
+    else
+    {
+        IFF_ChunkType *result;
+        IFF_ChunkType key;
+        key.chunkId = chunkId;
 
-    return (IFF_ChunkType*)bsearch(&key, chunkTypes, chunkTypesLength, sizeof(IFF_ChunkType), &compareChunkTypes);
+        result = (IFF_ChunkType*)bsearch(&key, chunkTypesNode->chunkTypes, chunkTypesNode->chunkTypesLength, sizeof(IFF_ChunkType), &compareChunkTypes);
+
+        if(result == NULL)
+            return getChunkType(chunkId, chunkTypesNode->parent);
+        else
+            return result;
+    }
 }
 
-const IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry)
+IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry)
 {
     if(chunkRegistry == NULL)
         return NULL;
@@ -84,12 +93,12 @@ const IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunk
         IFF_ChunkType *result;
 
         if(formChunkTypes == NULL)
-            result = getChunkType(chunkId, chunkRegistry->globalChunkTypes, chunkRegistry->globalChunkTypesLength); /* Search for the chunk type that handles the a chunk with the given chunk id */
+            result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
         else
-            result = getChunkType(chunkId, formChunkTypes->chunkTypes, formChunkTypes->chunkTypesLength); /* Search for the chunk type that handles the a chunk with the given chunk id */
+            result = getChunkType(chunkId, formChunkTypes->chunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
 
         if(result == NULL)
-            return &rawChunkType;
+            return chunkRegistry->defaultChunkType;
         else
             return result;
     }

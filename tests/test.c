@@ -23,22 +23,25 @@
 #include "iff.h"
 #include "hello.h"
 #include "bye.h"
+#include "defaultregistry.h"
 
 #define TEST_NUM_OF_FORM_CHUNK_TYPES 1
 #define TEST_NUM_OF_CHUNK_TYPES 2
 
-static IFF_ChunkType chunkTypes[] = {
+static IFF_ChunkType applicationChunkTypes[] = {
     {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
     {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
-static IFF_FormChunkTypes formChunkTypes[] = {
-    {TEST_ID_TEST, TEST_NUM_OF_CHUNK_TYPES, chunkTypes}
+static IFF_ChunkTypesNode applicationChunkTypesNode = {
+    TEST_NUM_OF_CHUNK_TYPES, applicationChunkTypes, NULL
 };
 
-static IFF_ChunkRegistry chunkRegistry = {
-    TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes
+static IFF_FormChunkTypes formChunkTypes[] = {
+    {TEST_ID_TEST, &applicationChunkTypesNode }
 };
+
+static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
 
 IFF_Chunk *TEST_read(const char *filename)
 {

@@ -23,6 +23,7 @@
 #define __IFF_CHUNKREGISTRY_H
 
 typedef struct IFF_ChunkType IFF_ChunkType;
+typedef struct IFF_ChunkTypesNode IFF_ChunkTypesNode;
 typedef struct IFF_FormChunkTypes IFF_FormChunkTypes;
 typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 
@@ -60,6 +61,18 @@ struct IFF_ChunkType
     IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 };
 
+struct IFF_ChunkTypesNode
+{
+    /** Specifies the number of chunk types that have a specific meaning inside a FORM */
+    unsigned int chunkTypesLength;
+
+    /** An array specifying how chunks within the FORM context should be managed */
+    IFF_ChunkType *chunkTypes;
+
+    /** Link to the parent node that provides additional application chunks */
+    IFF_ChunkTypesNode *parent;
+};
+
 /**
  * @brief Defines how chunks inside a FORM with a particular formType should be managed.
  */
@@ -68,11 +81,8 @@ struct IFF_FormChunkTypes
     /** A 4 character form type id */
     IFF_ID formType;
 
-    /** Specifies the number of chunk types that have a specific meaning inside a FORM */
-    unsigned int chunkTypesLength;
-
-    /** An array specifying how chunks within the FORM context should be managed */
-    IFF_ChunkType *chunkTypes;
+    /** Link to the first node that defines how application specific chunks in a FORM should be managed */
+    IFF_ChunkTypesNode *chunkTypesNode;
 };
 
 /**
@@ -86,9 +96,11 @@ struct IFF_ChunkRegistry
     /** An array specifying the types of chunks per FORM type */
     IFF_FormChunkTypes *formChunkTypes;
 
-    unsigned int globalChunkTypesLength;
+    /** Link to the first node that specifies how chunks with global identifier should be handled */
+    IFF_ChunkTypesNode *globalChunkTypesNode;
 
-    IFF_ChunkType *globalChunkTypes;
+    /** Type definition of a chunk that is the default, when no FORM-specific or global identifier matches */
+    IFF_ChunkType *defaultChunkType;
 };
 
 #ifdef __cplusplus
@@ -101,9 +113,9 @@ extern "C" {
  * @param formType A 4 character form type id. If the formType is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- * @return The form extension that handles the specified chunk or NULL if it does not exists
+ * @return The chunk type that specifies how a chunk type within a form should be handled
  */
-const IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry);
+IFF_ChunkType *IFF_findChunkType(const IFF_ID formType, const IFF_ID chunkId, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

@@ -80,8 +80,7 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)
 
 IFF_Bool IFF_checkProp(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Prop *prop = (const IFF_Prop*)chunk;
-    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkFormType, &subChunkCheck, prop->formType, chunkRegistry);
+    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkFormType, &subChunkCheck, chunkRegistry);
 }
 
 void IFF_freeProp(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
