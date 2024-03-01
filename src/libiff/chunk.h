@@ -27,6 +27,7 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunkregistry.h"
+#include "group.h"
 
 #ifdef __cplusplus
 extern "C" {

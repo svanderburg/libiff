@@ -137,7 +137,29 @@ IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const c
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeLong(FILE* file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName);
+
+/**
+ * Skips the remaining data in a chunk that was not processed.
+ *
+ * @param file File descriptor of the file
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param chunkSize Size of the chunk in bytes
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
+ * @return TRUE if the data was successfully skipped, else FALSE
+ */
+IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed);
+
+/**
+ * Writes 0-filler bytes for the remainder of the data in a chunk.
+ *
+ * @param file File descriptor of the file
+ * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
+ * @param chunkSize Size of the chunk in bytes
+ * @param bytesProcessed Indicates how many bytes in the chunk body were processed
+ * @return TRUE if the data was successfully written, else FALSE
+ */
+IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed);
 
 /**
  * Reads a padding byte from a chunk with an odd size.

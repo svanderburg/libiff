@@ -43,123 +43,55 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_
     return chunk;
 }
 
-static IFF_Bool skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
+static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(bytesProcessed < chunk->chunkSize)
-    {
-        long bytesToSkip = chunk->chunkSize - bytesProcessed;
+    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunkId, chunkRegistry);
+    IFF_Chunk *chunk = chunkType->createExtensionChunk(chunkId, chunkSize);
 
-        if(fseek(file, bytesToSkip, SEEK_CUR) == 0)
+    if(chunk != NULL)
+    {
+        IFF_Long bytesProcessed = 0;
+
+        /* Read remaining bytes (procedure depends on chunk id type) */
+        if(!chunkType->readExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed)
+            || !IFF_skipUnknownBytes(file, chunk->chunkId, chunkSize, bytesProcessed)
+            || !IFF_readPaddingByte(file, chunkSize, chunk->chunkId))
         {
-            IFF_error("Cannot skip: %d bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunk->chunkId);
-            IFF_error("'\n");
-            return TRUE;
+            IFF_freeChunk(chunk, formType, chunkRegistry);
+            return NULL;
         }
-        else
-            return FALSE;
     }
-    else
-        return TRUE;
+
+    return chunk;
 }
 
 IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_ID chunkId;
     IFF_Long chunkSize;
-    IFF_Chunk *chunk;
-    IFF_Long bytesProcessed = 0;
-    IFF_ChunkType *chunkType;
 
-    /* Read chunk id */
-    if(!IFF_readId(file, &chunkId, ID_EMPTY, ""))
+    if(!IFF_readId(file, &chunkId, ID_EMPTY, "")
+        || !IFF_readLong(file, &chunkSize, chunkId, "chunkSize"))
         return NULL;
 
-    /* Read chunk size */
-    if(!IFF_readLong(file, &chunkSize, chunkId, "chunkSize"))
-        return NULL;
-
-    /* Query chunk type */
-    chunkType = IFF_findChunkType(formType, chunkId, chunkRegistry);
-
-    /* Create the chunk */
-    chunk = chunkType->createExtensionChunk(chunkId, chunkSize);
-
-    if(chunk == NULL)
-        return NULL;
-
-    /* Read remaining bytes (procedure depends on chunk id type) */
-
-    if(!chunkType->readExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed))
-    {
-        IFF_freeChunk(chunk, formType, chunkRegistry);
-        return NULL;
-    }
-
-    /* Skip unknown bytes */
-    if(!skipUnknownBytes(file, chunk, bytesProcessed))
-    {
-        IFF_freeChunk(chunk, formType, chunkRegistry);
-        return NULL;
-    }
-
-    /* If the chunk size is odd, we have to read the padding byte */
-    if(!IFF_readPaddingByte(file, chunkSize, chunk->chunkId))
-    {
-        IFF_freeChunk(chunk, formType, chunkRegistry);
-        return NULL;
-    }
-
-    return chunk;
+    return readChunkBody(file, chunkId, chunkSize, formType, chunkRegistry);
 }
 
-static IFF_Bool writeZeroFillerBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed)
+static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(bytesProcessed < chunk->chunkSize)
-    {
-        size_t bytesToSkip = chunk->chunkSize - bytesProcessed;
-        IFF_UByte *emptyData = (IFF_UByte*)calloc(bytesToSkip, sizeof(IFF_UByte));
-        IFF_Bool status = fwrite(emptyData, sizeof(IFF_UByte), bytesToSkip, file) == bytesToSkip;
+    IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
+    IFF_Long bytesProcessed = 0;
 
-        if(!status)
-        {
-            IFF_error("Cannot write: %u zero bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunk->chunkId);
-            IFF_error("'\n");
-        }
-
-        free(emptyData);
-        return status;
-    }
-    else
-        return TRUE;
+    return chunkType->writeExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed)
+        && IFF_writeZeroFillerBytes(file, chunk->chunkId, chunk->chunkSize, bytesProcessed)
+        && IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId);
 }
 
 IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Long bytesProcessed = 0;
-    IFF_ChunkType *chunkType;
-
-    if(!IFF_writeId(file, chunk->chunkId, chunk->chunkId, "chunkId"))
-        return FALSE;
-
-    if(!IFF_writeLong(file, chunk->chunkSize, chunk->chunkId, "chunkSize"))
-        return FALSE;
-
-    /* Query chunk type */
-    chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
-
-    if(!chunkType->writeExtensionChunkFields(file, chunk, chunkRegistry, &bytesProcessed))
-        return FALSE;
-
-    if(!writeZeroFillerBytes(file, chunk, bytesProcessed))
-        return FALSE;
-
-    /* If the chunk size is odd, we have to write the padding byte */
-    if(!IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId))
-        return FALSE;
-
-    return TRUE;
+    return IFF_writeId(file, chunk->chunkId, chunk->chunkId, "chunkId")
+        && IFF_writeLong(file, chunk->chunkSize, chunk->chunkId, "chunkSize")
+        && writeChunkBody(file, chunk, formType, chunkRegistry);
 }
 
 IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
@@ -168,9 +100,7 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF
         return FALSE;
     else
     {
-        /* Query chunk type */
         IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
-
         return chunkType->checkExtensionChunk(chunk, chunkRegistry);
     }
 }
@@ -178,7 +108,6 @@ IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF
 void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_ChunkType *chunkType = IFF_findChunkType(formType, chunk->chunkId, chunkRegistry);
-
     chunkType->freeExtensionChunk(chunk, chunkRegistry);
     free(chunk);
 }
@@ -190,7 +119,6 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     IFF_printIndent(stdout, indentLevel, "'");
     IFF_printId(chunk->chunkId);
     printf("' = {\n");
-
     IFF_printIndent(stdout, indentLevel + 1, "chunkSize = %d;\n", chunk->chunkSize);
     chunkType->printExtensionChunk(chunk, indentLevel, chunkRegistry);
     IFF_printIndent(stdout, indentLevel, "}\n\n");

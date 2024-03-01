@@ -20,6 +20,7 @@
  */
 
 #include "io.h"
+#include <stdlib.h>
 #include "error.h"
 
 IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
@@ -203,6 +204,48 @@ IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, c
         IFF_writeError(chunkId, attributeName);
         return FALSE;
     }
+}
+
+IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed)
+{
+    if(bytesProcessed < chunkSize)
+    {
+        long bytesToSkip = chunkSize - bytesProcessed;
+
+        if(fseek(file, bytesToSkip, SEEK_CUR) == 0)
+        {
+            IFF_error("Cannot skip: %d bytes in data chunk: '", bytesToSkip);
+            IFF_errorId(chunkId);
+            IFF_error("'\n");
+            return TRUE;
+        }
+        else
+            return FALSE;
+    }
+    else
+        return TRUE;
+}
+
+IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed)
+{
+    if(bytesProcessed < chunkSize)
+    {
+        size_t bytesToSkip = chunkSize - bytesProcessed;
+        IFF_UByte *emptyData = (IFF_UByte*)calloc(bytesToSkip, sizeof(IFF_UByte));
+        IFF_Bool status = fwrite(emptyData, sizeof(IFF_UByte), bytesToSkip, file) == bytesToSkip;
+
+        if(!status)
+        {
+            IFF_error("Cannot write: %u zero bytes in data chunk: '", bytesToSkip);
+            IFF_errorId(chunkId);
+            IFF_error("'\n");
+        }
+
+        free(emptyData);
+        return status;
+    }
+    else
+        return TRUE;
 }
 
 IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
