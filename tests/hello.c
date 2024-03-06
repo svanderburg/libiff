@@ -45,7 +45,7 @@ TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
     return (TEST_Hello*)TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     TEST_Hello *hello = (TEST_Hello*)chunk;
     IFF_FieldStatus status;
@@ -62,7 +62,7 @@ IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *c
     return TRUE;
 }
 
-IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
     IFF_FieldStatus status;

@@ -80,14 +80,14 @@ void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)
     IFF_addToGroup((IFF_Group*)form, chunk);
 }
 
-IFF_Bool IFF_readForm(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readForm(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
-    return IFF_readGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, bytesProcessed);
+    return IFF_readGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed);
 }
 
-IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
-    return IFF_writeGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, bytesProcessed);
+    return IFF_writeGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed);
 }
 
 IFF_Bool IFF_checkFormType(const IFF_ID formType)

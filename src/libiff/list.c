@@ -81,12 +81,20 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
+    unsigned int index = 0;
+
+    IFF_visitAttributeByName(attributePath, "props");
+
     while(*bytesProcessed < list->chunkSize)
     {
         /* Read sub chunk */
-        IFF_Chunk *chunk = IFF_readChunk(file, list->contentsType, chunkRegistry);
+        IFF_Chunk *chunk;
+
+        IFF_visitAttributeByIndex(attributePath, index);
+
+        chunk = IFF_readChunk(file, list->contentsType, chunkRegistry, attributePath);
 
         if(chunk == NULL)
             return FALSE;
@@ -99,15 +107,20 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
 
         /* Increase the bytes processed counter */
         *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, chunk);
+        index++;
+
+        IFF_unvisitAttribute(attributePath);
     }
 
     if(*bytesProcessed > list->chunkSize)
         IFF_error("WARNING: truncated LIST chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", list->chunkSize, bytesProcessed);
 
+    IFF_unvisitAttribute(attributePath);
+
     return TRUE;
 }
 
-IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     IFF_List *list = (IFF_List*)chunk;
     IFF_FieldStatus status;
@@ -117,7 +130,7 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
         return IFF_deriveSuccess(status);
 
     /* Read the remaining nested sub chunks */
-    if(!readListSubChunks(file, list, chunkRegistry, bytesProcessed))
+    if(!readListSubChunks(file, list, chunkRegistry, attributePath, bytesProcessed))
     {
         IFF_error("Error reading chunk in list!\n");
         return FALSE;
@@ -127,13 +140,17 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
     return TRUE;
 }
 
-static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     unsigned int i;
 
+    IFF_visitAttributeByName(attributePath, "props");
+
     for(i = 0; i < list->propLength; i++)
     {
-        if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry))
+        IFF_visitAttributeByIndex(attributePath, i);
+
+        if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry, attributePath))
         {
             IFF_error("Error writing PROP!\n");
             return FALSE;
@@ -141,12 +158,16 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
 
         /* Increase the bytes processed counter */
         *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->prop[i]);
+
+        IFF_unvisitAttribute(attributePath);
     }
+
+    IFF_unvisitAttribute(attributePath);
 
     return TRUE;
 }
 
-IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     const IFF_List *list = (const IFF_List*)chunk;
     IFF_FieldStatus status;
@@ -154,10 +175,10 @@ IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     if((status = IFF_writeIdField(file, list->contentsType, chunk, "contentsType", bytesProcessed)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if(!writeListPropChunks(file, list, chunkRegistry, bytesProcessed))
+    if(!writeListPropChunks(file, list, chunkRegistry, attributePath, bytesProcessed))
         return FALSE;
 
-    if(!IFF_writeGroupSubChunks(file, (const IFF_Group*)chunk, chunkRegistry, bytesProcessed))
+    if(!IFF_writeGroupSubChunks(file, (const IFF_Group*)chunk, chunkRegistry, attributePath, bytesProcessed))
         return FALSE;
 
     return TRUE;

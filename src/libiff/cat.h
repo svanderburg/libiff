@@ -30,6 +30,7 @@ typedef struct IFF_CAT IFF_CAT;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunk.h"
+#include "attributepath.h"
 
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks.
@@ -133,7 +134,7 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.
@@ -144,7 +145,7 @@ IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
 
 /**
  * Checks a sub chunk in a CAT for its validity.

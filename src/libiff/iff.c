@@ -41,9 +41,12 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_Chunk *chunk;
     int byte;
+    IFF_AttributePath attributePath;
+
+    IFF_initAttributePath(&attributePath);
 
     /* Read the chunk */
-    chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry));
+    chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry), &attributePath);
 
     if(chunk == NULL)
     {
@@ -92,7 +95,10 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry
 
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry));
+    IFF_AttributePath attributePath;
+
+    IFF_initAttributePath(&attributePath);
+    return IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry), &attributePath);
 }
 
 IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)

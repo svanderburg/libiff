@@ -29,6 +29,7 @@ typedef struct IFF_RawChunk IFF_RawChunk;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunk.h"
+#include "attributepath.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,7 +97,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
 
 /**
  * Writes the given raw chunk to a file descriptor.
@@ -107,7 +108,7 @@ IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry 
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
 
 /**
  * Checks the given raw chunk

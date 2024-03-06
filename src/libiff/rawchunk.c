@@ -65,7 +65,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
 
@@ -83,7 +83,7 @@ IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry 
     }
 }
 
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
 

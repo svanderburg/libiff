@@ -28,6 +28,7 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include "ifftypes.h"
 #include "chunkregistry.h"
 #include "group.h"
+#include "attributepath.h"
 
 /**
  * @brief An abstract chunk containing the common properties of all chunk types
@@ -67,7 +68,7 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t stru
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.
@@ -78,7 +79,7 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.

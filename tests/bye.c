@@ -44,7 +44,7 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return (TEST_Bye*)TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
-IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     TEST_Bye *bye = (TEST_Bye*)chunk;
     IFF_FieldStatus status;
@@ -58,7 +58,7 @@ IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
     return TRUE;
 }
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
     IFF_FieldStatus status;
