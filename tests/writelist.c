@@ -29,7 +29,15 @@
 int main(int argc, char *argv[])
 {
     IFF_List *list = IFF_createTestList();
-    int status = !IFF_write("list.TEST", (IFF_Chunk*)list, NULL);
+    IFF_IOError *error = NULL;
+    int status = !IFF_write("list.TEST", (IFF_Chunk*)list, NULL, &error);
+
+    if(error != NULL)
+    {
+        IFF_printWriteError(error);
+        IFF_freeIOError(error);
+    }
+
     IFF_free((IFF_Chunk*)list, NULL);
     return status;
 }

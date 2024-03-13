@@ -24,14 +24,22 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = TEST_read(argv[1]);
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = TEST_read(argv[1], &error);
+    int status;
 
-    if(chunk == NULL)
-        return 1;
-    else
+    if(error == NULL)
     {
         TEST_print(chunk, 0);
-        TEST_free(chunk);
-        return 0;
+        status = 0;
     }
+    else
+    {
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+        status = 1;
+    }
+
+    TEST_free(chunk);
+    return status;
 }

@@ -29,6 +29,7 @@ typedef struct IFF_Group IFF_Group;
 #include "chunk.h"
 #include "form.h"
 #include "attributepath.h"
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,7 +127,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes all sub chunks inside a group to a file.
@@ -137,7 +138,7 @@ IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, 
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a group chunk and its sub chunks to a file.
@@ -149,7 +150,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks whether the given chunk size matches the chunk size of the group

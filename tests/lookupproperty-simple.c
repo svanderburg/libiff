@@ -27,35 +27,44 @@
 
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 
-int main(int argc, char *argv[])
+static IFF_Bool lookupPropertyAndCheck(const IFF_Chunk *chunk)
 {
-    IFF_Chunk *chunk = IFF_read("hello.TEST", NULL);
-
-    if(chunk == NULL)
-        return 1;
-    else
+    if(chunk->chunkId == IFF_ID_FORM)
     {
-        int status = 0;
+        IFF_Form *form = (IFF_Form*)chunk;
+        IFF_Chunk *lookupChunk = IFF_getChunkFromForm(form, ID_HELO);
 
-        if(chunk->chunkId == IFF_ID_FORM)
+        if(lookupChunk == NULL || lookupChunk->chunkId != ID_HELO)
         {
-            IFF_Form *form = (IFF_Form*)chunk;
-            IFF_Chunk *lookupChunk = IFF_getChunkFromForm(form, ID_HELO);
-
-            if(lookupChunk == NULL || lookupChunk->chunkId  != ID_HELO)
-            {
-                fprintf(stderr, "HELO chunk can't be obtained from the form!\n");
-                status = 1;
-            }
+            fprintf(stderr, "HELO chunk can't be obtained from the form!\n");
+            return FALSE;
         }
         else
-        {
-            fprintf(stderr, "Error: the IFF file must be form!\n");
-            status = 1;
-        }
-
-        IFF_free(chunk, NULL);
-
-        return status;
+            return TRUE;
     }
+    else
+    {
+        fprintf(stderr, "Error: the IFF file must be form!\n");
+        return FALSE;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = IFF_read("hello.TEST", NULL, &error);
+    int status;
+
+    if(error == NULL)
+        status = !lookupPropertyAndCheck(chunk);
+    else
+    {
+        status = 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+    }
+
+    IFF_free(chunk, NULL);
+
+    return status;
 }

@@ -27,7 +27,15 @@
 int main(int argc, char *argv[])
 {
     IFF_Form *form = IFF_createTestForm();
-    int status = !IFF_write("hello.TEST", (IFF_Chunk*)form, NULL);
+    IFF_IOError *error = NULL;
+    int status = !IFF_write("hello.TEST", (IFF_Chunk*)form, NULL, &error);
+
+    if(error != NULL)
+    {
+        IFF_printWriteError(error);
+        IFF_freeIOError(error);
+    }
+
     IFF_free((IFF_Chunk*)form, NULL);
     return status;
 }

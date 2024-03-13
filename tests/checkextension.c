@@ -24,14 +24,19 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = TEST_read("extension.TEST");
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = TEST_read("extension.TEST", &error);
+    int status;
 
-    if(chunk == NULL)
-        return 1;
+    if(error == NULL)
+        status = TEST_check(chunk); /* The given file should be invalid */
     else
     {
-        int status = TEST_check(chunk); /* The given file should be invalid */
-        TEST_free(chunk);
-        return status;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+        status = 1;
     }
+
+    TEST_free(chunk);
+    return status;
 }

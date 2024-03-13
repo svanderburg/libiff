@@ -76,14 +76,14 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     IFF_addToCAT(cat, chunk);
 }
 
-IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_readGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed);
+    return IFF_readGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed);
+    return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)

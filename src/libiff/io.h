@@ -24,6 +24,8 @@
 
 #include <stdio.h>
 #include "ifftypes.h"
+#include "error.h"
+#include "attributepath.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +40,7 @@ extern "C" {
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes an unsigned byte to a file.
@@ -49,7 +51,7 @@ IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Reads an unsigned word from a file.
@@ -60,7 +62,7 @@ IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId,
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes an unsigned word to a file.
@@ -71,7 +73,7 @@ IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Reads a signed word from a file.
@@ -82,7 +84,7 @@ IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId,
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes a signed word to a file.
@@ -93,7 +95,7 @@ IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const c
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Reads an unsigned long from a file.
@@ -104,7 +106,7 @@ IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, c
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes an unsigned long to a file.
@@ -115,7 +117,7 @@ IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, const IFF_ID chunkId, const
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Reads a signed long from a file.
@@ -126,7 +128,7 @@ IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId,
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes a signed long to a file.
@@ -137,7 +139,7 @@ IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const c
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Skips the remaining data in a chunk that was not processed.
@@ -148,7 +150,7 @@ IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, c
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the data was successfully skipped, else FALSE
  */
-IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed);
+IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Writes 0-filler bytes for the remainder of the data in a chunk.
@@ -159,7 +161,7 @@ IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long c
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the data was successfully written, else FALSE
  */
-IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed);
+IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Reads a padding byte from a chunk with an odd size.
@@ -169,7 +171,7 @@ IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Lo
  * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
  * @return TRUE if the byte has been successfully read, else FALSE
  */
-IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId);
+IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Writes a padding byte to a chunk with an odd size.
@@ -179,7 +181,7 @@ IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID 
  * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
  * @return TRUE if the byte has been successfully written, else FALSE
  */
-IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId);
+IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 #ifdef __cplusplus
 }

@@ -22,12 +22,12 @@
 #include "group.h"
 #include <stdlib.h>
 #include "id.h"
+#include "io.h"
 #include "form.h"
 #include "cat.h"
 #include "list.h"
 #include "prop.h"
 #include "field.h"
-#include "error.h"
 #include "util.h"
 
 void IFF_initGroup(IFF_Group *group, const IFF_ID groupType)
@@ -71,7 +71,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;
 
@@ -84,7 +84,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
         IFF_visitAttributeByIndex(attributePath, index);
 
         /* Read sub chunk */
-        chunk = IFF_readChunk(file, group->groupType, chunkRegistry, attributePath);
+        chunk = IFF_readChunk(file, group->groupType, chunkRegistry, attributePath, error);
 
         if(chunk == NULL)
             return FALSE;
@@ -99,31 +99,28 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
         IFF_unvisitAttribute(attributePath);
     }
 
-    if(*bytesProcessed > group->chunkSize)
-        IFF_error("WARNING: truncated group chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", group->chunkSize, bytesProcessed);
-
     IFF_unvisitAttribute(attributePath);
 
     return TRUE;
 }
 
-IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_Group *group = (IFF_Group*)chunk;
     IFF_FieldStatus status;
 
     /* Read group type */
-    if((status = IFF_readIdField(file, &group->groupType, chunk, groupTypeName, bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_readIdField(file, &group->groupType, chunk, attributePath, groupTypeName, bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
     /* Keep parsing sub chunks until we have read all bytes */
-    if(!readGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed))
+    if(!readGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error))
         return FALSE;
 
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -133,7 +130,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
     {
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_writeChunk(file, group->chunk[i], group->groupType, chunkRegistry, attributePath))
+        if(!IFF_writeChunk(file, group->chunk[i], group->groupType, chunkRegistry, attributePath, error))
         {
             IFF_error("Error writing chunk!\n");
             return FALSE;
@@ -150,15 +147,15 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_Group *group = (const IFF_Group*)chunk;
     IFF_FieldStatus status;
 
-    if((status = IFF_writeIdField(file, group->groupType, chunk, groupTypeName, bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_writeIdField(file, group->groupType, chunk, attributePath, groupTypeName, bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if(!IFF_writeGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed))
+    if(!IFF_writeGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error))
         return FALSE;
 
     return TRUE;

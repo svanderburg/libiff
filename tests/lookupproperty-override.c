@@ -31,55 +31,65 @@
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-int main(int argc, char *argv[])
+static IFF_Bool lookupPropertyAndCheck(IFF_Chunk *chunk)
 {
-    IFF_Chunk *chunk = IFF_read("lookupproperty-override.TEST", NULL);
+    unsigned int formsLength;
+    IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
 
-    if(chunk == NULL)
-        return 1;
-    else
+    if(formsLength == 2)
     {
-        int status = 0;
-        unsigned int formsLength;
-        IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
+        IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], ID_HELO);
 
-        if(formsLength == 2)
+        if(heloChunk != NULL && heloChunk->chunkId == ID_HELO)
         {
-            IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], ID_HELO);
-
-            if(heloChunk != NULL && heloChunk->chunkId == ID_HELO)
+            if(heloChunk->chunkSize == HELO_BYTES_SIZE)
             {
-                if(heloChunk->chunkSize == HELO_BYTES_SIZE)
+                if(heloChunk->chunkData[0] != '1' ||
+                   heloChunk->chunkData[1] != '2' ||
+                   heloChunk->chunkData[2] != '3' ||
+                   heloChunk->chunkData[3] != '4')
                 {
-                    if(heloChunk->chunkData[0] != '1' ||
-                       heloChunk->chunkData[1] != '2' ||
-                       heloChunk->chunkData[2] != '3' ||
-                       heloChunk->chunkData[3] != '4')
-                    {
-                        fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
-                        status = 1;
-                    }
-                }
-                else
-                {
-                    fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
-                    status = 1;
+                    fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
+                    return FALSE;
                 }
             }
             else
             {
-                fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
-                status = 1;
+                fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
+                return FALSE;
             }
         }
         else
         {
-            fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
-            status = 1;
+            fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
+            return FALSE;
         }
-
-        IFF_free(chunk, NULL);
-
-        return status;
     }
+    else
+    {
+        fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+int main(int argc, char *argv[])
+{
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = IFF_read("lookupproperty-override.TEST", NULL, &error);
+    int status = 0;
+
+    if(error == NULL)
+        status = !lookupPropertyAndCheck(chunk);
+    else
+    {
+        status = 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+    }
+
+    IFF_free(chunk, NULL);
+
+    return status;
 }

@@ -21,15 +21,15 @@
 
 #include "io.h"
 #include <stdlib.h>
-#include "error.h"
+#include <stdio.h>
 
-IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     int byte = fgetc(file);
 
     if(byte == EOF)
     {
-        IFF_readError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_UByte), attributePath, attributeName, "UBYTE", chunkId);
         return FALSE;
     }
     else
@@ -39,18 +39,18 @@ IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const
     }
 }
 
-IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     if(fputc(value, file) == EOF)
     {
-        IFF_writeError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_UByte), attributePath, attributeName, "UBYTE", chunkId);
         return FALSE;
     }
     else
         return TRUE;
 }
 
-IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     IFF_UWord readUWord;
 
@@ -67,12 +67,12 @@ IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const
     }
     else
     {
-        IFF_readError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_UWord), attributePath, attributeName, "UWORD", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_UWord writeUWord = value;
@@ -85,12 +85,12 @@ IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId,
         return TRUE;
     else
     {
-        IFF_writeError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_UWord), attributePath, attributeName, "UWORD", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     IFF_Word readWord;
 
@@ -106,12 +106,12 @@ IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const c
     }
     else
     {
-        IFF_readError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_Word), attributePath, attributeName, "WORD", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_Word writeWord = value;
@@ -123,12 +123,12 @@ IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, c
         return TRUE;
     else
     {
-        IFF_writeError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_Word), attributePath, attributeName, "WORD", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     IFF_ULong readValue;
 
@@ -144,12 +144,12 @@ IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, const IFF_ID chunkId, const
     }
     else
     {
-        IFF_readError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_ULong), attributePath, attributeName, "ULONG", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_ULong writeValue = value;
@@ -162,12 +162,12 @@ IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId,
         return TRUE;
     else
     {
-        IFF_writeError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_ULong), attributePath, attributeName, "ULONG", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
     IFF_Long readValue;
 
@@ -183,12 +183,12 @@ IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, const IFF_ID chunkId, const c
     }
     else
     {
-        IFF_readError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_Long), attributePath, attributeName, "LONG", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
 #if IFF_BIG_ENDIAN == 1
     IFF_Long writeValue = value;
@@ -201,32 +201,30 @@ IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, c
         return TRUE;
     else
     {
-        IFF_writeError(chunkId, attributeName);
+        *error = IFF_createDataIOError(file, sizeof(IFF_Long), attributePath, attributeName, "LONG", chunkId);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed)
+IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     if(bytesProcessed < chunkSize)
     {
         long bytesToSkip = chunkSize - bytesProcessed;
 
         if(fseek(file, bytesToSkip, SEEK_CUR) == 0)
-        {
-            IFF_error("Cannot skip: %d bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunkId);
-            IFF_error("'\n");
             return TRUE;
-        }
         else
+        {
+            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunkId);
             return FALSE;
+        }
     }
     else
         return TRUE;
 }
 
-IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed)
+IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     if(bytesProcessed < chunkSize)
     {
@@ -235,11 +233,7 @@ IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Lo
         IFF_Bool status = fwrite(emptyData, sizeof(IFF_UByte), bytesToSkip, file) == bytesToSkip;
 
         if(!status)
-        {
-            IFF_error("Cannot write: %u zero bytes in data chunk: '", bytesToSkip);
-            IFF_errorId(chunkId);
-            IFF_error("'\n");
-        }
+            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunkId);
 
         free(emptyData);
         return status;
@@ -248,7 +242,7 @@ IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Lo
         return TRUE;
 }
 
-IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
+IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
@@ -256,27 +250,21 @@ IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID 
 
         if(byte == EOF) /* We shouldn't have reached the EOF yet */
         {
-            IFF_error("Unexpected end of file, while reading padding byte of '");
-            IFF_errorId(chunkId);
-            IFF_error("'\n");
+            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunkId);
             return FALSE;
         }
-        else if(byte != 0) /* Normally, a padding byte is 0, warn if this is not the case */
-            IFF_error("WARNING: Padding byte is non-zero!\n");
     }
 
     return TRUE;
 }
 
-IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
+IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
         if(fputc('\0', file) == EOF)
         {
-            IFF_error("Cannot write padding byte of '");
-            IFF_errorId(chunkId);
-            IFF_error("'\n");
+            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunkId);
             return FALSE;
         }
         else

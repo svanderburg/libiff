@@ -54,7 +54,9 @@ struct IFF_AttributePath
     IFF_AttributePathNode *currentNode;
 };
 
-void IFF_initAttributePath(IFF_AttributePath *attributePath);
+IFF_AttributePath *IFF_createAttributePath(void);
+
+void IFF_freeAttributePath(IFF_AttributePath *attributePath);
 
 void IFF_visitAttributeByIndex(IFF_AttributePath *attributePath, unsigned int index);
 

@@ -134,7 +134,7 @@ void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.
@@ -145,7 +145,7 @@ IFF_Bool IFF_readCAT(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks a sub chunk in a CAT for its validity.

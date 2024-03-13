@@ -25,9 +25,9 @@
 
 #define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-IFF_Chunk *TEST_read(const char *filename);
+IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error);
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk);
+IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
 
 void TEST_free(IFF_Chunk *chunk);
 

@@ -24,6 +24,7 @@
 
 #include "ifftypes.h"
 #include "chunk.h"
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,7 @@ extern "C" {
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename. The resulting chunk must be freed using IFF_free().
@@ -45,7 +46,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry);
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename or from the standard input when no filename was provided.
@@ -55,7 +56,7 @@ IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegi
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a given file descriptor.
@@ -65,7 +66,7 @@ IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a file with the given filename.
@@ -75,7 +76,7 @@ IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a file with the given filename or to the standard output if no filename was provided.
@@ -85,7 +86,7 @@ IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_C
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Frees an IFF chunk hierarchy from memory.

@@ -26,7 +26,6 @@
 #include "form.h"
 #include "cat.h"
 #include "list.h"
-#include "error.h"
 #include "defaultregistry.h"
 
 static const IFF_ChunkRegistry *selectChunkRegistry(const IFF_ChunkRegistry *chunkRegistry)
@@ -37,92 +36,85 @@ static const IFF_ChunkRegistry *selectChunkRegistry(const IFF_ChunkRegistry *chu
         return chunkRegistry;
 }
 
-IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
-    IFF_Chunk *chunk;
     int byte;
-    IFF_AttributePath attributePath;
-
-    IFF_initAttributePath(&attributePath);
+    IFF_AttributePath *attributePath = IFF_createAttributePath();
 
     /* Read the chunk */
-    chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry), &attributePath);
-
-    if(chunk == NULL)
-    {
-        IFF_error("ERROR: cannot open main chunk!\n");
-        return NULL;
-    }
+    IFF_Chunk *chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry), attributePath, error);
 
     /* We should have reached the EOF now */
-
     if((byte = fgetc(file)) != EOF)
         IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
+
+    /* Remove the attribute path if we no longer need it */
+    if(*error == NULL)
+        IFF_freeAttributePath(attributePath);
 
     /* Return the parsed main chunk */
     return chunk;
 }
 
-IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
-    IFF_Chunk *chunk;
     FILE *file = fopen(filename, "rb");
 
-    /* Open the IFF file */
     if(file == NULL)
     {
-        IFF_error("ERROR: cannot open file: %s\n", filename);
+        *error = IFF_createFileIOError(filename);
         return NULL;
     }
-
-    /* Parse the main chunk */
-    chunk = IFF_readFd(file, chunkRegistry);
-
-    /* Close the file */
-    fclose(file);
-
-    /* Return the chunk */
-    return chunk;
+    else
+    {
+        IFF_Chunk *chunk = IFF_readFd(file, chunkRegistry, error);
+        fclose(file);
+        return chunk;
+    }
 }
 
-IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
     if(filename == NULL)
-        return IFF_readFd(stdin, chunkRegistry);
+        return IFF_readFd(stdin, chunkRegistry, error);
     else
-        return IFF_readFile(filename, chunkRegistry);
+        return IFF_readFile(filename, chunkRegistry, error);
 }
 
-IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
-    IFF_AttributePath attributePath;
+    IFF_AttributePath *attributePath = IFF_createAttributePath();
+    IFF_Bool status = IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, error);
 
-    IFF_initAttributePath(&attributePath);
-    return IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry), &attributePath);
+    if(*error == NULL)
+        IFF_freeAttributePath(attributePath);
+
+    return status;
 }
 
-IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
-    IFF_Bool status;
     FILE *file = fopen(filename, "wb");
 
     if(file == NULL)
     {
-        IFF_error("ERROR: cannot open file: %s\n", filename);
+        *error = IFF_createFileIOError(filename);
         return FALSE;
     }
-
-    status = IFF_writeFd(file, chunk, chunkRegistry);
-    fclose(file);
-    return status;
+    else
+    {
+        IFF_Bool status = IFF_writeFd(file, chunk, chunkRegistry, error);
+        fclose(file);
+        return status;
+    }
 }
 
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
     if(filename == NULL)
-        return IFF_writeFd(stdout, chunk, chunkRegistry);
+        return IFF_writeFd(stdout, chunk, chunkRegistry, error);
     else
-        return IFF_writeFile(filename, chunk, chunkRegistry);
+        return IFF_writeFile(filename, chunk, chunkRegistry, error);
 }
 
 void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)

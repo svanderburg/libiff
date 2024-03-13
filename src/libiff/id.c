@@ -22,16 +22,15 @@
 #include "id.h"
 #include <string.h>
 #include "io.h"
-#include "error.h"
 
-IFF_Bool IFF_readId(FILE *file, IFF_ID *id, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_readId(FILE *file, IFF_ID *id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
-    return IFF_readULong(file, id, chunkId, attributeName);
+    return IFF_readULong(file, id, attributePath, attributeName, chunkId, error);
 }
 
-IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName)
+IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
-    return IFF_writeULong(file, id, chunkId, attributeName);
+    return IFF_writeULong(file, id, attributePath, attributeName, chunkId, error);
 }
 
 void IFF_idToString(const IFF_ID id, IFF_ID2 id2)

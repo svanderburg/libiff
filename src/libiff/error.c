@@ -21,6 +21,9 @@
 
 #include "error.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 void IFF_errorCallbackStderr(const char *formatString, va_list ap)
 {
@@ -61,4 +64,104 @@ void IFF_writeError(const IFF_ID chunkId, const char *attributeName)
     IFF_error("Error writing '");
     IFF_errorId(chunkId);
     IFF_error("'.%s\n", attributeName);
+}
+
+IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId)
+{
+    IFF_DataIOError *error = (IFF_DataIOError*)malloc(sizeof(IFF_DataIOError));
+
+    if(error != NULL)
+    {
+        error->type = IFF_IO_ERROR_DATA;
+        error->dataSize = dataSize;
+        error->attributePath = attributePath;
+        error->attributeName = attributeName;
+        error->position = ftell(file);
+        error->description = description;
+        error->chunkId = chunkId;
+    }
+
+    return (IFF_IOError*)error;
+}
+
+IFF_IOError *IFF_createFileIOError(char *filename)
+{
+    IFF_FileIOError *error = (IFF_FileIOError*)malloc(sizeof(IFF_FileIOError));
+
+    if(error != NULL)
+    {
+        error->type = IFF_IO_ERROR_FILE;
+        error->filename = filename;
+        error->reason = strerror(errno);
+    }
+
+    return (IFF_IOError*)error;
+}
+
+static void clearDataIOError(IFF_DataIOError *error)
+{
+    IFF_freeAttributePath(error->attributePath);
+}
+
+void IFF_freeIOError(IFF_IOError *error)
+{
+    if(error->type == IFF_IO_ERROR_DATA)
+        clearDataIOError((IFF_DataIOError*)error);
+    free(error);
+}
+
+static void printDataIOError(const IFF_DataIOError *error)
+{
+    fprintf(stderr, " %u bytes (%s)", error->dataSize, error->description);
+
+    if(error->attributeName == NULL)
+    {
+        fprintf(stderr, " while processing a chunk at path: ");
+        IFF_printAttributePath(error->attributePath);
+    }
+    else
+    {
+        fprintf(stderr, " for field: ");
+        IFF_printAttributePath(error->attributePath);
+        fprintf(stderr, ".%s", error->attributeName);
+    }
+
+    if(error->chunkId != 0)
+    {
+        fputs("inside a chunk with ID: \"", stderr);
+        IFF_errorId(error->chunkId);
+        fputs("\"", stderr);
+    }
+
+    fprintf(stderr, " at position: %ld\n", error->position);
+}
+
+static void printFileIOError(const IFF_FileIOError *error)
+{
+    fprintf(stderr, " file: %s, reason: %s\n", error->filename, error->reason);
+}
+
+static void printIOError(const IFF_IOError *error)
+{
+    switch(error->type)
+    {
+        case IFF_IO_ERROR_DATA:
+            printDataIOError((const IFF_DataIOError*)error);
+            break;
+        case IFF_IO_ERROR_FILE:
+            printFileIOError((const IFF_FileIOError*)error);
+            break;
+    }
+}
+
+void IFF_printReadError(const IFF_IOError *error)
+{
+    fprintf(stderr, "Cannot read");
+    printIOError(error);
+}
+
+void IFF_printWriteError(const IFF_IOError *error)
+{
+    fprintf(stderr, "Cannot write");
+    printIOError(error);
 }

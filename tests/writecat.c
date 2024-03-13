@@ -25,7 +25,15 @@
 int main(int argc, char *argv[])
 {
     IFF_CAT *cat = IFF_createTestCAT();
-    int status = !IFF_write("cat.TEST", (IFF_Chunk*)cat, NULL);
+    IFF_IOError *error = NULL;
+    int status = !IFF_write("cat.TEST", (IFF_Chunk*)cat, NULL, &error);
+
+    if(error != NULL)
+    {
+        IFF_printWriteError(error);
+        IFF_freeIOError(error);
+    }
+
     IFF_free((IFF_Chunk*)cat, NULL);
     return status;
 }

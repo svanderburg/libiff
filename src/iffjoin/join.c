@@ -30,6 +30,7 @@
 
 int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, const char *outputFilename)
 {
+    IFF_IOError *error = NULL;
     IFF_CAT *cat = IFF_createEmptyCAT();
     unsigned int i;
     int status = 0;
@@ -37,21 +38,32 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     for(i = 0; i < inputFilenamesLength; i++)
     {
         /* Open each input IFF file */
-        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], NULL);
+        IFF_IOError *error = NULL;
+        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], NULL, &error);
 
         /* Check whether the IFF file is valid */
-        if(chunk == NULL || !IFF_check(chunk, NULL))
+        if(error == NULL || IFF_check(chunk, NULL))
+            IFF_addToCATAndUpdateContentsType(cat, chunk); /* Add the input IFF chunk to the concatenation */
+        else
         {
+            if(error != NULL)
+            {
+                IFF_printReadError(error);
+                IFF_freeIOError(error);
+            }
+
             IFF_free((IFF_Chunk*)cat, NULL);
             return 1;
         }
-        else
-            IFF_addToCATAndUpdateContentsType(cat, chunk); /* Add the input IFF chunk to the concatenation */
     }
 
     /* Write the resulting CAT to the output file or standard output */
-    if(!IFF_write(outputFilename, (IFF_Chunk*)cat, NULL))
+    if(!IFF_write(outputFilename, (IFF_Chunk*)cat, NULL, &error))
+    {
         status = 1;
+        IFF_printWriteError(error);
+        IFF_freeIOError(error);
+    }
 
     /* Free everything */
     IFF_free((IFF_Chunk*)cat, NULL);

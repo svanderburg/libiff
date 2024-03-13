@@ -25,7 +25,6 @@
 #include "field.h"
 #include "util.h"
 #include "cat.h"
-#include "error.h"
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -81,7 +80,7 @@ void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;
 
@@ -94,7 +93,7 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
 
         IFF_visitAttributeByIndex(attributePath, index);
 
-        chunk = IFF_readChunk(file, list->contentsType, chunkRegistry, attributePath);
+        chunk = IFF_readChunk(file, list->contentsType, chunkRegistry, attributePath, error);
 
         if(chunk == NULL)
             return FALSE;
@@ -120,17 +119,17 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
     return TRUE;
 }
 
-IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_List *list = (IFF_List*)chunk;
     IFF_FieldStatus status;
 
     /* Read the contentsType id */
-    if((status = IFF_readIdField(file, &list->contentsType, chunk, "contentsType", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_readIdField(file, &list->contentsType, chunk, attributePath, "contentsType", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
     /* Read the remaining nested sub chunks */
-    if(!readListSubChunks(file, list, chunkRegistry, attributePath, bytesProcessed))
+    if(!readListSubChunks(file, list, chunkRegistry, attributePath, bytesProcessed, error))
     {
         IFF_error("Error reading chunk in list!\n");
         return FALSE;
@@ -140,7 +139,7 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
     return TRUE;
 }
 
-static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -150,7 +149,7 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
     {
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry, attributePath))
+        if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry, attributePath, error))
         {
             IFF_error("Error writing PROP!\n");
             return FALSE;
@@ -167,18 +166,18 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
     return TRUE;
 }
 
-IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_List *list = (const IFF_List*)chunk;
     IFF_FieldStatus status;
 
-    if((status = IFF_writeIdField(file, list->contentsType, chunk, "contentsType", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_writeIdField(file, list->contentsType, chunk, attributePath, "contentsType", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if(!writeListPropChunks(file, list, chunkRegistry, attributePath, bytesProcessed))
+    if(!writeListPropChunks(file, list, chunkRegistry, attributePath, bytesProcessed, error))
         return FALSE;
 
-    if(!IFF_writeGroupSubChunks(file, (const IFF_Group*)chunk, chunkRegistry, attributePath, bytesProcessed))
+    if(!IFF_writeGroupSubChunks(file, (const IFF_Group*)chunk, chunkRegistry, attributePath, bytesProcessed, error))
         return FALSE;
 
     return TRUE;

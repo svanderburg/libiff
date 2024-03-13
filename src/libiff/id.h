@@ -24,6 +24,8 @@
 
 #include <stdio.h>
 #include "ifftypes.h"
+#include "attributepath.h"
+#include "error.h"
 
 #define IFF_MAKEID(a, b, c, d) ( (a) << 24 | (b) << 16 | (c) << 8 | (d) )
 
@@ -42,7 +44,7 @@ extern "C" {
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
-IFF_Bool IFF_readId(FILE *file, IFF_ID *id, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_readId(FILE *file, IFF_ID *id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Writes an IFF id to a file
@@ -53,7 +55,7 @@ IFF_Bool IFF_readId(FILE *file, IFF_ID *id, const IFF_ID chunkId, const char *at
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully written, else FALSE
  */
-IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
 /**
  * Converts a given ID to a string representation

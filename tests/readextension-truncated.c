@@ -25,21 +25,24 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST");
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST", &error);
+    int status;
 
-    if(chunk == NULL)
+    if(error == NULL)
     {
-        fprintf(stderr, "Cannot open 'extension-truncated.TEST'\n");
-        return 1;
+        IFF_Form *form = IFF_createTestForm();
+        status = !TEST_compare(chunk, (IFF_Chunk*)form);
+        TEST_free((IFF_Chunk*)form);
     }
     else
     {
-        IFF_Form *form = IFF_createTestForm();
-        int status = !TEST_compare(chunk, (IFF_Chunk*)form);
-
-        TEST_free((IFF_Chunk*)form);
-        TEST_free(chunk);
-
-        return status;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+        status = 1;
     }
+
+    TEST_free(chunk);
+
+    return status;
 }

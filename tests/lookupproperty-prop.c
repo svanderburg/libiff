@@ -28,36 +28,46 @@
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-int main(int argc, char *argv[])
+static IFF_Bool lookupPropertyAndCheck(IFF_Chunk *chunk)
 {
-    IFF_Chunk *chunk = IFF_read("list.TEST", NULL);
+    unsigned int formsLength;
+    IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
 
-    if(chunk == NULL)
-        return 1;
-    else
+    if(formsLength > 0)
     {
-        int status = 0;
-        unsigned int formsLength;
-        IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
+        IFF_Chunk *heloChunk = IFF_getChunkFromForm(forms[0], ID_HELO);
 
-        if(formsLength > 0)
+        if(heloChunk == NULL || heloChunk->chunkId != ID_HELO)
         {
-            IFF_Chunk *heloChunk = IFF_getChunkFromForm(forms[0], ID_HELO);
-
-            if(heloChunk == NULL || heloChunk->chunkId != ID_HELO)
-            {
-                fprintf(stderr, "Error: the chunk we should find must be the HELO chunk!\n");
-                status = 1;
-            }
+            fprintf(stderr, "Error: the chunk we should find must be the HELO chunk!\n");
+            return FALSE;
         }
         else
-        {
-            fprintf(stderr, "Error: we should be able to find a TEST form!\n");
-            status = 1;
-        }
-
-        IFF_free(chunk, NULL);
-
-        return status;
+            return TRUE;
     }
+    else
+    {
+        fprintf(stderr, "Error: we should be able to find a TEST form!\n");
+        return FALSE;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = IFF_read("list.TEST", NULL, &error);
+    int status;
+
+    if(error == NULL)
+        status = !lookupPropertyAndCheck(chunk);
+    else
+    {
+        status = 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+    }
+
+    IFF_free(chunk, NULL);
+
+    return status;
 }

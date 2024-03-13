@@ -21,6 +21,7 @@
 
 #include "chunkregistry.h"
 #include <stdlib.h>
+#include "io.h"
 #include "id.h"
 #include "rawchunk.h"
 

@@ -22,8 +22,43 @@
 #ifndef __IFF_ERROR_H
 #define __IFF_ERROR_H
 
+typedef struct IFF_IOError IFF_IOError;
+typedef struct IFF_DataIOError IFF_DataIOError;
+typedef struct IFF_FileIOError IFF_FileIOError;
+
 #include <stdarg.h>
 #include "id.h"
+#include "attributepath.h"
+
+typedef enum
+{
+    IFF_IO_ERROR_DATA,
+    IFF_IO_ERROR_FILE
+}
+IFF_IOErrorType;
+
+struct IFF_IOError
+{
+    IFF_IOErrorType type;
+};
+
+struct IFF_DataIOError
+{
+    IFF_IOErrorType type;
+    IFF_AttributePath *attributePath;
+    char *attributeName;
+    unsigned int dataSize;
+    long position;
+    char *description;
+    IFF_ID chunkId;
+};
+
+struct IFF_FileIOError
+{
+    IFF_IOErrorType type;
+    char *filename;
+    char *reason;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,6 +106,16 @@ void IFF_readError(const IFF_ID chunkId, const char *attributeName);
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  */
 void IFF_writeError(const IFF_ID chunkId, const char *attributeName);
+
+IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId);
+
+IFF_IOError *IFF_createFileIOError(char *filename);
+
+void IFF_freeIOError(IFF_IOError *error);
+
+void IFF_printReadError(const IFF_IOError *error);
+
+void IFF_printWriteError(const IFF_IOError *error);
 
 #ifdef __cplusplus
 }

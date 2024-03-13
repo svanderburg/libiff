@@ -44,29 +44,29 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return (TEST_Bye*)TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
-IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool TEST_readBye(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Bye *bye = (TEST_Bye*)chunk;
     IFF_FieldStatus status;
 
-    if((status = IFF_readLongField(file, &bye->one, chunk, "one", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_readLongField(file, &bye->one, chunk, attributePath, "one", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if((status = IFF_readLongField(file, &bye->two, chunk, "two", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_readLongField(file, &bye->two, chunk, attributePath, "two", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
     return TRUE;
 }
 
-IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
     IFF_FieldStatus status;
 
-    if((status = IFF_writeLongField(file, bye->one, chunk, "one", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_writeLongField(file, bye->one, chunk, attributePath, "one", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if((status = IFF_writeLongField(file, bye->two, chunk, "two", bytesProcessed)) != IFF_FIELD_MORE)
+    if((status = IFF_writeLongField(file, bye->two, chunk, attributePath, "two", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
     return TRUE;

@@ -22,7 +22,6 @@
 #include "rawchunk.h"
 #include <stdlib.h>
 #include <string.h>
-#include "error.h"
 #include "io.h"
 #include "id.h"
 #include "util.h"
@@ -65,15 +64,13 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
 
     if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
-        IFF_error("Error reading raw chunk body of chunk: '");
-        IFF_errorId(rawChunk->chunkId);
-        IFF_error("'\n");
+        *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
         return FALSE;
     }
     else
@@ -83,15 +80,13 @@ IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry 
     }
 }
 
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
 
     if(fwrite(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
     {
-        IFF_error("Error writing raw chunk body of chunk '");
-        IFF_errorId(rawChunk->chunkId);
-        IFF_error("'\n");
+        *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
         return FALSE;
     }
     else

@@ -27,7 +27,6 @@
 #include "list.h"
 #include "cat.h"
 #include "util.h"
-#include "error.h"
 
 #define PROP_GROUPTYPENAME "formType"
 
@@ -51,14 +50,14 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
     IFF_addToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_readGroup(file, chunk, PROP_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed);
+    return IFF_readGroup(file, chunk, PROP_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed)
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeForm(file, chunk, chunkRegistry, attributePath, bytesProcessed);
+    return IFF_writeForm(file, chunk, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk)

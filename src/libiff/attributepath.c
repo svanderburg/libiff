@@ -1,7 +1,7 @@
 #include "attributepath.h"
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 static IFF_AttributePathNode *createAttributePathNodeByIndex(unsigned int index)
 {
@@ -25,8 +25,7 @@ static IFF_AttributePathNode *createAttributePathNodeByName(char *name)
     {
         node->next = NULL;
         node->type = IFF_ATTRIBUTE_NAME;
-        node->attribute.name = (char*)malloc(strlen(name) + 1);
-        strcpy(node->attribute.name, name);
+        node->attribute.name = name;
     }
 
     return node;
@@ -40,9 +39,6 @@ static void linkAttributePathNodes(IFF_AttributePathNode *attributePathNode1, IF
 
 static void freeAttributePathNode(IFF_AttributePathNode *attributePathNode)
 {
-    if(attributePathNode->type == IFF_ATTRIBUTE_NAME)
-        free(attributePathNode->attribute.name);
-
     free(attributePathNode);
 }
 
@@ -59,9 +55,28 @@ static void printAttributePathNode(IFF_AttributePathNode *attributePathNode)
     }
 }
 
-void IFF_initAttributePath(IFF_AttributePath *attributePath)
+IFF_AttributePath *IFF_createAttributePath(void)
 {
-    memset(attributePath, '\0', sizeof(IFF_AttributePath));
+    IFF_AttributePath *attributePath = (IFF_AttributePath*)malloc(sizeof(IFF_AttributePath));
+
+    if(attributePath != NULL)
+        memset(attributePath, '\0', sizeof(IFF_AttributePath));
+
+    return attributePath;
+}
+
+void IFF_freeAttributePath(IFF_AttributePath *attributePath)
+{
+    IFF_AttributePathNode *node = attributePath->rootNode;
+
+    while(node != NULL)
+    {
+        IFF_AttributePathNode *nextNode = node->next;
+        freeAttributePathNode(node);
+        node = nextNode;
+    }
+
+    free(attributePath);
 }
 
 static void linkAttributePathNodeToAttributePath(IFF_AttributePath *attributePath, IFF_AttributePathNode *node)

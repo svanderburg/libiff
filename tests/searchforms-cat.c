@@ -29,13 +29,12 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Chunk *chunk = IFF_read("cat.TEST", NULL);
+    IFF_IOError *error;
+    IFF_Chunk *chunk = IFF_read("cat.TEST", NULL, &error);
+    int status;
 
-    if(chunk == NULL)
-        return 1;
-    else
+    if(error == NULL)
     {
-        int status = 0;
         unsigned int formsLength;
         IFF_searchForms(chunk, ID_TEST, &formsLength);
 
@@ -44,9 +43,17 @@ int main(int argc, char *argv[])
             fprintf(stderr, "We should be able to find 2 TEST forms!\n");
             status = 1;
         }
-
-        IFF_free(chunk, NULL);
-
-        return status;
+        else
+            status = 0;
     }
+    else
+    {
+        status = 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+    }
+
+    IFF_free(chunk, NULL);
+
+    return status;
 }

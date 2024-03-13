@@ -30,6 +30,7 @@ typedef struct IFF_Form IFF_Prop;
 #include "ifftypes.h"
 #include "chunk.h"
 #include "form.h"
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,7 +85,7 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the PROP has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a PROP chunk and its sub chunks to a file.
@@ -95,7 +96,7 @@ IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the PROP has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.

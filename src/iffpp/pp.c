@@ -25,7 +25,8 @@
 int IFF_prettyPrint(const char *filename, const int options)
 {
     /* Parse the chunk */
-    IFF_Chunk *chunk = IFF_read(filename, NULL);
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = IFF_read(filename, NULL, &error);
 
     if(chunk == NULL)
     {
@@ -35,6 +36,12 @@ int IFF_prettyPrint(const char *filename, const int options)
     else
     {
         int status;
+
+        if(error != NULL)
+        {
+            IFF_printReadError(error);
+            IFF_freeIOError(error);
+        }
 
         /* Check the file */
         if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL))

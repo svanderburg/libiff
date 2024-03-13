@@ -43,14 +43,14 @@ static IFF_FormChunkTypes formChunkTypes[] = {
 
 static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
 
-IFF_Chunk *TEST_read(const char *filename)
+IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error)
 {
-    return IFF_read(filename, &chunkRegistry);
+    return IFF_read(filename, &chunkRegistry, error);
 }
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk)
+IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    return IFF_write(filename, chunk, &chunkRegistry);
+    return IFF_write(filename, chunk, &chunkRegistry, error);
 }
 
 void TEST_free(IFF_Chunk *chunk)

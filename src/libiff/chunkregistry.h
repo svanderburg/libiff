@@ -31,6 +31,7 @@ typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 #include "ifftypes.h"
 #include "chunk.h"
 #include "attributepath.h"
+#include "error.h"
 
 /**
  * @brief Defines how a particular chunk should be managed
@@ -44,10 +45,10 @@ struct IFF_ChunkType
     IFF_Chunk *(*createExtensionChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
 
     /** Function resposible for reading the given chunk */
-    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function resposible for writing the given chunk */
-    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed);
+    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function resposible for checking the given chunk */
     IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
