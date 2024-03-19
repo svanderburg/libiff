@@ -164,6 +164,14 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
 IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
+ * Computes the actual chunk size of the list.
+ *
+ * @param group An instance of a list chunk
+ * @return The size of the list chunk in bytes
+ */
+IFF_Long IFF_computeActualListChunkSize(const IFF_List *list);
+
+/**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.
  *
  * @param chunk An instance of a list chunk

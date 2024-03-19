@@ -183,9 +183,22 @@ IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     return TRUE;
 }
 
-static IFF_Long checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
 {
-    IFF_Long chunkSize = 0;
+    IFF_Long chunkSize = IFF_computeActualGroupChunkSize((const IFF_Group*)list);
+    unsigned int i;
+
+    for(i = 0; i < list->propLength; i++)
+    {
+        IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
+        chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
+    }
+
+    return chunkSize;
+}
+
+static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+{
     unsigned int i;
 
     for(i = 0; i < list->propLength; i++)
@@ -193,39 +206,31 @@ static IFF_Long checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistr
         IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
 
         if(!IFF_checkChunk(propChunk, list->contentsType, chunkRegistry))
-            return -1;
-
-        chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
+            return FALSE;
     }
 
-    return chunkSize;
+    return TRUE;
 }
 
 IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_List *list = (const IFF_List*)chunk;
 
-    IFF_Long chunkSize = IFF_ID_SIZE;
-    IFF_Long subChunkSize;
-
     if(!IFF_checkId(list->contentsType))
         return FALSE;
 
-    /* Check validity of PROP chunks */
-    if((subChunkSize = checkListPropChunks(list, chunkRegistry)) == -1)
+    if(!checkListPropChunks(list, chunkRegistry))
         return FALSE;
 
-    chunkSize += subChunkSize;
-
-    /* Check validity of other sub chunks */
-    if((subChunkSize = IFF_checkGroupSubChunks((IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry)) == -1)
+    if(!IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry))
         return FALSE;
+    else
+    {
+        IFF_Long actualChunkSize = IFF_computeActualListChunkSize(list);
 
-    chunkSize += subChunkSize;
-
-    /* Check whether the calculated chunk size matches the chunks' chunk size */
-    if(!IFF_checkGroupChunkSize((IFF_Group*)list, chunkSize))
-        return FALSE;
+        if(!IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize))
+            return FALSE;
+    }
 
     return TRUE;
 }

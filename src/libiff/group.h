@@ -153,13 +153,21 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
 IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
+ * Computes the actual chunk size of the group.
+ *
+ * @param group An instance of a group chunk
+ * @return The size of the group chunk in bytes
+ */
+IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group);
+
+/**
  * Checks whether the given chunk size matches the chunk size of the group
  *
  * @param group An instance of a group chunk
- * @param chunkSize A chunk size
+ * @param actualChunkSize The actual chunk size
  * @return TRUE if the chunk sizes are equal, else FALSE
  */
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSize);
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize);
 
 /**
  * Checks whether the group sub chunks are valid

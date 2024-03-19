@@ -161,55 +161,62 @@ IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTyp
     return TRUE;
 }
 
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long chunkSize)
-{
-    if(chunkSize == group->chunkSize)
-        return TRUE;
-    else
-    {
-        IFF_error("Chunk size mismatch! ");
-        IFF_errorId(group->chunkId);
-        IFF_error(" size: %d, while body has: %d\n", group->chunkSize, chunkSize);
-        return FALSE;
-    }
-}
-
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
+IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group)
 {
     unsigned int i;
-    IFF_Long chunkSize = 0;
+    IFF_Long chunkSize = IFF_ID_SIZE; /* Initially, the group chunk already contains a group type */
 
     for(i = 0; i < group->chunkLength; i++)
     {
         IFF_Chunk *subChunk = group->chunk[i];
-
-        if(!subChunkCheck(group, subChunk))
-            return -1;
-
-        /* Check validity of the sub chunk */
-        if(!IFF_checkChunk(subChunk, group->groupType, chunkRegistry))
-            return -1;
-
         chunkSize = IFF_incrementChunkSize(chunkSize, subChunk);
     }
 
     return chunkSize;
 }
 
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize)
+{
+    if(actualChunkSize == group->chunkSize)
+        return TRUE;
+    else
+    {
+        IFF_error("Chunk size mismatch! ");
+        IFF_errorId(group->chunkId);
+        IFF_error(" size: %d, while body has: %d\n", group->chunkSize, actualChunkSize);
+        return FALSE;
+    }
+}
+
+IFF_Bool IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
+{
+    unsigned int i;
+
+    for(i = 0; i < group->chunkLength; i++)
+    {
+        IFF_Chunk *subChunk = group->chunk[i];
+
+        if(!subChunkCheck(group, subChunk) || !IFF_checkChunk(subChunk, group->groupType, chunkRegistry))
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
 IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Long chunkSize;
-
     if(!groupTypeCheck(group->groupType))
         return FALSE;
 
-    if((chunkSize = IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry)) == -1)
+    if(!IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry))
         return FALSE;
+    else
+    {
+        IFF_Long actualChunkSize = IFF_computeActualGroupChunkSize(group);
 
-    chunkSize += IFF_ID_SIZE;
-
-    if(!IFF_checkGroupChunkSize(group, chunkSize))
-        return FALSE;
+        if(!IFF_checkGroupChunkSize(group, actualChunkSize))
+            return FALSE;
+    }
 
     return TRUE;
 }
