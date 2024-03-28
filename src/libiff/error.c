@@ -25,47 +25,6 @@
 #include <string.h>
 #include <errno.h>
 
-void IFF_errorCallbackStderr(const char *formatString, va_list ap)
-{
-    vfprintf(stderr, formatString, ap);
-}
-
-void (*IFF_errorCallback) (const char *formatString, va_list ap) = &IFF_errorCallbackStderr;
-
-void IFF_error(const char *formatString, ...)
-{
-    va_list ap;
-
-    va_start(ap, formatString);
-    IFF_errorCallback(formatString, ap);
-    va_end(ap);
-}
-
-void IFF_errorId(const IFF_ID id)
-{
-    unsigned int i;
-    IFF_ID2 id2;
-
-    IFF_idToString(id, id2);
-
-    for(i = 0; i < IFF_ID_SIZE; i++)
-        IFF_error("%c", id2[i]);
-}
-
-void IFF_readError(const IFF_ID chunkId, const char *attributeName)
-{
-    IFF_error("Error reading '");
-    IFF_errorId(chunkId);
-    IFF_error("'.%s\n", attributeName);
-}
-
-void IFF_writeError(const IFF_ID chunkId, const char *attributeName)
-{
-    IFF_error("Error writing '");
-    IFF_errorId(chunkId);
-    IFF_error("'.%s\n", attributeName);
-}
-
 IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId)
 {
     IFF_DataIOError *error = (IFF_DataIOError*)malloc(sizeof(IFF_DataIOError));
@@ -128,9 +87,9 @@ static void printDataIOError(const IFF_DataIOError *error)
 
     if(error->chunkId != 0)
     {
-        fputs("inside a chunk with ID: \"", stderr);
-        IFF_errorId(error->chunkId);
-        fputs("\"", stderr);
+        IFF_ID2 chunkId;
+        IFF_idToString(error->chunkId, chunkId);
+        fprintf(stderr, " inside a chunk with ID: \"%.4s\"", chunkId);
     }
 
     fprintf(stderr, " at position: %ld\n", error->position);
@@ -164,4 +123,29 @@ void IFF_printWriteError(const IFF_IOError *error)
 {
     fprintf(stderr, "Cannot write");
     printIOError(error);
+}
+
+void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...)
+{
+    va_list ap;
+
+    IFF_printAttributePath(attributePath);
+
+    if(attributeName != NULL)
+        fprintf(stderr, ".%s", attributeName);
+
+    fputs(" ", stderr);
+
+    va_start(ap, formatString);
+    vfprintf(stderr, formatString, ap);
+    va_end(ap);
+
+    if(chunkId != 0)
+    {
+        IFF_ID2 chunkId2;
+        IFF_idToString(chunkId, chunkId2);
+        fprintf(stderr, " inside a chunk with chunkId: \"%.4s\"", chunkId2);
+    }
+
+    fputs("\n", stderr);
 }

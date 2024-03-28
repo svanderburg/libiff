@@ -21,14 +21,16 @@
 
 #ifndef __IFF_ERROR_H
 #define __IFF_ERROR_H
+#include "attributepath.h"
+#include "ifftypes.h"
 
 typedef struct IFF_IOError IFF_IOError;
 typedef struct IFF_DataIOError IFF_DataIOError;
 typedef struct IFF_FileIOError IFF_FileIOError;
+typedef void (*IFF_printCheckMessage) (const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 
 #include <stdarg.h>
 #include "id.h"
-#include "attributepath.h"
 
 typedef enum
 {
@@ -64,49 +66,6 @@ struct IFF_FileIOError
 extern "C" {
 #endif
 
-/**
- * A function pointer specifying which error callback function should be used.
- */
-extern void (*IFF_errorCallback) (const char *formatString, va_list ap);
-
-/**
- * An error callback function printing errors to the standard error.
- *
- * @param formatString A format specifier for fprintf()
- * @param ap A list of command-line parameters
- */
-void IFF_errorCallbackStderr(const char *formatString, va_list ap);
-
-/**
- * The error callback function used by the IFF library and derivatives.
- *
- * @param formatString A format specifier for fprintf()
- */
-void IFF_error(const char *formatString, ...);
-
-/**
- * Prints a 4 character IFF id on the standard error
- *
- * @param id A 4 character IFF id
- */
-void IFF_errorId(const IFF_ID id);
-
-/**
- * Prints a standard read error message.
- *
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
- */
-void IFF_readError(const IFF_ID chunkId, const char *attributeName);
-
-/**
- * Prints a standard write error message.
- *
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
- */
-void IFF_writeError(const IFF_ID chunkId, const char *attributeName);
-
 IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId);
 
 IFF_IOError *IFF_createFileIOError(char *filename);
@@ -116,6 +75,8 @@ void IFF_freeIOError(IFF_IOError *error);
 void IFF_printReadError(const IFF_IOError *error);
 
 void IFF_printWriteError(const IFF_IOError *error);
+
+void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 
 #ifdef __cplusplus
 }

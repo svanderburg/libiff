@@ -131,10 +131,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
         IFF_visitAttributeByIndex(attributePath, i);
 
         if(!IFF_writeChunk(file, group->chunk[i], group->groupType, chunkRegistry, attributePath, error))
-        {
-            IFF_error("Error writing chunk!\n");
             return FALSE;
-        }
 
         /* Increase the bytes processed counter */
         *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, group->chunk[i]);
@@ -175,46 +172,52 @@ IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group)
     return chunkSize;
 }
 
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize)
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
     if(actualChunkSize == group->chunkSize)
         return TRUE;
     else
     {
-        IFF_error("Chunk size mismatch! ");
-        IFF_errorId(group->chunkId);
-        IFF_error(" size: %d, while body has: %d\n", group->chunkSize, actualChunkSize);
+        printCheckMessage(attributePath, "chunkSize", group->chunkId, data, "does not match the sum of its sub chunks: %d, value is: %d", actualChunkSize, group->chunkSize);
         return FALSE;
     }
 }
 
-IFF_Bool IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
     unsigned int i;
+
+    IFF_visitAttributeByName(attributePath, "chunks");
 
     for(i = 0; i < group->chunkLength; i++)
     {
         IFF_Chunk *subChunk = group->chunk[i];
 
-        if(!subChunkCheck(group, subChunk) || !IFF_checkChunk(subChunk, group->groupType, chunkRegistry))
+        IFF_visitAttributeByIndex(attributePath, i);
+
+        if(!subChunkCheck(group, subChunk, attributePath, printCheckMessage, data) || !IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data))
             return FALSE;
+
+        IFF_unvisitAttribute(attributePath);
     }
+
+    IFF_unvisitAttribute(attributePath);
 
     return TRUE;
 }
 
-IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
-    if(!groupTypeCheck(group->groupType))
+    if(!groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId))
         return FALSE;
 
-    if(!IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry))
+    if(!IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data))
         return FALSE;
     else
     {
         IFF_Long actualChunkSize = IFF_computeActualGroupChunkSize(group);
 
-        if(!IFF_checkGroupChunkSize(group, actualChunkSize))
+        if(!IFF_checkGroupChunkSize(group, actualChunkSize, attributePath, printCheckMessage, data))
             return FALSE;
     }
 

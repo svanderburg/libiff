@@ -167,7 +167,7 @@ IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group);
  * @param actualChunkSize The actual chunk size
  * @return TRUE if the chunk sizes are equal, else FALSE
  */
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize);
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
 
 /**
  * Checks whether the group sub chunks are valid
@@ -177,7 +177,7 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualCh
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return The size of the sub chunks together, or -1 if a failure has occured
  */
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry);
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
 
 /**
  * Checks whether the group chunk and its sub chunks conform to the IFF specification.
@@ -188,7 +188,7 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkChec
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_Bool IFF_checkGroup(const IFF_Group *group, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk), const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
 
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.

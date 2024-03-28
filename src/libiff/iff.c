@@ -46,7 +46,7 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IO
 
     /* We should have reached the EOF now */
     if((byte = fgetc(file)) != EOF)
-        IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
+        fprintf(stderr, "WARNING: Trailing IFF contents found: %d!\n", byte);
 
     /* Remove the attribute path if we no longer need it */
     if(*error == NULL)
@@ -122,19 +122,35 @@ void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
-IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessage printCheckMessage, void *data)
 {
-    /* The main chunk must be of ID: FORM, CAT or LIST */
+    IFF_AttributePath *attributePath = IFF_createAttributePath();
+    IFF_Bool status;
 
-    if(chunk->chunkId != IFF_ID_FORM &&
+    if(chunk == NULL)
+    {
+        printCheckMessage(attributePath, NULL, 0, data, "The file cannot be processed");
+        status = FALSE;
+    }
+    else if(chunk->chunkId != IFF_ID_FORM && /* The main chunk must be of ID: FORM, CAT or LIST */
        chunk->chunkId != IFF_ID_CAT &&
        chunk->chunkId != IFF_ID_LIST)
     {
-        IFF_error("Not a valid IFF-85 file: First bytes should start with either: 'FORM', 'CAT ' or 'LIST'\n");
-        return FALSE;
+        IFF_ID2 chunkId;
+        IFF_idToString(chunk->chunkId, chunkId);
+        printCheckMessage(attributePath, "chunkId", chunk->chunkId, data, "is invalid: the first chunkId should be: \"FORM\", \"CAT \" or \"LIST\", value is: \"%.4s\"", chunkId);
+        status = FALSE;
     }
     else
-        return IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
+        status = IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, printCheckMessage, NULL);
+
+    IFF_freeAttributePath(attributePath);
+    return status;
+}
+
+IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+{
+    return IFF_advancedCheck(chunk, chunkRegistry, IFF_printCheckMessageOnStderr, NULL);
 }
 
 void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)

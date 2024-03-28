@@ -111,9 +111,6 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
         IFF_unvisitAttribute(attributePath);
     }
 
-    if(*bytesProcessed > list->chunkSize)
-        IFF_error("WARNING: truncated LIST chunk! The size specifies: %d but the total amount of its sub chunks is: %d bytes. The parser may get confused!\n", list->chunkSize, bytesProcessed);
-
     IFF_unvisitAttribute(attributePath);
 
     return TRUE;
@@ -130,10 +127,7 @@ IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chu
 
     /* Read the remaining nested sub chunks */
     if(!readListSubChunks(file, list, chunkRegistry, attributePath, bytesProcessed, error))
-    {
-        IFF_error("Error reading chunk in list!\n");
         return FALSE;
-    }
 
     /* Return the result */
     return TRUE;
@@ -150,10 +144,7 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
         IFF_visitAttributeByIndex(attributePath, i);
 
         if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry, attributePath, error))
-        {
-            IFF_error("Error writing PROP!\n");
             return FALSE;
-        }
 
         /* Increase the bytes processed counter */
         *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->prop[i]);
@@ -197,38 +188,46 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
     return chunkSize;
 }
 
-static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
     unsigned int i;
+
+    IFF_visitAttributeByName(attributePath, "props");
 
     for(i = 0; i < list->propLength; i++)
     {
         IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
 
-        if(!IFF_checkChunk(propChunk, list->contentsType, chunkRegistry))
+        IFF_visitAttributeByIndex(attributePath, i);
+
+        if(!IFF_checkChunk(propChunk, list->contentsType, chunkRegistry, attributePath, printCheckMessage, data))
             return FALSE;
+
+        IFF_unvisitAttribute(attributePath);
     }
+
+    IFF_unvisitAttribute(attributePath);
 
     return TRUE;
 }
 
-IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
     const IFF_List *list = (const IFF_List*)chunk;
 
-    if(!IFF_checkId(list->contentsType))
+    if(!IFF_checkId(list->contentsType, attributePath, "contentsType", printCheckMessage, data, list->chunkId))
         return FALSE;
 
-    if(!checkListPropChunks(list, chunkRegistry))
+    if(!checkListPropChunks(list, chunkRegistry, attributePath, printCheckMessage, data))
         return FALSE;
 
-    if(!IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry))
+    if(!IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data))
         return FALSE;
     else
     {
         IFF_Long actualChunkSize = IFF_computeActualListChunkSize(list);
 
-        if(!IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize))
+        if(!IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize, attributePath, printCheckMessage, data))
             return FALSE;
     }
 

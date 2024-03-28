@@ -41,20 +41,20 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2)
     id2[3] = id & 0xff;
 }
 
-IFF_Bool IFF_checkId(const IFF_ID id)
+IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId)
 {
     IFF_ID2 id2;
     unsigned int i;
 
     IFF_idToString(id, id2);
 
-    /* ID characters must be between 0x20 and 0x7e */
+    /* ID characters must be readable: a value between 0x20 and 0x7e */
 
     for(i = 0; i < IFF_ID_SIZE; i++)
     {
         if(id2[i] < 0x20 || id2[i] > 0x7e)
         {
-            IFF_error("Illegal character: '%c' in ID!\n", id2[i]);
+            printCheckMessage(attributePath, attributeName, chunkId, data, "contains an illegal character: %c", id2[i]);
             return FALSE;
         }
     }
@@ -63,7 +63,7 @@ IFF_Bool IFF_checkId(const IFF_ID id)
 
     if(id2[0] == ' ')
     {
-        IFF_error("Spaces may not precede an ID!\n");
+        printCheckMessage(attributePath, attributeName, chunkId, data, "contains preceding white spaces: \"%.4s\"", id2);
         return FALSE;
     }
 

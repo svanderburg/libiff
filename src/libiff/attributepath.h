@@ -64,6 +64,6 @@ void IFF_visitAttributeByName(IFF_AttributePath *attributePath, char *name);
 
 void IFF_unvisitAttribute(IFF_AttributePath *attributePath);
 
-void IFF_printAttributePath(IFF_AttributePath *attributePath);
+void IFF_printAttributePath(const IFF_AttributePath *attributePath);
 
 #endif

@@ -30,11 +30,6 @@ EXPORTS
 	IFF_searchFormsFromArray  @28
 	IFF_incrementChunkSize    @29
 	IFF_updateChunkSizes      @30
-	IFF_errorCallbackStderr   @31
-	IFF_error                 @32
-	IFF_errorId               @33
-	IFF_readError             @34
-	IFF_writeError            @35
 	IFF_findFormExtension     @36
 	IFF_createForm            @37
 	IFF_addToForm             @38

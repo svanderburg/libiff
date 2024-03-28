@@ -51,7 +51,7 @@ struct IFF_ChunkType
     IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function resposible for checking the given chunk */
-    IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+    IFF_Bool (*checkExtensionChunk) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
 
     /** Function resposible for freeing the given chunk */
     void (*freeExtensionChunk) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);

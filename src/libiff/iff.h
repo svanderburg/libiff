@@ -96,6 +96,8 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Chunk
  */
 void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
+IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessage printCheckMessage, void *data);
+
 /**
  * Checks whether an IFF file conforms to the IFF specification.
  *

@@ -42,7 +42,7 @@ static void freeAttributePathNode(IFF_AttributePathNode *attributePathNode)
     free(attributePathNode);
 }
 
-static void printAttributePathNode(IFF_AttributePathNode *attributePathNode)
+static void printAttributePathNode(const IFF_AttributePathNode *attributePathNode)
 {
     switch(attributePathNode->type)
     {
@@ -121,9 +121,9 @@ void IFF_unvisitAttribute(IFF_AttributePath *attributePath)
     freeAttributePathNode(currentNode);
 }
 
-void IFF_printAttributePath(IFF_AttributePath *attributePath)
+void IFF_printAttributePath(const IFF_AttributePath *attributePath)
 {
-    IFF_AttributePathNode *node = attributePath->rootNode;
+    const IFF_AttributePathNode *node = attributePath->rootNode;
 
     while(node != NULL)
     {

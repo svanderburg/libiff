@@ -86,17 +86,17 @@ IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistr
     return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
+IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
-    IFF_CAT *cat = (IFF_CAT*)group;
+    const IFF_CAT *cat = (const IFF_CAT*)group;
 
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
 
     if(!checkValidCATSubChunkId(subChunk->chunkId))
     {
-        IFF_error("ERROR: Element with chunk Id: '");
-        IFF_errorId(subChunk->chunkId);
-        IFF_error("' not allowed in CAT chunk!\n");
+        IFF_ID2 subChunkId;
+        IFF_idToString(subChunk->chunkId, subChunkId);
+        printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
         return FALSE;
     }
 
@@ -110,7 +110,11 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
 
             if(group->groupType != cat->contentsType)
             {
-                IFF_error("Sub form does not match contentsType of the CAT!\n");
+                IFF_ID2 groupType, contentsType;
+                IFF_idToString(group->groupType, groupType);
+                IFF_idToString(cat->contentsType, contentsType);
+
+                printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a group sub chunk with groupType: \"%.4s\" that does not match the parent's contentsType: \"%.4s\"", groupType, contentsType);
                 return FALSE;
             }
         }
@@ -119,9 +123,9 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk)
     return TRUE;
 }
 
-IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
 {
-    return IFF_checkGroup((IFF_Group*)chunk, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry);
+    return IFF_checkGroup((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
 void IFF_freeCAT(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
