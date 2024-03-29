@@ -58,7 +58,6 @@ struct IFF_DataIOError
 struct IFF_FileIOError
 {
     IFF_IOErrorType type;
-    char *filename;
     char *reason;
 };
 
@@ -68,7 +67,7 @@ extern "C" {
 
 IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId);
 
-IFF_IOError *IFF_createFileIOError(char *filename);
+IFF_IOError *IFF_createFileIOError(void);
 
 void IFF_freeIOError(IFF_IOError *error);
 

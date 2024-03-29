@@ -43,14 +43,13 @@ IFF_IOError *IFF_createDataIOError(FILE *file, unsigned int dataSize, IFF_Attrib
     return (IFF_IOError*)error;
 }
 
-IFF_IOError *IFF_createFileIOError(char *filename)
+IFF_IOError *IFF_createFileIOError(void)
 {
     IFF_FileIOError *error = (IFF_FileIOError*)malloc(sizeof(IFF_FileIOError));
 
     if(error != NULL)
     {
         error->type = IFF_IO_ERROR_FILE;
-        error->filename = filename;
         error->reason = strerror(errno);
     }
 
@@ -97,7 +96,7 @@ static void printDataIOError(const IFF_DataIOError *error)
 
 static void printFileIOError(const IFF_FileIOError *error)
 {
-    fprintf(stderr, " file: %s, reason: %s\n", error->filename, error->reason);
+    fprintf(stderr, " file, reason: %s\n", error->reason);
 }
 
 static void printIOError(const IFF_IOError *error)

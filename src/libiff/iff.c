@@ -62,7 +62,7 @@ IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegi
 
     if(file == NULL)
     {
-        *error = IFF_createFileIOError(filename);
+        *error = IFF_createFileIOError();
         return NULL;
     }
     else
@@ -98,7 +98,7 @@ IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_C
 
     if(file == NULL)
     {
-        *error = IFF_createFileIOError(filename);
+        *error = IFF_createFileIOError();
         return FALSE;
     }
     else
