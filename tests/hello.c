@@ -100,9 +100,9 @@ void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel, con
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
-    IFF_printIndent(stdout, indentLevel, "a = %c;\n", hello->a);
-    IFF_printIndent(stdout, indentLevel, "b = %c;\n", hello->b);
-    IFF_printIndent(stdout, indentLevel, "c = %u;\n", hello->c);
+    IFF_printUByteField(stdout, indentLevel, "a", hello->a);
+    IFF_printUByteField(stdout, indentLevel, "b", hello->b);
+    IFF_printUWordField(stdout, indentLevel, "c", hello->c);
 }
 
 IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

@@ -70,6 +70,20 @@ IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chun
 
 IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
 
+void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value);
+
+void IFF_printByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Byte value);
+
+void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UWord value);
+
+void IFF_printWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Word value);
+
+void IFF_printULongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ULong value);
+
+void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Long value);
+
+void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID value);
+
 #ifdef __cplusplus
 }
 #endif

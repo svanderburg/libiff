@@ -117,7 +117,7 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
     IFF_printIndent(stdout, indentLevel, "'");
     IFF_printId(chunk->chunkId);
     printf("' = {\n");
-    IFF_printIndent(stdout, indentLevel + 1, "chunkSize = %d;\n", chunk->chunkSize);
+    IFF_printLongField(stdout, indentLevel + 1, "chunkSize", chunk->chunkSize);
     chunkType->printExtensionChunk(chunk, indentLevel + 1, chunkRegistry);
     IFF_printIndent(stdout, indentLevel, "}\n\n");
 }

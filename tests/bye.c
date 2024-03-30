@@ -85,8 +85,8 @@ void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel, const
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
 
-    IFF_printIndent(stdout, indentLevel, "one = %d;\n", bye->one);
-    IFF_printIndent(stdout, indentLevel, "two = %d;\n", bye->two);
+    IFF_printLongField(stdout, indentLevel, "one", bye->one);
+    IFF_printLongField(stdout, indentLevel, "two", bye->two);
 }
 
 IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

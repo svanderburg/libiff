@@ -236,9 +236,7 @@ void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
 
 void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
 {
-    IFF_printIndent(stdout, indentLevel, "%s = '", groupTypeName);
-    IFF_printId(groupType);
-    printf("';\n");
+    IFF_printIdField(stdout, indentLevel, groupTypeName, groupType);
 }
 
 void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
