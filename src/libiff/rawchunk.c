@@ -113,14 +113,12 @@ void IFF_printText(const IFF_RawChunk *chunk, const unsigned int indentLevel)
 
     IFF_Long i;
 
-    IFF_printIndent(stdout, indentLevel, "text = '\n");
-    IFF_printIndent(stdout, indentLevel + 1, "");
+    IFF_printIndent(stdout, indentLevel, ".chunkData = \"");
 
     for(i = 0; i < rawChunk->chunkSize; i++)
         printf("%c", rawChunk->chunkData[i]);
 
-    printf("\n");
-    IFF_printIndent(stdout, indentLevel, "';\n");
+    printf("\",\n");
 }
 
 void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
@@ -128,11 +126,14 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
     IFF_Long i;
     IFF_UByte byte;
 
-    IFF_printIndent(stdout, indentLevel, "bytes = \n");
+    IFF_printIndent(stdout, indentLevel, ".chunkData = {\n");
     IFF_printIndent(stdout, indentLevel + 1, "");
 
     for(i = 0; i < rawChunk->chunkSize; i++)
     {
+        if(i > 0)
+            printf(", ");
+
         if(i > 0 && i % 10 == 0)
         {
             printf("\n");
@@ -141,15 +142,18 @@ void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 
         byte = rawChunk->chunkData[i];
 
+        printf("0x");
+
         /* Print extra 0 for small numbers */
+
         if(byte <= 0xf)
             printf("0");
 
-        printf("%x ", byte);
+        printf("%x", byte);
     }
 
     printf("\n");
-    IFF_printIndent(stdout, indentLevel, ";\n");
+    IFF_printIndent(stdout, indentLevel, "},\n");
 }
 
 void IFF_printRawChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)

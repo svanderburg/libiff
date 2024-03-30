@@ -221,37 +221,37 @@ IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk
 
 void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %c;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %c,\n", attributeName, value);
 }
 
 void IFF_printByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Byte value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %c;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %c,\n", attributeName, value);
 }
 
 void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UWord value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %u;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %u,\n", attributeName, value);
 }
 
 void IFF_printWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Word value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %d;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %d,\n", attributeName, value);
 }
 
 void IFF_printULongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ULong value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %u;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %u,\n", attributeName, value);
 }
 
 void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Long value)
 {
-    IFF_printIndent(file, indentLevel, "%s = %d;\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %d,\n", attributeName, value);
 }
 
 void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID value)
 {
     IFF_ID2 value2;
     IFF_idToString(value, value2);
-    IFF_printIndent(file, indentLevel, "%s = \"%.4s\";\n", attributeName, value2);
+    IFF_printIndent(file, indentLevel, ".%s = \"%.4s\",\n", attributeName, value2);
 }

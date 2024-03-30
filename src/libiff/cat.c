@@ -58,7 +58,7 @@ static void updateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     {
         IFF_Group *group = (IFF_Group*)chunk;
 
-        if(cat->chunkLength == 0)
+        if(cat->chunksLength == 0)
             cat->contentsType = group->groupType;
         else if(cat->contentsType != IFF_ID_JJJJ && cat->contentsType != group->groupType)
             cat->contentsType = IFF_ID_JJJJ;

@@ -53,10 +53,10 @@ struct IFF_Form
     IFF_ID formType;
 
     /** Contains the number of sub chunks stored in this form chunk */
-    unsigned int chunkLength;
+    unsigned int chunksLength;
 
     /** An array of chunk pointers referring to the sub chunks */
-    IFF_Chunk **chunk;
+    IFF_Chunk **chunks;
 };
 
 #ifdef __cplusplus

@@ -55,10 +55,10 @@ struct IFF_CAT
     IFF_ID contentsType;
 
     /** Contains the number of sub chunks stored in this concatenation chunk */
-    unsigned int chunkLength;
+    unsigned int chunksLength;
 
     /** An array of chunk pointers referring to the sub chunks */
-    IFF_Chunk **chunk;
+    IFF_Chunk **chunks;
 };
 
 #ifdef __cplusplus

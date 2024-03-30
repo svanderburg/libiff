@@ -34,8 +34,8 @@ IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
     {
         IFF_initGroup((IFF_Group*)list, contentsType);
 
-        list->prop = NULL;
-        list->propLength = 0;
+        list->props = NULL;
+        list->propsLength = 0;
     }
 
     return list;
@@ -58,9 +58,9 @@ IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize
 
 static void addPropToList(IFF_List *list, IFF_Prop *prop)
 {
-    list->prop = (IFF_Prop**)realloc(list->prop, (list->propLength + 1) * sizeof(IFF_Prop*));
-    list->prop[list->propLength] = prop;
-    list->propLength++;
+    list->props = (IFF_Prop**)realloc(list->props, (list->propsLength + 1) * sizeof(IFF_Prop*));
+    list->props[list->propsLength] = prop;
+    list->propsLength++;
     prop->parent = (IFF_Group*)list;
 }
 
@@ -139,15 +139,15 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
 
     IFF_visitAttributeByName(attributePath, "props");
 
-    for(i = 0; i < list->propLength; i++)
+    for(i = 0; i < list->propsLength; i++)
     {
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_writeChunk(file, (IFF_Chunk*)list->prop[i], 0, chunkRegistry, attributePath, error))
+        if(!IFF_writeChunk(file, (IFF_Chunk*)list->props[i], 0, chunkRegistry, attributePath, error))
             return FALSE;
 
         /* Increase the bytes processed counter */
-        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->prop[i]);
+        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->props[i]);
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -179,9 +179,9 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
     IFF_Long chunkSize = IFF_computeActualGroupChunkSize((const IFF_Group*)list);
     unsigned int i;
 
-    for(i = 0; i < list->propLength; i++)
+    for(i = 0; i < list->propsLength; i++)
     {
-        IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
+        IFF_Chunk *propChunk = (IFF_Chunk*)list->props[i];
         chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
     }
 
@@ -194,9 +194,9 @@ static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistr
 
     IFF_visitAttributeByName(attributePath, "props");
 
-    for(i = 0; i < list->propLength; i++)
+    for(i = 0; i < list->propsLength; i++)
     {
-        IFF_Chunk *propChunk = (IFF_Chunk*)list->prop[i];
+        IFF_Chunk *propChunk = (IFF_Chunk*)list->props[i];
 
         IFF_visitAttributeByIndex(attributePath, i);
 
@@ -238,8 +238,8 @@ static void freeListPropChunks(IFF_List *list, const IFF_ChunkRegistry *chunkReg
 {
     unsigned int i;
 
-    for(i = 0; i < list->propLength; i++)
-        IFF_freeChunk((IFF_Chunk*)list->prop[i], list->contentsType, chunkRegistry);
+    for(i = 0; i < list->propsLength; i++)
+        IFF_freeChunk((IFF_Chunk*)list->props[i], list->contentsType, chunkRegistry);
 }
 
 void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
@@ -248,19 +248,25 @@ void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 
     IFF_freeCAT(chunk, chunkRegistry);
     freeListPropChunks(list, chunkRegistry);
-    free(list->prop);
+    free(list->props);
 }
 
 static void printListPropChunks(const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
-    IFF_printIndent(stdout, indentLevel, "prop = [\n");
+    IFF_printIndent(stdout, indentLevel, ".props = {\n");
 
-    for(i = 0; i < list->propLength; i++)
-        IFF_printChunk((IFF_Chunk*)list->prop[i], indentLevel + 1, list->contentsType, chunkRegistry);
+    for(i = 0; i < list->propsLength; i++)
+    {
+        if(i > 0)
+            printf(",\n");
 
-    IFF_printIndent(stdout, indentLevel, "];\n");
+        IFF_printChunk((IFF_Chunk*)list->props[i], indentLevel + 1, list->contentsType, chunkRegistry);
+    }
+
+    printf("\n");
+    IFF_printIndent(stdout, indentLevel, "},\n");
 }
 
 void IFF_printList(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
@@ -274,13 +280,13 @@ void IFF_printList(const IFF_Chunk *chunk, const unsigned int indentLevel, const
 
 static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *list2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(list1->propLength == list2->propLength)
+    if(list1->propsLength == list2->propsLength)
     {
         unsigned int i;
 
-        for(i = 0; i < list1->propLength; i++)
+        for(i = 0; i < list1->propsLength; i++)
         {
-            if(!IFF_compareProp((IFF_Chunk*)list1->prop[i], (IFF_Chunk*)list2->prop[i], chunkRegistry))
+            if(!IFF_compareProp((IFF_Chunk*)list1->props[i], (IFF_Chunk*)list2->props[i], chunkRegistry))
                return FALSE;
         }
 
@@ -312,18 +318,18 @@ void IFF_updateListChunkSizes(IFF_List *list)
 
     IFF_updateCATChunkSizes((IFF_CAT*)list);
 
-    for(i = 0; i < list->propLength; i++)
-        list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)list->prop[i]);
+    for(i = 0; i < list->propsLength; i++)
+        list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)list->props[i]);
 }
 
 IFF_Prop *IFF_getPropFromList(const IFF_List *list, const IFF_ID formType)
 {
     unsigned int i;
 
-    for(i = 0; i < list->propLength; i++)
+    for(i = 0; i < list->propsLength; i++)
     {
-        if(list->prop[i]->formType == formType)
-            return list->prop[i];
+        if(list->props[i]->formType == formType)
+            return list->props[i];
     }
 
     return NULL;

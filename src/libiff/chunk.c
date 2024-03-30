@@ -26,6 +26,7 @@
 #include "id.h"
 #include "util.h"
 #include "error.h"
+#include "field.h"
 
 IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
 {
@@ -114,12 +115,11 @@ void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, cons
 {
     IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
 
-    IFF_printIndent(stdout, indentLevel, "'");
-    IFF_printId(chunk->chunkId);
-    printf("' = {\n");
+    IFF_printIndent(stdout, indentLevel, "{\n");
+    IFF_printIdField(stdout, indentLevel + 1, "chunkId", chunk->chunkId);
     IFF_printLongField(stdout, indentLevel + 1, "chunkSize", chunk->chunkSize);
     chunkType->printExtensionChunk(chunk, indentLevel + 1, chunkRegistry);
-    IFF_printIndent(stdout, indentLevel, "}\n\n");
+    IFF_printIndent(stdout, indentLevel, "}");
 }
 
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)

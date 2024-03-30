@@ -56,16 +56,16 @@ struct IFF_List
     IFF_ID contentsType;
 
     /** Contains the number of sub chunks stored in this list chunk */
-    unsigned int chunkLength;
+    unsigned int chunksLength;
 
     /** An array of chunk pointers referring to the sub chunks */
-    IFF_Chunk **chunk;
+    IFF_Chunk **chunks;
 
     /** Contains the number of PROP chunks stored in this list chunk */
-    unsigned int propLength;
+    unsigned int propsLength;
 
     /** An array of chunk pointers referring to the PROP chunks */
-    IFF_Prop **prop;
+    IFF_Prop **props;
 };
 
 #ifdef __cplusplus

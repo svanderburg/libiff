@@ -288,10 +288,10 @@ IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
 {
     unsigned int i;
 
-    for(i = 0; i < form->chunkLength; i++)
+    for(i = 0; i < form->chunksLength; i++)
     {
-        if(form->chunk[i]->chunkId == chunkId)
-            return form->chunk[i];
+        if(form->chunks[i]->chunkId == chunkId)
+            return form->chunks[i];
     }
 
     return NULL;
@@ -316,12 +316,12 @@ IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, un
 
     *chunksLength = 0;
 
-    for(i = 0; i < form->chunkLength; i++)
+    for(i = 0; i < form->chunksLength; i++)
     {
-        if(form->chunk[i]->chunkId == chunkId)
+        if(form->chunks[i]->chunkId == chunkId)
         {
             result = (IFF_Chunk**)realloc(result, (*chunksLength + 1) * sizeof(IFF_Chunk*));
-            result[*chunksLength] = form->chunk[i];
+            result[*chunksLength] = form->chunks[i];
             *chunksLength = *chunksLength + 1;
         }
     }
