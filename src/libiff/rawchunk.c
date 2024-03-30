@@ -107,63 +107,63 @@ void IFF_freeRawChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     free(rawChunk->chunkData);
 }
 
-void IFF_printText(const IFF_RawChunk *chunk, const unsigned int indentLevel)
+void IFF_printText(FILE *file, const IFF_RawChunk *chunk, const unsigned int indentLevel)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
 
     IFF_Long i;
 
-    IFF_printIndent(stdout, indentLevel, ".chunkData = \"");
+    IFF_printIndent(file, indentLevel, ".chunkData = \"");
 
     for(i = 0; i < rawChunk->chunkSize; i++)
-        printf("%c", rawChunk->chunkData[i]);
+        fputc(rawChunk->chunkData[i], file);
 
-    printf("\",\n");
+    fprintf(file, "\",\n");
 }
 
-void IFF_printRaw(const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
+void IFF_printRaw(FILE *file, const IFF_RawChunk *rawChunk, const unsigned int indentLevel)
 {
     IFF_Long i;
     IFF_UByte byte;
 
-    IFF_printIndent(stdout, indentLevel, ".chunkData = {\n");
-    IFF_printIndent(stdout, indentLevel + 1, "");
+    IFF_printIndent(file, indentLevel, ".chunkData = {\n");
+    IFF_printIndent(file, indentLevel + 1, "");
 
     for(i = 0; i < rawChunk->chunkSize; i++)
     {
         if(i > 0)
-            printf(", ");
+            fputs(", ", file);
 
         if(i > 0 && i % 10 == 0)
         {
-            printf("\n");
-            IFF_printIndent(stdout, indentLevel + 1, "");
+            fprintf(file, "\n");
+            IFF_printIndent(file, indentLevel + 1, "");
         }
 
         byte = rawChunk->chunkData[i];
 
-        printf("0x");
+        fputs("0x", file);
 
         /* Print extra 0 for small numbers */
 
         if(byte <= 0xf)
-            printf("0");
+            fputs("0", file);
 
-        printf("%x", byte);
+        fprintf(file, "%x", byte);
     }
 
-    printf("\n");
-    IFF_printIndent(stdout, indentLevel, "},\n");
+    fprintf(file, "\n");
+    IFF_printIndent(file, indentLevel, "},\n");
 }
 
-void IFF_printRawChunk(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printRawChunk(FILE *file, const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
 
     if(rawChunk->chunkId == IFF_ID_TEXT)
-        IFF_printText(rawChunk, indentLevel);
+        IFF_printText(file, rawChunk, indentLevel);
     else
-        IFF_printRaw(rawChunk, indentLevel);
+        IFF_printRaw(file, rawChunk, indentLevel);
 }
 
 IFF_Bool IFF_compareRawChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

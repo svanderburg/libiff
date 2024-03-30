@@ -27,10 +27,10 @@
 /**
  * Displays a textual representation of the given IFF file.
  *
- * @param filename Path to the IFF file, or NULL to read from the standard input
+ * @param inputFilename Path to the IFF file, or NULL to read from the standard input
  * @param options An integer in which their bits represent a number of pretty print options
  * @return 0 if the file has been successfully printed, else 1
  */
-int IFF_prettyPrint(const char *filename, const int options);
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const int options);
 
 #endif

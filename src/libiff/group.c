@@ -234,34 +234,34 @@ void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
     free(group->chunks);
 }
 
-void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
+void IFF_printGroupType(FILE *file, const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
 {
-    IFF_printIdField(stdout, indentLevel, groupTypeName, groupType);
+    IFF_printIdField(file, indentLevel, groupTypeName, groupType);
 }
 
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
-    IFF_printIndent(stdout, indentLevel, ".chunks = {\n");
+    IFF_printIndent(file, indentLevel, ".chunks = {\n");
 
     for(i = 0; i < group->chunksLength; i++)
     {
         if(i > 0)
-            printf(",\n");
+            fprintf(file, ",\n");
 
-        IFF_printChunk((IFF_Chunk*)group->chunks[i], indentLevel + 1, group->groupType, chunkRegistry);
+        IFF_printChunk(file, (IFF_Chunk*)group->chunks[i], indentLevel + 1, group->groupType, chunkRegistry);
     }
 
-    printf("\n");
+    fprintf(file, "\n");
 
-    IFF_printIndent(stdout, indentLevel, "},\n");
+    IFF_printIndent(file, indentLevel, "},\n");
 }
 
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroup(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroupType(groupTypeName, group->groupType, indentLevel);
-    IFF_printGroupSubChunks(group, indentLevel, chunkRegistry);
+    IFF_printGroupType(file, groupTypeName, group->groupType, indentLevel);
+    IFF_printGroupSubChunks(file, group, indentLevel, chunkRegistry);
 }
 
 IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)

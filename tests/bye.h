@@ -54,7 +54,7 @@ IFF_Bool TEST_checkBye(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkReg
 
 void TEST_freeBye(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void TEST_printBye(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 IFF_Bool TEST_compareBye(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 

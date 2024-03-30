@@ -177,9 +177,9 @@ void IFF_freeForm(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeGroup((IFF_Group*)chunk, chunkRegistry);
 }
 
-void IFF_printForm(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printForm(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroup((const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroup(file, (const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareForm(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

@@ -37,15 +37,20 @@ static void printUsage(const char *command)
     puts(
     "The command `iffpp' displays a textual representation of a given IFF file, which\n"
     "can be used for manual inspection of its contents. If no IFF file is specified,\n"
-    "it reads an IFF file from the standard input.\n\n"
+    "it reads an IFF file from the standard input.\n");
 
+    puts(
     "Options:\n"
 #if _MSC_VER
     "  /c    Do not check the IFF file for validity\n"
+    "  /o    Specifies where to store the output. By default,\n"
+    "        it will be redirected to the standard output.\n"
     "  /?    Shows the usage of this command to the user\n"
     "  /v    Shows the version of this command to the user"
 #else
     "  -c, --disable-check    Do not check the IFF file for validity\n"
+    "  -o, --output           Specifies where to store the output. By default,\n"
+    "                         it will be redirected to the standard output.\n"
     "  -h, --help             Shows the usage of this command to the user\n"
     "  -v, --version          Shows the version of this command to the user"
 #endif
@@ -63,7 +68,8 @@ static void printVersion(const char *command)
 int main(int argc, char *argv[])
 {
     int options = 0;
-    char *filename;
+    char *inputFilename;
+    char *outputFilename = NULL;
 
 #if _MSC_VER
     unsigned int optind = 1;
@@ -71,7 +77,12 @@ int main(int argc, char *argv[])
 
     for(i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i], "/c") == 0)
+        if (strcmp(argv[i], "/o") == 0)
+        {
+            outputFilename = argv[i + 1];
+            optind++;
+        }
+        else if (strcmp(argv[i], "/c") == 0)
         {
             options |= IFFPP_DISABLE_CHECK;
             optind++;
@@ -94,6 +105,7 @@ int main(int argc, char *argv[])
     struct option long_options[] =
     {
         {"disable-check", no_argument, 0, 'c'},
+        {"output", required_argument, 0, 'o'},
         {"help", no_argument, 0, 'h'},
         {"version", no_argument, 0, 'v'},
         {0, 0, 0, 0}
@@ -101,17 +113,20 @@ int main(int argc, char *argv[])
 #endif
 
     /* Parse command-line options */
-    
+
 #if HAVE_GETOPT_H == 1
-    while((c = getopt_long(argc, argv, "chv", long_options, &option_index)) != -1)
+    while((c = getopt_long(argc, argv, "co:hv", long_options, &option_index)) != -1)
 #else
-    while((c = getopt(argc, argv, "chv")) != -1)
+    while((c = getopt(argc, argv, "co:hv")) != -1)
 #endif
     {
         switch(c)
         {
             case 'c':
                 options |= IFFPP_DISABLE_CHECK;
+                break;
+            case 'o':
+                outputFilename = optarg;
                 break;
             case 'h':
                 printUsage(argv[0]);
@@ -129,10 +144,10 @@ int main(int argc, char *argv[])
     /* Validate non options */
 
     if(optind >= argc)
-        filename = NULL;
+        inputFilename = NULL;
     else
-        filename = argv[optind];
+        inputFilename = argv[optind];
 
     /* Pretty print the IFF file */
-    return IFF_prettyPrint(filename, options);
+    return IFF_prettyPrint(inputFilename, outputFilename, options);
 }

@@ -108,13 +108,36 @@ IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
 IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
- * Displays a textual representation of an IFF file on the standard output.
+ * Prints a textual representation of an IFF file to the given file descriptor.
  *
+ * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+
+/**
+ * Prints a textual representation of an IFF file to a file with a given filename.
+ *
+ * @param filename Filename of the file or NULL to write to the standard output
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param indentLevel Indent level of the textual representation
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return TRUE if the file has been successfully written, else FALSE
+ */
+IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+
+/**
+ * Prints a textual representation of an IFF file to a file with a given filename or to the standard output if no filename was provided.
+ *
+ * @param filename Filename of the file or NULL to write to the standard output
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param indentLevel Indent level of the textual representation
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return TRUE if the file has been successfully written, else FALSE
+ */
+IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given IFF files are equal.

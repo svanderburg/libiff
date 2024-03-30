@@ -22,15 +22,15 @@
 #include "pp.h"
 #include "iff.h"
 
-int IFF_prettyPrint(const char *filename, const int options)
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const int options)
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(filename, NULL, &error);
+    IFF_Chunk *chunk = IFF_read(inputFilename, NULL, &error);
 
     if(chunk == NULL)
     {
-        fprintf(stderr, "Cannot open IFF file!\n");
+        fprintf(stderr, "Cannot open IFF file: %s\n", inputFilename);
         return 1;
     }
     else
@@ -47,9 +47,13 @@ int IFF_prettyPrint(const char *filename, const int options)
         if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL))
         {
             /* Print the file */
-            IFF_print(chunk, 0, NULL);
-
-            status = 0;
+            if(IFF_print(outputFilename, chunk, 0, NULL))
+                status = 0;
+            else
+            {
+                fprintf(stderr, "Cannot open output file: %s\n", outputFilename);
+                status = 1;
+            }
         }
         else
             status = 1;

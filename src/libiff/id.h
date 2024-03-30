@@ -73,13 +73,6 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2);
  */
 IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId);
 
-/**
- * Prints an IFF id
- *
- * @param id A 4 character IFF id
- */
-void IFF_printId(const IFF_ID id);
-
 #ifdef __cplusplus
 }
 #endif

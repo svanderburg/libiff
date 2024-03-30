@@ -86,9 +86,9 @@ void IFF_freeProp(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeForm(chunk, chunkRegistry);
 }
 
-void IFF_printProp(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printProp(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printForm(chunk, indentLevel, chunkRegistry);
+    IFF_printForm(file, chunk, indentLevel, chunkRegistry);
 }
 
 IFF_Bool IFF_compareProp(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

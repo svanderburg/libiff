@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
     if(error == NULL)
     {
-        TEST_print(chunk, 0);
+        TEST_printFd(stdout, chunk, 0);
         status = 0;
     }
     else

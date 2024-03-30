@@ -55,7 +55,7 @@ IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkR
 
 void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void TEST_printHello(const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void TEST_printHello(FILE *file, const IFF_Chunk *chunk, unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 

@@ -133,9 +133,9 @@ void IFF_freeCAT(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeGroup((IFF_Group*)chunk, chunkRegistry);
 }
 
-void IFF_printCAT(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printCAT(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroup((const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroup(file, (const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareCAT(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

@@ -69,14 +69,3 @@ IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *at
 
     return TRUE;
 }
-
-void IFF_printId(const IFF_ID id)
-{
-    IFF_ID2 id2;
-    unsigned int i;
-
-    IFF_idToString(id, id2);
-
-    for(i = 0; i < IFF_ID_SIZE; i++)
-        printf("%c", id2[i]);
-}

@@ -96,13 +96,13 @@ void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
 }
 
-void TEST_printHello(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_printHello(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
-    IFF_printUByteField(stdout, indentLevel, "a", hello->a);
-    IFF_printUByteField(stdout, indentLevel, "b", hello->b);
-    IFF_printUWordField(stdout, indentLevel, "c", hello->c);
+    IFF_printUByteField(file, indentLevel, "a", hello->a);
+    IFF_printUByteField(file, indentLevel, "b", hello->b);
+    IFF_printUWordField(file, indentLevel, "c", hello->c);
 }
 
 IFF_Bool TEST_compareHello(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

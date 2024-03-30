@@ -251,31 +251,31 @@ void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     free(list->props);
 }
 
-static void printListPropChunks(const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+static void printListPropChunks(FILE *file, const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
-    IFF_printIndent(stdout, indentLevel, ".props = {\n");
+    IFF_printIndent(file, indentLevel, ".props = {\n");
 
     for(i = 0; i < list->propsLength; i++)
     {
         if(i > 0)
-            printf(",\n");
+            fprintf(file, ",\n");
 
-        IFF_printChunk((IFF_Chunk*)list->props[i], indentLevel + 1, list->contentsType, chunkRegistry);
+        IFF_printChunk(file, (IFF_Chunk*)list->props[i], indentLevel + 1, list->contentsType, chunkRegistry);
     }
 
-    printf("\n");
-    IFF_printIndent(stdout, indentLevel, "},\n");
+    fprintf(file, "\n");
+    IFF_printIndent(file, indentLevel, "},\n");
 }
 
-void IFF_printList(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printList(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_List *list = (const IFF_List*)chunk;
 
-    IFF_printGroupType("contentsType", list->contentsType, indentLevel);
-    printListPropChunks(list, indentLevel, chunkRegistry);
-    IFF_printGroupSubChunks((const IFF_Group*)list, indentLevel, chunkRegistry);
+    IFF_printGroupType(file, "contentsType", list->contentsType, indentLevel);
+    printListPropChunks(file, list, indentLevel, chunkRegistry);
+    IFF_printGroupSubChunks(file, (const IFF_Group*)list, indentLevel, chunkRegistry);
 }
 
 static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *list2, const IFF_ChunkRegistry *chunkRegistry)

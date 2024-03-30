@@ -63,9 +63,9 @@ IFF_Bool TEST_check(const IFF_Chunk *chunk)
     return IFF_check(chunk, &chunkRegistry);
 }
 
-void TEST_print(const IFF_Chunk *chunk, const unsigned int indentLevel)
+void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_print(chunk, indentLevel, &chunkRegistry);
+    IFF_printFd(file, chunk, indentLevel, &chunkRegistry);
 }
 
 IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)

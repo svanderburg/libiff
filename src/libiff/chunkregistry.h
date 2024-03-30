@@ -57,7 +57,7 @@ struct IFF_ChunkType
     void (*freeExtensionChunk) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for printing the given chunk */
-    void (*printExtensionChunk) (const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+    void (*printExtensionChunk) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for comparing the given chunk */
     IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);

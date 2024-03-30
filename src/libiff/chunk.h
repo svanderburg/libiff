@@ -108,7 +108,7 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegis
  * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given chunk hierarchies are equal.

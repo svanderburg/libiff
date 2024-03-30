@@ -111,15 +111,15 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegis
     }
 }
 
-void IFF_printChunk(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
 
-    IFF_printIndent(stdout, indentLevel, "{\n");
-    IFF_printIdField(stdout, indentLevel + 1, "chunkId", chunk->chunkId);
-    IFF_printLongField(stdout, indentLevel + 1, "chunkSize", chunk->chunkSize);
-    chunkType->printExtensionChunk(chunk, indentLevel + 1, chunkRegistry);
-    IFF_printIndent(stdout, indentLevel, "}");
+    IFF_printIndent(file, indentLevel, "{\n");
+    IFF_printIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
+    IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
+    chunkType->printExtensionChunk(file, chunk, indentLevel + 1, chunkRegistry);
+    IFF_printIndent(file, indentLevel, "}");
 }
 
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)

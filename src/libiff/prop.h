@@ -122,7 +122,7 @@ void IFF_freeProp(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printProp(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printProp(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given PROP chunks' contents is equal to each other.

@@ -205,7 +205,7 @@ void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry);
  * @param groupType A group type ID
  * @param indentLevel Indent level of the textual representation
  */
-void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel);
+void IFF_printGroupType(FILE *file, const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel);
 
 /**
  * Displays a textual representation of the sub chunks on the standard output.
@@ -214,7 +214,7 @@ void IFF_printGroupType(const char *groupTypeName, const IFF_ID groupType, const
  * @param indentLevel Indent level of the textual representation
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of the group chunk and its sub chunks on the standard output.
@@ -224,7 +224,7 @@ void IFF_printGroupSubChunks(const IFF_Group *group, const unsigned int indentLe
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printGroup(const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroup(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given group chunks' contents is equal to each other.

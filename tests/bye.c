@@ -81,7 +81,7 @@ void TEST_freeBye(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
 }
 
-void TEST_printBye(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_printBye(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
 

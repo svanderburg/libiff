@@ -153,9 +153,34 @@ IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistr
     return IFF_advancedCheck(chunk, chunkRegistry, IFF_printCheckMessageOnStderr, NULL);
 }
 
-void IFF_print(const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printChunk(chunk, indentLevel, 0, selectChunkRegistry(chunkRegistry));
+    IFF_printChunk(file, chunk, indentLevel, 0, selectChunkRegistry(chunkRegistry));
+}
+
+IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+{
+    FILE *file = fopen(filename, "wb");
+
+    if(file == NULL)
+        return FALSE;
+    else
+    {
+        IFF_printFd(file, chunk, indentLevel, chunkRegistry);
+        fclose(file);
+        return TRUE;
+    }
+}
+
+IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+{
+    if(filename == NULL)
+    {
+        IFF_printFd(stdout, chunk, indentLevel, chunkRegistry);
+        return TRUE;
+    }
+    else
+        return IFF_printFile(filename, chunk, indentLevel, chunkRegistry);
 }
 
 IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
