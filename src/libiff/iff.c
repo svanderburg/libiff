@@ -122,7 +122,7 @@ void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
-IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_AttributePath *attributePath = IFF_createAttributePath();
     IFF_Bool status;

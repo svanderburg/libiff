@@ -188,7 +188,7 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
     return chunkSize;
 }
 
-static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     unsigned int i;
 
@@ -211,7 +211,7 @@ static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistr
     return TRUE;
 }
 
-IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_List *list = (const IFF_List*)chunk;
 

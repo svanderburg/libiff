@@ -178,7 +178,7 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list);
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list is valid, else FALSE.
  */
-IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
+IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Recursively frees the memory of the sub chunks and PROP chunks of the given list chunk.

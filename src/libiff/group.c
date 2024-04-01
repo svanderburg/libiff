@@ -172,7 +172,7 @@ IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group)
     return chunkSize;
 }
 
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(actualChunkSize == group->chunkSize)
         return TRUE;
@@ -183,7 +183,7 @@ IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualCh
     }
 }
 
-IFF_Bool IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     unsigned int i;
 
@@ -206,7 +206,7 @@ IFF_Bool IFF_checkGroupSubChunks(const IFF_Group *group, IFF_Bool (*subChunkChec
     return TRUE;
 }
 
-IFF_Bool IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_Bool (*groupTypeCheck) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId), IFF_Bool (*subChunkCheck) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data), const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(!groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId))
         return FALSE;

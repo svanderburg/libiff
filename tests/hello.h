@@ -51,7 +51,7 @@ IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *c
 
 IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
+IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 

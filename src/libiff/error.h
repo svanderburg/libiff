@@ -27,7 +27,7 @@
 typedef struct IFF_IOError IFF_IOError;
 typedef struct IFF_DataIOError IFF_DataIOError;
 typedef struct IFF_FileIOError IFF_FileIOError;
-typedef void (*IFF_printCheckMessage) (const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
+typedef void (*IFF_printCheckMessageFunction) (const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 
 #include <stdarg.h>
 #include "id.h"

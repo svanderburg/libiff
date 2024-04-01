@@ -131,7 +131,7 @@ IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
  * @param formType A 4 character form identifier
  * @return TRUE if the form type is valid, else FALSE
  */
-IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId);
+IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
 
 /**
  * Checks whether the form chunk and its sub chunks conform to the IFF specification.
@@ -140,7 +140,7 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePa
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data);
+IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Recursively frees the memory of the sub chunks of the given form chunk.

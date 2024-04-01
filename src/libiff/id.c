@@ -41,7 +41,7 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2)
     id2[3] = id & 0xff;
 }
 
-IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId)
+IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
 {
     IFF_ID2 id2;
     unsigned int i;

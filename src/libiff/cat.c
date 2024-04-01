@@ -86,7 +86,7 @@ IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistr
     return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_CAT *cat = (const IFF_CAT*)group;
 
@@ -123,7 +123,7 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk,
     return TRUE;
 }
 
-IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroup((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
 }

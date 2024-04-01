@@ -90,7 +90,7 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formTyp
         && writeChunkBody(file, chunk, formType, chunkRegistry, attributePath, error);
 }
 
-IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(!IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0))
         return FALSE;

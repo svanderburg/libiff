@@ -90,7 +90,7 @@ IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     return IFF_writeGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessage printCheckMessage, void *data, const IFF_ID chunkId)
+IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
 {
     unsigned int i;
     IFF_ID2 formType2;
@@ -154,7 +154,7 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePa
     return TRUE;
 }
 
-static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(subChunk->chunkId == IFF_ID_PROP)
     {
@@ -167,7 +167,7 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk,
         return TRUE;
 }
 
-IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessage printCheckMessage, void *data)
+IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroup((IFF_Group*)chunk, FORM_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }
