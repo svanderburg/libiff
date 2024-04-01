@@ -219,29 +219,34 @@ IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk
         return IFF_FIELD_FAILURE;
 }
 
+void IFF_printCharField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value)
+{
+    IFF_printIndent(file, indentLevel, ".%s = '%c',\n", attributeName, value);
+}
+
 void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value)
 {
-    IFF_printIndent(file, indentLevel, ".%s = %c,\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = (UBYTE)%uU,\n", attributeName, value);
 }
 
 void IFF_printByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Byte value)
 {
-    IFF_printIndent(file, indentLevel, ".%s = %c,\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = (BYTE)%d,\n", attributeName, value);
 }
 
 void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UWord value)
 {
-    IFF_printIndent(file, indentLevel, ".%s = %u,\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = (UWORD)%uU,\n", attributeName, value);
 }
 
 void IFF_printWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Word value)
 {
-    IFF_printIndent(file, indentLevel, ".%s = %d,\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = (WORD)%d,\n", attributeName, value);
 }
 
 void IFF_printULongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ULong value)
 {
-    IFF_printIndent(file, indentLevel, ".%s = %u,\n", attributeName, value);
+    IFF_printIndent(file, indentLevel, ".%s = %uU,\n", attributeName, value);
 }
 
 void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Long value)

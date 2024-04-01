@@ -100,8 +100,8 @@ void TEST_printHello(FILE *file, const IFF_Chunk *chunk, const unsigned int inde
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
-    IFF_printUByteField(file, indentLevel, "a", hello->a);
-    IFF_printUByteField(file, indentLevel, "b", hello->b);
+    IFF_printCharField(file, indentLevel, "a", hello->a);
+    IFF_printCharField(file, indentLevel, "b", hello->b);
     IFF_printUWordField(file, indentLevel, "c", hello->c);
 }
 
