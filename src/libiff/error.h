@@ -29,6 +29,24 @@ typedef struct IFF_DataIOError IFF_DataIOError;
 typedef struct IFF_FileIOError IFF_FileIOError;
 typedef void (*IFF_printCheckMessageFunction) (const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 
+/**
+ * Indicates the quality level of an IFF file after checking it
+ */
+typedef enum
+{
+    /** The file completely adheres to the IFF and application file format standards */
+    IFF_QUALITY_PERFECT = 0,
+    /** The file is parsable and usable, but non-critical violations have been found */
+    IFF_QUALITY_OK = 1,
+    /** The file contains errors, but the parser was able to recover from it. The resulting file is usable. */
+    IFF_QUALITY_RECOVERED = 2,
+    /** The file was parsed (may be with recovery) but contains violations to the IFF and application file format standards making the file impossible to be viewed/used */
+    IFF_QUALITY_INCONSISTENT = 3,
+    /** The file is completely unusable and cannot even be partially inspected */
+    IFF_QUALITY_GARBAGE = 4
+}
+IFF_QualityLevel;
+
 #include <stdarg.h>
 #include "id.h"
 
@@ -76,6 +94,8 @@ void IFF_printReadError(const IFF_IOError *error);
 void IFF_printWriteError(const IFF_IOError *error);
 
 void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
+
+IFF_QualityLevel IFF_adjustQualityLevel(const IFF_QualityLevel currentLevel, const IFF_QualityLevel newLevel);
 
 #ifdef __cplusplus
 }

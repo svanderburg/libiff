@@ -96,7 +96,7 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_Chunk
  */
 void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Checks whether an IFF file conforms to the IFF specification.
@@ -105,7 +105,7 @@ IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_QualityLevel IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Prints a textual representation of an IFF file to the given file descriptor.

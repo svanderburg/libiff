@@ -22,15 +22,13 @@
 #ifndef __IFF_PP_H
 #define __IFF_PP_H
 
-#define IFFPP_DISABLE_CHECK 0x01
-
 /**
  * Displays a textual representation of the given IFF file.
  *
  * @param inputFilename Path to the IFF file, or NULL to read from the standard input
- * @param options An integer in which their bits represent a number of pretty print options
+ * @param outputFilename Path to the file in which the textual representation is stored, or NULL to write to the standard output
  * @return 0 if the file has been successfully printed, else 1
  */
-int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const int options);
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename);
 
 #endif

@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     int status;
 
     if(error == NULL)
-        status = TEST_check(chunk); /* The given file should be invalid */
+        status = TEST_check(chunk) == IFF_QUALITY_PERFECT; /* The given file should be invalid */
     else
     {
         IFF_printReadError(error);

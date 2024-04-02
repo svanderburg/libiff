@@ -22,7 +22,7 @@
 #include "pp.h"
 #include "iff.h"
 
-int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const int options)
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename)
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
@@ -44,7 +44,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
         }
 
         /* Check the file */
-        if((options & IFFPP_DISABLE_CHECK) || IFF_check(chunk, NULL))
+        if(IFF_check(chunk, NULL) < IFF_QUALITY_GARBAGE)
         {
             /* Print the file */
             if(IFF_print(outputFilename, chunk, 0, NULL))

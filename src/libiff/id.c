@@ -41,7 +41,7 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2)
     id2[3] = id & 0xff;
 }
 
-IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
+IFF_QualityLevel IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
 {
     IFF_ID2 id2;
     unsigned int i;
@@ -55,7 +55,7 @@ IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *at
         if(id2[i] < 0x20 || id2[i] > 0x7e)
         {
             printCheckMessage(attributePath, attributeName, chunkId, data, "contains an illegal character: %c", id2[i]);
-            return FALSE;
+            return IFF_QUALITY_OK;
         }
     }
 
@@ -64,8 +64,8 @@ IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *at
     if(id2[0] == ' ')
     {
         printCheckMessage(attributePath, attributeName, chunkId, data, "contains preceding white spaces: \"%.4s\"", id2);
-        return FALSE;
+        return IFF_QUALITY_OK;
     }
 
-    return TRUE;
+    return IFF_QUALITY_PERFECT;
 }

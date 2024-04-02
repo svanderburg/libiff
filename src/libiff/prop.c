@@ -60,7 +60,7 @@ IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     return IFF_writeForm(file, chunk, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(subChunk->chunkId == IFF_ID_FORM ||
        subChunk->chunkId == IFF_ID_LIST ||
@@ -70,13 +70,13 @@ static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk,
         IFF_ID2 subChunkId;
         IFF_idToString(subChunk->chunkId, subChunkId);
         printCheckMessage(attributePath, NULL, group->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
-        return FALSE;
+        return IFF_QUALITY_OK;
     }
     else
-        return TRUE;
+        return IFF_QUALITY_PERFECT;
 }
 
-IFF_Bool IFF_checkProp(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkProp(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroup((IFF_Group*)chunk, "formType", &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }

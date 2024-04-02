@@ -72,9 +72,9 @@ IFF_Bool TEST_writeBye(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     return TRUE;
 }
 
-IFF_Bool TEST_checkBye(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel TEST_checkBye(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return TRUE;
+    return IFF_QUALITY_PERFECT;
 }
 
 void TEST_freeBye(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)

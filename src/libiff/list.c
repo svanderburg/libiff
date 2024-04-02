@@ -188,9 +188,10 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
     return chunkSize;
 }
 
-static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+static IFF_QualityLevel checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     unsigned int i;
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
     IFF_visitAttributeByName(attributePath, "props");
 
@@ -200,38 +201,31 @@ static IFF_Bool checkListPropChunks(const IFF_List *list, const IFF_ChunkRegistr
 
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_checkChunk(propChunk, list->contentsType, chunkRegistry, attributePath, printCheckMessage, data))
-            return FALSE;
+        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkChunk(propChunk, list->contentsType, chunkRegistry, attributePath, printCheckMessage, data));
 
         IFF_unvisitAttribute(attributePath);
     }
 
     IFF_unvisitAttribute(attributePath);
 
-    return TRUE;
+    return qualityLevel;
 }
 
-IFF_Bool IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_List *list = (const IFF_List*)chunk;
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
+    IFF_Long actualChunkSize;
 
-    if(!IFF_checkId(list->contentsType, attributePath, "contentsType", printCheckMessage, data, list->chunkId))
-        return FALSE;
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkId(list->contentsType, attributePath, "contentsType", printCheckMessage, data, list->chunkId));
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, checkListPropChunks(list, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data));
 
-    if(!checkListPropChunks(list, chunkRegistry, attributePath, printCheckMessage, data))
-        return FALSE;
+    actualChunkSize = IFF_computeActualListChunkSize(list);
 
-    if(!IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data))
-        return FALSE;
-    else
-    {
-        IFF_Long actualChunkSize = IFF_computeActualListChunkSize(list);
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize, attributePath, printCheckMessage, data));
 
-        if(!IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize, attributePath, printCheckMessage, data))
-            return FALSE;
-    }
-
-    return TRUE;
+    return qualityLevel;
 }
 
 static void freeListPropChunks(IFF_List *list, const IFF_ChunkRegistry *chunkRegistry)

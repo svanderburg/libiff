@@ -71,7 +71,7 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2);
  * @param id A 4 character IFF id
  * @return TRUE if the IFF id is valid, else FALSE
  */
-IFF_Bool IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
+IFF_QualityLevel IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }

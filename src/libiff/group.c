@@ -172,19 +172,20 @@ IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group)
     return chunkSize;
 }
 
-IFF_Bool IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(actualChunkSize == group->chunkSize)
-        return TRUE;
+        return IFF_QUALITY_PERFECT;
     else
     {
         printCheckMessage(attributePath, "chunkSize", group->chunkId, data, "does not match the sum of its sub chunks: %d, value is: %d", actualChunkSize, group->chunkSize);
-        return FALSE;
+        return IFF_QUALITY_RECOVERED;
     }
 }
 
-IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     unsigned int i;
 
     IFF_visitAttributeByName(attributePath, "chunks");
@@ -195,33 +196,30 @@ IFF_Long IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFuncti
 
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!subChunkCheck(group, subChunk, attributePath, printCheckMessage, data) || !IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data))
-            return FALSE;
+        qualityLevel = IFF_adjustQualityLevel(qualityLevel, subChunkCheck(group, subChunk, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
 
         IFF_unvisitAttribute(attributePath);
     }
 
     IFF_unvisitAttribute(attributePath);
 
-    return TRUE;
+    return qualityLevel;
 }
 
-IFF_Bool IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    if(!groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId))
-        return FALSE;
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
+    IFF_Long actualChunkSize;
 
-    if(!IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data))
-        return FALSE;
-    else
-    {
-        IFF_Long actualChunkSize = IFF_computeActualGroupChunkSize(group);
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId));
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data));
 
-        if(!IFF_checkGroupChunkSize(group, actualChunkSize, attributePath, printCheckMessage, data))
-            return FALSE;
-    }
+    actualChunkSize = IFF_computeActualGroupChunkSize(group);
 
-    return TRUE;
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupChunkSize(group, actualChunkSize, attributePath, printCheckMessage, data));
+
+    return qualityLevel;
 }
 
 void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)

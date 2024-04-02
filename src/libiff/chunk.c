@@ -90,15 +90,15 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formTyp
         && writeChunkBody(file, chunk, formType, chunkRegistry, attributePath, error);
 }
 
-IFF_Bool IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    if(!IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0))
-        return FALSE;
-    else
-    {
-        IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
-        return chunkType->checkExtensionChunk(chunk, chunkRegistry, attributePath, printCheckMessage, data);
-    }
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
+    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
+
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0));
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, chunkType->checkExtensionChunk(chunk, chunkRegistry, attributePath, printCheckMessage, data));
+
+    return qualityLevel;
 }
 
 void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)

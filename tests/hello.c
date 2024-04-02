@@ -79,17 +79,18 @@ IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegi
     return TRUE;
 }
 
-IFF_Bool TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel TEST_checkHello(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
     if((hello->c < 0) || (hello->c > 1024))
     {
         printCheckMessage(attributePath, "c", chunk->chunkId, data, "must be between 0 and 1024, value is: %u", hello->c);
-        return FALSE;
+        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_INCONSISTENT);
     }
 
-    return TRUE;
+    return qualityLevel;
 }
 
 void TEST_freeHello(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)

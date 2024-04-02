@@ -90,15 +90,16 @@ IFF_Bool IFF_writeForm(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegist
     return IFF_writeGroup(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
+IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
 {
     unsigned int i;
     IFF_ID2 formType2;
+    IFF_QualityLevel currentLevel = IFF_QUALITY_PERFECT;
+    IFF_QualityLevel newLevel;
 
     /* A form type must be a valid ID */
-    if(!IFF_checkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId))
-        return FALSE;
-
+    newLevel = IFF_checkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId);
+    currentLevel = IFF_adjustQualityLevel(currentLevel, newLevel);
     IFF_idToString(formType, formType2);
 
     /* A form type is not allowed to have lowercase or puntuaction marks */
@@ -107,7 +108,7 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePa
         if((formType2[i] >= 0x61 && formType2[i] <= 0x7a) || formType2[i] == '.')
         {
             printCheckMessage(attributePath, attributeName, chunkId, data, "contains lowercase characters or punctuation marks: \"%.4s\"", formType2);
-            return FALSE;
+            currentLevel = IFF_adjustQualityLevel(currentLevel, IFF_QUALITY_OK);
         }
     }
 
@@ -148,26 +149,26 @@ IFF_Bool IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePa
        formType == ID_CAT9)
     {
         printCheckMessage(attributePath, attributeName, chunkId, data, "contains an identifier that is not allowed: \"%.4s\"", formType2);
-        return FALSE;
+        currentLevel = IFF_adjustQualityLevel(currentLevel, IFF_QUALITY_OK);
     }
 
-    return TRUE;
+    return currentLevel;
 }
 
-static IFF_Bool subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     if(subChunk->chunkId == IFF_ID_PROP)
     {
         IFF_ID2 subChunkId;
         IFF_idToString(subChunk->chunkId, subChunkId);
         printCheckMessage(attributePath, NULL, group->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
-        return FALSE;
+        return IFF_QUALITY_OK;
     }
     else
-        return TRUE;
+        return IFF_QUALITY_PERFECT;
 }
 
-IFF_Bool IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkForm(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroup((IFF_Group*)chunk, FORM_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }

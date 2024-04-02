@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
     IFF_RawChunk *abcdChunk = createABCDChunk();
     IFF_CAT *cat = createABCDCAT(abcdChunk);
     int status = 0;
+    IFF_QualityLevel qualityLevel;
 
     /* Intentionally increase the size of the ABCD chunk */
 
@@ -72,19 +73,22 @@ int main(int argc, char *argv[])
     abcdChunk->chunkSize++;
 
     /* The IFF file should be invalid now as the, form chunk size is too small */
-    if(!IFF_check((IFF_Chunk*)cat, NULL))
+    if((qualityLevel = IFF_check((IFF_Chunk*)cat, NULL)) == IFF_QUALITY_RECOVERED)
     {
         /* Update the chunk sizes */
         IFF_updateChunkSizes((IFF_Chunk*)abcdChunk);
 
         /* Now the IFF should be valid */
 
-        if(!IFF_check((IFF_Chunk*)cat, NULL))
+        if((qualityLevel = IFF_check((IFF_Chunk*)cat, NULL)) != IFF_QUALITY_PERFECT)
+        {
+            fprintf(stderr, "The IFF file should be in state: %d, but is in: %d!\n", IFF_QUALITY_RECOVERED, qualityLevel);
             status = 1;
+        }
     }
     else
     {
-        fprintf(stderr, "The IFF file should be invalid!\n");
+        fprintf(stderr, "The IFF file should be in state: %d, but is in: %d!\n", IFF_QUALITY_RECOVERED, qualityLevel);
         status = 1;
     }
 

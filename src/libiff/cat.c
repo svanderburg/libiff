@@ -86,9 +86,10 @@ IFF_Bool IFF_writeCAT(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistr
     return IFF_writeGroup(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_CAT *cat = (const IFF_CAT*)group;
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
 
@@ -97,7 +98,7 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk,
         IFF_ID2 subChunkId;
         IFF_idToString(subChunk->chunkId, subChunkId);
         printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
-        return FALSE;
+        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_OK);
     }
 
     if(cat->contentsType != IFF_ID_JJJJ)
@@ -115,15 +116,15 @@ IFF_Bool IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk,
                 IFF_idToString(cat->contentsType, contentsType);
 
                 printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a group sub chunk with groupType: \"%.4s\" that does not match the parent's contentsType: \"%.4s\"", groupType, contentsType);
-                return FALSE;
+                qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_OK);
             }
         }
     }
 
-    return TRUE;
+    return qualityLevel;
 }
 
-IFF_Bool IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkCAT(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroup((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
 }

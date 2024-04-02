@@ -58,7 +58,7 @@ void TEST_free(IFF_Chunk *chunk)
     IFF_free(chunk, &chunkRegistry);
 }
 
-IFF_Bool TEST_check(const IFF_Chunk *chunk)
+IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
 {
     return IFF_check(chunk, &chunkRegistry);
 }

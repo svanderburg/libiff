@@ -122,15 +122,15 @@ void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
     IFF_freeChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
 }
 
-IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_AttributePath *attributePath = IFF_createAttributePath();
-    IFF_Bool status;
+    IFF_QualityLevel qualityLevel;
 
     if(chunk == NULL)
     {
         printCheckMessage(attributePath, NULL, 0, data, "The file cannot be processed");
-        status = FALSE;
+        qualityLevel = IFF_QUALITY_GARBAGE;
     }
     else if(chunk->chunkId != IFF_ID_FORM && /* The main chunk must be of ID: FORM, CAT or LIST */
        chunk->chunkId != IFF_ID_CAT &&
@@ -139,16 +139,16 @@ IFF_Bool IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chun
         IFF_ID2 chunkId;
         IFF_idToString(chunk->chunkId, chunkId);
         printCheckMessage(attributePath, "chunkId", chunk->chunkId, data, "is invalid: the first chunkId should be: \"FORM\", \"CAT \" or \"LIST\", value is: \"%.4s\"", chunkId);
-        status = FALSE;
+        qualityLevel = IFF_QUALITY_INCONSISTENT;
     }
     else
-        status = IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, printCheckMessage, NULL);
+        qualityLevel = IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, printCheckMessage, NULL);
 
     IFF_freeAttributePath(attributePath);
-    return status;
+    return qualityLevel;
 }
 
-IFF_Bool IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_QualityLevel IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     return IFF_advancedCheck(chunk, chunkRegistry, IFF_printCheckMessageOnStderr, NULL);
 }

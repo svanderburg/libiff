@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     int status;
 
     if(error == NULL)
-        status = !IFF_check(chunk, NULL); /* Should succeed */
+        status = IFF_check(chunk, NULL) != IFF_QUALITY_PERFECT; /* Should succeed */
     else
     {
         IFF_printReadError(error);

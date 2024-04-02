@@ -31,7 +31,7 @@ IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **
 
 void TEST_free(IFF_Chunk *chunk);
 
-IFF_Bool TEST_check(const IFF_Chunk *chunk);
+IFF_QualityLevel TEST_check(const IFF_Chunk *chunk);
 
 void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
