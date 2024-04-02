@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalid.IFF
+../src/iffcheck/iffcheck --level 3 invalid.IFF

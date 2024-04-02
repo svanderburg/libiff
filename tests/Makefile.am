@@ -1,6 +1,6 @@
 noinst_HEADERS = bye.h hello.h test.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
 
-check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist invalidiff validiff \
+check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     searchforms-form searchforms-cat searchforms-nestedform updatechunksizes lookupproperty-simple lookupproperty-prop lookupproperty-override lookupproperty-nested \
     writeextension readextension checkextension ppextension \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
@@ -44,14 +44,6 @@ writelist_CFLAGS = -I../src/libiff
 readlist_SOURCES = listdata.c readlist.c
 readlist_LDADD = ../src/libiff/libiff.la
 readlist_CFLAGS = -I../src/libiff
-
-validiff_SOURCES = validiff.c
-validiff_LDADD = ../src/libiff/libiff.la
-validiff_CFLAGS = -I../src/libiff
-
-invalidiff_SOURCES = invalidiff.c
-invalidiff_LDADD = ../src/libiff/libiff.la
-invalidiff_CFLAGS = -I../src/libiff
 
 lookupproperty_simple_SOURCES = lookupproperty-simple.c
 lookupproperty_simple_LDADD = ../src/libiff/libiff.la

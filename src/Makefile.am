@@ -1,4 +1,4 @@
-SUBDIRS = libiff iffjoin iffpp
+SUBDIRS = libiff iffcheck iffjoin iffpp
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libiff.pc

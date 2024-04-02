@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidprop-size.TEST
+../src/iffcheck/iffcheck --level 2 invalidprop-size.TEST

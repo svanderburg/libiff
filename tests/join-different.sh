@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
 ../src/iffjoin/iffjoin -o join.IFF join.HELO join.BYE
-./validiff join.IFF
+../src/iffcheck/iffcheck --level 0 join.IFF

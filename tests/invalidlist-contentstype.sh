@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidlist-contentstype.TEST
+../src/iffcheck/iffcheck --level 1 invalidlist-contentstype.TEST

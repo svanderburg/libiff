@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidcat-raw.TEST
+../src/iffcheck/iffcheck --level 1 invalidcat-raw.TEST

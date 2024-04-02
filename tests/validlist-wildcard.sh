@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./validiff ./validlist-wildcard.TEST
+../src/iffcheck/iffcheck --level 0 ./validlist-wildcard.TEST

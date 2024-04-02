@@ -19,25 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "iff.h"
-#include "chunk.h"
+#ifndef __IFF_CHECK_H
+#define __IFF_CHECK_H
 
-int main(int argc, char *argv[])
-{
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(argv[1], NULL, &error);
-    int status;
+/**
+ * Performs a conformance check of the given IFF file and outputs its quality
+ * level
+ *
+ * @param filename Path to the IFF file to check or NULL to read from the standard input
+ * @param minLevel Specifies the desired minimum quality level
+ * @param maxLevel Specifies the desired maximum quality level
+ * @return 0 if the file was successfully checked and the quality level is between the minimum and maximum, else 1
+ */
+int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel);
 
-    if(error == NULL)
-        status = IFF_check(chunk, NULL) != IFF_QUALITY_PERFECT; /* Should succeed */
-    else
-    {
-        IFF_printReadError(error);
-        IFF_freeIOError(error);
-        status = 1; /* Should succeed */
-    }
-
-    IFF_free(chunk, NULL);
-
-    return status;
-}
+#endif

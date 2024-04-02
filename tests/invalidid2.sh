@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidid2.TEST
+../src/iffcheck/iffcheck --level 1 invalidid2.TEST

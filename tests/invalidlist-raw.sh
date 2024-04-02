@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidlist-raw.TEST
+../src/iffcheck/iffcheck --level 1 invalidlist-raw.TEST

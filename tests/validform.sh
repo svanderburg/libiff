@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
-./validiff ./hello.TEST
+../src/iffcheck/iffcheck --level 0 ./hello.TEST
 

@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidcat-prop.TEST
+../src/iffcheck/iffcheck --level 1 invalidcat-prop.TEST

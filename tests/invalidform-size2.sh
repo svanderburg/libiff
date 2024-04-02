@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidform-size2.TEST
+../src/iffcheck/iffcheck --level 2 invalidform-size2.TEST

@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidlist-negsize.TEST
+../src/iffcheck/iffcheck --level 2 invalidlist-negsize.TEST

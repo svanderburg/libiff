@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidform-prop.TEST
+../src/iffcheck/iffcheck --level 1 invalidform-prop.TEST

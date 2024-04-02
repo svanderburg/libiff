@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./validiff ./list.TEST
+../src/iffcheck/iffcheck --level 0 ./list.TEST

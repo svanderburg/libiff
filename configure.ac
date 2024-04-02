@@ -27,6 +27,7 @@ src/Makefile
 src/libiff.pc
 src/libiff/ifftypes.h
 src/libiff/Makefile
+src/iffcheck/Makefile
 src/iffjoin/Makefile
 src/iffpp/Makefile
 tests/Makefile

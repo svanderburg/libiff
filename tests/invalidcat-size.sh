@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./invalidiff invalidcat-size.TEST
+../src/iffcheck/iffcheck --level 2 invalidcat-size.TEST
