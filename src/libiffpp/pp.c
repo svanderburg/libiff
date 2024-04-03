@@ -19,27 +19,48 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "test.h"
-#include "chunk.h"
+#include "pp.h"
+#include "iff.h"
 
-int main(int argc, char *argv[])
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_ChunkRegistry *chunkRegistry)
 {
+    /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = TEST_read(argv[1], &error);
-    int status;
+    IFF_Chunk *chunk = IFF_read(inputFilename, chunkRegistry, &error);
 
-    if(error == NULL)
+    if(chunk == NULL)
     {
-        TEST_printFd(stdout, chunk, 0);
-        status = 0;
+        fprintf(stderr, "Cannot open IFF file: %s\n", inputFilename);
+        return 1;
     }
     else
     {
-        IFF_printReadError(error);
-        IFF_freeIOError(error);
-        status = 1;
-    }
+        int status;
 
-    TEST_free(chunk);
-    return status;
+        if(error != NULL)
+        {
+            IFF_printReadError(error);
+            IFF_freeIOError(error);
+        }
+
+        /* Check the file */
+        if(IFF_check(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
+        {
+            /* Print the file */
+            if(IFF_print(outputFilename, chunk, 0, chunkRegistry))
+                status = 0;
+            else
+            {
+                fprintf(stderr, "Cannot open output file: %s\n", outputFilename);
+                status = 1;
+            }
+        }
+        else
+            status = 1;
+
+        /* Free the chunk structure */
+        IFF_free(chunk, chunkRegistry);
+
+        return status;
+    }
 }

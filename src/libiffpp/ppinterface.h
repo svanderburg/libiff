@@ -19,45 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "check.h"
-#include "iff.h"
+#ifndef __IFF_PPINTERFACE_H
+#define __IFF_PPINTERFACE_H
+#include "chunkregistry.h"
 
-int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel)
-{
-    /* Parse the chunk */
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(filename, NULL, &error);
+int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_ChunkRegistry *chunkRegistry, void (*printVersion) (const char *command));
 
-    if(chunk == NULL)
-    {
-        fprintf(stderr, "Cannot open IFF file: %s\n", filename);
-        return 1;
-    }
-    else
-    {
-        IFF_QualityLevel qualityLevel;
-        IFF_Bool status;
-
-        if(error != NULL)
-        {
-            IFF_printReadError(error);
-            IFF_freeIOError(error);
-        }
-
-        /* Check the file and print the quality level */
-        qualityLevel = IFF_check(chunk, NULL);
-
-        if(qualityLevel == IFF_QUALITY_PERFECT)
-            fprintf(stderr, "No conformance issues were found!\n");
-
-        printf("%d", qualityLevel);
-
-        /* Check if the quality is between the specified minimum and maximum level */
-        status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
-
-        /* Free the chunk structure */
-        IFF_free(chunk, NULL);
-
-        return !status;
-    }
-}
+#endif

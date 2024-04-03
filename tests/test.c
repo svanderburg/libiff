@@ -21,54 +21,33 @@
 
 #include "test.h"
 #include "iff.h"
-#include "hello.h"
-#include "bye.h"
-#include "defaultregistry.h"
-
-#define TEST_NUM_OF_FORM_CHUNK_TYPES 1
-#define TEST_NUM_OF_CHUNK_TYPES 2
-
-static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_createByeChunk, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
-    {TEST_ID_HELO, &TEST_createHelloChunk, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
-};
-
-static IFF_ChunkTypesNode applicationChunkTypesNode = {
-    TEST_NUM_OF_CHUNK_TYPES, applicationChunkTypes, NULL
-};
-
-static IFF_FormChunkTypes formChunkTypes[] = {
-    { TEST_ID_TEST, &applicationChunkTypesNode }
-};
-
-static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
 
 IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error)
 {
-    return IFF_read(filename, &chunkRegistry, error);
+    return IFF_read(filename, &TEST_chunkRegistry, error);
 }
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    return IFF_write(filename, chunk, &chunkRegistry, error);
+    return IFF_write(filename, chunk, &TEST_chunkRegistry, error);
 }
 
 void TEST_free(IFF_Chunk *chunk)
 {
-    IFF_free(chunk, &chunkRegistry);
+    IFF_free(chunk, &TEST_chunkRegistry);
 }
 
 IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
 {
-    return IFF_check(chunk, &chunkRegistry);
+    return IFF_check(chunk, &TEST_chunkRegistry);
 }
 
 void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printFd(file, chunk, indentLevel, &chunkRegistry);
+    IFF_printFd(file, chunk, indentLevel, &TEST_chunkRegistry);
 }
 
 IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compare(chunk1, chunk2, &chunkRegistry);
+    return IFF_compare(chunk1, chunk2, &TEST_chunkRegistry);
 }

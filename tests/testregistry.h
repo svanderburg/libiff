@@ -19,24 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include "test.h"
+#ifndef __TESTREGISTRY_H
+#define __TESTREGISTRY_H
+#include "chunkregistry.h"
 
-int main(int argc, char *argv[])
-{
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = TEST_read("extension.TEST", &error);
-    int status;
+#define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-    if(error == NULL)
-        status = TEST_check(chunk) == IFF_QUALITY_PERFECT; /* The given file should be invalid */
-    else
-    {
-        IFF_printReadError(error);
-        IFF_freeIOError(error);
-        status = 1;
-    }
+#define TEST_NUM_OF_FORM_CHUNK_TYPES 1
+#define TEST_NUM_OF_CHUNK_TYPES 2
 
-    TEST_free(chunk);
-    return status;
-}
+extern const IFF_ChunkRegistry TEST_chunkRegistry;
+
+#endif

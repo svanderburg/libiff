@@ -19,16 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __IFF_PP_H
-#define __IFF_PP_H
+#include "testregistry.h"
+#include "defaultregistry.h"
+#include "hello.h"
+#include "bye.h"
 
-/**
- * Displays a textual representation of the given IFF file.
- *
- * @param inputFilename Path to the IFF file, or NULL to read from the standard input
- * @param outputFilename Path to the file in which the textual representation is stored, or NULL to write to the standard output
- * @return 0 if the file has been successfully printed, else 1
- */
-int IFF_prettyPrint(const char *inputFilename, const char *outputFilename);
+static IFF_ChunkType applicationChunkTypes[] = {
+    {TEST_ID_BYE, &TEST_createByeChunk, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {TEST_ID_HELO, &TEST_createHelloChunk, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+};
 
-#endif
+static IFF_ChunkTypesNode applicationChunkTypesNode = {
+    TEST_NUM_OF_CHUNK_TYPES, applicationChunkTypes, NULL
+};
+
+static IFF_FormChunkTypes formChunkTypes[] = {
+    { TEST_ID_TEST, &applicationChunkTypesNode }
+};
+
+const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);

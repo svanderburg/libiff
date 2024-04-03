@@ -19,21 +19,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __TEST_H
-#define __TEST_H
-#include "testregistry.h"
-#include "chunk.h"
+#include "check.h"
+#include "iff.h"
 
-IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error);
+int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_ChunkRegistry *chunkRegistry)
+{
+    /* Parse the chunk */
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = IFF_read(filename, chunkRegistry, &error);
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
+    if(chunk == NULL)
+    {
+        fprintf(stderr, "Cannot open IFF file: %s\n", filename);
+        return 1;
+    }
+    else
+    {
+        IFF_QualityLevel qualityLevel;
+        IFF_Bool status;
 
-void TEST_free(IFF_Chunk *chunk);
+        if(error != NULL)
+        {
+            IFF_printReadError(error);
+            IFF_freeIOError(error);
+        }
 
-IFF_QualityLevel TEST_check(const IFF_Chunk *chunk);
+        /* Check the file and print the quality level */
+        qualityLevel = IFF_check(chunk, chunkRegistry);
 
-void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
+        if(qualityLevel == IFF_QUALITY_PERFECT)
+            fprintf(stderr, "No conformance issues were found!\n");
 
-IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+        printf("%d", qualityLevel);
 
-#endif
+        /* Check if the quality is between the specified minimum and maximum level */
+        status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
+
+        /* Free the chunk structure */
+        IFF_free(chunk, chunkRegistry);
+
+        return !status;
+    }
+}

@@ -19,48 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "pp.h"
-#include "iff.h"
+#ifndef __IFF_PP_H
+#define __IFF_PP_H
+#include "chunkregistry.h"
 
-int IFF_prettyPrint(const char *inputFilename, const char *outputFilename)
-{
-    /* Parse the chunk */
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(inputFilename, NULL, &error);
+/**
+ * Displays a textual representation of the given IFF file.
+ *
+ * @param inputFilename Path to the IFF file, or NULL to read from the standard input
+ * @param outputFilename Path to the file in which the textual representation is stored, or NULL to write to the standard output
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return 0 if the file has been successfully printed, else 1
+ */
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_ChunkRegistry *chunkRegistry);
 
-    if(chunk == NULL)
-    {
-        fprintf(stderr, "Cannot open IFF file: %s\n", inputFilename);
-        return 1;
-    }
-    else
-    {
-        int status;
-
-        if(error != NULL)
-        {
-            IFF_printReadError(error);
-            IFF_freeIOError(error);
-        }
-
-        /* Check the file */
-        if(IFF_check(chunk, NULL) < IFF_QUALITY_GARBAGE)
-        {
-            /* Print the file */
-            if(IFF_print(outputFilename, chunk, 0, NULL))
-                status = 0;
-            else
-            {
-                fprintf(stderr, "Cannot open output file: %s\n", outputFilename);
-                status = 1;
-            }
-        }
-        else
-            status = 1;
-
-        /* Free the chunk structure */
-        IFF_free(chunk, NULL);
-
-        return status;
-    }
-}
+#endif

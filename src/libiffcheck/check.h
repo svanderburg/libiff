@@ -19,21 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __TEST_H
-#define __TEST_H
-#include "testregistry.h"
-#include "chunk.h"
+#ifndef __IFF_CHECK_H
+#define __IFF_CHECK_H
+#include "chunkregistry.h"
 
-IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error);
-
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
-
-void TEST_free(IFF_Chunk *chunk);
-
-IFF_QualityLevel TEST_check(const IFF_Chunk *chunk);
-
-void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
+/**
+ * Performs a conformance check of the given IFF file and outputs its quality
+ * level
+ *
+ * @param filename Path to the IFF file to check or NULL to read from the standard input
+ * @param minLevel Specifies the desired minimum quality level
+ * @param maxLevel Specifies the desired maximum quality level
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return 0 if the file was successfully checked and the quality level is between the minimum and maximum, else 1
+ */
+int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 #endif

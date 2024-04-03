@@ -19,21 +19,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __TEST_H
-#define __TEST_H
+#include "test.h"
+#include "checkinterface.h"
 #include "testregistry.h"
-#include "chunk.h"
 
-IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error);
+static void printVersion(const char *command)
+{
+    printf(
+    "%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n"
+    "Copyright (C) 2012-2015 Sander van der Burg\n"
+    , command);
+}
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
-
-void TEST_free(IFF_Chunk *chunk);
-
-IFF_QualityLevel TEST_check(const IFF_Chunk *chunk);
-
-void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
-
-#endif
+int main(int argc, char *argv[])
+{
+    return IFF_checkCmdLineInterface("testcheck", "TEST", argc, argv, &TEST_chunkRegistry, printVersion);
+}

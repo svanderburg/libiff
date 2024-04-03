@@ -19,18 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __IFF_CHECK_H
-#define __IFF_CHECK_H
+#ifndef __IFF_CHECKINTERFACE_H
+#define __IFF_CHECKINTERFACE_H
+#include "chunkregistry.h"
 
-/**
- * Performs a conformance check of the given IFF file and outputs its quality
- * level
- *
- * @param filename Path to the IFF file to check or NULL to read from the standard input
- * @param minLevel Specifies the desired minimum quality level
- * @param maxLevel Specifies the desired maximum quality level
- * @return 0 if the file was successfully checked and the quality level is between the minimum and maximum, else 1
- */
-int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel);
+int IFF_checkCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_ChunkRegistry *chunkRegistry, void (*printVersion) (const char *command));
 
 #endif
