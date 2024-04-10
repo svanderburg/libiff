@@ -26,14 +26,14 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("nestedform.TEST", NULL, &error);
+    IFF_Chunk *chunk = IFF_read("nestedform.TEST", &error);
     int status;
 
     if(error == NULL)
     {
         IFF_Form *form = IFF_createTestForm();
-        status = !IFF_compare(chunk, (IFF_Chunk*)form, NULL);
-        IFF_free((IFF_Chunk*)form, NULL);
+        status = !IFF_compare(chunk, (IFF_Chunk*)form);
+        IFF_free((IFF_Chunk*)form);
     }
     else
     {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    IFF_free(chunk, NULL);
+    IFF_free(chunk);
 
     return status;
 }

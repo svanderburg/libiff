@@ -20,13 +20,13 @@
  */
 
 #include "pp.h"
-#include "iff.h"
+#include "iffcore.h"
 
 int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_ChunkRegistry *chunkRegistry)
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(inputFilename, chunkRegistry, &error);
+    IFF_Chunk *chunk = IFF_readCore(inputFilename, chunkRegistry, &error);
 
     if(chunk == NULL)
     {
@@ -44,10 +44,10 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
         }
 
         /* Check the file */
-        if(IFF_check(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
+        if(IFF_checkCore(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
         {
             /* Print the file */
-            if(IFF_print(outputFilename, chunk, 0, chunkRegistry))
+            if(IFF_printCore(outputFilename, chunk, 0, chunkRegistry))
                 status = 0;
             else
             {
@@ -59,7 +59,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
             status = 1;
 
         /* Free the chunk structure */
-        IFF_free(chunk, chunkRegistry);
+        IFF_freeCore(chunk, chunkRegistry);
 
         return status;
     }

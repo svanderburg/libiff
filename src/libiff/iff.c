@@ -20,170 +20,70 @@
  */
 
 #include "iff.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "util.h"
-#include "form.h"
-#include "cat.h"
-#include "list.h"
+#include "iffcore.h"
 #include "defaultregistry.h"
 
-static const IFF_ChunkRegistry *selectChunkRegistry(const IFF_ChunkRegistry *chunkRegistry)
+IFF_Chunk *IFF_readFd(FILE *file, IFF_IOError **error)
 {
-    if(chunkRegistry == NULL)
-        return &IFF_defaultChunkRegistry;
-    else
-        return chunkRegistry;
+    return IFF_readFdCore(file, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Chunk *IFF_readFd(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Chunk *IFF_readFile(const char *filename, IFF_IOError **error)
 {
-    int byte;
-    IFF_AttributePath *attributePath = IFF_createAttributePath();
-
-    /* Read the chunk */
-    IFF_Chunk *chunk = IFF_readChunk(file, 0, selectChunkRegistry(chunkRegistry), attributePath, error);
-
-    /* We should have reached the EOF now */
-    if((byte = fgetc(file)) != EOF)
-        fprintf(stderr, "WARNING: Trailing IFF contents found: %d!\n", byte);
-
-    /* Remove the attribute path if we no longer need it */
-    if(*error == NULL)
-        IFF_freeAttributePath(attributePath);
-
-    /* Return the parsed main chunk */
-    return chunk;
+    return IFF_readFileCore(filename, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Chunk *IFF_readFile(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Chunk *IFF_read(const char *filename, IFF_IOError **error)
 {
-    FILE *file = fopen(filename, "rb");
-
-    if(file == NULL)
-    {
-        *error = IFF_createFileIOError();
-        return NULL;
-    }
-    else
-    {
-        IFF_Chunk *chunk = IFF_readFd(file, chunkRegistry, error);
-        fclose(file);
-        return chunk;
-    }
+    return IFF_readCore(filename, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Chunk *IFF_read(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    if(filename == NULL)
-        return IFF_readFd(stdin, chunkRegistry, error);
-    else
-        return IFF_readFile(filename, chunkRegistry, error);
+    return IFF_writeFdCore(file, chunk, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    IFF_AttributePath *attributePath = IFF_createAttributePath();
-    IFF_Bool status = IFF_writeChunk(file, chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, error);
-
-    if(*error == NULL)
-        IFF_freeAttributePath(attributePath);
-
-    return status;
+    return IFF_writeFileCore(filename, chunk, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    FILE *file = fopen(filename, "wb");
-
-    if(file == NULL)
-    {
-        *error = IFF_createFileIOError();
-        return FALSE;
-    }
-    else
-    {
-        IFF_Bool status = IFF_writeFd(file, chunk, chunkRegistry, error);
-        fclose(file);
-        return status;
-    }
+    return IFF_writeCore(filename, chunk, &IFF_defaultChunkRegistry, error);
 }
 
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+void IFF_free(IFF_Chunk *chunk)
 {
-    if(filename == NULL)
-        return IFF_writeFd(stdout, chunk, chunkRegistry, error);
-    else
-        return IFF_writeFile(filename, chunk, chunkRegistry, error);
+    IFF_freeCore(chunk, &IFF_defaultChunkRegistry);
 }
 
-void IFF_free(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    IFF_freeChunk(chunk, 0, selectChunkRegistry(chunkRegistry));
+    return IFF_advancedCheckCore(chunk, &IFF_defaultChunkRegistry, printCheckMessage, data);
 }
 
-IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_check(const IFF_Chunk *chunk)
 {
-    IFF_AttributePath *attributePath = IFF_createAttributePath();
-    IFF_QualityLevel qualityLevel;
-
-    if(chunk == NULL)
-    {
-        printCheckMessage(attributePath, NULL, 0, data, "The file cannot be processed");
-        qualityLevel = IFF_QUALITY_GARBAGE;
-    }
-    else if(chunk->chunkId != IFF_ID_FORM && /* The main chunk must be of ID: FORM, CAT or LIST */
-       chunk->chunkId != IFF_ID_CAT &&
-       chunk->chunkId != IFF_ID_LIST)
-    {
-        IFF_ID2 chunkId;
-        IFF_idToString(chunk->chunkId, chunkId);
-        printCheckMessage(attributePath, "chunkId", chunk->chunkId, data, "is invalid: the first chunkId should be: \"FORM\", \"CAT \" or \"LIST\", value is: \"%.4s\"", chunkId);
-        qualityLevel = IFF_QUALITY_INCONSISTENT;
-    }
-    else
-        qualityLevel = IFF_checkChunk(chunk, 0, selectChunkRegistry(chunkRegistry), attributePath, printCheckMessage, NULL);
-
-    IFF_freeAttributePath(attributePath);
-    return qualityLevel;
+    return IFF_checkCore(chunk, &IFF_defaultChunkRegistry);
 }
 
-IFF_QualityLevel IFF_check(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    return IFF_advancedCheck(chunk, chunkRegistry, IFF_printCheckMessageOnStderr, NULL);
+    IFF_printFdCore(file, chunk, indentLevel, &IFF_defaultChunkRegistry);
 }
 
-void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printChunk(file, chunk, indentLevel, 0, selectChunkRegistry(chunkRegistry));
+    return IFF_printFileCore(filename, chunk, indentLevel, &IFF_defaultChunkRegistry);
 }
 
-IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    FILE *file = fopen(filename, "wb");
-
-    if(file == NULL)
-        return FALSE;
-    else
-    {
-        IFF_printFd(file, chunk, indentLevel, chunkRegistry);
-        fclose(file);
-        return TRUE;
-    }
+    return IFF_printCore(filename, chunk, indentLevel, &IFF_defaultChunkRegistry);
 }
 
-IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    if(filename == NULL)
-    {
-        IFF_printFd(stdout, chunk, indentLevel, chunkRegistry);
-        return TRUE;
-    }
-    else
-        return IFF_printFile(filename, chunk, indentLevel, chunkRegistry);
-}
-
-IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
-{
-    return IFF_compareChunk(chunk1, chunk2, 0, selectChunkRegistry(chunkRegistry));
+    return IFF_compareCore(chunk1, chunk2, &IFF_defaultChunkRegistry);
 }

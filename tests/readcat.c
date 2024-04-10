@@ -26,14 +26,14 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("cat.TEST", NULL, &error);
+    IFF_Chunk *chunk = IFF_read("cat.TEST", &error);
     int status;
 
     if(error == NULL)
     {
         IFF_CAT *cat = IFF_createTestCAT();
-        status = !IFF_compare(chunk, (IFF_Chunk*)cat, NULL);
-        IFF_free((IFF_Chunk*)cat, NULL);
+        status = !IFF_compare(chunk, (IFF_Chunk*)cat);
+        IFF_free((IFF_Chunk*)cat);
     }
     else
     {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    IFF_free(chunk, NULL);
+    IFF_free(chunk);
 
     return status;
 }

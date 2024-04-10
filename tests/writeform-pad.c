@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
     IFF_Form *form = IFF_createTestForm();
     IFF_IOError *error = NULL;
-    int status = !IFF_write("hello-pad.TEST", (IFF_Chunk*)form, NULL, &error);
+    int status = !IFF_write("hello-pad.TEST", (IFF_Chunk*)form, &error);
 
     if(error != NULL)
     {
@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
         IFF_freeIOError(error);
     }
 
-    IFF_free((IFF_Chunk*)form, NULL);
+    IFF_free((IFF_Chunk*)form);
     return status;
 }

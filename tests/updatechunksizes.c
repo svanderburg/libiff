@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
     abcdChunk->chunkSize++;
 
     /* The IFF file should be invalid now as the, form chunk size is too small */
-    if((qualityLevel = IFF_check((IFF_Chunk*)cat, NULL)) == IFF_QUALITY_RECOVERED)
+    if((qualityLevel = IFF_check((IFF_Chunk*)cat)) == IFF_QUALITY_RECOVERED)
     {
         /* Update the chunk sizes */
         IFF_updateChunkSizes((IFF_Chunk*)abcdChunk);
 
         /* Now the IFF should be valid */
 
-        if((qualityLevel = IFF_check((IFF_Chunk*)cat, NULL)) != IFF_QUALITY_PERFECT)
+        if((qualityLevel = IFF_check((IFF_Chunk*)cat)) != IFF_QUALITY_PERFECT)
         {
             fprintf(stderr, "The IFF file should be in state: %d, but is in: %d!\n", IFF_QUALITY_RECOVERED, qualityLevel);
             status = 1;
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    IFF_free((IFF_Chunk*)cat, NULL);
+    IFF_free((IFF_Chunk*)cat);
 
     return status;
 }

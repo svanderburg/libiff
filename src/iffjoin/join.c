@@ -39,10 +39,10 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     {
         /* Open each input IFF file */
         IFF_IOError *error = NULL;
-        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], NULL, &error);
+        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], &error);
 
         /* Check whether the IFF file is valid */
-        if(error == NULL || IFF_check(chunk, NULL))
+        if(error == NULL || IFF_check(chunk))
             IFF_addToCATAndUpdateContentsType(cat, chunk); /* Add the input IFF chunk to the concatenation */
         else
         {
@@ -52,13 +52,13 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
                 IFF_freeIOError(error);
             }
 
-            IFF_free((IFF_Chunk*)cat, NULL);
+            IFF_free((IFF_Chunk*)cat);
             return 1;
         }
     }
 
     /* Write the resulting CAT to the output file or standard output */
-    if(!IFF_write(outputFilename, (IFF_Chunk*)cat, NULL, &error))
+    if(!IFF_write(outputFilename, (IFF_Chunk*)cat, &error))
     {
         status = 1;
         IFF_printWriteError(error);
@@ -66,7 +66,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     }
 
     /* Free everything */
-    IFF_free((IFF_Chunk*)cat, NULL);
+    IFF_free((IFF_Chunk*)cat);
 
     /* Return whether the join has succeeded */
     return status;

@@ -20,13 +20,13 @@
  */
 
 #include "check.h"
-#include "iff.h"
+#include "iffcore.h"
 
 int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read(filename, chunkRegistry, &error);
+    IFF_Chunk *chunk = IFF_readCore(filename, chunkRegistry, &error);
 
     if(chunk == NULL)
     {
@@ -45,7 +45,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
         }
 
         /* Check the file and print the quality level */
-        qualityLevel = IFF_check(chunk, chunkRegistry);
+        qualityLevel = IFF_checkCore(chunk, chunkRegistry);
 
         if(qualityLevel == IFF_QUALITY_PERFECT)
             fprintf(stderr, "No conformance issues were found!\n");
@@ -56,7 +56,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
         status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
 
         /* Free the chunk structure */
-        IFF_free(chunk, chunkRegistry);
+        IFF_freeCore(chunk, chunkRegistry);
 
         return !status;
     }

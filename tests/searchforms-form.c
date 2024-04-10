@@ -30,7 +30,7 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("hello.TEST", NULL, &error);
+    IFF_Chunk *chunk = IFF_read("hello.TEST", &error);
     int status;
 
     if(error == NULL)
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         IFF_freeIOError(error);
     }
 
-    IFF_free(chunk, NULL);
+    IFF_free(chunk);
 
     return status;
 }

@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
     IFF_List *list = IFF_createTestList();
     IFF_IOError *error = NULL;
-    int status = !IFF_write("list.TEST", (IFF_Chunk*)list, NULL, &error);
+    int status = !IFF_write("list.TEST", (IFF_Chunk*)list, &error);
 
     if(error != NULL)
     {
@@ -38,6 +38,6 @@ int main(int argc, char *argv[])
         IFF_freeIOError(error);
     }
 
-    IFF_free((IFF_Chunk*)list, NULL);
+    IFF_free((IFF_Chunk*)list);
     return status;
 }
