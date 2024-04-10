@@ -57,12 +57,7 @@ static void printAttributePathNode(const IFF_AttributePathNode *attributePathNod
 
 IFF_AttributePath *IFF_createAttributePath(void)
 {
-    IFF_AttributePath *attributePath = (IFF_AttributePath*)malloc(sizeof(IFF_AttributePath));
-
-    if(attributePath != NULL)
-        memset(attributePath, '\0', sizeof(IFF_AttributePath));
-
-    return attributePath;
+    return (IFF_AttributePath*)calloc(1, sizeof(IFF_AttributePath));
 }
 
 void IFF_freeAttributePath(IFF_AttributePath *attributePath)
@@ -123,7 +118,7 @@ void IFF_unvisitAttribute(IFF_AttributePath *attributePath)
 
 void IFF_printAttributePath(const IFF_AttributePath *attributePath)
 {
-    const IFF_AttributePathNode *node = attributePath->rootNode;
+    IFF_AttributePathNode *node = attributePath->rootNode;
 
     while(node != NULL)
     {

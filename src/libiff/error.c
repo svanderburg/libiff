@@ -133,7 +133,8 @@ void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const
     if(attributeName != NULL)
         fprintf(stderr, ".%s", attributeName);
 
-    fputs(" ", stderr);
+    if(attributePath->rootNode != NULL || attributeName != NULL)
+        fputs(" ", stderr);
 
     va_start(ap, formatString);
     vfprintf(stderr, formatString, ap);

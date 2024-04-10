@@ -24,43 +24,35 @@
 
 int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_ChunkRegistry *chunkRegistry)
 {
+    int status;
+
     /* Parse the chunk */
     IFF_IOError *error = NULL;
     IFF_Chunk *chunk = IFF_readCore(inputFilename, chunkRegistry, &error);
 
-    if(chunk == NULL)
+    if(error != NULL)
     {
-        fprintf(stderr, "Cannot open IFF file: %s\n", inputFilename);
-        return 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
+    }
+
+    /* Check the file */
+    if(IFF_checkCore(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
+    {
+        /* Print the file */
+        if(IFF_printCore(outputFilename, chunk, 0, chunkRegistry))
+            status = 0;
+        else
+        {
+            fprintf(stderr, "Cannot open output file: %s\n", outputFilename);
+            status = 1;
+        }
     }
     else
-    {
-        int status;
+        status = 1;
 
-        if(error != NULL)
-        {
-            IFF_printReadError(error);
-            IFF_freeIOError(error);
-        }
+    /* Free the chunk structure */
+    IFF_freeCore(chunk, chunkRegistry);
 
-        /* Check the file */
-        if(IFF_checkCore(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
-        {
-            /* Print the file */
-            if(IFF_printCore(outputFilename, chunk, 0, chunkRegistry))
-                status = 0;
-            else
-            {
-                fprintf(stderr, "Cannot open output file: %s\n", outputFilename);
-                status = 1;
-            }
-        }
-        else
-            status = 1;
-
-        /* Free the chunk structure */
-        IFF_freeCore(chunk, chunkRegistry);
-
-        return status;
-    }
+    return status;
 }

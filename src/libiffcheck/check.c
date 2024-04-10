@@ -28,36 +28,28 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
     IFF_IOError *error = NULL;
     IFF_Chunk *chunk = IFF_readCore(filename, chunkRegistry, &error);
 
-    if(chunk == NULL)
+    IFF_QualityLevel qualityLevel;
+    IFF_Bool status;
+
+    if(error != NULL)
     {
-        fprintf(stderr, "Cannot open IFF file: %s\n", filename);
-        return 1;
+        IFF_printReadError(error);
+        IFF_freeIOError(error);
     }
-    else
-    {
-        IFF_QualityLevel qualityLevel;
-        IFF_Bool status;
 
-        if(error != NULL)
-        {
-            IFF_printReadError(error);
-            IFF_freeIOError(error);
-        }
+    /* Check the file and print the quality level */
+    qualityLevel = IFF_checkCore(chunk, chunkRegistry);
 
-        /* Check the file and print the quality level */
-        qualityLevel = IFF_checkCore(chunk, chunkRegistry);
+    if(qualityLevel == IFF_QUALITY_PERFECT)
+        fprintf(stderr, "No conformance issues were found!\n");
 
-        if(qualityLevel == IFF_QUALITY_PERFECT)
-            fprintf(stderr, "No conformance issues were found!\n");
+    printf("%d", qualityLevel);
 
-        printf("%d", qualityLevel);
+    /* Check if the quality is between the specified minimum and maximum level */
+    status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
 
-        /* Check if the quality is between the specified minimum and maximum level */
-        status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
+    /* Free the chunk structure */
+    IFF_freeCore(chunk, chunkRegistry);
 
-        /* Free the chunk structure */
-        IFF_freeCore(chunk, chunkRegistry);
-
-        return !status;
-    }
+    return !status;
 }
