@@ -40,15 +40,10 @@ static int compareFormChunkTypes(const void *a, const void *b)
 
 const static IFF_FormChunkTypes *getFormChunkTypes(const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(chunkRegistry == NULL)
-        return NULL;
-    else
-    {
-        IFF_FormChunkTypes key;
-        key.formType = formType;
+    IFF_FormChunkTypes key;
+    key.formType = formType;
 
-        return (IFF_FormChunkTypes*)bsearch(&key, chunkRegistry->formChunkTypes, chunkRegistry->formChunkTypesLength, sizeof(IFF_FormChunkTypes), &compareFormChunkTypes);
-    }
+    return (IFF_FormChunkTypes*)bsearch(&key, chunkRegistry->formChunkTypes, chunkRegistry->formChunkTypesLength, sizeof(IFF_FormChunkTypes), &compareFormChunkTypes);
 }
 
 static int compareChunkTypes(const void *a, const void *b)
@@ -85,22 +80,17 @@ static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNod
 
 IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId)
 {
-    if(chunkRegistry == NULL)
-        return NULL;
+    /* Search for the requested FORM chunk types */
+    const IFF_FormChunkTypes *formChunkTypes = getFormChunkTypes(formType, chunkRegistry);
+    IFF_ChunkType *result;
+
+    if(formChunkTypes == NULL)
+        result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
     else
-    {
-        /* Search for the requested FORM chunk types */
-        const IFF_FormChunkTypes *formChunkTypes = getFormChunkTypes(formType, chunkRegistry);
-        IFF_ChunkType *result;
+        result = getChunkType(chunkId, formChunkTypes->chunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
 
-        if(formChunkTypes == NULL)
-            result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
-        else
-            result = getChunkType(chunkId, formChunkTypes->chunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
-
-        if(result == NULL)
-            return chunkRegistry->defaultChunkType;
-        else
-            return result;
-    }
+    if(result == NULL)
+        return chunkRegistry->defaultChunkType;
+    else
+        return result;
 }

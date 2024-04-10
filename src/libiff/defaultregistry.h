@@ -26,7 +26,7 @@
 #define IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(numOfFormChunkTypes, formChunkTypes) \
     { numOfFormChunkTypes, formChunkTypes, &IFF_globalChunkTypesNode, &IFF_defaultChunkType }
 
-#define IFF_NUM_OF_CHUNK_TYPES 4
+#define IFF_NUM_OF_CHUNK_TYPES 5
 
 extern IFF_ChunkTypesNode IFF_globalChunkTypesNode;
 
