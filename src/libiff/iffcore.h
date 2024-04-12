@@ -43,7 +43,7 @@ IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IF
  * Reads an IFF file from a file with the given filename. The resulting chunk must be freed using IFF_free().
  *
  * @param filename Filename of the file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determine s how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
 IFF_Chunk *IFF_readFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);

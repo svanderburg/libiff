@@ -64,7 +64,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
     IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
-IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_readRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
 
@@ -80,7 +80,7 @@ IFF_Bool IFF_readRawChunk(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry 
     }
 }
 
-IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
 
@@ -96,18 +96,18 @@ IFF_Bool IFF_writeRawChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRe
     }
 }
 
-IFF_QualityLevel IFF_checkRawChunk(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_QUALITY_PERFECT;
 }
 
-void IFF_freeRawChunk(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
     free(rawChunk->chunkData);
 }
 
-void IFF_printTextChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
     IFF_Long i;
@@ -132,7 +132,7 @@ static void printUByteHex(FILE *file, IFF_UByte byte)
     fprintf(file, "%x", byte);
 }
 
-void IFF_printRawChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
     IFF_Long i;
@@ -161,7 +161,7 @@ void IFF_printRawChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int in
     IFF_printIndent(file, indentLevel, "},\n");
 }
 
-IFF_Bool IFF_compareRawChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_RawChunk *rawChunk1 = (const IFF_RawChunk*)chunk1;
     const IFF_RawChunk *rawChunk2 = (const IFF_RawChunk*)chunk2;

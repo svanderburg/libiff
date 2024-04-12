@@ -54,6 +54,10 @@ struct IFF_AttributePath
     IFF_AttributePathNode *currentNode;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 IFF_AttributePath *IFF_createAttributePath(void);
 
 void IFF_freeAttributePath(IFF_AttributePath *attributePath);
@@ -65,5 +69,9 @@ void IFF_visitAttributeByName(IFF_AttributePath *attributePath, char *name);
 void IFF_unvisitAttribute(IFF_AttributePath *attributePath);
 
 void IFF_printAttributePath(const IFF_AttributePath *attributePath);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

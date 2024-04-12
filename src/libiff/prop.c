@@ -50,14 +50,14 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk)
     IFF_addToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Bool IFF_readProp(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_readPropContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_readGroup(file, chunk, PROP_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_readGroupContents(file, chunk, PROP_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_writeProp(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writePropContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeForm(file, chunk, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_writeFormContents(file, chunk, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -76,24 +76,24 @@ static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *s
         return IFF_QUALITY_PERFECT;
 }
 
-IFF_QualityLevel IFF_checkProp(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_checkGroup((IFF_Group*)chunk, "formType", &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, "formType", &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
-void IFF_freeProp(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearPropContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_freeForm(chunk, chunkRegistry);
+    IFF_clearFormContents(chunk, chunkRegistry);
 }
 
-void IFF_printProp(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printPropContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printForm(file, chunk, indentLevel, chunkRegistry);
+    IFF_printFormContents(file, chunk, indentLevel, chunkRegistry);
 }
 
-IFF_Bool IFF_compareProp(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_comparePropContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareForm(chunk1, chunk2, chunkRegistry);
+    return IFF_compareFormContents(chunk1, chunk2, chunkRegistry);
 }
 
 void IFF_updatePropChunkSizes(IFF_Prop *prop)

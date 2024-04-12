@@ -116,7 +116,7 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
     return TRUE;
 }
 
-IFF_Bool IFF_readList(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_readListContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_List *list = (IFF_List*)chunk;
     IFF_FieldStatus status;
@@ -157,7 +157,7 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
     return TRUE;
 }
 
-IFF_Bool IFF_writeList(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_List *list = (const IFF_List*)chunk;
     IFF_FieldStatus status;
@@ -211,7 +211,7 @@ static IFF_QualityLevel checkListPropChunks(const IFF_List *list, const IFF_Chun
     return qualityLevel;
 }
 
-IFF_QualityLevel IFF_checkList(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_List *list = (const IFF_List*)chunk;
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
@@ -236,11 +236,11 @@ static void freeListPropChunks(IFF_List *list, const IFF_ChunkRegistry *chunkReg
         IFF_freeChunk((IFF_Chunk*)list->props[i], list->contentsType, chunkRegistry);
 }
 
-void IFF_freeList(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_List *list = (IFF_List*)chunk;
 
-    IFF_freeCAT(chunk, chunkRegistry);
+    IFF_clearCATContents(chunk, chunkRegistry);
     freeListPropChunks(list, chunkRegistry);
     free(list->props);
 }
@@ -263,7 +263,7 @@ static void printListPropChunks(FILE *file, const IFF_List *list, const unsigned
     IFF_printIndent(file, indentLevel, "},\n");
 }
 
-void IFF_printList(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     const IFF_List *list = (const IFF_List*)chunk;
 
@@ -280,7 +280,7 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
 
         for(i = 0; i < list1->propsLength; i++)
         {
-            if(!IFF_compareProp((IFF_Chunk*)list1->props[i], (IFF_Chunk*)list2->props[i], chunkRegistry))
+            if(!IFF_comparePropContents((IFF_Chunk*)list1->props[i], (IFF_Chunk*)list2->props[i], chunkRegistry))
                return FALSE;
         }
 
@@ -290,12 +290,12 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
         return FALSE;
 }
 
-IFF_Bool IFF_compareList(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
     if(!compareListPropChunks((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry))
         return FALSE;
 
-    if(!IFF_compareCAT(chunk1, chunk2, chunkRegistry))
+    if(!IFF_compareCATContents(chunk1, chunk2, chunkRegistry))
         return FALSE;
 
     return TRUE;

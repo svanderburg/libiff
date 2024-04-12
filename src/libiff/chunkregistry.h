@@ -42,25 +42,25 @@ struct IFF_ChunkType
     IFF_ID chunkId;
 
     /** Function responsible for creating the given chunk */
-    IFF_Chunk *(*createExtensionChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
+    IFF_Chunk *(*createChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
 
     /** Function resposible for reading the given chunk */
-    IFF_Bool (*readExtensionChunkFields) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    IFF_Bool (*readChunkContents) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function resposible for writing the given chunk */
-    IFF_Bool (*writeExtensionChunkFields) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function resposible for checking the given chunk */
-    IFF_QualityLevel (*checkExtensionChunk) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+    IFF_QualityLevel (*checkChunkContents) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
     /** Function resposible for freeing the given chunk */
-    void (*freeExtensionChunk) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+    void (*clearChunkContents) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for printing the given chunk */
-    void (*printExtensionChunk) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+    void (*printChunkContents) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for comparing the given chunk */
-    IFF_Bool (*compareExtensionChunk) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+    IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 };
 
 struct IFF_ChunkTypesNode

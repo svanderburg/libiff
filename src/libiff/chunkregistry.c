@@ -27,8 +27,8 @@
 
 static int compareFormChunkTypes(const void *a, const void *b)
 {
-    const IFF_FormChunkTypes *l = (IFF_FormChunkTypes*)a;
-    const IFF_FormChunkTypes *r = (IFF_FormChunkTypes*)b;
+    const IFF_FormChunkTypes *l = (const IFF_FormChunkTypes*)a;
+    const IFF_FormChunkTypes *r = (const IFF_FormChunkTypes*)b;
 
     if(l->formType < r->formType)
         return -1;
@@ -48,8 +48,8 @@ const static IFF_FormChunkTypes *getFormChunkTypes(const IFF_ID formType, const 
 
 static int compareChunkTypes(const void *a, const void *b)
 {
-    const IFF_ChunkType *l = (IFF_ChunkType*)a;
-    const IFF_ChunkType *r = (IFF_ChunkType*)b;
+    const IFF_ChunkType *l = (const IFF_ChunkType*)a;
+    const IFF_ChunkType *r = (const IFF_ChunkType*)b;
 
     if(l->chunkId < r->chunkId)
         return -1;

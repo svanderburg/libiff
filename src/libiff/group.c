@@ -104,7 +104,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
     return TRUE;
 }
 
-IFF_Bool IFF_readGroup(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_Group *group = (IFF_Group*)chunk;
     IFF_FieldStatus status;
@@ -144,7 +144,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroup(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_Group *group = (const IFF_Group*)chunk;
     IFF_FieldStatus status;
@@ -207,7 +207,7 @@ IFF_QualityLevel IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkChe
     return qualityLevel;
 }
 
-IFF_QualityLevel IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     IFF_Long actualChunkSize;
@@ -222,7 +222,7 @@ IFF_QualityLevel IFF_checkGroup(const IFF_Group *group, char *groupTypeName, IFF
     return qualityLevel;
 }
 
-void IFF_freeGroup(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearGroupContents(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
 {
     unsigned int i;
 
@@ -256,13 +256,13 @@ void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned 
     IFF_printIndent(file, indentLevel, "},\n");
 }
 
-void IFF_printGroup(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_printGroupType(file, groupTypeName, group->groupType, indentLevel);
     IFF_printGroupSubChunks(file, group, indentLevel, chunkRegistry);
 }
 
-IFF_Bool IFF_compareGroup(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
 {
     if(group1->groupType == group2->groupType && group1->chunksLength == group2->chunksLength)
     {
