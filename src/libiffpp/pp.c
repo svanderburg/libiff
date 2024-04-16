@@ -32,7 +32,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
 
     if(error != NULL)
     {
-        IFF_printReadError(error);
+        IFF_printReadError(stderr, error);
         IFF_freeIOError(error);
     }
 

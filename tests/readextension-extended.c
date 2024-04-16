@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        IFF_printWriteError(error);
+        IFF_printWriteError(stderr, error);
         IFF_freeIOError(error);
         status = 1;
     }

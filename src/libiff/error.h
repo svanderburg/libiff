@@ -89,9 +89,9 @@ IFF_IOError *IFF_createFileIOError(void);
 
 void IFF_freeIOError(IFF_IOError *error);
 
-void IFF_printReadError(const IFF_IOError *error);
+void IFF_printReadError(FILE *file, const IFF_IOError *error);
 
-void IFF_printWriteError(const IFF_IOError *error);
+void IFF_printWriteError(FILE *file, const IFF_IOError *error);
 
 void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 

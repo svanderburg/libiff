@@ -48,7 +48,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
         {
             if(error != NULL)
             {
-                IFF_printReadError(error);
+                IFF_printReadError(stderr, error);
                 IFF_freeIOError(error);
             }
 
@@ -61,7 +61,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     if(!IFF_write(outputFilename, (IFF_Chunk*)cat, &error))
     {
         status = 1;
-        IFF_printWriteError(error);
+        IFF_printWriteError(stderr, error);
         IFF_freeIOError(error);
     }
 

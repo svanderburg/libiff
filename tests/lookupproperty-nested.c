@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     else
     {
         status = 1;
-        IFF_printReadError(error);
+        IFF_printReadError(stderr, error);
         IFF_freeIOError(error);
     }
 

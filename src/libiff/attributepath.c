@@ -1,6 +1,5 @@
 #include "attributepath.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 static IFF_AttributePathNode *createAttributePathNodeByIndex(unsigned int index)
@@ -42,15 +41,15 @@ static void freeAttributePathNode(IFF_AttributePathNode *attributePathNode)
     free(attributePathNode);
 }
 
-static void printAttributePathNode(const IFF_AttributePathNode *attributePathNode)
+static void printAttributePathNode(FILE *file, const IFF_AttributePathNode *attributePathNode)
 {
     switch(attributePathNode->type)
     {
         case IFF_ATTRIBUTE_INDEX:
-            fprintf(stderr, "[%d]", attributePathNode->attribute.index);
+            fprintf(file, "[%d]", attributePathNode->attribute.index);
             break;
         case IFF_ATTRIBUTE_NAME:
-            fprintf(stderr, ".%s", attributePathNode->attribute.name);
+            fprintf(file, ".%s", attributePathNode->attribute.name);
             break;
     }
 }
@@ -116,13 +115,13 @@ void IFF_unvisitAttribute(IFF_AttributePath *attributePath)
     freeAttributePathNode(currentNode);
 }
 
-void IFF_printAttributePath(const IFF_AttributePath *attributePath)
+void IFF_printAttributePath(FILE *file, const IFF_AttributePath *attributePath)
 {
     IFF_AttributePathNode *node = attributePath->rootNode;
 
     while(node != NULL)
     {
-        printAttributePathNode(node);
+        printAttributePathNode(file, node);
         node = node->next;
     }
 }

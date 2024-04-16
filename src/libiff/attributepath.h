@@ -21,6 +21,7 @@
 
 #ifndef __IFF_ATTRIBUTE_PATH_H
 #define __IFF_ATTRIBUTE_PATH_H
+#include <stdio.h>
 
 typedef enum
 {
@@ -68,7 +69,7 @@ void IFF_visitAttributeByName(IFF_AttributePath *attributePath, char *name);
 
 void IFF_unvisitAttribute(IFF_AttributePath *attributePath);
 
-void IFF_printAttributePath(const IFF_AttributePath *attributePath);
+void IFF_printAttributePath(FILE *file, const IFF_AttributePath *attributePath);
 
 #ifdef __cplusplus
 }

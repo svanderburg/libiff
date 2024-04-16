@@ -68,67 +68,67 @@ void IFF_freeIOError(IFF_IOError *error)
     free(error);
 }
 
-static void printDataIOError(const IFF_DataIOError *error)
+static void printDataIOError(FILE *file, const IFF_DataIOError *error)
 {
-    fprintf(stderr, " %u bytes (%s)", error->dataSize, error->description);
+    fprintf(file, " %u bytes (%s)", error->dataSize, error->description);
 
     if(error->attributeName == NULL)
     {
-        fprintf(stderr, " while processing a chunk at path: ");
-        IFF_printAttributePath(error->attributePath);
+        fprintf(file, " while processing a chunk at path: ");
+        IFF_printAttributePath(file, error->attributePath);
     }
     else
     {
-        fprintf(stderr, " for field: ");
-        IFF_printAttributePath(error->attributePath);
-        fprintf(stderr, ".%s", error->attributeName);
+        fprintf(file, " for field: ");
+        IFF_printAttributePath(file, error->attributePath);
+        fprintf(file, ".%s", error->attributeName);
     }
 
     if(error->chunkId != 0)
     {
         IFF_ID2 chunkId;
         IFF_idToString(error->chunkId, chunkId);
-        fprintf(stderr, " inside a chunk with ID: \"%.4s\"", chunkId);
+        fprintf(file, " inside a chunk with ID: \"%.4s\"", chunkId);
     }
 
-    fprintf(stderr, " at position: %ld\n", error->position);
+    fprintf(file, " at position: %ld\n", error->position);
 }
 
-static void printFileIOError(const IFF_FileIOError *error)
+static void printFileIOError(FILE *file, const IFF_FileIOError *error)
 {
-    fprintf(stderr, " file, reason: %s\n", error->reason);
+    fprintf(file, " file, reason: %s\n", error->reason);
 }
 
-static void printIOError(const IFF_IOError *error)
+static void printIOError(FILE *file, const IFF_IOError *error)
 {
     switch(error->type)
     {
         case IFF_IO_ERROR_DATA:
-            printDataIOError((const IFF_DataIOError*)error);
+            printDataIOError(file, (const IFF_DataIOError*)error);
             break;
         case IFF_IO_ERROR_FILE:
-            printFileIOError((const IFF_FileIOError*)error);
+            printFileIOError(file, (const IFF_FileIOError*)error);
             break;
     }
 }
 
-void IFF_printReadError(const IFF_IOError *error)
+void IFF_printReadError(FILE *file, const IFF_IOError *error)
 {
-    fprintf(stderr, "Cannot read");
-    printIOError(error);
+    fprintf(file, "Cannot read");
+    printIOError(file, error);
 }
 
-void IFF_printWriteError(const IFF_IOError *error)
+void IFF_printWriteError(FILE *file, const IFF_IOError *error)
 {
-    fprintf(stderr, "Cannot write");
-    printIOError(error);
+    fprintf(file, "Cannot write");
+    printIOError(file, error);
 }
 
 void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...)
 {
     va_list ap;
 
-    IFF_printAttributePath(attributePath);
+    IFF_printAttributePath(stderr, attributePath);
 
     if(attributeName != NULL)
         fprintf(stderr, ".%s", attributeName);

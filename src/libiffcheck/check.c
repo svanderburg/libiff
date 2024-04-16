@@ -33,7 +33,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
 
     if(error != NULL)
     {
-        IFF_printReadError(error);
+        IFF_printReadError(stderr, error);
         IFF_freeIOError(error);
     }
 
