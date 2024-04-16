@@ -26,22 +26,19 @@
 #include "cat.h"
 #include "list.h"
 #include "prop.h"
-#include "rawchunk.h"
 
 static IFF_ChunkType IFF_globalChunkTypes[] = {
-    {IFF_ID_CAT, &IFF_createUnparsedCAT, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearCATContents, &IFF_printCATContents, &IFF_compareCATContents},
-    {IFF_ID_FORM, &IFF_createUnparsedForm, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearFormContents, &IFF_printFormContents, &IFF_compareFormContents},
-    {IFF_ID_LIST, &IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents},
-    {IFF_ID_PROP, &IFF_createUnparsedProp, &IFF_readPropContents, &IFF_writePropContents, &IFF_checkPropContents, &IFF_clearPropContents, &IFF_printPropContents, &IFF_comparePropContents},
-    {IFF_ID_TEXT, &IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents},
+    {IFF_ID_CAT, &IFF_catInterface},
+    {IFF_ID_FORM, &IFF_formInterface},
+    {IFF_ID_LIST, &IFF_listInterface},
+    {IFF_ID_PROP, &IFF_propInterface},
+    {IFF_ID_TEXT, &IFF_textInterface},
 };
 
 IFF_ChunkTypesNode IFF_globalChunkTypesNode = {
     IFF_NUM_OF_CHUNK_TYPES, IFF_globalChunkTypes, NULL
 };
 
-IFF_ChunkType IFF_defaultChunkType = {0, &IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents};
-
 const IFF_ChunkRegistry IFF_defaultChunkRegistry = {
-    0, NULL, &IFF_globalChunkTypesNode, &IFF_defaultChunkType
+    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface
 };

@@ -30,6 +30,8 @@
 #define TEST_ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
 #define TEST_HELO_DEFAULT_SIZE (2 * sizeof(IFF_UByte) + sizeof(IFF_UWord))
 
+extern IFF_ChunkInterface TEST_helloInterface;
+
 typedef struct
 {
     IFF_Group *parent;

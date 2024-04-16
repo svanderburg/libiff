@@ -32,6 +32,8 @@ typedef struct IFF_CAT IFF_CAT;
 #include "chunk.h"
 #include "attributepath.h"
 
+extern IFF_ChunkInterface IFF_catInterface;
+
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks.
  */

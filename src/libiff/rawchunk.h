@@ -32,6 +32,9 @@ typedef struct IFF_RawChunk IFF_RawChunk;
 #include "attributepath.h"
 #include "error.h"
 
+extern IFF_ChunkInterface IFF_textInterface;
+extern IFF_ChunkInterface IFF_rawChunkInterface;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

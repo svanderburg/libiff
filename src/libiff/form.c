@@ -60,6 +60,8 @@
 #define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
 #define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
 
+IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedForm, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearFormContents, &IFF_printFormContents, &IFF_compareFormContents};
+
 IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 {
     return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, chunkSize, formType);

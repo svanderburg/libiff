@@ -32,6 +32,8 @@ typedef struct IFF_Form IFF_Prop;
 #include "form.h"
 #include "error.h"
 
+extern IFF_ChunkInterface IFF_propInterface;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

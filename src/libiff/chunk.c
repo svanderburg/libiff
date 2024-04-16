@@ -44,15 +44,15 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_
 
 static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunkId);
-    IFF_Chunk *chunk = chunkType->createChunk(chunkId, chunkSize);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunkId);
+    IFF_Chunk *chunk = chunkInterface->createChunk(chunkId, chunkSize);
 
     if(chunk != NULL)
     {
         IFF_Long bytesProcessed = 0;
 
         /* Read remaining bytes (procedure depends on chunk id type) */
-        if(!chunkType->readChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
+        if(!chunkInterface->readChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
             || !IFF_skipUnknownBytes(file, chunk->chunkId, chunkSize, bytesProcessed, attributePath, error)
             || !IFF_readPaddingByte(file, chunkSize, chunk->chunkId, attributePath, error))
             return chunk;
@@ -75,10 +75,10 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegis
 
 static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
     IFF_Long bytesProcessed = 0;
 
-    return chunkType->writeChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
+    return chunkInterface->writeChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
         && IFF_writeZeroFillerBytes(file, chunk->chunkId, chunk->chunkSize, bytesProcessed, attributePath, error)
         && IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId, attributePath, error);
 }
@@ -93,10 +93,10 @@ IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formTyp
 IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
-    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
 
     qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0));
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, chunkType->checkChunkContents(chunk, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_adjustQualityLevel(qualityLevel, chunkInterface->checkChunkContents(chunk, chunkRegistry, attributePath, printCheckMessage, data));
 
     return qualityLevel;
 }
@@ -105,20 +105,20 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegis
 {
     if(chunk != NULL)
     {
-        IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
-        chunkType->clearChunkContents(chunk, chunkRegistry);
+        IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
+        chunkInterface->clearChunkContents(chunk, chunkRegistry);
         free(chunk);
     }
 }
 
 void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk->chunkId);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
 
     IFF_printIndent(file, indentLevel, "{\n");
     IFF_printIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
     IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
-    chunkType->printChunkContents(file, chunk, indentLevel + 1, chunkRegistry);
+    chunkInterface->printChunkContents(file, chunk, indentLevel + 1, chunkRegistry);
     IFF_printIndent(file, indentLevel, "}");
 }
 
@@ -126,8 +126,8 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
 {
     if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
     {
-        IFF_ChunkType *chunkType = IFF_findChunkType(chunkRegistry, formType, chunk1->chunkId);
-        return chunkType->compareChunkContents(chunk1, chunk2, chunkRegistry);
+        IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk1->chunkId);
+        return chunkInterface->compareChunkContents(chunk1, chunk2, chunkRegistry);
     }
     else
         return FALSE;

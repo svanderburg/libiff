@@ -30,6 +30,8 @@
 
 #define PROP_GROUPTYPENAME "formType"
 
+IFF_ChunkInterface IFF_propInterface = {&IFF_createUnparsedProp, &IFF_readPropContents, &IFF_writePropContents, &IFF_checkPropContents, &IFF_clearPropContents, &IFF_printPropContents, &IFF_comparePropContents};
+
 IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType)
 {
     return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, chunkSize, formType);

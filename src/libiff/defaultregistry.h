@@ -22,9 +22,10 @@
 #ifndef __IFF_DEFAULTREGISTRY_H
 #define __IFF_DEFAULTREGISTRY_H
 #include "chunkregistry.h"
+#include "rawchunk.h"
 
 #define IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(numOfFormChunkTypes, formChunkTypes) \
-    { numOfFormChunkTypes, formChunkTypes, &IFF_globalChunkTypesNode, &IFF_defaultChunkType }
+    { numOfFormChunkTypes, formChunkTypes, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface }
 
 #define IFF_NUM_OF_CHUNK_TYPES 5
 

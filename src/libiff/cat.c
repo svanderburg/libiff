@@ -27,6 +27,8 @@
 
 #define CAT_GROUPTYPENAME "contentsType"
 
+IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedCAT, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearCATContents, &IFF_printCATContents, &IFF_compareCATContents};
+
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
     return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, chunkSize, contentsType);

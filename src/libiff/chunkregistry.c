@@ -78,7 +78,7 @@ static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNod
     }
 }
 
-IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId)
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId)
 {
     /* Search for the requested FORM chunk types */
     const IFF_FormChunkTypes *formChunkTypes = getFormChunkTypes(formType, chunkRegistry);
@@ -90,7 +90,7 @@ IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const I
         result = getChunkType(chunkId, formChunkTypes->chunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
 
     if(result == NULL)
-        return chunkRegistry->defaultChunkType;
+        return chunkRegistry->defaultChunkInterface;
     else
-        return result;
+        return result->chunkInterface;
 }

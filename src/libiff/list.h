@@ -33,6 +33,8 @@ typedef struct IFF_List IFF_List;
 #include "attributepath.h"
 #include "error.h"
 
+extern IFF_ChunkInterface IFF_listInterface;
+
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks and PROP chunks which share common data chunks with the nested group chunks.
  */

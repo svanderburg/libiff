@@ -25,8 +25,8 @@
 #include "bye.h"
 
 static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_createByeChunk, &TEST_readByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents},
-    {TEST_ID_HELO, &TEST_createHelloChunk, &TEST_readHelloContents, &TEST_writeHelloContents, &TEST_checkHelloContents, &TEST_clearHelloContents, &TEST_printHelloContents, &TEST_compareHelloContents}
+    {TEST_ID_BYE, &TEST_byeInterface},
+    {TEST_ID_HELO, &TEST_helloInterface}
 };
 
 static IFF_ChunkTypesNode applicationChunkTypesNode = {

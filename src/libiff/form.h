@@ -32,6 +32,8 @@ typedef struct IFF_Form IFF_Form;
 #include "attributepath.h"
 #include "error.h"
 
+extern IFF_ChunkInterface IFF_formInterface;
+
 /**
  * @brief A special group chunk, which contains an arbitrary number of group chunks and data chunks.
  */

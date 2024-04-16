@@ -26,6 +26,8 @@
 #include "util.h"
 #include "cat.h"
 
+IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents};
+
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
     IFF_List *list = (IFF_List*)IFF_createChunk(IFF_ID_LIST, chunkSize, sizeof(IFF_List));

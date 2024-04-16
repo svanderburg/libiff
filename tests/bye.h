@@ -30,6 +30,8 @@
 #define TEST_ID_BYE IFF_MAKEID('B', 'Y', 'E', ' ')
 #define TEST_BYE_DEFAULT_SIZE (2 * sizeof(IFF_Long))
 
+extern IFF_ChunkInterface TEST_byeInterface;
+
 typedef struct
 {
     IFF_Group *parent;

@@ -22,6 +22,7 @@
 #ifndef __IFF_CHUNKREGISTRY_H
 #define __IFF_CHUNKREGISTRY_H
 
+typedef struct IFF_ChunkInterface IFF_ChunkInterface;
 typedef struct IFF_ChunkType IFF_ChunkType;
 typedef struct IFF_ChunkTypesNode IFF_ChunkTypesNode;
 typedef struct IFF_FormChunkTypes IFF_FormChunkTypes;
@@ -34,26 +35,23 @@ typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 #include "error.h"
 
 /**
- * @brief Defines how a particular chunk should be managed
+ * @brief An interface of operations to manage a particular chunk
  */
-struct IFF_ChunkType
+struct IFF_ChunkInterface
 {
-    /** A 4 character chunk id */
-    IFF_ID chunkId;
-
     /** Function responsible for creating the given chunk */
     IFF_Chunk *(*createChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
 
-    /** Function resposible for reading the given chunk */
+    /** Function responsible for reading the given chunk */
     IFF_Bool (*readChunkContents) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-    /** Function resposible for writing the given chunk */
+    /** Function responsible for writing the given chunk */
     IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-    /** Function resposible for checking the given chunk */
+    /** Function responsible for checking the given chunk */
     IFF_QualityLevel (*checkChunkContents) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-    /** Function resposible for freeing the given chunk */
+    /** Function responsible for freeing the given chunk */
     void (*clearChunkContents) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Function responsible for printing the given chunk */
@@ -61,6 +59,18 @@ struct IFF_ChunkType
 
     /** Function responsible for comparing the given chunk */
     IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+};
+
+/**
+ * @brief Defines how a particular chunk with a specific chunk id should be managed
+ */
+struct IFF_ChunkType
+{
+    /** A 4 character chunk id */
+    IFF_ID chunkId;
+
+    /** Interface definition that specifies how the chunk should be managed */
+    IFF_ChunkInterface *chunkInterface;
 };
 
 struct IFF_ChunkTypesNode
@@ -101,8 +111,8 @@ struct IFF_ChunkRegistry
     /** Link to the first node that specifies how chunks with global identifier should be handled */
     IFF_ChunkTypesNode *globalChunkTypesNode;
 
-    /** Type definition of a chunk that is the default, when no FORM-specific or global identifier matches */
-    IFF_ChunkType *defaultChunkType;
+    /** Interface of the default chunk, that is used when no FORM-specific or global identifier matches */
+    IFF_ChunkInterface *defaultChunkInterface;
 };
 
 #ifdef __cplusplus
@@ -110,14 +120,14 @@ extern "C" {
 #endif
 
 /**
- * Searches for a chunk type that can deal with a chunk in a given form with a form type and a given chunk id
+ * Searches for a chunk interface that can deal with a chunk in a given form with a form type and a given chunk id
  *
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param formType A 4 character form type id. If the formType is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
- * @return The chunk type that specifies how a chunk type within a form should be handled
+ * @return The chunk interface that specifies how a chunk type within a form should be handled
  */
-IFF_ChunkType *IFF_findChunkType(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId);
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }
