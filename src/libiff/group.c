@@ -104,7 +104,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
     return TRUE;
 }
 
-IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_Group *group = (IFF_Group*)chunk;
     IFF_FieldStatus status;
@@ -144,7 +144,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_Group *group = (const IFF_Group*)chunk;
     IFF_FieldStatus status;

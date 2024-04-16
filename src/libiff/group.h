@@ -130,7 +130,7 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes all sub chunks inside a group to a file.
@@ -153,7 +153,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Computes the actual chunk size of the group.
