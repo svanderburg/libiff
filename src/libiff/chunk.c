@@ -111,14 +111,20 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegis
     }
 }
 
+static void printChunkIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID chunkId)
+{
+    IFF_printFirstField(file, indentLevel, attributeName, &chunkId, IFF_printIdValue);
+}
+
 void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
 
     IFF_printIndent(file, indentLevel, "{\n");
-    IFF_printIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
+    printChunkIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
     IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
     chunkInterface->printChunkContents(file, chunk, indentLevel + 1, chunkRegistry);
+    fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }
 

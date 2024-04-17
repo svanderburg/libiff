@@ -237,23 +237,34 @@ void IFF_printGroupType(FILE *file, const char *groupTypeName, const IFF_ID grou
     IFF_printIdField(file, indentLevel, groupTypeName, groupType);
 }
 
-void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printChunksArray(FILE *file, const void *value, const unsigned int indentLevel)
 {
+    const IFF_PrintChunksArrayParameter *param = (const IFF_PrintChunksArrayParameter*)value;
     unsigned int i;
 
-    IFF_printIndent(file, indentLevel, ".chunks = {\n");
+    fputs("{\n", file);
 
-    for(i = 0; i < group->chunksLength; i++)
+    for(i = 0; i < param->chunksLength; i++)
     {
         if(i > 0)
-            fprintf(file, ",\n");
+            fputs(",\n", file);
 
-        IFF_printChunk(file, (IFF_Chunk*)group->chunks[i], indentLevel + 1, group->groupType, chunkRegistry);
+        IFF_printChunk(file, (const IFF_Chunk*)param->chunks[i], indentLevel + 1, param->groupType, param->chunkRegistry);
     }
 
-    fprintf(file, "\n");
+    fputc('\n', file);
+    IFF_printIndent(file, indentLevel, "}");
+}
 
-    IFF_printIndent(file, indentLevel, "},\n");
+void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+{
+    IFF_PrintChunksArrayParameter param;
+    param.groupType = group->groupType;
+    param.chunksLength = group->chunksLength;
+    param.chunks = group->chunks;
+    param.chunkRegistry = chunkRegistry;
+
+    IFF_printField(file, indentLevel, "chunks", &param, IFF_printChunksArray);
 }
 
 void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)

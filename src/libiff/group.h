@@ -62,6 +62,15 @@ struct IFF_Group
     IFF_Chunk **chunks;
 };
 
+typedef struct
+{
+    IFF_ID groupType;
+    unsigned int chunksLength;
+    IFF_Chunk **chunks;
+    const IFF_ChunkRegistry *chunkRegistry;
+}
+IFF_PrintChunksArrayParameter;
+
 /**
  * Initializes the members of the group chunk instances with default values.
  *
@@ -209,6 +218,8 @@ void IFF_clearGroupContents(IFF_Group *group, const IFF_ChunkRegistry *chunkRegi
  * @param indentLevel Indent level of the textual representation
  */
 void IFF_printGroupType(FILE *file, const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel);
+
+void IFF_printChunksArray(FILE *file, const void *value, const unsigned int indentLevel);
 
 /**
  * Displays a textual representation of the sub chunks on the standard output.

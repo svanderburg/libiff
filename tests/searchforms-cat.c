@@ -29,7 +29,7 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_IOError *error;
+    IFF_IOError *error = NULL;
     IFF_Chunk *chunk = IFF_read("cat.TEST", &error);
     int status;
 

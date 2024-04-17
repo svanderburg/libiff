@@ -249,20 +249,13 @@ void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegis
 
 static void printListPropChunks(FILE *file, const IFF_List *list, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    unsigned int i;
+    IFF_PrintChunksArrayParameter param;
+    param.groupType = list->contentsType;
+    param.chunksLength = list->propsLength;
+    param.chunks = (IFF_Chunk**)list->props;
+    param.chunkRegistry = chunkRegistry;
 
-    IFF_printIndent(file, indentLevel, ".props = {\n");
-
-    for(i = 0; i < list->propsLength; i++)
-    {
-        if(i > 0)
-            fprintf(file, ",\n");
-
-        IFF_printChunk(file, (IFF_Chunk*)list->props[i], indentLevel + 1, list->contentsType, chunkRegistry);
-    }
-
-    fprintf(file, "\n");
-    IFF_printIndent(file, indentLevel, "},\n");
+    IFF_printField(file, indentLevel, "props", &param, IFF_printChunksArray);
 }
 
 void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)

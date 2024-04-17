@@ -110,58 +110,67 @@ void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkR
     free(rawChunk->chunkData);
 }
 
-void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+static void printChunkDataText(FILE *file, const void *value, const unsigned int indentLevel)
 {
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)value;
     IFF_Long i;
 
-    IFF_printIndent(file, indentLevel, ".chunkData = \"");
+    fputc('"', file);
 
     for(i = 0; i < rawChunk->chunkSize; i++)
-        fputc(rawChunk->chunkData[i], file);
+    {
+        char character = rawChunk->chunkData[i];
 
-    fprintf(file, "\",\n");
+        if(character == '"')
+            fputs("\\\"", file);
+        else
+            fputc(character, file);
+    }
+
+    fputc('"', file);
 }
 
-static void printUByteHex(FILE *file, IFF_UByte byte)
+void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    fputs("0x", file);
-
-    /* Print 0 prefix for small numbers */
-
-    if(byte <= 0xf)
-        fputs("0", file);
-
-    fprintf(file, "%x", byte);
+    IFF_printField(file, indentLevel, "chunkData", (const IFF_RawChunk*)chunk, printChunkDataText);
 }
 
-void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue)
 {
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)value;
     IFF_Long i;
 
-    IFF_printIndent(file, indentLevel, ".chunkData = {\n");
+    fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
 
     for(i = 0; i < rawChunk->chunkSize; i++)
     {
-        IFF_UByte byte;
-
         if(i > 0)
+        {
             fputs(", ", file);
 
-        if(i > 0 && i % 10 == 0)
-        {
-            fprintf(file, "\n");
-            IFF_printIndent(file, indentLevel + 1, "");
+            if(i % 10 == 0)
+            {
+                fputc('\n', file);
+                IFF_printIndent(file, indentLevel + 1, "");
+            }
         }
 
-        byte = rawChunk->chunkData[i];
-        printUByteHex(file, byte);
+        printByteValue(file, &rawChunk->chunkData[i], indentLevel + 1);
     }
 
-    fprintf(file, "\n");
-    IFF_printIndent(file, indentLevel, "},\n");
+    fputc('\n', file);
+    IFF_printIndent(file, indentLevel, "}");
+}
+
+void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned int indentLevel)
+{
+    IFF_printChunkDataBytes(file, value, indentLevel, IFF_printUByteHex);
+}
+
+void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+{
+    IFF_printField(file, indentLevel, "chunkData", chunk, IFF_printChunkDataUByteHex);
 }
 
 IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)

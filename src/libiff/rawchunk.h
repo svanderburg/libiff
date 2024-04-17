@@ -31,6 +31,7 @@ typedef struct IFF_RawChunk IFF_RawChunk;
 #include "chunk.h"
 #include "attributepath.h"
 #include "error.h"
+#include "field.h"
 
 extern IFF_ChunkInterface IFF_textInterface;
 extern IFF_ChunkInterface IFF_rawChunkInterface;
@@ -139,6 +140,10 @@ void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkR
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+
+void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue);
+
+void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned int indentLevel);
 
 /**
  * Prints the data of the raw chunk as numeric values
