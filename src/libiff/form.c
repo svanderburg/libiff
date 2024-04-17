@@ -101,7 +101,7 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
 
     /* A form type must be a valid ID */
     newLevel = IFF_checkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId);
-    currentLevel = IFF_adjustQualityLevel(currentLevel, newLevel);
+    currentLevel = IFF_degradeQualityLevel(currentLevel, newLevel);
     IFF_idToString(formType, formType2);
 
     /* A form type is not allowed to have lowercase or puntuaction marks */
@@ -110,7 +110,7 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
         if((formType2[i] >= 0x61 && formType2[i] <= 0x7a) || formType2[i] == '.')
         {
             printCheckMessage(attributePath, attributeName, chunkId, data, "contains lowercase characters or punctuation marks: \"%.4s\"", formType2);
-            currentLevel = IFF_adjustQualityLevel(currentLevel, IFF_QUALITY_OK);
+            currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_QUALITY_OK);
         }
     }
 
@@ -151,7 +151,7 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
        formType == ID_CAT9)
     {
         printCheckMessage(attributePath, attributeName, chunkId, data, "contains an identifier that is not allowed: \"%.4s\"", formType2);
-        currentLevel = IFF_adjustQualityLevel(currentLevel, IFF_QUALITY_OK);
+        currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_QUALITY_OK);
     }
 
     return currentLevel;

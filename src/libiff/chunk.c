@@ -95,8 +95,8 @@ IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, c
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
 
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0));
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, chunkInterface->checkChunkContents(chunk, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, chunkInterface->checkChunkContents(chunk, chunkRegistry, attributePath, printCheckMessage, data));
 
     return qualityLevel;
 }

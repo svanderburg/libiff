@@ -203,7 +203,7 @@ static IFF_QualityLevel checkListPropChunks(const IFF_List *list, const IFF_Chun
 
         IFF_visitAttributeByIndex(attributePath, i);
 
-        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkChunk(propChunk, list->contentsType, chunkRegistry, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(propChunk, list->contentsType, chunkRegistry, attributePath, printCheckMessage, data));
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -219,13 +219,13 @@ IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, const IFF_ChunkRe
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     IFF_Long actualChunkSize;
 
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkId(list->contentsType, attributePath, "contentsType", printCheckMessage, data, list->chunkId));
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, checkListPropChunks(list, chunkRegistry, attributePath, printCheckMessage, data));
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkId(list->contentsType, attributePath, "contentsType", printCheckMessage, data, list->chunkId));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, checkListPropChunks(list, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupSubChunks((const IFF_Group*)list, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data));
 
     actualChunkSize = IFF_computeActualListChunkSize(list);
 
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupChunkSize((const IFF_Group*)list, actualChunkSize, attributePath, printCheckMessage, data));
 
     return qualityLevel;
 }

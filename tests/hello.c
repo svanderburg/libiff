@@ -89,7 +89,7 @@ IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, const IFF_Chunk
     if((hello->c < 0) || (hello->c > 1024))
     {
         printCheckMessage(attributePath, "c", chunk->chunkId, data, "must be between 0 and 1024, value is: %u", hello->c);
-        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_INCONSISTENT);
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_INCONSISTENT);
     }
 
     return qualityLevel;

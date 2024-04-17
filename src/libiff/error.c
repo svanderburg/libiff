@@ -150,7 +150,7 @@ void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const
     fputs("\n", stderr);
 }
 
-IFF_QualityLevel IFF_adjustQualityLevel(const IFF_QualityLevel currentLevel, const IFF_QualityLevel newLevel)
+IFF_QualityLevel IFF_degradeQualityLevel(const IFF_QualityLevel currentLevel, const IFF_QualityLevel newLevel)
 {
     if(newLevel > currentLevel)
         return newLevel;

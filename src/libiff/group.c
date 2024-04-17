@@ -196,8 +196,8 @@ IFF_QualityLevel IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkChe
 
         IFF_visitAttributeByIndex(attributePath, i);
 
-        qualityLevel = IFF_adjustQualityLevel(qualityLevel, subChunkCheck(group, subChunk, attributePath, printCheckMessage, data));
-        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, subChunkCheck(group, subChunk, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -212,12 +212,12 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     IFF_Long actualChunkSize;
 
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId));
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data));
 
     actualChunkSize = IFF_computeActualGroupChunkSize(group);
 
-    qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_checkGroupChunkSize(group, actualChunkSize, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupChunkSize(group, actualChunkSize, attributePath, printCheckMessage, data));
 
     return qualityLevel;
 }

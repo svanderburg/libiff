@@ -95,7 +95,7 @@ void IFF_printWriteError(FILE *file, const IFF_IOError *error);
 
 void IFF_printCheckMessageOnStderr(const IFF_AttributePath *attributePath, const char *attributeName, const IFF_ID chunkId, void *data, const char *formatString, ...);
 
-IFF_QualityLevel IFF_adjustQualityLevel(const IFF_QualityLevel currentLevel, const IFF_QualityLevel newLevel);
+IFF_QualityLevel IFF_degradeQualityLevel(const IFF_QualityLevel currentLevel, const IFF_QualityLevel newLevel);
 
 #ifdef __cplusplus
 }

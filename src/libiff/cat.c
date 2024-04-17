@@ -100,7 +100,7 @@ IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *s
         IFF_ID2 subChunkId;
         IFF_idToString(subChunk->chunkId, subChunkId);
         printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
-        qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_OK);
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_OK);
     }
 
     if(cat->contentsType != IFF_ID_JJJJ)
@@ -118,7 +118,7 @@ IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *s
                 IFF_idToString(cat->contentsType, contentsType);
 
                 printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a group sub chunk with groupType: \"%.4s\" that does not match the parent's contentsType: \"%.4s\"", groupType, contentsType);
-                qualityLevel = IFF_adjustQualityLevel(qualityLevel, IFF_QUALITY_OK);
+                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_OK);
             }
         }
     }
