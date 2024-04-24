@@ -242,7 +242,7 @@ void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegis
 {
     IFF_List *list = (IFF_List*)chunk;
 
-    IFF_clearCATContents(chunk, chunkRegistry);
+    IFF_clearGroupContents(chunk, chunkRegistry);
     freeListPropChunks(list, chunkRegistry);
     free(list->props);
 }
@@ -275,7 +275,7 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
 
         for(i = 0; i < list1->propsLength; i++)
         {
-            if(!IFF_comparePropContents((IFF_Chunk*)list1->props[i], (IFF_Chunk*)list2->props[i], chunkRegistry))
+            if(!IFF_compareGroupContents((IFF_Chunk*)list1->props[i], (IFF_Chunk*)list2->props[i], chunkRegistry))
                return FALSE;
         }
 
@@ -287,13 +287,8 @@ static IFF_Bool compareListPropChunks(const IFF_List *list1, const IFF_List *lis
 
 IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    if(!compareListPropChunks((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry))
-        return FALSE;
-
-    if(!IFF_compareCATContents(chunk1, chunk2, chunkRegistry))
-        return FALSE;
-
-    return TRUE;
+    return compareListPropChunks((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry)
+        && IFF_compareGroupContents(chunk1, chunk2, chunkRegistry);
 }
 
 IFF_Form **IFF_searchFormsInList(IFF_List *list, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)

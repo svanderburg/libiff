@@ -222,8 +222,9 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
     return qualityLevel;
 }
 
-void IFF_clearGroupContents(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearGroupContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
+    IFF_Group *group = (IFF_Group*)chunk;
     unsigned int i;
 
     for(i = 0; i < group->chunksLength; i++)
@@ -273,8 +274,11 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
     IFF_printGroupSubChunks(file, group, indentLevel, chunkRegistry);
 }
 
-IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
+    const IFF_Group *group1 = (const IFF_Group*)chunk1;
+    const IFF_Group *group2 = (const IFF_Group*)chunk2;
+
     if(group1->groupType == group2->groupType && group1->chunksLength == group2->chunksLength)
     {
         unsigned int i;

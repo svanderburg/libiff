@@ -27,7 +27,7 @@
 
 #define CAT_GROUPTYPENAME "contentsType"
 
-IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedCAT, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearCATContents, &IFF_printCATContents, &IFF_compareCATContents};
+IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedGroup, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearGroupContents, &IFF_printCATContents, &IFF_compareGroupContents};
 
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -42,11 +42,6 @@ IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType)
 IFF_CAT *IFF_createEmptyCAT(void)
 {
     return (IFF_CAT*)IFF_createEmptyCATWithContentsType(IFF_ID_JJJJ);
-}
-
-IFF_Chunk *IFF_createUnparsedCAT(const IFF_ID chunkId, const IFF_Long chunkSize)
-{
-    return IFF_createUnparsedGroup(chunkId, chunkSize);
 }
 
 static IFF_Bool checkValidCATSubChunkId(IFF_ID chunkId)
@@ -134,19 +129,9 @@ IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkReg
     return IFF_checkGroupContents((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
-void IFF_clearCATContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
-{
-    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
-}
-
 void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
-}
-
-IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
-{
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)

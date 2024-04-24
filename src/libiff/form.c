@@ -60,7 +60,7 @@
 #define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
 #define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
 
-IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedForm, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearFormContents, &IFF_printFormContents, &IFF_compareFormContents};
+IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents};
 
 IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 {
@@ -70,11 +70,6 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 IFF_Form *IFF_createEmptyForm(const IFF_ID formType)
 {
     return (IFF_Form*)IFF_createEmptyGroup(IFF_ID_FORM, formType);
-}
-
-IFF_Chunk *IFF_createUnparsedForm(const IFF_ID chunkId, const IFF_Long chunkSize)
-{
-    return IFF_createUnparsedGroup(chunkId, chunkSize);
 }
 
 void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk)
@@ -190,19 +185,9 @@ IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRe
     return IFF_checkGroupContents((const IFF_Group*)chunk, FORM_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
-void IFF_clearFormContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
-{
-    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
-}
-
 void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
-}
-
-IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
-{
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)

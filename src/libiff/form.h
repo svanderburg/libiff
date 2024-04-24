@@ -86,17 +86,6 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
 IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
 
 /**
- * Creates an empty FORM with no form type specified. This function should not
- * be directly used to create a FORM.
- * The resulting chunk must be freed by using IFF_free().
- *
- * @param chunkId A 4 character id
- * @param chunkSize Size of the chunk data
- * @return FORM chunk or NULL, if the memory for the struct can't be allocated
- */
-IFF_Chunk *IFF_createUnparsedForm(const IFF_ID chunkId, const IFF_Long chunkSize);
-
-/**
  * Adds a chunk to the body of the given FORM. This function also increments the
  * chunk size and chunk length counter.
  *
@@ -145,14 +134,6 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
 IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
- * Recursively frees the memory of the sub chunks of the given form chunk.
- *
- * @param chunk An instance of a form chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- */
-void IFF_clearFormContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
-
-/**
  * Displays a textual representation of the form chunk and its sub chunks on the standard output.
  *
  * @param chunk An instance of a form chunk
@@ -160,16 +141,6 @@ void IFF_clearFormContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegis
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
 void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
-
-/**
- * Checks whether the given forms' contents is equal to each other.
- *
- * @param chunk1 Form to compare
- * @param chunk2 Form to compare
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- * @return TRUE if the given forms are equal, else FALSE
- */
-IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Merges two given IFF form arrays in the target array.

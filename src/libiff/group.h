@@ -205,10 +205,10 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.
  *
- * @param group An instance of a group chunk
+ * @param chunk An instance of a group chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_clearGroupContents(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearGroupContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays the group type on the standard output.
@@ -243,12 +243,12 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
 /**
  * Checks whether the given group chunks' contents is equal to each other.
  *
- * @param group1 Group to compare
- * @param group2 Group to compare
+ * @param chunk1 Group to compare
+ * @param chunk2 Group to compare
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given groups are equal, else FALSE
  */
-IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.
