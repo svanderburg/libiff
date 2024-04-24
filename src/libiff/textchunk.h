@@ -19,27 +19,42 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "defaultregistry.h"
-#include "id.h"
+#ifndef __IFF_TEXTCHUNK_H
+#define __IFF_TEXTCHUNK_H
+
+typedef struct IFF_RawChunk IFF_TextChunk;
+
+#include <stdio.h>
 #include "chunk.h"
-#include "form.h"
-#include "cat.h"
-#include "list.h"
-#include "prop.h"
-#include "textchunk.h"
 
-static IFF_ChunkType IFF_globalChunkTypes[] = {
-    {IFF_ID_CAT, &IFF_catInterface},
-    {IFF_ID_FORM, &IFF_formInterface},
-    {IFF_ID_LIST, &IFF_listInterface},
-    {IFF_ID_PROP, &IFF_propInterface},
-    {IFF_ID_TEXT, &IFF_textChunkInterface},
-};
+#define IFF_ID_TEXT IFF_MAKEID('T', 'E', 'X', 'T')
 
-IFF_ChunkTypesNode IFF_globalChunkTypesNode = {
-    IFF_NUM_OF_CHUNK_TYPES, IFF_globalChunkTypes, NULL
-};
+extern IFF_ChunkInterface IFF_textChunkInterface;
 
-const IFF_ChunkRegistry IFF_defaultChunkRegistry = {
-    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * Copies the given string into the data of the chunk. Additionally, it makes
+ * the chunk size equal to the given string.
+ *
+ * @param textChunk A text chunk
+ * @param text Text to store in the body
+ */
+void IFF_setTextData(IFF_TextChunk *textChunk, const char *text);
+
+/**
+ * Prints the data of the raw chunk as text
+ *
+ * @param chunk A raw chunk instance
+ * @param indentLevel Indent level of the textual representation
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ */
+void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

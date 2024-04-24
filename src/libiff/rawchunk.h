@@ -22,8 +22,6 @@
 #ifndef __IFF_RAWCHUNK_H
 #define __IFF_RAWCHUNK_H
 
-#define IFF_ID_TEXT IFF_MAKEID('T', 'E', 'X', 'T')
-
 typedef struct IFF_RawChunk IFF_RawChunk;
 
 #include <stdio.h>
@@ -33,12 +31,7 @@ typedef struct IFF_RawChunk IFF_RawChunk;
 #include "error.h"
 #include "field.h"
 
-extern IFF_ChunkInterface IFF_textInterface;
 extern IFF_ChunkInterface IFF_rawChunkInterface;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * @brief A raw chunk, which contains an arbitrary number of bytes.
@@ -57,6 +50,10 @@ struct IFF_RawChunk
     /** An array of bytes representing raw chunk data */
     IFF_UByte *chunkData;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a raw chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().
@@ -83,15 +80,6 @@ void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data);
  * @param chunkSize Length of the bytes array.
  */
 void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize);
-
-/**
- * Copies the given string into the data of the chunk. Additionally, it makes
- * the chunk size equal to the given string.
- *
- * @param rawChunk A raw chunk
- * @param text Text to store in the body
- */
-void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
 
 /**
  * Reads a raw chunk with the given chunk id and chunk size from a file.
@@ -131,15 +119,6 @@ IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, const IFF_Chu
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
 void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
-
-/**
- * Prints the data of the raw chunk as text
- *
- * @param chunk A raw chunk instance
- * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- */
-void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue);
 

@@ -26,7 +26,6 @@
 #include "id.h"
 #include "util.h"
 
-IFF_ChunkInterface IFF_textInterface = {&IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents};
 IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents};
 
 IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
@@ -56,15 +55,6 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
 {
     rawChunk->chunkData = chunkData;
     rawChunk->chunkSize = chunkSize;
-}
-
-void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text)
-{
-    size_t textLength = strlen(text);
-    IFF_UByte *chunkData = (IFF_UByte*)malloc(textLength * sizeof(IFF_UByte));
-
-    memcpy(chunkData, text, textLength);
-    IFF_setRawChunkData(rawChunk, chunkData, textLength);
 }
 
 IFF_Bool IFF_readRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -108,31 +98,6 @@ void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkR
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
     free(rawChunk->chunkData);
-}
-
-static void printChunkDataText(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)value;
-    IFF_Long i;
-
-    fputc('"', file);
-
-    for(i = 0; i < rawChunk->chunkSize; i++)
-    {
-        char character = rawChunk->chunkData[i];
-
-        if(character == '"')
-            fputs("\\\"", file);
-        else
-            fputc(character, file);
-    }
-
-    fputc('"', file);
-}
-
-void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
-{
-    IFF_printField(file, indentLevel, "chunkData", (const IFF_RawChunk*)chunk, printChunkDataText);
 }
 
 void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue)
