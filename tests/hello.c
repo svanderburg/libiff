@@ -113,14 +113,7 @@ IFF_Bool TEST_compareHelloContents(const IFF_Chunk *chunk1, const IFF_Chunk *chu
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
 
-    if(hello1->a != hello2->a)
-        return FALSE;
-
-    if(hello1->b != hello2->b)
-        return FALSE;
-
-    if(hello1->c != hello2->c)
-        return FALSE;
-
-    return TRUE;
+    return (hello1->a == hello2->a
+        && hello1->b == hello2->b
+        && hello1->c == hello2->c);
 }

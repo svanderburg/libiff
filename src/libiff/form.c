@@ -92,16 +92,12 @@ IFF_Bool IFF_writeFormContents(FILE *file, const IFF_Chunk *chunk, const IFF_Chu
     return IFF_writeGroupContents(file, chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
-IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
+static IFF_QualityLevel checkValidFormChars(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
 {
-    unsigned int i;
-    IFF_ID2 formType2;
     IFF_QualityLevel currentLevel = IFF_QUALITY_PERFECT;
-    IFF_QualityLevel newLevel;
+    IFF_ID2 formType2;
+    unsigned int i;
 
-    /* A form type must be a valid ID */
-    newLevel = IFF_checkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId);
-    currentLevel = IFF_degradeQualityLevel(currentLevel, newLevel);
     IFF_idToString(formType, formType2);
 
     /* A form type is not allowed to have lowercase or puntuaction marks */
@@ -113,6 +109,14 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
             currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_QUALITY_OK);
         }
     }
+
+    return currentLevel;
+}
+
+static IFF_QualityLevel checkNonGroupChunkId(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
+{
+    IFF_ID2 formType2;
+    IFF_idToString(formType, formType2);
 
     /* A form ID is not allowed to be equal to a group chunk ID */
 
@@ -151,8 +155,19 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
        formType == ID_CAT9)
     {
         printCheckMessage(attributePath, attributeName, chunkId, data, "contains an identifier that is not allowed: \"%.4s\"", formType2);
-        currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_QUALITY_OK);
+        return IFF_QUALITY_OK;
     }
+    else
+        return IFF_QUALITY_PERFECT;
+}
+
+IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
+{
+    IFF_QualityLevel currentLevel = IFF_QUALITY_PERFECT;
+
+    currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_checkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId));
+    currentLevel = IFF_degradeQualityLevel(currentLevel, checkValidFormChars(formType, attributePath, attributeName, printCheckMessage, data, chunkId));
+    currentLevel = IFF_degradeQualityLevel(currentLevel, checkNonGroupChunkId(formType, attributePath, attributeName, printCheckMessage, data, chunkId));
 
     return currentLevel;
 }

@@ -96,11 +96,6 @@ IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
     const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
     const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;
 
-    if(bye1->one != bye2->one)
-        return FALSE;
-
-    if(bye1->two != bye2->two)
-        return FALSE;
-
-    return TRUE;
+    return (bye1->one == bye2->one
+        && bye1->two == bye2->two);
 }

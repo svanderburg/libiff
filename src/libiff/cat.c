@@ -88,42 +88,45 @@ IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, const IFF_Chun
     return IFF_writeGroupContents(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
+static IFF_QualityLevel checkSubChunkGroupTypeMatchesContentType(const IFF_CAT *cat, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+{
+    if(cat->contentsType == IFF_ID_JJJJ)
+        return IFF_QUALITY_PERFECT;
+    else
+    {
+        /* Check whether a group type matches the contents type of the CAT */
+
+        const IFF_Group *group = (const IFF_Group*)subChunk;
+
+        if(group->groupType == cat->contentsType)
+            return IFF_QUALITY_PERFECT;
+        else
+        {
+            IFF_ID2 groupType, contentsType;
+            IFF_idToString(group->groupType, groupType);
+            IFF_idToString(cat->contentsType, contentsType);
+
+            printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a group sub chunk with groupType: \"%.4s\" that does not match the parent's contentsType: \"%.4s\"", groupType, contentsType);
+            return IFF_QUALITY_OK;
+        }
+    }
+}
+
 IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const IFF_CAT *cat = (const IFF_CAT*)group;
-    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
     /* A concatenation chunk may only contain other group chunks (except a PROP) */
 
-    if(!checkValidCATSubChunkId(subChunk->chunkId))
+    if(checkValidCATSubChunkId(subChunk->chunkId))
+        return checkSubChunkGroupTypeMatchesContentType(cat, subChunk, attributePath, printCheckMessage, data);
+    else
     {
         IFF_ID2 subChunkId;
         IFF_idToString(subChunk->chunkId, subChunkId);
         printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a sub chunk with chunkId: \"%.4s\" that is not allowed", subChunkId);
-        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_OK);
+        return IFF_QUALITY_OK;
     }
-
-    if(cat->contentsType != IFF_ID_JJJJ)
-    {
-        /* Check whether a group type matches the contents type of the CAT */
-
-        if(checkValidCATSubChunkId(subChunk->chunkId))
-        {
-            IFF_Group *group = (IFF_Group*)subChunk;
-
-            if(group->groupType != cat->contentsType)
-            {
-                IFF_ID2 groupType, contentsType;
-                IFF_idToString(group->groupType, groupType);
-                IFF_idToString(cat->contentsType, contentsType);
-
-                printCheckMessage(attributePath, NULL, cat->chunkId, data, "is a group sub chunk with groupType: \"%.4s\" that does not match the parent's contentsType: \"%.4s\"", groupType, contentsType);
-                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_OK);
-            }
-        }
-    }
-
-    return qualityLevel;
 }
 
 IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
