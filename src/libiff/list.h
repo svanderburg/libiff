@@ -40,8 +40,8 @@ extern IFF_ChunkInterface IFF_listInterface;
  */
 struct IFF_List
 {
-    /** Pointer to the parent group chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
-    IFF_Group *parent;
+    /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
+    IFF_Chunk *parent;
 
     /** Contains the ID of this chunk, which equals to 'LIST' */
     IFF_ID chunkId;

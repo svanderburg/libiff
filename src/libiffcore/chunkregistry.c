@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include "io.h"
 #include "id.h"
-#include "rawchunk.h"
 
 static int compareFormChunkTypes(const void *a, const void *b)
 {

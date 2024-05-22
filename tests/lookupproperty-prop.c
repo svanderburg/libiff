@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include "chunk.h"
 #include "id.h"
+#include "group.h"
 #include "form.h"
 #include "iff.h"
 

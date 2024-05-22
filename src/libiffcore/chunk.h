@@ -27,16 +27,16 @@ typedef struct IFF_Chunk IFF_Chunk;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunkregistry.h"
-#include "group.h"
 #include "attributepath.h"
+#include "error.h"
 
 /**
  * @brief An abstract chunk containing the common properties of all chunk types
  */
 struct IFF_Chunk
 {
-    /** Pointer to the parent group chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
-    IFF_Group *parent;
+    /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
+    IFF_Chunk *parent;
 
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;

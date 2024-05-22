@@ -40,6 +40,21 @@ IFF_ChunkTypesNode IFF_globalChunkTypesNode = {
     IFF_NUM_OF_CHUNK_TYPES, IFF_globalChunkTypes, NULL
 };
 
+IFF_QualityLevel IFF_checkMainIFFChunk(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+{
+    if(chunk->chunkId == IFF_ID_FORM || /* The main chunk must have one of the following IDs: FORM, CAT or LIST */
+       chunk->chunkId == IFF_ID_CAT ||
+       chunk->chunkId == IFF_ID_LIST)
+        return IFF_QUALITY_PERFECT;
+    else
+    {
+        IFF_ID2 chunkId;
+        IFF_idToString(chunk->chunkId, chunkId);
+        printCheckMessage(attributePath, "chunkId", chunk->chunkId, data, "is invalid: the main chunkId should be: \"FORM\", \"CAT \" or \"LIST\", value is: \"%.4s\"", chunkId);
+        return IFF_QUALITY_INCONSISTENT;
+    }
+}
+
 const IFF_ChunkRegistry IFF_defaultChunkRegistry = {
-    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface
+    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk
 };

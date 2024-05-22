@@ -102,6 +102,7 @@ static IFF_QualityLevel checkValidFormChars(const IFF_ID formType, IFF_Attribute
         {
             printCheckMessage(attributePath, attributeName, chunkId, data, "contains lowercase characters or punctuation marks: \"%.4s\"", formType2);
             currentLevel = IFF_degradeQualityLevel(currentLevel, IFF_QUALITY_OK);
+            break;
         }
     }
 
@@ -240,7 +241,7 @@ void IFF_updateFormChunkSizes(IFF_Form *form)
  */
 static IFF_List *searchList(const IFF_Chunk *chunk)
 {
-    IFF_Group *parent = chunk->parent;
+    IFF_Chunk *parent = chunk->parent;
 
     if(parent == NULL)
         return NULL;
@@ -249,7 +250,7 @@ static IFF_List *searchList(const IFF_Chunk *chunk)
         if(parent->chunkId == IFF_ID_LIST)
             return (IFF_List*)parent;
         else
-            return searchList((IFF_Chunk*)parent);
+            return searchList(parent);
     }
 }
 

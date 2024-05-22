@@ -9,6 +9,6 @@ man1_MANS = iffjoin.1
 
 iffjoin_SOURCES = main.c join.c
 iffjoin_LDADD = ../libiff/libiff.la
-iffjoin_CFLAGS = -I../libiff
+iffjoin_CFLAGS = -I../libiffcore -I../libiff
 
 EXTRA_DIST = iffjoin.1

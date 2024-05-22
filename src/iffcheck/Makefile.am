@@ -6,6 +6,6 @@ man1_MANS = iffcheck.1
 
 iffcheck_SOURCES = main.c
 iffcheck_LDADD = ../libiff/libiff.la ../libiffcheck/libiffcheck.la
-iffcheck_CFLAGS = -I../libiff -I../libiffcheck
+iffcheck_CFLAGS = -I../libiffcore -I../libiff -I../libiffcheck
 
 EXTRA_DIST = iffcheck.1

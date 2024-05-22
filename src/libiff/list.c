@@ -63,7 +63,7 @@ static void addPropToList(IFF_List *list, IFF_Prop *prop)
     list->props = (IFF_Prop**)realloc(list->props, (list->propsLength + 1) * sizeof(IFF_Prop*));
     list->props[list->propsLength] = prop;
     list->propsLength++;
-    prop->parent = (IFF_Group*)list;
+    prop->parent = (IFF_Chunk*)list;
 }
 
 void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)

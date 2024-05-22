@@ -6,6 +6,6 @@ man1_MANS = iffpp.1
 
 iffpp_SOURCES = main.c
 iffpp_LDADD = ../libiff/libiff.la ../libiffpp/libiffpp.la
-iffpp_CFLAGS = -I../libiff -I../libiffpp
+iffpp_CFLAGS = -I../libiffcore -I../libiff -I../libiffpp
 
 EXTRA_DIST = iffpp.1

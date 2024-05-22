@@ -34,6 +34,8 @@ typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 #include "attributepath.h"
 #include "error.h"
 
+typedef IFF_QualityLevel (*IFF_checkMainChunkFunction) (const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+
 /**
  * @brief An interface of operations to manage a particular chunk
  */
@@ -51,13 +53,13 @@ struct IFF_ChunkInterface
     /** Function responsible for checking the given chunk */
     IFF_QualityLevel (*checkChunkContents) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-    /** Function responsible for freeing the given chunk */
+    /** Function responsible for freeing the contents of the given chunk */
     void (*clearChunkContents) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
-    /** Function responsible for printing the given chunk */
+    /** Function responsible for printing the contents of the given chunk */
     void (*printChunkContents) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
-    /** Function responsible for comparing the given chunk */
+    /** Function responsible for comparing the contents of the given chunk */
     IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 };
 
@@ -113,6 +115,9 @@ struct IFF_ChunkRegistry
 
     /** Interface of the default chunk, that is used when no FORM-specific or global identifier matches */
     IFF_ChunkInterface *defaultChunkInterface;
+
+    /** Function that checks the main chunk's validity */
+    IFF_checkMainChunkFunction checkMainChunk;
 };
 
 #ifdef __cplusplus

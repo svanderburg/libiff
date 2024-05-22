@@ -21,11 +21,14 @@
 
 #ifndef __IFF_DEFAULTREGISTRY_H
 #define __IFF_DEFAULTREGISTRY_H
+
 #include "chunkregistry.h"
+#include "chunk.h"
 #include "rawchunk.h"
+#include "error.h"
 
 #define IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(numOfFormChunkTypes, formChunkTypes) \
-    { numOfFormChunkTypes, formChunkTypes, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface }
+    { numOfFormChunkTypes, formChunkTypes, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk }
 
 #define IFF_NUM_OF_CHUNK_TYPES 5
 
@@ -34,5 +37,15 @@ extern IFF_ChunkTypesNode IFF_globalChunkTypesNode;
 extern IFF_ChunkType IFF_defaultChunkType;
 
 extern const IFF_ChunkRegistry IFF_defaultChunkRegistry;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+IFF_QualityLevel IFF_checkMainIFFChunk(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

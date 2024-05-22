@@ -4,5 +4,5 @@ lib_LTLIBRARIES = libiffcheck.la
 pkginclude_HEADERS = check.h checkinterface.h
 
 libiffcheck_la_SOURCES = check.c checkinterface.c
-libiffcheck_la_CFLAGS = -I../libiff
-libiffcheck_la_LIBADD = ../libiff/libiff.la
+libiffcheck_la_CFLAGS = -I../libiffcore -I../libiff
+libiffcheck_la_LIBADD = ../libiffcore/libiffcore.la ../libiff/libiff.la

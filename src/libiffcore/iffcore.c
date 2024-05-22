@@ -23,10 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
-#include "form.h"
-#include "cat.h"
-#include "list.h"
-#include "defaultregistry.h"
 
 IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
 {
@@ -38,7 +34,7 @@ IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IF
 
     /* We should have reached the EOF now */
     if((byte = fgetc(file)) != EOF)
-        fprintf(stderr, "WARNING: Trailing IFF contents found: %d!\n", byte);
+        fprintf(stderr, "WARNING: Trailing contents found: %d!\n", byte);
 
     /* Remove the attribute path if we no longer need it */
     if(*error == NULL)
@@ -124,17 +120,11 @@ IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRe
         printCheckMessage(attributePath, NULL, 0, data, "The file cannot be processed");
         qualityLevel = IFF_QUALITY_GARBAGE;
     }
-    else if(chunk->chunkId != IFF_ID_FORM && /* The main chunk must be of ID: FORM, CAT or LIST */
-       chunk->chunkId != IFF_ID_CAT &&
-       chunk->chunkId != IFF_ID_LIST)
-    {
-        IFF_ID2 chunkId;
-        IFF_idToString(chunk->chunkId, chunkId);
-        printCheckMessage(attributePath, "chunkId", chunk->chunkId, data, "is invalid: the first chunkId should be: \"FORM\", \"CAT \" or \"LIST\", value is: \"%.4s\"", chunkId);
-        qualityLevel = IFF_QUALITY_INCONSISTENT;
-    }
     else
-        qualityLevel = IFF_checkChunk(chunk, 0, chunkRegistry, attributePath, printCheckMessage, NULL);
+    {
+        qualityLevel = chunkRegistry->checkMainChunk(chunk, attributePath, printCheckMessage, data);
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, 0, chunkRegistry, attributePath, printCheckMessage, data));
+    }
 
     IFF_freeAttributePath(attributePath);
     return qualityLevel;

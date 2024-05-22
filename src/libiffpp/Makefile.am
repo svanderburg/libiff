@@ -4,5 +4,5 @@ lib_LTLIBRARIES = libiffpp.la
 pkginclude_HEADERS = pp.h ppinterface.h
 
 libiffpp_la_SOURCES = pp.c ppinterface.c
-libiffpp_la_CFLAGS = -I../libiff
-libiffpp_la_LIBADD = ../libiff/libiff.la
+libiffpp_la_CFLAGS = -I../libiffcore -I../libiff
+libiffpp_la_LIBADD = ../libiffcore/libiffcore.la ../libiff/libiff.la

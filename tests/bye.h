@@ -34,7 +34,7 @@ extern IFF_ChunkInterface TEST_byeInterface;
 
 typedef struct
 {
-    IFF_Group *parent;
+    IFF_Chunk *parent;
 
     IFF_ID chunkId;
     IFF_Long chunkSize;

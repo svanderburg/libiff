@@ -25,7 +25,8 @@ Makefile
 doc/Makefile
 src/Makefile
 src/libiff.pc
-src/libiff/ifftypes.h
+src/libiffcore/ifftypes.h
+src/libiffcore/Makefile
 src/libiff/Makefile
 src/libiffpp/Makefile
 src/libiffcheck/Makefile

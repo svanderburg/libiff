@@ -62,7 +62,7 @@ void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk)
     group->chunks = (IFF_Chunk**)realloc(group->chunks, (group->chunksLength + 1) * sizeof(IFF_Chunk*));
     group->chunks[group->chunksLength] = chunk;
     group->chunksLength++;
-    chunk->parent = group;
+    chunk->parent = (IFF_Chunk*)group;
 }
 
 void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
