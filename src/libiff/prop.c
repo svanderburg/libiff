@@ -73,7 +73,12 @@ void IFF_updatePropChunkSizes(IFF_Prop *prop)
     IFF_updateFormChunkSizes((IFF_Form*)prop);
 }
 
-IFF_Chunk *IFF_getChunkFromProp(const IFF_Prop *prop, const IFF_ID chunkId)
+IFF_Chunk *IFF_searchChunkInProp(const IFF_Prop *prop, const IFF_ID chunkId)
 {
-    return IFF_getDataChunkFromForm((IFF_Form*)prop, chunkId);
+    return IFF_searchChunkInForm((const IFF_Form*)prop, chunkId);
+}
+
+IFF_Chunk **IFF_searchChunksInProp(IFF_Chunk **chunks, const IFF_Prop *prop, const IFF_ID chunkId, unsigned int *chunksLength)
+{
+    return IFF_searchChunksInForm(chunks, (const IFF_Form*)prop, chunkId, chunksLength);
 }

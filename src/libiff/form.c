@@ -239,60 +239,57 @@ void IFF_updateFormChunkSizes(IFF_Form *form)
  * @param chunk An arbitrary chunk, which could be (indirectly) a member of a list
  * @return List instance of which the given chunk is (indirectly) a member, or NULL if the chunk is not a member of a list
  */
-static IFF_List *searchList(const IFF_Chunk *chunk)
+static IFF_List *searchParentList(const IFF_Chunk *chunk)
 {
     IFF_Chunk *parent = chunk->parent;
 
     if(parent == NULL)
         return NULL;
+    else if(parent->chunkId == IFF_ID_LIST)
+        return (IFF_List*)parent;
     else
-    {
-        if(parent->chunkId == IFF_ID_LIST)
-            return (IFF_List*)parent;
-        else
-            return searchList(parent);
-    }
+        return searchParentList(parent);
 }
 
 /**
- * Recursively searches for a shared list property with the given chunk ID.
+ * Recursively searches for a shared list chunk with the given chunk ID.
  *
  * @param chunk An arbitrary chunk, which could be (indirectly) a member of a list
  * @param formType A 4 character form id
  * @param chunkId A 4 character chunk id
  * @return The chunk with the given chunk id, or NULL if the chunk can't be found
  */
-static IFF_Chunk *searchProperty(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId)
+static IFF_Chunk *searchSharedChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId)
 {
-    IFF_List *list = searchList(chunk);
+    IFF_List *list = searchParentList(chunk);
 
     if(list == NULL)
-        return NULL; /* If the chunk is not (indirectly) in a list, we have no shared properties at all */
+        return NULL; /* If the chunk is not (indirectly) embedded in a list, we have no shared properties at all */
     else
     {
         /* Try requesting the PROP chunk for the given form type */
         IFF_Prop *prop = IFF_getPropFromList(list, formType);
 
         if(prop == NULL)
-            return searchProperty((IFF_Chunk*)list, formType, chunkId); /* If we can't find a shared property chunk with the given form type, try searching for a list higher in the hierarchy */
+            return searchSharedChunk((IFF_Chunk*)list, formType, chunkId); /* If we can't find a shared property chunk with the given form type, try searching for a list higher in the hierarchy */
         else
         {
             /* Try requesting the chunk from the shared property chunk */
-            IFF_Chunk *chunk = IFF_getChunkFromProp(prop, chunkId);
+            IFF_Chunk *chunk = IFF_searchChunkInProp(prop, chunkId);
 
             if(chunk == NULL)
-                return searchProperty((IFF_Chunk*)list, formType, chunkId); /* If the requested chunk is not in the PROP chunk, try searching for a list higher in the hierarchy */
+                return searchSharedChunk((IFF_Chunk*)list, formType, chunkId); /* If the requested chunk is not in the PROP chunk, try searching for a list higher in the hierarchy */
             else
                 return chunk; /* We have found the requested shared property chunk */
         }
     }
 }
 
-IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
+IFF_Chunk *IFF_searchChunkInForm(const IFF_Form *form, const IFF_ID chunkId)
 {
     unsigned int i;
 
-    for(i = 0; i < form->chunksLength; i++)
+    for(i = form->chunksLength; i-- > 0; )
     {
         if(form->chunks[i]->chunkId == chunkId)
             return form->chunks[i];
@@ -304,31 +301,57 @@ IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
 IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const IFF_ID chunkId)
 {
     /* Retrieve the chunk with the given id from the given form */
-    IFF_Chunk *chunk = IFF_getDataChunkFromForm(form, chunkId);
+    IFF_Chunk *chunk = IFF_searchChunkInForm(form, chunkId);
 
-    /* If the chunk is not in the form, try to find it in a higher located PROP */
+    /* If the chunk is not in the form, try to find it in a higher located shared PROP */
     if(chunk == NULL)
-        return searchProperty((IFF_Chunk*)form, form->formType, chunkId);
+        return searchSharedChunk((IFF_Chunk*)form, form->formType, chunkId);
     else
         return chunk;
 }
 
-IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength)
+IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength)
 {
-    IFF_Chunk **result = NULL;
     unsigned int i;
-
-    *chunksLength = 0;
 
     for(i = 0; i < form->chunksLength; i++)
     {
         if(form->chunks[i]->chunkId == chunkId)
         {
-            result = (IFF_Chunk**)realloc(result, (*chunksLength + 1) * sizeof(IFF_Chunk*));
-            result[*chunksLength] = form->chunks[i];
+            chunks = (IFF_Chunk**)realloc(chunks, (*chunksLength + 1) * sizeof(IFF_Chunk*));
+            chunks[*chunksLength] = form->chunks[i];
             *chunksLength = *chunksLength + 1;
         }
     }
 
-    return result;
+    return chunks;
+}
+
+static IFF_Chunk **searchSharedChunks(IFF_Chunk **chunks, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId, unsigned int *chunksLength)
+{
+    IFF_List *list = searchParentList(chunk);
+
+    if(list != NULL)
+    {
+        IFF_Prop *prop;
+
+        chunks = searchSharedChunks(chunks, (IFF_Chunk*)list, formType, chunkId, chunksLength);
+        prop = IFF_getPropFromList(list, formType); /* Try requesting the PROP chunk for the given form type */
+
+        if(prop != NULL)
+            chunks = IFF_searchChunksInProp(chunks, (IFF_Form*)prop, chunkId, chunksLength);
+    }
+
+    return chunks;
+}
+
+IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength)
+{
+    IFF_Chunk **chunks = NULL;
+    *chunksLength = 0;
+
+    chunks = searchSharedChunks(chunks, (const IFF_Chunk*)form, form->formType, chunkId, chunksLength);
+    chunks = IFF_searchChunksInForm(chunks, form, chunkId, chunksLength);
+
+    return chunks;
 }

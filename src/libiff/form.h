@@ -172,19 +172,20 @@ IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const IFF_ID *formTypes, const 
 void IFF_updateFormChunkSizes(IFF_Form *form);
 
 /**
- * Retrieves the chunk with the given chunk ID from the given form.
+ * Searches for the last occurence of a chunk with the given chunk ID in the given form.
  *
  * @param form An instance of a form chunk
  * @param chunkId An arbitrary chunk ID
  * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
  */
-IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
+IFF_Chunk *IFF_searchChunkInForm(const IFF_Form *form, const IFF_ID chunkId);
 
 /**
- * Retrieves the chunk with the given chunk ID from the given form.
+ * Retrieves a chunk with the given chunk ID from the given form.
  * If the chunk does not exist and the form is member of a list with shared
  * properties, this function will recursively lookup the chunk from the
- * shared list properties.
+ * shared list properties. If a chunk with the same chunk ID appears multiple times,
+ * then the last will be used.
  *
  * @param form An instance of a form chunk
  * @param chunkId An arbitrary chunk ID
@@ -193,7 +194,20 @@ IFF_Chunk *IFF_getDataChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
 IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
 
 /**
- * Retrieves all the chunks with the given chunk ID from the given form. The resulting array must be freed by using free().
+ * Searches for all occurences of a chunk with the given chunk ID in the given form.
+ *
+ * @param chunks An array of chunks to which matched chunks will be appended
+ * @param form An instance of a form chunk
+ * @param chunkId An arbitrary chunk ID
+ * @param chunksLength A pointer to a variable in which the length of the array is stored
+ * @return An array containing pointers to all chunks that have been found
+ */
+IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength);
+
+/**
+ * Searches for all the chunks with the given chunk ID from the given form or from any
+ * of the shared properties of the lists that the form is embedded in.
+ * The resulting array must be freed by using free().
  *
  * @param form An instance of a form chunk
  * @param chunkId An arbitrary chunk ID

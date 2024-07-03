@@ -22,38 +22,64 @@
 #include <stdio.h>
 #include "chunk.h"
 #include "id.h"
+#include "group.h"
 #include "form.h"
+#include "rawchunk.h"
 #include "iff.h"
 
+#define HELO_BYTES_SIZE 4
+
 #define ID_HELO IFF_MAKEID('H', 'E', 'L', 'O')
+#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-static IFF_Bool lookupPropertyAndCheck(const IFF_Chunk *chunk)
+static IFF_Bool lookupPropertyAndCheck(IFF_Chunk *chunk)
 {
-    if(chunk->chunkId == IFF_ID_FORM)
-    {
-        IFF_Form *form = (IFF_Form*)chunk;
-        IFF_Chunk *lookupChunk = IFF_getChunkFromForm(form, ID_HELO);
+    unsigned int formsLength;
+    IFF_Form **forms = IFF_searchForms(chunk, ID_TEST, &formsLength);
 
-        if(lookupChunk == NULL || lookupChunk->chunkId != ID_HELO)
+    if(formsLength == 2)
+    {
+        IFF_RawChunk *heloChunk = (IFF_RawChunk*)IFF_getChunkFromForm(forms[0], ID_HELO);
+
+        if(heloChunk != NULL && heloChunk->chunkId == ID_HELO)
         {
-            fprintf(stderr, "HELO chunk can't be obtained from the form!\n");
-            return FALSE;
+            if(heloChunk->chunkSize == HELO_BYTES_SIZE)
+            {
+                if(heloChunk->chunkData[0] != '1' ||
+                   heloChunk->chunkData[1] != '2' ||
+                   heloChunk->chunkData[2] != '3' ||
+                   heloChunk->chunkData[3] != '4')
+                {
+                    fprintf(stderr, "Error: HELO chunk contents should be: '1', '2', '3', '4'!\n");
+                    return FALSE;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Error: size of helo chunk should be: %u!\n", HELO_BYTES_SIZE);
+                return FALSE;
+            }
         }
         else
-            return TRUE;
+        {
+            fprintf(stderr, "Error: we should be able to find a HELO chunk!\n");
+            return FALSE;
+        }
     }
     else
     {
-        fprintf(stderr, "Error: the IFF file must be a FORM!\n");
+        fprintf(stderr, "Error: we should be able to find 2 TEST forms!\n");
         return FALSE;
     }
+
+    return TRUE;
 }
 
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("hello.TEST", &error);
-    int status;
+    IFF_Chunk *chunk = IFF_read("lookupproperty-override-shared.TEST", &error);
+    int status = 0;
 
     if(error == NULL)
         status = !lookupPropertyAndCheck(chunk);
