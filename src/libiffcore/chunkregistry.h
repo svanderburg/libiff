@@ -62,8 +62,11 @@ struct IFF_ChunkInterface
     /** Function responsible for comparing the contents of the given chunk */
     IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
-    /** Function responsible for traversing the chunk and its sub chunks. If it refers to NULL, then it lacks the ability to do it */
+    /** Function responsible for traversing the chunk and its sub chunks. This function is only relevant for chunks embedding other chunks. If it refers to NULL, then it lacks the ability to do it */
     IFF_Bool (*traverseChunkHierarchy) (IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+
+    /** Recalculates the size of the given chunk and its parent chunks. This function is only relevant for chunks embedding other chunks. If it refers to NULL, then it lacks the ability to do it */
+    void (*recalculateChunkSize) (IFF_Chunk *chunk);
 };
 
 /**

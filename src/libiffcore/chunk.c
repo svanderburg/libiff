@@ -148,3 +148,15 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
     else
         return FALSE;
 }
+
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+{
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
+
+    if(chunkInterface->recalculateChunkSize != NULL)
+        chunkInterface->recalculateChunkSize(chunk);
+
+    /* If the given chunk has a parent, recursively update these as well */
+    if(chunk->parent != NULL)
+        IFF_recalculateChunkHierarchySizes(chunk->parent, formType, chunkRegistry);
+}

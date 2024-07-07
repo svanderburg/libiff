@@ -165,13 +165,6 @@ IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkReg
  */
 void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
-/**
- * Recalculates the chunk size of the given concatentation chunk.
- *
- * @param cat An instance of a concatenation chunk
- */
-void IFF_updateCATChunkSizes(IFF_CAT *cat);
-
 #ifdef __cplusplus
 }
 #endif

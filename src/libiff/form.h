@@ -154,13 +154,6 @@ void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength);
 
 /**
- * Recalculates the chunk size of the given form chunk.
- *
- * @param form An instance of a form chunk
- */
-void IFF_updateFormChunkSizes(IFF_Form *form);
-
-/**
  * Searches for the last occurence of a chunk with the given chunk ID in the given form.
  *
  * @param form An instance of a form chunk

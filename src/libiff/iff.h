@@ -56,6 +56,8 @@ IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
+void IFF_recalculateChunkSizes(IFF_Chunk *chunk);
+
 #ifdef __cplusplus
 }
 #endif

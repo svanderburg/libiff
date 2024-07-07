@@ -77,13 +77,6 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
 IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
- * Recalculates the chunk size of the given PROP chunk.
- *
- * @param prop An instance of a PROP chunk
- */
-void IFF_updatePropChunkSizes(IFF_Prop *prop);
-
-/**
  * Searches for the last occurence of a chunk with the given chunk ID in the given PROP chunk.
  *
  * @param prop An instance of a PROP chunk

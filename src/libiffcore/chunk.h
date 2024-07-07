@@ -134,6 +134,15 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
  */
 IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID formType, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
+/**
+ * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ */
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+
 #ifdef __cplusplus
 }
 #endif

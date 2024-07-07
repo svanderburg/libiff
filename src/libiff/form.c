@@ -61,7 +61,7 @@
 #define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
 #define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
 
-IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy};
+IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateGroupChunkSize};
 
 IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 {
@@ -205,11 +205,6 @@ IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF
     *targetLength = newLength;
 
     return target;
-}
-
-void IFF_updateFormChunkSizes(IFF_Form *form)
-{
-    IFF_updateGroupChunkSizes((IFF_Group*)form);
 }
 
 /**

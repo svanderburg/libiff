@@ -26,7 +26,7 @@
 #include "util.h"
 #include "cat.h"
 
-IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents, &IFF_traverseGroupChunkHierarchy};
+IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateListChunkSize};
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -291,11 +291,12 @@ IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
         && IFF_compareGroupContents(chunk1, chunk2, chunkRegistry);
 }
 
-void IFF_updateListChunkSizes(IFF_List *list)
+void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
 {
+    IFF_List *list = (IFF_List*)chunk;
     unsigned int i;
 
-    IFF_updateCATChunkSizes((IFF_CAT*)list);
+    IFF_recalculateGroupChunkSize(chunk);
 
     for(i = 0; i < list->propsLength; i++)
         list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)list->props[i]);

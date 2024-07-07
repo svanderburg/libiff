@@ -323,36 +323,13 @@ IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk
     return returnValue;
 }
 
-void IFF_updateGroupChunkSizes(IFF_Group *group)
+void IFF_recalculateGroupChunkSize(IFF_Chunk *chunk)
 {
+    IFF_Group *group = (IFF_Group*)chunk;
     unsigned int i;
 
     group->chunkSize = IFF_ID_SIZE;
 
     for(i = 0; i < group->chunksLength; i++)
         group->chunkSize = IFF_incrementChunkSize(group->chunkSize, group->chunks[i]);
-}
-
-void IFF_updateChunkSizes(IFF_Chunk *chunk)
-{
-    /* Check whether the given chunk is a group chunk and update the sizes */
-    switch(chunk->chunkId)
-    {
-        case IFF_ID_FORM:
-            IFF_updateFormChunkSizes((IFF_Form*)chunk);
-            break;
-        case IFF_ID_PROP:
-            IFF_updatePropChunkSizes((IFF_Prop*)chunk);
-            break;
-        case IFF_ID_CAT:
-            IFF_updateCATChunkSizes((IFF_CAT*)chunk);
-            break;
-        case IFF_ID_LIST:
-            IFF_updateListChunkSizes((IFF_List*)chunk);
-            break;
-    }
-
-    /* If the given type has a parent, recursively update these as well */
-    if(chunk->parent != NULL)
-        IFF_updateChunkSizes((IFF_Chunk*)chunk->parent);
 }

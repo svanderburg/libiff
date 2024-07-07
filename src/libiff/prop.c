@@ -30,7 +30,7 @@
 
 #define PROP_GROUPTYPENAME "formType"
 
-IFF_ChunkInterface IFF_propInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkPropContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy};
+IFF_ChunkInterface IFF_propInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkPropContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateGroupChunkSize};
 
 IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType)
 {
@@ -66,11 +66,6 @@ static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *s
 IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_checkGroupContents((const IFF_Group*)chunk, "formType", &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
-}
-
-void IFF_updatePropChunkSizes(IFF_Prop *prop)
-{
-    IFF_updateFormChunkSizes((IFF_Form*)prop);
 }
 
 IFF_Chunk *IFF_searchChunkInProp(const IFF_Prop *prop, const IFF_ID chunkId)

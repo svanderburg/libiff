@@ -75,10 +75,10 @@ int main(int argc, char *argv[])
     /* The IFF file should be invalid now as the, form chunk size is too small */
     if((qualityLevel = IFF_check((IFF_Chunk*)cat)) == IFF_QUALITY_RECOVERED)
     {
-        /* Update the chunk sizes */
-        IFF_updateChunkSizes((IFF_Chunk*)abcdChunk);
+        /* Recalculate the chunk sizes */
+        IFF_recalculateChunkSizes((IFF_Chunk*)abcdChunk);
 
-        /* Now the IFF should be valid */
+        /* Now the IFF file should be valid */
 
         if((qualityLevel = IFF_check((IFF_Chunk*)cat)) != IFF_QUALITY_PERFECT)
         {

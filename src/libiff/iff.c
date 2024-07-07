@@ -92,3 +92,8 @@ IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visit
 {
     return IFF_traverseCore(chunk, data, visitChunk, &IFF_defaultChunkRegistry);
 }
+
+void IFF_recalculateChunkSizes(IFF_Chunk *chunk)
+{
+    IFF_recalculateChunkSizesCore(chunk, &IFF_defaultChunkRegistry);
+}

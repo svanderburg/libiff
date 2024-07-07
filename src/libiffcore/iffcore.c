@@ -174,3 +174,8 @@ IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction v
 {
     return IFF_traverseChunkHierarchy(chunk, 0, data, visitChunk, chunkRegistry);
 }
+
+void IFF_recalculateChunkSizesCore(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+{
+    IFF_recalculateChunkHierarchySizes(chunk, 0, chunkRegistry);
+}

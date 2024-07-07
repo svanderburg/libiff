@@ -1,7 +1,7 @@
 noinst_HEADERS = bye.h hello.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
-    searchforms-form searchforms-cat searchforms-nestedform updatechunksizes \
+    searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     writeextension readextension testcheck testpp \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
@@ -86,9 +86,9 @@ searchforms_nestedform_SOURCES = searchforms-nestedform.c
 searchforms_nestedform_LDADD = ../src/libiff/libiff.la
 searchforms_nestedform_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-updatechunksizes_SOURCES = updatechunksizes.c
-updatechunksizes_LDADD = ../src/libiff/libiff.la
-updatechunksizes_CFLAGS = -I../src/libiffcore -I../src/libiff
+recalculatechunksizes_SOURCES = recalculatechunksizes.c
+recalculatechunksizes_LDADD = ../src/libiff/libiff.la
+recalculatechunksizes_CFLAGS = -I../src/libiffcore -I../src/libiff
 
 writeextension_SOURCES = hello.c bye.c test.c testregistry.c extensiondata.c writeextension.c
 writeextension_LDADD = ../src/libiff/libiff.la
@@ -137,7 +137,7 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     invalidcat-raw.sh invalidcat-prop.sh invalidcat-contentstype.sh invalidcat-size.sh \
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
     invalidprop.sh invalidprop-size.sh invalidlist-negsize.sh \
-    pp-text.sh searchforms-form searchforms-cat searchforms-nestedform updatechunksizes \
+    pp-text.sh searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension testcheck.sh testpp-c.sh testpp-otherform.sh \

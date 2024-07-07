@@ -26,7 +26,7 @@
 #include <util.h>
 #include "test.h"
 
-IFF_ChunkInterface TEST_byeInterface = {&TEST_createByeChunk, &TEST_readByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents, NULL};
+IFF_ChunkInterface TEST_byeInterface = {&TEST_createByeChunk, &TEST_readByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents, NULL, NULL};
 
 IFF_Chunk *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {

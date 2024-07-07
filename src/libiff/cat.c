@@ -27,7 +27,7 @@
 
 #define CAT_GROUPTYPENAME "contentsType"
 
-IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedGroup, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearGroupContents, &IFF_printCATContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy};
+IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedGroup, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearGroupContents, &IFF_printCATContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateGroupChunkSize};
 
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -132,9 +132,4 @@ IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkReg
 void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
-}
-
-void IFF_updateCATChunkSizes(IFF_CAT *cat)
-{
-    IFF_updateGroupChunkSizes((IFF_Group*)cat);
 }

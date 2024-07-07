@@ -265,16 +265,9 @@ IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk
 /**
  * Recalculates the chunk size of the given group chunk.
  *
- * @param group An instance of a group chunk
+ * @param chunk An instance of a group chunk
  */
-void IFF_updateGroupChunkSizes(IFF_Group *group);
-
-/**
- * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- */
-void IFF_updateChunkSizes(IFF_Chunk *chunk);
+void IFF_recalculateGroupChunkSize(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }
