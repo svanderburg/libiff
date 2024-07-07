@@ -149,6 +149,17 @@ IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsig
  */
 IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
+/**
+ * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param data An arbitrary data structure propagated to the visitor function
+ * @param visitChunk Function that gets invoked for each chunk that is encountered
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
+ */
+IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+
 #ifdef __cplusplus
 }
 #endif

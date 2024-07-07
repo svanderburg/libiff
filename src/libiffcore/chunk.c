@@ -28,6 +28,16 @@
 #include "error.h"
 #include "field.h"
 
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID formType, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+{
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, formType, chunk->chunkId);
+
+    if(chunkInterface->traverseChunkHierarchy == NULL)
+        return TRUE;
+    else
+        return chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk, chunkRegistry);
+}
+
 IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)malloc(structSize);

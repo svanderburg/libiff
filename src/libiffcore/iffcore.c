@@ -169,3 +169,8 @@ IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const
 {
     return IFF_compareChunk(chunk1, chunk2, 0, chunkRegistry);
 }
+
+IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+{
+    return IFF_traverseChunkHierarchy(chunk, 0, data, visitChunk, chunkRegistry);
+}

@@ -166,17 +166,6 @@ IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkReg
 void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
- * Returns an array of form structs of the given formType, which are recursively retrieved from the given CAT.
- *
- * @param cat An instance of a concatenation chunk
- * @param formTypes An array of 4 character form type IDs
- * @param formTypesLength Length of the form types array
- * @param formsLength Returns the length of the resulting array
- * @return An array of form structs
- */
-IFF_Form **IFF_searchFormsInCAT(IFF_CAT *cat, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
-
-/**
  * Recalculates the chunk size of the given concatentation chunk.
  *
  * @param cat An instance of a concatenation chunk

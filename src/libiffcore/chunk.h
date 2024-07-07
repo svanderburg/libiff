@@ -21,11 +21,12 @@
 
 #ifndef __IFF_CHUNK_H
 #define __IFF_CHUNK_H
+#include "ifftypes.h"
 
 typedef struct IFF_Chunk IFF_Chunk;
+typedef IFF_Bool (*IFF_visitChunkFunction) (IFF_Chunk *chunk, void *data);
 
 #include <stdio.h>
-#include "ifftypes.h"
 #include "chunkregistry.h"
 #include "attributepath.h"
 #include "error.h"
@@ -120,6 +121,18 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+
+/**
+ * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param data An arbitrary data structure propagated to the visitor function
+ * @param visitChunk Function that gets invoked for each chunk that is encountered
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
+ */
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID formType, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

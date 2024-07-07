@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "rawchunk.h"
 
-IFF_ChunkInterface IFF_textChunkInterface = {&IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents};
+IFF_ChunkInterface IFF_textChunkInterface = {&IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents, NULL};
 
 void IFF_setTextData(IFF_TextChunk *textChunk, const char *text)
 {

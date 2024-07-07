@@ -295,22 +295,21 @@ IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chun
         return FALSE;
 }
 
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Form **forms = NULL;
+    IFF_Group *group = (IFF_Group*)chunk;
     unsigned int i;
 
-    *formsLength = 0;
+    visitChunk(chunk, data);
 
+    /* Visit sub chunks */
     for(i = 0; i < group->chunksLength; i++)
     {
-        unsigned int resultLength;
-        IFF_Form **result = IFF_searchFormsFromArray(group->chunks[i], formTypes, formTypesLength, &resultLength);
-
-        forms = IFF_mergeFormArray(forms, formsLength, result, resultLength);
+        if(!IFF_traverseChunkHierarchy(group->chunks[i], group->groupType, data, visitChunk, chunkRegistry))
+            return FALSE;
     }
 
-    return forms;
+    return TRUE;
 }
 
 IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
@@ -332,29 +331,6 @@ void IFF_updateGroupChunkSizes(IFF_Group *group)
 
     for(i = 0; i < group->chunksLength; i++)
         group->chunkSize = IFF_incrementChunkSize(group->chunkSize, group->chunks[i]);
-}
-
-IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
-{
-    switch(chunk->chunkId)
-    {
-        case IFF_ID_FORM:
-            return IFF_searchFormsInForm((IFF_Form*)chunk, formTypes, formTypesLength, formsLength);
-        case IFF_ID_CAT:
-            return IFF_searchFormsInCAT((IFF_CAT*)chunk, formTypes, formTypesLength, formsLength);
-        case IFF_ID_LIST:
-            return IFF_searchFormsInList((IFF_List*)chunk, formTypes, formTypesLength, formsLength);
-        default:
-            *formsLength = 0;
-            return NULL;
-    }
-}
-
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength)
-{
-    IFF_ID formTypes[1];
-    formTypes[0] = formType;
-    return IFF_searchFormsFromArray(chunk, formTypes, 1, formsLength);
 }
 
 void IFF_updateChunkSizes(IFF_Chunk *chunk)

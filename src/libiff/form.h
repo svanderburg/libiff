@@ -154,17 +154,6 @@ void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
 IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength);
 
 /**
- * Returns an array of form structs of the given form types, which are recursively retrieved from the given form.
- *
- * @param form An instance of a form chunk
- * @param formTypes An array of 4 character form type IDs
- * @param formTypesLength Length of the form types array
- * @param formsLength Returns the length of the resulting array
- * @return An array of form structs
- */
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
-
-/**
  * Recalculates the chunk size of the given form chunk.
  *
  * @param form An instance of a form chunk
@@ -215,6 +204,27 @@ IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, con
  * @return An array with pointers to the chunks with the requested chunk ID, or NULL if there can't be any chunk found
  */
 IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength);
+
+/**
+ * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formTypes An array of 4 character form identifiers
+ * @param formTypesLength Length of the form types array
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+
+/**
+ * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
+ *
+ * @param chunk A chunk hierarchy representing an IFF file
+ * @param formType A 4 character form identifier
+ * @param formsLength An integer in which the length of the resulting array is stored
+ * @return An array of forms having the given form type
+ */
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
 
 #ifdef __cplusplus
 }

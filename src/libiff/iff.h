@@ -54,6 +54,8 @@ IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned 
 
 IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
+IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
+
 #ifdef __cplusplus
 }
 #endif

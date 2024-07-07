@@ -250,16 +250,7 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
  */
 IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
-/**
- * Returns an array of form structs of the given form types, which are recursively retrieved from the given group.
- *
- * @param group An instance of a group chunk
- * @param formTypes An array of 4 character form type IDs
- * @param formTypesLength Length of the form types array
- * @param formsLength Returns the length of the resulting array
- * @return An array of form structs
- */
-IFF_Form **IFF_searchFormsInGroup(IFF_Group *group, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
+IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Increments the given chunk size by the size of the given chunk.
@@ -277,27 +268,6 @@ IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk
  * @param group An instance of a group chunk
  */
 void IFF_updateGroupChunkSizes(IFF_Group *group);
-
-/**
- * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- * @param formTypes An array of 4 character form identifiers
- * @param formTypesLength Length of the form types array
- * @param formsLength An integer in which the length of the resulting array is stored
- * @return An array of forms having the given form type
- */
-IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
-
-/**
- * Recursively searches for all FORMs with the given form type in a chunk hierarchy.
- *
- * @param chunk A chunk hierarchy representing an IFF file
- * @param formType A 4 character form identifier
- * @param formsLength An integer in which the length of the resulting array is stored
- * @return An array of forms having the given form type
- */
-IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.

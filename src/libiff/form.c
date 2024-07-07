@@ -27,6 +27,7 @@
 #include "list.h"
 #include "cat.h"
 #include "io.h"
+#include "iff.h"
 
 #define FORM_GROUPTYPENAME "formType"
 
@@ -60,7 +61,7 @@
 #define ID_LIS8 IFF_MAKEID('L', 'I', 'S', '8')
 #define ID_LIS9 IFF_MAKEID('L', 'I', 'S', '9')
 
-IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents};
+IFF_ChunkInterface IFF_formInterface = {&IFF_createUnparsedGroup, &IFF_readFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearGroupContents, &IFF_printFormContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy};
 
 IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType)
 {
@@ -206,28 +207,6 @@ IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF
     return target;
 }
 
-IFF_Form **IFF_searchFormsInForm(IFF_Form *form, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
-{
-    unsigned int i;
-
-    /* If the given form is what we look for, return it */
-    for(i = 0; i < formTypesLength; i++)
-    {
-        const IFF_ID formType = formTypes[i];
-
-        if(form->formType == formType)
-        {
-            IFF_Form **forms = (IFF_Form**)malloc(sizeof(IFF_Form*));
-            forms[0] = form;
-            *formsLength = 1;
-
-            return forms;
-        }
-    }
-
-    return IFF_searchFormsInGroup((IFF_Group*)form, formTypes, formTypesLength, formsLength); /* Search into the nested forms in this form */
-}
-
 void IFF_updateFormChunkSizes(IFF_Form *form)
 {
     IFF_updateGroupChunkSizes((IFF_Group*)form);
@@ -354,4 +333,59 @@ IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, un
     chunks = IFF_searchChunksInForm(chunks, form, chunkId, chunksLength);
 
     return chunks;
+}
+
+typedef struct
+{
+    const IFF_ID *formTypes;
+    unsigned int formTypesLength;
+    IFF_Form **forms;
+    unsigned int formsLength;
+}
+SearchFormsResult;
+
+static IFF_Bool visitFormChunkFunction(IFF_Chunk *chunk, void *data)
+{
+    if(chunk->chunkId == IFF_ID_FORM)
+    {
+        SearchFormsResult *result = (SearchFormsResult*)data;
+        IFF_Form *form = (IFF_Form*)chunk;
+        unsigned int i;
+
+        for(i = 0; i < result->formTypesLength; i++)
+        {
+            const IFF_ID formType = result->formTypes[i];
+
+            if(form->formType == formType)
+            {
+                result->forms = (IFF_Form**)realloc(result->forms, (result->formsLength + 1) * sizeof(IFF_Form));
+                result->forms[result->formsLength] = form;
+                result->formsLength++;
+                break;
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+IFF_Form **IFF_searchFormsFromArray(IFF_Chunk *chunk, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
+{
+    SearchFormsResult result;
+    result.formTypes = formTypes;
+    result.formTypesLength = formTypesLength;
+    result.forms = NULL;
+    result.formsLength = 0;
+
+    IFF_traverse(chunk, &result, visitFormChunkFunction);
+
+    *formsLength = result.formsLength;
+    return result.forms;
+}
+
+IFF_Form **IFF_searchForms(IFF_Chunk *chunk, const IFF_ID formType, unsigned int *formsLength)
+{
+    IFF_ID formTypes[1];
+    formTypes[0] = formType;
+    return IFF_searchFormsFromArray(chunk, formTypes, 1, formsLength);
 }

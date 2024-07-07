@@ -210,17 +210,6 @@ void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
 IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
- * Returns an array of form structs of the given form types, which are recursively retrieved from the given list.
- *
- * @param list An instance of a list chunk
- * @param formTypes An array of 4 character form type IDs
- * @param formTypesLength Length of the form types array
- * @param formsLength Returns the length of the resulting array
- * @return An array of form structs
- */
-IFF_Form **IFF_searchFormsInList(IFF_List *list, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength);
-
-/**
  * Recalculates the chunk size of the given list chunk.
  *
  * @param list An instance of a list chunk

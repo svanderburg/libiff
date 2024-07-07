@@ -26,7 +26,7 @@
 #include "util.h"
 #include "cat.h"
 
-IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents};
+IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents, &IFF_traverseGroupChunkHierarchy};
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -289,11 +289,6 @@ IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
 {
     return compareListPropChunks((const IFF_List*)chunk1, (const IFF_List*)chunk2, chunkRegistry)
         && IFF_compareGroupContents(chunk1, chunk2, chunkRegistry);
-}
-
-IFF_Form **IFF_searchFormsInList(IFF_List *list, const IFF_ID *formTypes, const unsigned int formTypesLength, unsigned int *formsLength)
-{
-    return IFF_searchFormsInCAT((IFF_CAT*)list, formTypes, formTypesLength, formsLength);
 }
 
 void IFF_updateListChunkSizes(IFF_List *list)
