@@ -51,7 +51,7 @@ IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType);
 /**
  * Creates a new empty PROP chunk instance with a given form type.
  * The resulting chunk must be freed by using IFF_free().
- * Sub chunks can be added with the IFF_addToProp() function.
+ * Sub chunks can be added with the IFF_addChunkToProp() function.
  *
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
@@ -65,7 +65,27 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
  * @param prop An instance of a PROP chunk
  * @param chunk A data chunk
  */
-void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
+void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk);
+
+/**
+ * Removes a chunk from the body of the given PROP. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param prop An instance of a PROP chunk
+ * @param index Index of a chunk
+ * @return The chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Chunk *IFF_removeChunkFromProp(IFF_Prop *prop, unsigned int index);
+
+/**
+ * Updates a chunk in the body of the given PROP and updates the chunk size.
+ *
+ * @param prop An instance of a PROP chunk
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInProp(IFF_Prop *prop, unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.

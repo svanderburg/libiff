@@ -57,7 +57,7 @@ IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSiz
     return (IFF_Chunk*)IFF_createGroup(chunkId, chunkSize, 0);
 }
 
-void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk)
+void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
     group->chunks = (IFF_Chunk**)realloc(group->chunks, (group->chunksLength + 1) * sizeof(IFF_Chunk*));
     group->chunks[group->chunksLength] = chunk;
@@ -65,10 +65,64 @@ void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk)
     chunk->parent = (IFF_Chunk*)group;
 }
 
-void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
+void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
-    IFF_attachToGroup(group, chunk);
-    group->chunkSize = IFF_incrementChunkSize(group->chunkSize, chunk);
+    IFF_attachChunkToGroup(group, chunk);
+    IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
+}
+
+IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, unsigned int index)
+{
+    if(index >= group->chunksLength)
+        return NULL;
+    else
+    {
+        unsigned int i;
+        IFF_Chunk *obsoleteChunk = group->chunks[index];
+        obsoleteChunk->parent = NULL;
+
+        group->chunksLength--;
+
+        for(i = index; i < group->chunksLength; i++)
+            group->chunks[i] = group->chunks[i + 1];
+
+        group->chunks = (IFF_Chunk**)realloc(group->chunks, group->chunksLength * sizeof(IFF_Chunk*));
+
+        return obsoleteChunk;
+    }
+}
+
+IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index)
+{
+    IFF_Chunk *obsoleteChunk = IFF_detachChunkFromGroup(group, index);
+
+    if(obsoleteChunk != NULL)
+        IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
+
+    return obsoleteChunk;
+}
+
+IFF_Chunk *IFF_replaceInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk)
+{
+    if(index >= group->chunksLength)
+        return NULL;
+    else
+    {
+        IFF_Chunk *obsoleteChunk = group->chunks[index];
+        obsoleteChunk->parent = NULL;
+        group->chunks[index] = chunk;
+        return obsoleteChunk;
+    }
+}
+
+IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk)
+{
+    IFF_Chunk *obsoleteChunk = IFF_replaceInGroup(group, index, chunk);
+
+    if(obsoleteChunk != NULL)
+        IFF_updateChunkSize((IFF_Chunk*)group, obsoleteChunk, chunk);
+
+    return obsoleteChunk;
 }
 
 static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -90,10 +144,10 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
             return FALSE;
 
         /* Attach chunk to the group */
-        IFF_attachToGroup(group, chunk);
+        IFF_attachChunkToGroup(group, chunk);
 
         /* Increase the bytes processed counter */
-        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, chunk);
+        *bytesProcessed = IFF_addChunkSize(*bytesProcessed, chunk);
         index++;
 
         IFF_unvisitAttribute(attributePath);
@@ -134,7 +188,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
             return FALSE;
 
         /* Increase the bytes processed counter */
-        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, group->chunks[i]);
+        *bytesProcessed = IFF_addChunkSize(*bytesProcessed, group->chunks[i]);
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -166,7 +220,7 @@ IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group)
     for(i = 0; i < group->chunksLength; i++)
     {
         IFF_Chunk *subChunk = group->chunks[i];
-        chunkSize = IFF_incrementChunkSize(chunkSize, subChunk);
+        chunkSize = IFF_addChunkSize(chunkSize, subChunk);
     }
 
     return chunkSize;
@@ -312,17 +366,6 @@ IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visit
     return TRUE;
 }
 
-IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
-{
-    IFF_Long returnValue = chunkSize + IFF_ID_SIZE + sizeof(IFF_Long) + chunk->chunkSize;
-
-    /* If the size of the nested chunk size is odd, we have to count the padding byte as well */
-    if(chunk->chunkSize % 2 != 0)
-        returnValue++;
-
-    return returnValue;
-}
-
 void IFF_recalculateGroupChunkSize(IFF_Chunk *chunk)
 {
     IFF_Group *group = (IFF_Group*)chunk;
@@ -331,5 +374,5 @@ void IFF_recalculateGroupChunkSize(IFF_Chunk *chunk)
     group->chunkSize = IFF_ID_SIZE;
 
     for(i = 0; i < group->chunksLength; i++)
-        group->chunkSize = IFF_incrementChunkSize(group->chunkSize, group->chunks[i]);
+        group->chunkSize = IFF_addChunkSize(group->chunkSize, group->chunks[i]);
 }

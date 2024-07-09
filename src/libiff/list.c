@@ -58,7 +58,7 @@ IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize
     return (IFF_Chunk*)IFF_createList(chunkSize, 0);
 }
 
-static void addPropToList(IFF_List *list, IFF_Prop *prop)
+static void attachPropToList(IFF_List *list, IFF_Prop *prop)
 {
     list->props = (IFF_Prop**)realloc(list->props, (list->propsLength + 1) * sizeof(IFF_Prop*));
     list->props[list->propsLength] = prop;
@@ -68,18 +68,87 @@ static void addPropToList(IFF_List *list, IFF_Prop *prop)
 
 void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
 {
-    addPropToList(list, prop);
-    list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)prop);
+    attachPropToList(list, prop);
+    IFF_increaseChunkSize((IFF_Chunk*)list, (IFF_Chunk*)prop);
 }
 
-void IFF_addToList(IFF_List *list, IFF_Chunk *chunk)
+static IFF_Prop *detachPropFromList(IFF_List *list, unsigned int index)
 {
-    IFF_addToCAT((IFF_CAT*)list, chunk);
+    if(index >= list->propsLength)
+        return NULL;
+    else
+    {
+        unsigned int i;
+        IFF_Prop *obsoleteProp = list->props[index];
+        obsoleteProp->parent = NULL;
+
+        list->propsLength--;
+
+        for(i = index; i < list->propsLength; i++)
+            list->props[i] = list->props[i + 1];
+
+        list->props = (IFF_Prop**)realloc(list->props, list->propsLength * sizeof(IFF_Prop*));
+
+        return obsoleteProp;
+    }
 }
 
-void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
+IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index)
 {
-    IFF_addToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
+    IFF_Prop *obsoleteProp = detachPropFromList(list, index);
+
+    if(obsoleteProp != NULL)
+        IFF_decreaseChunkSize((IFF_Chunk*)list, (IFF_Chunk*)obsoleteProp);
+
+    return obsoleteProp;
+}
+
+static IFF_Prop *replacePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop)
+{
+    if(index >= list->propsLength)
+        return NULL;
+    else
+    {
+        IFF_Prop *obsoleteProp = list->props[index];
+        obsoleteProp->parent = NULL;
+        list->props[index] = prop;
+        return obsoleteProp;
+    }
+}
+
+IFF_Prop *IFF_updatePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop)
+{
+    IFF_Prop *obsoleteProp = replacePropInList(list, index, prop);
+
+    if(obsoleteProp != NULL)
+        IFF_updateChunkSize((IFF_Chunk*)list, (IFF_Chunk*)obsoleteProp, (IFF_Chunk*)prop);
+
+    return obsoleteProp;
+}
+
+void IFF_addChunkToList(IFF_List *list, IFF_Chunk *chunk)
+{
+    IFF_addChunkToCAT((IFF_CAT*)list, chunk);
+}
+
+void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
+{
+    IFF_addChunkToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
+}
+
+IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, unsigned int index)
+{
+    return IFF_removeChunkFromCAT((IFF_CAT*)list, index);
+}
+
+IFF_Chunk *IFF_updateChunkInList(IFF_List *list, unsigned int index, IFF_Chunk *chunk)
+{
+    return IFF_updateChunkInCAT((IFF_CAT*)list, index, chunk);
+}
+
+IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, unsigned int index, IFF_Chunk *chunk)
+{
+    return IFF_updateChunkInCATAndUpdateContentsType((IFF_CAT*)list, index, chunk);
 }
 
 static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -102,12 +171,12 @@ static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkReg
 
         /* Add the PROP chunk or arbitrary sub chunk */
         if(chunk->chunkId == IFF_ID_PROP)
-            addPropToList(list, (IFF_Prop*)chunk);
+            attachPropToList(list, (IFF_Prop*)chunk);
         else
-            IFF_attachToGroup((IFF_Group*)list, chunk);
+            IFF_attachChunkToGroup((IFF_Group*)list, chunk);
 
         /* Increase the bytes processed counter */
-        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, chunk);
+        *bytesProcessed = IFF_addChunkSize(*bytesProcessed, chunk);
         index++;
 
         IFF_unvisitAttribute(attributePath);
@@ -149,7 +218,7 @@ static IFF_Bool writeListPropChunks(FILE *file, const IFF_List *list, const IFF_
             return FALSE;
 
         /* Increase the bytes processed counter */
-        *bytesProcessed = IFF_incrementChunkSize(*bytesProcessed, (IFF_Chunk*)list->props[i]);
+        *bytesProcessed = IFF_addChunkSize(*bytesProcessed, (IFF_Chunk*)list->props[i]);
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -184,7 +253,7 @@ IFF_Long IFF_computeActualListChunkSize(const IFF_List *list)
     for(i = 0; i < list->propsLength; i++)
     {
         IFF_Chunk *propChunk = (IFF_Chunk*)list->props[i];
-        chunkSize = IFF_incrementChunkSize(chunkSize, propChunk);
+        chunkSize = IFF_addChunkSize(chunkSize, propChunk);
     }
 
     return chunkSize;
@@ -299,7 +368,7 @@ void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
     IFF_recalculateGroupChunkSize(chunk);
 
     for(i = 0; i < list->propsLength; i++)
-        list->chunkSize = IFF_incrementChunkSize(list->chunkSize, (IFF_Chunk*)list->props[i]);
+        list->chunkSize = IFF_addChunkSize(list->chunkSize, (IFF_Chunk*)list->props[i]);
 }
 
 IFF_Prop *IFF_getPropFromList(const IFF_List *list, const IFF_ID formType)

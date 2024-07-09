@@ -43,7 +43,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
 
         /* Check whether the IFF file is valid */
         if(error == NULL || IFF_check(chunk))
-            IFF_addToCATAndUpdateContentsType(cat, chunk); /* Add the input IFF chunk to the concatenation */
+            IFF_addChunkToCATAndUpdateContentsType(cat, chunk); /* Add the input IFF chunk to the concatenation */
         else
         {
             if(error != NULL)

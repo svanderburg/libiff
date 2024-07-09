@@ -143,6 +143,49 @@ IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID formType, voi
  */
 void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
 
+/**
+ * Computes how much memory a chunk really needs. The chunkSize field of a chunk only indicates how many bytes its contents is.
+ * This function also takes the chunk header and padding into account.
+ *
+ * @param chunk A chunk
+ * @return The amount of bytes a chunk consumes
+ */
+IFF_Long IFF_computeActualChunkSize(const IFF_Chunk *chunk);
+
+/**
+ * Adds to the given chunk size the actual size of the given chunk.
+ *
+ * @param chunkSize Chunk size of a group chunk
+ * @param chunk A sub chunk
+ * @return The incremented chunk size
+ */
+IFF_Long IFF_addChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
+
+/**
+ * Increases the chunk size by the actual size of another chunk that is to be attached.
+ *
+ * @param chunk A chunk
+ * @param attachedChunk Chunk to be attached
+ */
+void IFF_increaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk);
+
+/**
+ * Decreases the chunk size by the actual size of another chunk that is to be attached.
+ *
+ * @param chunk A chunk
+ * @param attachedChunk Chunk to be attached
+ */
+void IFF_decreaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk);
+
+/**
+ * Updates the chunk size by differences of the actual size of the detached chunk and attached chunk.
+ *
+ * @param chunk A chunk to be updated
+ * @param detachedChunk Chunk to be detached
+ * @param attachedChunk Chunk to be attached
+ */
+void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const IFF_Chunk *attachedChunk);
+
 #ifdef __cplusplus
 }
 #endif

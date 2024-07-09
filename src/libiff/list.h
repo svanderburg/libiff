@@ -87,7 +87,7 @@ IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType);
 /**
  * Creates a new list chunk instance with a given contents type.
  * The resulting chunk must be freed by using IFF_free().
- * Sub chunks can be added with the IFF_addToList() function.
+ * Sub chunks can be added with the IFF_addChunkToList() function.
  *
  * @param contentsType Contents type hinting what the contents of the list is.
  * @return A list chunk or NULL, if the memory for the struct can't be allocated
@@ -97,7 +97,7 @@ IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType);
 /**
  * Creates a new list chunk instance with the JJJJ contents type.
  * The resulting chunk must be freed by using IFF_free().
- * Sub chunks can be added with the IFF_addToList() function.
+ * Sub chunks can be added with the IFF_addChunkToList() function.
  *
  * @return A list chunk or NULL, if the memory for the struct can't be allocated
  */
@@ -124,13 +124,33 @@ IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize
 void IFF_addPropToList(IFF_List *list, IFF_Prop *prop);
 
 /**
+ * Removes a PROP chunk from the body of the given list. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param list An instance of a list struct
+ * @param index Index of a chunk
+ * @return The PROP chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index);
+
+/**
+ * Updates a PROP chunk in the body of the given list and updates the chunk size.
+ *
+ * @param list An instance of a list struct
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The PROP chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Prop *IFF_updatePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop);
+
+/**
  * Adds a chunk to the body of the given list. This function also increments the
  * chunk size and chunk length counter.
  *
  * @param list An instance of a list struct
  * @param chunk A FORM, CAT or LIST chunk
  */
-void IFF_addToList(IFF_List *list, IFF_Chunk *chunk);
+void IFF_addChunkToList(IFF_List *list, IFF_Chunk *chunk);
 
 /**
  * Adds a chunk to the body of the given list.
@@ -141,7 +161,39 @@ void IFF_addToList(IFF_List *list, IFF_Chunk *chunk);
  * @param list An instance of a list struct
  * @param chunk A FORM, CAT or LIST chunk
  */
-void IFF_addToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
+void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
+
+/**
+ * Removes a chunk from the body of the given list. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param list An instance of a list struct
+ * @param index Index of a chunk
+ * @return The chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, unsigned int index);
+
+/**
+ * Updates a chunk in the body of the given list and updates the chunk size.
+ *
+ * @param list An instance of a list struct
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInList(IFF_List *list, unsigned int index, IFF_Chunk *chunk);
+
+/**
+ * Updates a chunk in the body of the given list and updates the chunk size.
+ * If it sees that all sub chunks have the same group type, it adopts it as its contents type.
+ * If there is no uniform group type possible it sets the contents type to: 'JJJJ'.
+ *
+ * @param list An instance of a list struct
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a list chunk and its sub chunks from a file.

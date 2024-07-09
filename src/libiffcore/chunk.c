@@ -160,3 +160,77 @@ void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID formType,
     if(chunk->parent != NULL)
         IFF_recalculateChunkHierarchySizes(chunk->parent, formType, chunkRegistry);
 }
+
+IFF_Long IFF_computeActualChunkSize(const IFF_Chunk *chunk)
+{
+    IFF_Long actualChunkSize = IFF_ID_SIZE + sizeof(IFF_Long) + chunk->chunkSize;
+
+    /* If the size of the nested chunk size is odd, we have to count the padding byte as well */
+    if(chunk->chunkSize % 2 != 0)
+        actualChunkSize++;
+
+    return actualChunkSize;
+}
+
+IFF_Long IFF_addChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
+{
+    return chunkSize + IFF_computeActualChunkSize(chunk);
+}
+
+static void increaseChunkSize(IFF_Chunk *chunk, IFF_Long increment)
+{
+    chunk->chunkSize += increment;
+
+    if(chunk->parent != NULL)
+        increaseChunkSize(chunk->parent, increment);
+}
+
+void IFF_increaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk)
+{
+    IFF_Long actualChunkSize = IFF_computeActualChunkSize(attachedChunk);
+    increaseChunkSize(chunk, actualChunkSize);
+}
+
+static void decreaseChunkSize(IFF_Chunk *chunk, IFF_Long decrement)
+{
+    chunk->chunkSize -= decrement;
+
+    if(chunk->parent != NULL)
+        decreaseChunkSize(chunk->parent, decrement);
+}
+
+void IFF_decreaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk)
+{
+    IFF_Long actualChunkSize = IFF_computeActualChunkSize(attachedChunk);
+    decreaseChunkSize(chunk, actualChunkSize);
+}
+
+void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const IFF_Chunk *attachedChunk)
+{
+    if(detachedChunk->chunkSize > attachedChunk->chunkSize)
+    {
+        IFF_Long decrement = detachedChunk->chunkSize - attachedChunk->chunkSize;
+
+        if(detachedChunk->chunkSize % 2 != 0)
+            decrement++;
+
+        if(attachedChunk->chunkSize % 2 != 0)
+            decrement--;
+
+        if(decrement > 0)
+            decreaseChunkSize(chunk, decrement);
+    }
+    else if(detachedChunk->chunkSize < attachedChunk->chunkSize)
+    {
+        IFF_Long increment = attachedChunk->chunkSize - detachedChunk->chunkSize;
+
+        if(detachedChunk->chunkSize % 2 != 0)
+            increment--;
+
+        if(attachedChunk->chunkSize % 2 != 0)
+            increment++;
+
+        if(increment > 0)
+            increaseChunkSize(chunk, increment);
+    }
+}

@@ -4,7 +4,8 @@ check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform r
     searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     writeextension readextension testcheck testpp \
-    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended \
+    catcrudoperations listcrudoperations formcrudoperations
 
 writeform_SOURCES = formdata.c writeform.c
 writeform_LDADD = ../src/libiff/libiff.la
@@ -130,6 +131,18 @@ readextension_extended_SOURCES = hello.c bye.c test.c testregistry.c extensionda
 readextension_extended_LDADD = ../src/libiff/libiff.la
 readextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 
+catcrudoperations_SOURCES = catdata.c catcrudoperations.c
+catcrudoperations_LDADD = ../src/libiff/libiff.la
+catcrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
+
+listcrudoperations_SOURCES = listdata.c listcrudoperations.c
+listcrudoperations_LDADD = ../src/libiff/libiff.la
+listcrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
+
+formcrudoperations_SOURCES = catdata.c formcrudoperations.c
+formcrudoperations_LDADD = ../src/libiff/libiff.la
+formcrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
+
 TESTS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     validform.sh validcat.sh validcat-wildcard.sh validlist.sh validlist-wildcard.sh invalidiff.sh \
     invalidid1.sh invalidid2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh \
@@ -141,7 +154,8 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension testcheck.sh testpp-c.sh testpp-otherform.sh \
-    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended \
+    catcrudoperations listcrudoperations formcrudoperations
 
 EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \
     invalidform-size2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh invalidid1.sh invalidid2.sh \

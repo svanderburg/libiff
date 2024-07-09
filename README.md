@@ -179,8 +179,8 @@ static IFF_Chunk *createForm(void)
     IFF_Chunk *byeChunk = createByeChunk();
     IFF_Form *form = IFF_createEmptyForm(ID_TEST);
 
-    IFF_addToForm(heloChunk);
-    IFF_addToForm(byeChunk);
+    IFF_addChunkToForm(heloChunk);
+    IFF_addChunkToForm(byeChunk);
 
     return (IFF_Chunk*)form;
 }
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
     IFF_Chunk *form = createForm();
     IFF_CAT *cat = IFF_createCAT(ID_TEST);
 
-    IFF_addToCAT(form);
+    IFF_addChunkToCAT(form);
 
     return 0;
 }

@@ -9,7 +9,7 @@ EXPORTS
 	IFF_print                 @7
 	IFF_compare               @8
 	IFF_createCAT             @9
-	IFF_addToCAT              @10
+	IFF_addChunkToCAT         @10
 	IFF_readCAT               @11
 	IFF_writeCAT              @12
 	IFF_checkCATSubChunk      @13
@@ -28,11 +28,11 @@ EXPORTS
 	IFF_compareChunk          @26
 	IFF_searchForms           @27
 	IFF_searchFormsFromArray  @28
-	IFF_incrementChunkSize    @29
+	IFF_addChunkSize          @29
 	IFF_updateChunkSizes      @30
 	IFF_findFormExtension     @36
 	IFF_createForm            @37
-	IFF_addToForm             @38
+	IFF_addChunkToForm        @38
 	IFF_readForm              @39
 	IFF_writeForm             @40
 	IFF_checkFormType         @41
@@ -48,7 +48,7 @@ EXPORTS
 	IFF_getChunksFromForm     @51
 	IFF_initGroup             @52
 	IFF_createGroup           @53
-	IFF_addToGroup            @54
+	IFF_addChunkToGroup       @54
 	IFF_readGroup             @55
 	IFF_writeGroupSubChunks   @56
 	IFF_writeGroup            @57
@@ -80,7 +80,7 @@ EXPORTS
 	IFF_writePaddingByte      @84
 	IFF_createList            @85
 	IFF_addPropToList         @86
-	IFF_addToList             @87
+	IFF_addChunkToList        @87
 	IFF_readList              @88
 	IFF_writeList             @89
 	IFF_checkList             @90
@@ -91,7 +91,7 @@ EXPORTS
 	IFF_updateListChunkSizes  @95
 	IFF_getPropFromList       @96
 	IFF_createProp            @97
-	IFF_addToProp             @98
+	IFF_addChunkToProp        @98
 	IFF_readProp              @99
 	IFF_writeProp             @100
 	IFF_checkProp             @101

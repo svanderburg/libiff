@@ -62,15 +62,32 @@ static void updateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     }
 }
 
-void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk)
+void IFF_addChunkToCAT(IFF_CAT *cat, IFF_Chunk *chunk)
 {
-    IFF_addToGroup((IFF_Group*)cat, chunk);
+    IFF_addChunkToGroup((IFF_Group*)cat, chunk);
 }
 
-void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
+void IFF_addChunkToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
 {
     updateContentsType(cat, chunk);
-    IFF_addToCAT(cat, chunk);
+    IFF_addChunkToCAT(cat, chunk);
+}
+
+IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, unsigned int index)
+{
+    return IFF_removeChunkFromGroup((IFF_Group*)cat, index);
+}
+
+IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk)
+{
+    IFF_Chunk *obsoleteChunk = IFF_updateChunkInGroup((IFF_Group*)cat, index, chunk);
+    updateContentsType(cat, chunk);
+    return obsoleteChunk;
+}
+
+IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk)
+{
+    return IFF_updateChunkInGroup((IFF_Group*)cat, index, chunk);
 }
 
 IFF_Bool IFF_readCATContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

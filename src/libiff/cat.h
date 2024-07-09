@@ -79,7 +79,7 @@ IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType);
 
 /**
  * Creates a new empty concatentation chunk instance with a given contents type.
- * Sub chunks can be added with the IFF_addToCAT() function.
+ * Sub chunks can be added with the IFF_addChunkToCAT() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param contentsType Contents type hinting what the contents of the CAT is.
@@ -89,7 +89,7 @@ IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType);
 
 /**
  * Creates a new empty concatentation chunk instance using the JJJJ contents type.
- * Sub chunks can be added with the IFF_addToCAT() function.
+ * Sub chunks can be added with the IFF_addChunkToCAT() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @return CAT chunk or NULL, if the memory for the struct can't be allocated
@@ -103,7 +103,7 @@ IFF_CAT *IFF_createEmptyCAT(void);
  * @param cat An instance of a CAT struct
  * @param chunk A FORM, CAT or LIST chunk
  */
-void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
+void IFF_addChunkToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
 
 /**
  * Adds a chunk to the body of the given CAT and updates the contents type.
@@ -114,7 +114,39 @@ void IFF_addToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
  * @param cat An instance of a CAT struct
  * @param chunk A FORM, CAT or LIST chunk
  */
-void IFF_addToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
+void IFF_addChunkToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
+
+/**
+ * Removes a chunk from the body of the given CAT. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param cat An instance of a CAT struct
+ * @param index Index of a chunk
+ * @return The chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, unsigned int index);
+
+/**
+ * Updates a chunk in the body of the given CAT and updates the chunk size.
+ *
+ * @param cat An instance of a CAT struct
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk);
+
+/**
+ * Updates a chunk in the body of the given CAT and updates the chunk size.
+ * If it sees that all sub chunks have the same group type, it adopts it as its contents type.
+ * If there is no uniform group type possible it sets the contents type to: 'JJJJ'.
+ *
+ * @param cat An instance of a CAT struct
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a concatenation chunk and its sub chunks from a file.

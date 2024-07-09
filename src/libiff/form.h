@@ -77,7 +77,7 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
 
 /**
  * Creates a new empty form chunk instance with a given form type.
- * Sub chunks can be added with the IFF_addToForm() function.
+ * Sub chunks can be added with the IFF_addChunkToForm() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param formType Form type describing the purpose of the sub chunks.
@@ -92,7 +92,27 @@ IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
  * @param form An instance of a FORM chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_addToForm(IFF_Form *form, IFF_Chunk *chunk);
+void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk);
+
+/**
+ * Removes a chunk from the body of the given FORM. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param form An instance of a FORM chunk
+ * @param index Index of a chunk
+ * @return The chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Chunk *IFF_removeChunkFromForm(IFF_Form *form, unsigned int index);
+
+/**
+ * Updates a chunk in the body of the given FORM and updates the chunk size.
+ *
+ * @param form An instance of a FORM chunk
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInForm(IFF_Form *form, unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a form chunk and its sub chunks from a file.

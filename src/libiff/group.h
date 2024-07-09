@@ -92,7 +92,7 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_I
 
 /**
  * Creates a new empty group chunk instance with the chunk id and group type.
- * Sub chunks can be added with the IFF_addToGroup() function.
+ * Sub chunks can be added with the IFF_addChunkToGroup() function.
  * The resulting chunk must be freed by using IFF_free().
  *
  * @param chunkId A 4 character chunk id.
@@ -118,7 +118,7 @@ IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSiz
  * @param group An instance of a group chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk);
+void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
 
 /**
  * Adds a chunk to the body of the given group. This function also increments the
@@ -127,7 +127,36 @@ void IFF_attachToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param group An instance of a group chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk);
+void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
+
+/**
+ * Detaches a chunk from the body of the given group.
+ *
+ * @param group An instance of a group chunk
+ * @param index Index of a chunk
+ * @return The chunk that was detached or NULL if it cannot be detached
+ */
+IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, unsigned int index);
+
+/**
+ * Removes a chunk from the body of the given group. This function also decrements
+ * the chunk size and chunk length counter.
+ *
+ * @param group An instance of a group chunk
+ * @param index Index of a chunk
+ * @return The chunk that was removed or NULL if it cannot be removed
+ */
+IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index);
+
+/**
+ * Updates a chunk in the body of the given group and updates the chunk size.
+ *
+ * @param group An instance of a group chunk
+ * @param index Index of a chunk
+ * @param chunk A chunk that needs to be put in the position
+ * @return The chunk that was previously at the specified index or NULL if it does not exists
+ */
+IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a group chunk and its sub chunks from a file.
@@ -251,16 +280,6 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
 IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
 
 IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
-
-/**
- * Increments the given chunk size by the size of the given chunk.
- * Additionally, it takes the padding byte into account if the chunk size is odd.
- *
- * @param chunkSize Chunk size of a group chunk
- * @param chunk A sub chunk
- * @return The incremented chunk size with an optional padding byte
- */
-IFF_Long IFF_incrementChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
 
 /**
  * Recalculates the chunk size of the given group chunk.
