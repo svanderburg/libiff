@@ -405,8 +405,8 @@ The implementation of this interface (`test.c`) may look as follows:
 #include "hello.h"
 #include "bye.h"
 
-#define TEST_NUM_OF_FORM_CHUNK_TYPES 1
-#define TEST_NUM_OF_CHUNK_TYPES 2
+#define TEST_NUM_OF_SCOPED_CHUNK_TYPES 1
+#define TEST_NUM_OF_GLOBAL_CHUNK_TYPES 2
 
 /*
  * Defines how the 'HELO' and 'BYE ' chunks should be managed. The chunks must
@@ -429,20 +429,20 @@ static IFF_ChunkTypesNode applicationChunkTypesNode = {
  * Refers to the chunk types within the TEST form scope.
  * Also these form types must be alphabetically sorted.
  */
-static IFF_FormChunkTypes formChunkTypes[] = {
+static IFF_ScopedChunkTypes scopedChunkTypes[] = {
     { TEST_ID_TEST, &applicationChunkTypesNode }
 };
 
 /*
  * Extends the default chunk registry with our custom form chunk types
  */
-static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
+static const IFF_ChunkRegistry chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_SCOPED_CHUNK_TYPES(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes);
 
 /*
  * Represents a registry that specifies how chunks should be managed
  */
 static IFF_ChunkRegistry chunkRegistry = {
-    TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes
+    TEST_NUM_OF_GLOBAL_CHUNK_TYPES, scopedChunkTypes
 };
 
 /* The following functions hide the the extension parameters for this application format */

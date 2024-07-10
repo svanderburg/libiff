@@ -65,83 +65,83 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t stru
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()
  *
  * @param file File descriptor of the file
- * @param formType Form type id describing in which FORM the sub chunk is located. 0 is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.
  *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays a textual representation of an IFF chunk hierarchy on the standard output.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether two given chunk hierarchies are equal.
  *
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @param data An arbitrary data structure propagated to the visitor function
  * @param visitChunk Function that gets invoked for each chunk that is encountered
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
  */
-IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID formType, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param formType Form type id describing in which FORM the sub chunk is located. NULL is used for sub chunks in other group chunks.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Computes how much memory a chunk really needs. The chunkSize field of a chunk only indicates how many bytes its contents is.

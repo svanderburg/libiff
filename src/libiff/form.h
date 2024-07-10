@@ -163,17 +163,6 @@ IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRe
 void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
- * Merges two given IFF form arrays in the target array.
- *
- * @param target Target form array
- * @param targetLength Length of the target form array
- * @param source Source form array
- * @param sourceLength Length of the source form array
- * @return A reallocated target form array containing the forms of both the source and target arrays
- */
-IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength);
-
-/**
  * Searches for the last occurence of a chunk with the given chunk ID in the given form.
  *
  * @param form An instance of a form chunk

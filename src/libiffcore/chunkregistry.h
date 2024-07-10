@@ -25,7 +25,7 @@
 typedef struct IFF_ChunkInterface IFF_ChunkInterface;
 typedef struct IFF_ChunkType IFF_ChunkType;
 typedef struct IFF_ChunkTypesNode IFF_ChunkTypesNode;
-typedef struct IFF_FormChunkTypes IFF_FormChunkTypes;
+typedef struct IFF_ScopedChunkTypes IFF_ScopedChunkTypes;
 typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
 
 #include <stdio.h>
@@ -94,12 +94,12 @@ struct IFF_ChunkTypesNode
 };
 
 /**
- * @brief Defines how chunks inside a FORM with a particular formType should be managed.
+ * @brief Defines how chunks inside another chunk (most common case: a FORM with a particular formType) should be managed.
  */
-struct IFF_FormChunkTypes
+struct IFF_ScopedChunkTypes
 {
-    /** A 4 character form type id */
-    IFF_ID formType;
+    /** A 4 character form scope id */
+    IFF_ID scopeId;
 
     /** Link to the first node that defines how application specific chunks in a FORM should be managed */
     IFF_ChunkTypesNode *chunkTypesNode;
@@ -110,16 +110,16 @@ struct IFF_FormChunkTypes
  */
 struct IFF_ChunkRegistry
 {
-    /** Specifies the number of FORM types that have their own chunk types */
-    unsigned int formChunkTypesLength;
+    /** Specifies the number of scoped types that have their own chunk types */
+    unsigned int scopedChunkTypesLength;
 
-    /** An array specifying the types of chunks per FORM type */
-    IFF_FormChunkTypes *formChunkTypes;
+    /** An array specifying the types of chunks in a scope */
+    IFF_ScopedChunkTypes *scopedChunkTypes;
 
     /** Link to the first node that specifies how chunks with global identifier should be handled */
     IFF_ChunkTypesNode *globalChunkTypesNode;
 
-    /** Interface of the default chunk, that is used when no FORM-specific or global identifier matches */
+    /** Interface of the default chunk, that is used when no chunk type matches */
     IFF_ChunkInterface *defaultChunkInterface;
 
     /** Function that checks the main chunk's validity */
@@ -133,12 +133,12 @@ extern "C" {
 /**
  * Searches for a chunk interface that can deal with a chunk in a given form with a form type and a given chunk id
  *
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- * @param formType A 4 character form type id. If the formType is 0 then only the global chunk types will be considered
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of another chunk
+ * @param scopeId A 4 character scope id. If the scopeId is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
  * @return The chunk interface that specifies how a chunk type within a form should be handled
  */
-IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId);
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID scopeId, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }

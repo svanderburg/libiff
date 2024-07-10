@@ -30,11 +30,11 @@ static IFF_ChunkType applicationChunkTypes[] = {
 };
 
 static IFF_ChunkTypesNode applicationChunkTypesNode = {
-    TEST_NUM_OF_CHUNK_TYPES, applicationChunkTypes, NULL
+    TEST_NUM_OF_GLOBAL_CHUNK_TYPES, applicationChunkTypes, NULL
 };
 
-static IFF_FormChunkTypes formChunkTypes[] = {
+static IFF_ScopedChunkTypes scopedChunkTypes[] = {
     { TEST_ID_TEST, &applicationChunkTypesNode }
 };
 
-const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_FORM_CHUNK_TYPES(TEST_NUM_OF_FORM_CHUNK_TYPES, formChunkTypes);
+const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_SCOPED_CHUNK_TYPES(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes);

@@ -24,25 +24,25 @@
 #include "io.h"
 #include "id.h"
 
-static int compareFormChunkTypes(const void *a, const void *b)
+static int compareScopedChunkTypes(const void *a, const void *b)
 {
-    const IFF_FormChunkTypes *l = (const IFF_FormChunkTypes*)a;
-    const IFF_FormChunkTypes *r = (const IFF_FormChunkTypes*)b;
+    const IFF_ScopedChunkTypes *l = (const IFF_ScopedChunkTypes*)a;
+    const IFF_ScopedChunkTypes *r = (const IFF_ScopedChunkTypes*)b;
 
-    if(l->formType < r->formType)
+    if(l->scopeId < r->scopeId)
         return -1;
-    else if(l->formType > r->formType)
+    else if(l->scopeId > r->scopeId)
         return 1;
     else
         return 0;
 }
 
-const static IFF_FormChunkTypes *getFormChunkTypes(const IFF_ID formType, const IFF_ChunkRegistry *chunkRegistry)
+const static IFF_ScopedChunkTypes *getScopedChunkTypes(const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_FormChunkTypes key;
-    key.formType = formType;
+    IFF_ScopedChunkTypes key;
+    key.scopeId = scopeId;
 
-    return (IFF_FormChunkTypes*)bsearch(&key, chunkRegistry->formChunkTypes, chunkRegistry->formChunkTypesLength, sizeof(IFF_FormChunkTypes), &compareFormChunkTypes);
+    return (IFF_ScopedChunkTypes*)bsearch(&key, chunkRegistry->scopedChunkTypes, chunkRegistry->scopedChunkTypesLength, sizeof(IFF_ScopedChunkTypes), &compareScopedChunkTypes);
 }
 
 static int compareChunkTypes(const void *a, const void *b)
@@ -77,16 +77,17 @@ static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNod
     }
 }
 
-IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType, const IFF_ID chunkId)
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID scopeId, const IFF_ID chunkId)
 {
-    /* Search for the requested FORM chunk types */
-    const IFF_FormChunkTypes *formChunkTypes = getFormChunkTypes(formType, chunkRegistry);
+    /* Search for the requested scoped chunk types */
+    const IFF_ScopedChunkTypes *scopedChunkTypes = getScopedChunkTypes(scopeId, chunkRegistry);
     IFF_ChunkType *result;
 
-    if(formChunkTypes == NULL)
-        result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
+    /* Search for the chunk type that handles the chunk with the given chunk id */
+    if(scopedChunkTypes == NULL)
+        result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode);
     else
-        result = getChunkType(chunkId, formChunkTypes->chunkTypesNode); /* Search for the chunk type that handles the a chunk with the given chunk id */
+        result = getChunkType(chunkId, scopedChunkTypes->chunkTypesNode);
 
     if(result == NULL)
         return chunkRegistry->defaultChunkInterface;

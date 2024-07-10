@@ -202,21 +202,6 @@ void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
     IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
-IFF_Form **IFF_mergeFormArray(IFF_Form **target, unsigned int *targetLength, IFF_Form **source, const unsigned int sourceLength)
-{
-    unsigned int i;
-    unsigned int newLength = *targetLength + sourceLength;
-
-    target = (IFF_Form**)realloc(target, newLength * sizeof(IFF_Form*));
-
-    for(i = 0; i < sourceLength; i++)
-        target[i + *targetLength] = source[i];
-
-    *targetLength = newLength;
-
-    return target;
-}
-
 /**
  * Searches the list in which the given chunk is (indirectly) a member from.
  *

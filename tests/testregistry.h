@@ -25,8 +25,8 @@
 
 #define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-#define TEST_NUM_OF_FORM_CHUNK_TYPES 1
-#define TEST_NUM_OF_CHUNK_TYPES 2
+#define TEST_NUM_OF_SCOPED_CHUNK_TYPES 1
+#define TEST_NUM_OF_GLOBAL_CHUNK_TYPES 2
 
 extern const IFF_ChunkRegistry TEST_chunkRegistry;
 

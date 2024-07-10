@@ -34,7 +34,7 @@ extern "C" {
  * Reads an IFF file from a given file descriptor. The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
 IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -43,7 +43,7 @@ IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IF
  * Reads an IFF file from a file with the given filename. The resulting chunk must be freed using IFF_free().
  *
  * @param filename Filename of the file
- * @param chunkRegistry A registry that determine s how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
 IFF_Chunk *IFF_readFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -53,7 +53,7 @@ IFF_Chunk *IFF_readFileCore(const char *filename, const IFF_ChunkRegistry *chunk
  * The resulting chunk must be freed using IFF_free().
  *
  * @param filename Filename of the file or NULL to read from the standard input
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
 IFF_Chunk *IFF_readCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -63,7 +63,7 @@ IFF_Chunk *IFF_readCore(const char *filename, const IFF_ChunkRegistry *chunkRegi
  *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -73,7 +73,7 @@ IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegi
  *
  * @param filename Filename of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -83,7 +83,7 @@ IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, const I
  *
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
@@ -92,7 +92,7 @@ IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, const IFF_C
  * Frees an IFF chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
 void IFF_freeCore(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
@@ -102,7 +102,7 @@ IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRe
  * Checks whether an IFF file conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
 IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
@@ -113,7 +113,7 @@ IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
 void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
@@ -123,7 +123,7 @@ void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int inde
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
 IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
@@ -134,7 +134,7 @@ IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const u
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
 IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
@@ -144,7 +144,7 @@ IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsig
  *
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
 IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
@@ -155,7 +155,7 @@ IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const
  * @param chunk A chunk hierarchy representing an IFF file
  * @param data An arbitrary data structure propagated to the visitor function
  * @param visitChunk Function that gets invoked for each chunk that is encountered
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
  */
 IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
@@ -164,7 +164,7 @@ IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction v
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
 void IFF_recalculateChunkSizesCore(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 

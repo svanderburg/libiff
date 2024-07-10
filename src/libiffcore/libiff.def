@@ -40,7 +40,6 @@ EXPORTS
 	IFF_freeForm              @43
 	IFF_printForm             @44
 	IFF_compareForm           @45
-	IFF_mergeFormArray        @46
 	IFF_searchFormsInForm     @47
 	IFF_updateFormChunkSizes  @48
 	IFF_getDataChunkFromForm  @49
