@@ -31,6 +31,7 @@ typedef struct IFF_Form IFF_Form;
 #include "chunk.h"
 #include "attributepath.h"
 #include "error.h"
+#include "prop.h"
 
 extern IFF_ChunkInterface IFF_formInterface;
 
@@ -161,6 +162,15 @@ IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRe
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
 void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+
+/**
+ * Searches for the first matching PROP chunk in the nearest enclosing LIST chunk.
+ *
+ * @param chunk An instance of a form chunk
+ * @param formType Form type of the PROP chunk
+ * @return The nearest PROP chunk with the given formType or NULL if such a PROP chunk does not exists
+ */
+IFF_Prop *IFF_searchEnclosingProp(const IFF_Chunk *chunk, const IFF_ID formType);
 
 /**
  * Searches for the last occurence of a chunk with the given chunk ID in the given form.

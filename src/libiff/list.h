@@ -275,7 +275,7 @@ void IFF_recalculateListChunkSize(IFF_Chunk *chunk);
  * @param formType Form type describing the purpose of the sub chunks.
  * @return The requested PROP chunk, or NULL if the PROP chunk does not exists.
  */
-IFF_Prop *IFF_getPropFromList(const IFF_List *list, const IFF_ID formType);
+IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType);
 
 #ifdef __cplusplus
 }

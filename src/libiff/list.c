@@ -371,11 +371,11 @@ void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
         list->chunkSize = IFF_addChunkSize(list->chunkSize, (IFF_Chunk*)list->props[i]);
 }
 
-IFF_Prop *IFF_getPropFromList(const IFF_List *list, const IFF_ID formType)
+IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType)
 {
     unsigned int i;
 
-    for(i = 0; i < list->propsLength; i++)
+    for(i = list->propsLength; i-- > 0; )
     {
         if(list->props[i]->formType == formType)
             return list->props[i];

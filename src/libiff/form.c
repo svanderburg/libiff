@@ -203,12 +203,12 @@ void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
 }
 
 /**
- * Searches the list in which the given chunk is (indirectly) a member from.
+ * Searches the enclosing in which the given chunk is (indirectly) a member from.
  *
  * @param chunk An arbitrary chunk, which could be (indirectly) a member of a list
  * @return List instance of which the given chunk is (indirectly) a member, or NULL if the chunk is not a member of a list
  */
-static IFF_List *searchParentList(const IFF_Chunk *chunk)
+static IFF_List *searchEnclosingList(const IFF_Chunk *chunk)
 {
     IFF_Chunk *parent = chunk->parent;
 
@@ -217,7 +217,25 @@ static IFF_List *searchParentList(const IFF_Chunk *chunk)
     else if(parent->chunkId == IFF_ID_LIST)
         return (IFF_List*)parent;
     else
-        return searchParentList(parent);
+        return searchEnclosingList(parent);
+}
+
+IFF_Prop *IFF_searchEnclosingProp(const IFF_Chunk *chunk, const IFF_ID formType)
+{
+    IFF_List *list = searchEnclosingList(chunk);
+
+    if(list == NULL)
+        return NULL; /* If the chunk is not (indirectly) embedded in a list, we have no PROPs at all */
+    else
+    {
+        /* Try requesting the PROP chunk for the given form type */
+        IFF_Prop *prop = IFF_searchPropInList(list, formType);
+
+        if(prop == NULL)
+            return IFF_searchEnclosingProp((const IFF_Chunk*)list, formType); /* If we can't find a PROP in the given list, try the parent list */
+        else
+            return prop;
+    }
 }
 
 /**
@@ -230,27 +248,19 @@ static IFF_List *searchParentList(const IFF_Chunk *chunk)
  */
 static IFF_Chunk *searchSharedChunk(const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId)
 {
-    IFF_List *list = searchParentList(chunk);
+    IFF_Prop *prop = IFF_searchEnclosingProp(chunk, formType);
 
-    if(list == NULL)
-        return NULL; /* If the chunk is not (indirectly) embedded in a list, we have no shared properties at all */
+    if(prop == NULL)
+        return NULL;
     else
     {
-        /* Try requesting the PROP chunk for the given form type */
-        IFF_Prop *prop = IFF_getPropFromList(list, formType);
+        /* Try requesting the chunk from the PROP chunk */
+        IFF_Chunk *chunk = IFF_searchChunkInProp(prop, chunkId);
 
-        if(prop == NULL)
-            return searchSharedChunk((IFF_Chunk*)list, formType, chunkId); /* If we can't find a shared property chunk with the given form type, try searching for a list higher in the hierarchy */
+        if(chunk == NULL)
+            return searchSharedChunk((IFF_Chunk*)prop->parent, formType, chunkId); /* If the requested chunk is not in the PROP chunk, try searching in the next parent's list PROP */
         else
-        {
-            /* Try requesting the chunk from the shared property chunk */
-            IFF_Chunk *chunk = IFF_searchChunkInProp(prop, chunkId);
-
-            if(chunk == NULL)
-                return searchSharedChunk((IFF_Chunk*)list, formType, chunkId); /* If the requested chunk is not in the PROP chunk, try searching for a list higher in the hierarchy */
-            else
-                return chunk; /* We have found the requested shared property chunk */
-        }
+            return chunk; /* We have found the requested shared property chunk */
     }
 }
 
@@ -298,14 +308,14 @@ IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, con
 
 static IFF_Chunk **searchSharedChunks(IFF_Chunk **chunks, const IFF_Chunk *chunk, const IFF_ID formType, const IFF_ID chunkId, unsigned int *chunksLength)
 {
-    IFF_List *list = searchParentList(chunk);
+    IFF_List *list = searchEnclosingList(chunk);
 
     if(list != NULL)
     {
         IFF_Prop *prop;
 
         chunks = searchSharedChunks(chunks, (IFF_Chunk*)list, formType, chunkId, chunksLength);
-        prop = IFF_getPropFromList(list, formType); /* Try requesting the PROP chunk for the given form type */
+        prop = IFF_searchPropInList(list, formType); /* Try requesting the PROP chunk for the given form type */
 
         if(prop != NULL)
             chunks = IFF_searchChunksInProp(chunks, (IFF_Form*)prop, chunkId, chunksLength);
