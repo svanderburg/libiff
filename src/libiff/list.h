@@ -131,7 +131,7 @@ void IFF_addPropToList(IFF_List *list, IFF_Prop *prop);
  * @param index Index of a chunk
  * @return The PROP chunk that was removed or NULL if it cannot be removed
  */
-IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index);
+IFF_Prop *IFF_removePropFromList(IFF_List *list, const unsigned int index);
 
 /**
  * Updates a PROP chunk in the body of the given list and updates the chunk size.
@@ -141,7 +141,7 @@ IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index);
  * @param chunk A chunk that needs to be put in the position
  * @return The PROP chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Prop *IFF_updatePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop);
+IFF_Prop *IFF_updatePropInList(IFF_List *list, const unsigned int index, IFF_Prop *prop);
 
 /**
  * Adds a chunk to the body of the given list. This function also increments the
@@ -171,7 +171,7 @@ void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk);
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, unsigned int index);
+IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, const unsigned int index);
 
 /**
  * Updates a chunk in the body of the given list and updates the chunk size.
@@ -181,7 +181,7 @@ IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, unsigned int index);
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInList(IFF_List *list, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInList(IFF_List *list, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Updates a chunk in the body of the given list and updates the chunk size.
@@ -193,7 +193,7 @@ IFF_Chunk *IFF_updateChunkInList(IFF_List *list, unsigned int index, IFF_Chunk *
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a list chunk and its sub chunks from a file.

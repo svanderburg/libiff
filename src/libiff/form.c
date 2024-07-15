@@ -28,6 +28,7 @@
 #include "cat.h"
 #include "io.h"
 #include "iff.h"
+#include "array.h"
 
 #define FORM_GROUPTYPENAME "formType"
 
@@ -296,11 +297,7 @@ IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, con
     for(i = 0; i < form->chunksLength; i++)
     {
         if(form->chunks[i]->chunkId == chunkId)
-        {
-            chunks = (IFF_Chunk**)realloc(chunks, (*chunksLength + 1) * sizeof(IFF_Chunk*));
-            chunks[*chunksLength] = form->chunks[i];
-            *chunksLength = *chunksLength + 1;
-        }
+            chunks = (IFF_Chunk**)IFF_addElementToPointerArray((void**)chunks, (void*)form->chunks[i], chunksLength);
     }
 
     return chunks;
@@ -358,9 +355,7 @@ static IFF_Bool visitFormChunkFunction(IFF_Chunk *chunk, void *data)
 
             if(form->formType == formType)
             {
-                result->forms = (IFF_Form**)realloc(result->forms, (result->formsLength + 1) * sizeof(IFF_Form));
-                result->forms[result->formsLength] = form;
-                result->formsLength++;
+                result->forms = (IFF_Form**)IFF_addElementToPointerArray((void**)result->forms, (void*)form, &result->formsLength);
                 break;
             }
         }

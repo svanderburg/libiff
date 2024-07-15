@@ -73,19 +73,19 @@ void IFF_addChunkToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk)
     IFF_addChunkToCAT(cat, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, unsigned int index)
+IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, const unsigned int index)
 {
     return IFF_removeChunkFromGroup((IFF_Group*)cat, index);
 }
 
-IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk)
 {
     IFF_Chunk *obsoleteChunk = IFF_updateChunkInGroup((IFF_Group*)cat, index, chunk);
     updateContentsType(cat, chunk);
     return obsoleteChunk;
 }
 
-IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk)
 {
     return IFF_updateChunkInGroup((IFF_Group*)cat, index, chunk);
 }

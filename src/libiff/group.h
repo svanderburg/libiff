@@ -136,7 +136,7 @@ void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param index Index of a chunk
  * @return The chunk that was detached or NULL if it cannot be detached
  */
-IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, unsigned int index);
+IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, const unsigned int index);
 
 /**
  * Removes a chunk from the body of the given group. This function also decrements
@@ -146,7 +146,7 @@ IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, unsigned int index);
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index);
+IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, const unsigned int index);
 
 /**
  * Updates a chunk in the body of the given group and updates the chunk size.
@@ -156,7 +156,7 @@ IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index);
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a group chunk and its sub chunks from a file.

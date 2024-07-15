@@ -29,6 +29,7 @@
 #include "prop.h"
 #include "field.h"
 #include "util.h"
+#include "array.h"
 
 void IFF_initGroup(IFF_Group *group, const IFF_ID groupType)
 {
@@ -59,10 +60,8 @@ IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSiz
 
 void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
-    group->chunks = (IFF_Chunk**)realloc(group->chunks, (group->chunksLength + 1) * sizeof(IFF_Chunk*));
-    group->chunks[group->chunksLength] = chunk;
-    group->chunksLength++;
     chunk->parent = (IFF_Chunk*)group;
+    group->chunks = (IFF_Chunk**)IFF_addElementToPointerArray((void**)group->chunks, (void*)chunk, &group->chunksLength);
 }
 
 void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
@@ -71,28 +70,18 @@ void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
     IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
 }
 
-IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, unsigned int index)
+IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, const unsigned int index)
 {
-    if(index >= group->chunksLength)
-        return NULL;
-    else
-    {
-        unsigned int i;
-        IFF_Chunk *obsoleteChunk = group->chunks[index];
+    IFF_Chunk *obsoleteChunk = NULL;
+    group->chunks = (IFF_Chunk**)IFF_removeElementFromPointerArray((void**)group->chunks, index, &group->chunksLength, (void**)&obsoleteChunk);
+
+    if(obsoleteChunk != NULL)
         obsoleteChunk->parent = NULL;
 
-        group->chunksLength--;
-
-        for(i = index; i < group->chunksLength; i++)
-            group->chunks[i] = group->chunks[i + 1];
-
-        group->chunks = (IFF_Chunk**)realloc(group->chunks, group->chunksLength * sizeof(IFF_Chunk*));
-
-        return obsoleteChunk;
-    }
+    return obsoleteChunk;
 }
 
-IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index)
+IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, const unsigned int index)
 {
     IFF_Chunk *obsoleteChunk = IFF_detachChunkFromGroup(group, index);
 
@@ -102,20 +91,17 @@ IFF_Chunk *IFF_removeChunkFromGroup(IFF_Group *group, unsigned int index)
     return obsoleteChunk;
 }
 
-IFF_Chunk *IFF_replaceInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_replaceInGroup(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk)
 {
-    if(index >= group->chunksLength)
-        return NULL;
-    else
-    {
-        IFF_Chunk *obsoleteChunk = group->chunks[index];
+    IFF_Chunk *obsoleteChunk = (IFF_Chunk*)IFF_replaceElementInPointerArray((void**)group->chunks, group->chunksLength, index, (void*)chunk);
+
+    if(obsoleteChunk != NULL)
         obsoleteChunk->parent = NULL;
-        group->chunks[index] = chunk;
-        return obsoleteChunk;
-    }
+
+    return obsoleteChunk;
 }
 
-IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInGroup(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk)
 {
     IFF_Chunk *obsoleteChunk = IFF_replaceInGroup(group, index, chunk);
 

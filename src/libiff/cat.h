@@ -124,7 +124,7 @@ void IFF_addChunkToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, unsigned int index);
+IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, const unsigned int index);
 
 /**
  * Updates a chunk in the body of the given CAT and updates the chunk size.
@@ -134,7 +134,7 @@ IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, unsigned int index);
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Updates a chunk in the body of the given CAT and updates the chunk size.
@@ -146,7 +146,7 @@ IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, unsigned int index, IFF_Chunk *chu
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a concatenation chunk and its sub chunks from a file.

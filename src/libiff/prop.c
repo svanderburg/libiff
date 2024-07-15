@@ -47,12 +47,12 @@ void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk)
     IFF_addChunkToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromProp(IFF_Prop *prop, unsigned int index)
+IFF_Chunk *IFF_removeChunkFromProp(IFF_Prop *prop, const unsigned int index)
 {
     return IFF_removeChunkFromForm((IFF_Form*)prop, index);
 }
 
-IFF_Chunk *IFF_updateInProp(IFF_Prop *prop, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateInProp(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk)
 {
     return IFF_updateChunkInForm((IFF_Form*)prop, index, chunk);
 }

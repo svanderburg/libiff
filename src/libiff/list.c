@@ -25,6 +25,7 @@
 #include "field.h"
 #include "util.h"
 #include "cat.h"
+#include "array.h"
 
 IFF_ChunkInterface IFF_listInterface = {&IFF_createUnparsedList, &IFF_readListContents, &IFF_writeListContents, &IFF_checkListContents, &IFF_clearListContents, &IFF_printListContents, &IFF_compareListContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateListChunkSize};
 
@@ -60,10 +61,8 @@ IFF_Chunk *IFF_createUnparsedList(const IFF_ID chunkId, const IFF_Long chunkSize
 
 static void attachPropToList(IFF_List *list, IFF_Prop *prop)
 {
-    list->props = (IFF_Prop**)realloc(list->props, (list->propsLength + 1) * sizeof(IFF_Prop*));
-    list->props[list->propsLength] = prop;
-    list->propsLength++;
     prop->parent = (IFF_Chunk*)list;
+    list->props = (IFF_Prop**)IFF_addElementToPointerArray((void**)list->props, (void*)prop, &list->propsLength);
 }
 
 void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
@@ -72,28 +71,18 @@ void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
     IFF_increaseChunkSize((IFF_Chunk*)list, (IFF_Chunk*)prop);
 }
 
-static IFF_Prop *detachPropFromList(IFF_List *list, unsigned int index)
+static IFF_Prop *detachPropFromList(IFF_List *list, const unsigned int index)
 {
-    if(index >= list->propsLength)
-        return NULL;
-    else
-    {
-        unsigned int i;
-        IFF_Prop *obsoleteProp = list->props[index];
+    IFF_Prop *obsoleteProp = NULL;
+    IFF_removeElementFromPointerArray((void**)list->props, index, &list->propsLength, (void**)&obsoleteProp);
+
+    if(obsoleteProp != NULL)
         obsoleteProp->parent = NULL;
 
-        list->propsLength--;
-
-        for(i = index; i < list->propsLength; i++)
-            list->props[i] = list->props[i + 1];
-
-        list->props = (IFF_Prop**)realloc(list->props, list->propsLength * sizeof(IFF_Prop*));
-
-        return obsoleteProp;
-    }
+    return obsoleteProp;
 }
 
-IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index)
+IFF_Prop *IFF_removePropFromList(IFF_List *list, const unsigned int index)
 {
     IFF_Prop *obsoleteProp = detachPropFromList(list, index);
 
@@ -103,17 +92,14 @@ IFF_Prop *IFF_removePropFromList(IFF_List *list, unsigned int index)
     return obsoleteProp;
 }
 
-static IFF_Prop *replacePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop)
+static IFF_Prop *replacePropInList(IFF_List *list, const unsigned int index, IFF_Prop *prop)
 {
-    if(index >= list->propsLength)
-        return NULL;
-    else
-    {
-        IFF_Prop *obsoleteProp = list->props[index];
+    IFF_Prop *obsoleteProp = (IFF_Prop*)IFF_replaceElementInPointerArray((void**)list->props, list->propsLength, index, (void*)prop);
+
+    if(obsoleteProp != NULL)
         obsoleteProp->parent = NULL;
-        list->props[index] = prop;
-        return obsoleteProp;
-    }
+
+    return obsoleteProp;
 }
 
 IFF_Prop *IFF_updatePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop)
@@ -136,17 +122,17 @@ void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addChunkToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, unsigned int index)
+IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, const unsigned int index)
 {
     return IFF_removeChunkFromCAT((IFF_CAT*)list, index);
 }
 
-IFF_Chunk *IFF_updateChunkInList(IFF_List *list, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInList(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
 {
     return IFF_updateChunkInCAT((IFF_CAT*)list, index, chunk);
 }
 
-IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
 {
     return IFF_updateChunkInCATAndUpdateContentsType((IFF_CAT*)list, index, chunk);
 }
