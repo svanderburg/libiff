@@ -65,7 +65,7 @@ static IFF_Bool updateChunkAndCheck(const IFF_CAT *cat, IFF_Form *test2Form, con
 {
     IFF_QualityLevel qualityLevel;
     IFF_Chunk *heyChunk = createHeyChunk();
-    IFF_Chunk *obsoleteChunk = IFF_updateChunkInForm(test2Form, 2, heyChunk);
+    IFF_Chunk *obsoleteChunk = IFF_updateChunkInFormByIndex(test2Form, 2, heyChunk);
 
     if(obsoleteChunk != hiChunk)
     {
@@ -91,7 +91,7 @@ static IFF_Bool removeMiddleChunkAndCheck(const IFF_CAT *cat, IFF_Form *test2For
 {
     IFF_QualityLevel qualityLevel;
     IFF_Chunk *byeChunk = test2Form->chunks[1];
-    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromForm(test2Form, 1);
+    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromFormByIndex(test2Form, 1);
     IFF_Bool result = TRUE;
 
     if(obsoleteChunk != byeChunk)

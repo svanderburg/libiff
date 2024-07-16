@@ -68,24 +68,24 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType);
 void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk);
 
 /**
- * Removes a chunk from the body of the given PROP. This function also decrements
+ * Removes a chunk from the body of the given PROP at the given index. This function also decrements
  * the chunk size and chunk length counter.
  *
  * @param prop An instance of a PROP chunk
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromProp(IFF_Prop *prop, const unsigned int index);
+IFF_Chunk *IFF_removeChunkFromPropByIndex(IFF_Prop *prop, const unsigned int index);
 
 /**
- * Updates a chunk in the body of the given PROP and updates the chunk size.
+ * Updates a chunk in the body of the given PROP at the given index and updates the chunk size.
  *
  * @param prop An instance of a PROP chunk
  * @param index Index of a chunk
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInProp(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInPropByIndex(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.

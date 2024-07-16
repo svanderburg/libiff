@@ -79,14 +79,14 @@ void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk)
     IFF_addChunkToGroup((IFF_Group*)form, chunk);
 }
 
-IFF_Chunk *IFF_updateChunkInForm(IFF_Form *form, unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInFormByIndex(IFF_Form *form, const unsigned int index, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInGroup((IFF_Group*)form, index, chunk);
+    return IFF_updateChunkInGroupByIndex((IFF_Group*)form, index, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromForm(IFF_Form *form, unsigned int index)
+IFF_Chunk *IFF_removeChunkFromFormByIndex(IFF_Form *form, const unsigned int index)
 {
-    return IFF_removeChunkFromGroup((IFF_Group*)form, index);
+    return IFF_removeChunkFromGroupByIndex((IFF_Group*)form, index);
 }
 
 IFF_Bool IFF_readFormContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

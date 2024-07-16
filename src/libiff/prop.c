@@ -47,14 +47,14 @@ void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk)
     IFF_addChunkToForm((IFF_Form*)prop, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromProp(IFF_Prop *prop, const unsigned int index)
+IFF_Chunk *IFF_removeChunkFromPropByIndex(IFF_Prop *prop, const unsigned int index)
 {
-    return IFF_removeChunkFromForm((IFF_Form*)prop, index);
+    return IFF_removeChunkFromFormByIndex((IFF_Form*)prop, index);
 }
 
-IFF_Chunk *IFF_updateInProp(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateInPropByIndex(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInForm((IFF_Form*)prop, index, chunk);
+    return IFF_updateChunkInFormByIndex((IFF_Form*)prop, index, chunk);
 }
 
 static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)

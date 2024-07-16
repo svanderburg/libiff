@@ -33,7 +33,7 @@ static IFF_Form *updateCATAndCheck(IFF_List *list)
     IFF_QualityLevel qualityLevel;
     IFF_Form *newForm = IFF_createEmptyForm(ID_NEW);
     IFF_Chunk *previousMiddleChunk = list->chunks[1];
-    IFF_Chunk *obsoleteChunk = IFF_updateChunkInListAndUpdateContentsType(list, 1, (IFF_Chunk*)newForm);
+    IFF_Chunk *obsoleteChunk = IFF_updateChunkInListAndUpdateContentsTypeByIndex(list, 1, (IFF_Chunk*)newForm);
 
     if(obsoleteChunk != previousMiddleChunk)
     {
@@ -62,7 +62,7 @@ static IFF_Bool removeForm(IFF_List *list, const IFF_Form *newForm)
 {
     IFF_QualityLevel qualityLevel;
     IFF_Bool result = TRUE;
-    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromList(list, 1);
+    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromListByIndex(list, 1);
 
     if(obsoleteChunk != (IFF_Chunk*)newForm)
     {
@@ -116,7 +116,7 @@ static IFF_Bool updatePropAndCheck(IFF_List *list)
     IFF_QualityLevel qualityLevel;
     IFF_Prop *newProp = IFF_createEmptyProp(ID_NEW);
     IFF_Prop *previousMiddleProp = list->props[1];
-    IFF_Prop *obsoleteProp = IFF_updatePropInList(list, 1, newProp);
+    IFF_Prop *obsoleteProp = IFF_updatePropInListByIndex(list, 1, newProp);
 
     if(obsoleteProp != previousMiddleProp)
     {
@@ -143,7 +143,7 @@ static IFF_Bool removeFirstPropAndCheck(IFF_List *list)
     IFF_QualityLevel qualityLevel;
     IFF_Bool result = TRUE;
     IFF_Prop *firstProp = list->props[0];
-    IFF_Prop *obsoleteProp = IFF_removePropFromList(list, 0);
+    IFF_Prop *obsoleteProp = IFF_removePropFromListByIndex(list, 0);
 
     if(obsoleteProp != firstProp)
     {

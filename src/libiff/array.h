@@ -28,9 +28,13 @@ extern "C" {
 
 void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned int *pointerArrayLength);
 
-void **IFF_removeElementFromPointerArray(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement);
+void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement);
 
-void *IFF_replaceElementInPointerArray(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement);
+void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength);
+
+void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement);
+
+void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement);
 
 #ifdef __cplusplus
 }

@@ -117,27 +117,27 @@ void IFF_addChunkToCAT(IFF_CAT *cat, IFF_Chunk *chunk);
 void IFF_addChunkToCATAndUpdateContentsType(IFF_CAT *cat, IFF_Chunk *chunk);
 
 /**
- * Removes a chunk from the body of the given CAT. This function also decrements
+ * Removes a chunk from the body of the given CAT at the given index. This function also decrements
  * the chunk size and chunk length counter.
  *
  * @param cat An instance of a CAT struct
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromCAT(IFF_CAT *cat, const unsigned int index);
+IFF_Chunk *IFF_removeChunkFromCATByIndex(IFF_CAT *cat, const unsigned int index);
 
 /**
- * Updates a chunk in the body of the given CAT and updates the chunk size.
+ * Updates a chunk in the body of the given CAT at the given index and updates the chunk size.
  *
  * @param cat An instance of a CAT struct
  * @param index Index of a chunk
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInCATByIndex(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
 
 /**
- * Updates a chunk in the body of the given CAT and updates the chunk size.
+ * Updates a chunk in the body of the given CAT at the given index and updates the chunk size.
  * If it sees that all sub chunks have the same group type, it adopts it as its contents type.
  * If there is no uniform group type possible it sets the contents type to: 'JJJJ'.
  *
@@ -146,7 +146,7 @@ IFF_Chunk *IFF_updateChunkInCAT(IFF_CAT *cat, const unsigned int index, IFF_Chun
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsType(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsTypeByIndex(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a concatenation chunk and its sub chunks from a file.

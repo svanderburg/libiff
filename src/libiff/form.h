@@ -96,24 +96,24 @@ IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
 void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk);
 
 /**
- * Removes a chunk from the body of the given FORM. This function also decrements
+ * Removes a chunk from the body of the given FORM at the given index. This function also decrements
  * the chunk size and chunk length counter.
  *
  * @param form An instance of a FORM chunk
  * @param index Index of a chunk
  * @return The chunk that was removed or NULL if it cannot be removed
  */
-IFF_Chunk *IFF_removeChunkFromForm(IFF_Form *form, unsigned int index);
+IFF_Chunk *IFF_removeChunkFromFormByIndex(IFF_Form *form, const unsigned int index);
 
 /**
- * Updates a chunk in the body of the given FORM and updates the chunk size.
+ * Updates a chunk in the body of the given FORM at the given index and updates the chunk size.
  *
  * @param form An instance of a FORM chunk
  * @param index Index of a chunk
  * @param chunk A chunk that needs to be put in the position
  * @return The chunk that was previously at the specified index or NULL if it does not exists
  */
-IFF_Chunk *IFF_updateChunkInForm(IFF_Form *form, unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInFormByIndex(IFF_Form *form, const unsigned int index, IFF_Chunk *chunk);
 
 /**
  * Reads a form chunk and its sub chunks from a file.

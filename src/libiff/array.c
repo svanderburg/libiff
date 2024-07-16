@@ -30,7 +30,19 @@ void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned
     return result;
 }
 
-void **IFF_removeElementFromPointerArray(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement)
+static void **decreasePointerArrayAndShiftLeft(void **pointerArray, const unsigned index, unsigned int *pointerArrayLength)
+{
+    unsigned int i;
+    *pointerArrayLength = *pointerArrayLength - 1;
+
+    for(i = index; i < *pointerArrayLength; i++)
+        pointerArray[i] = pointerArray[i + 1];
+
+    return (void**)realloc(pointerArray, *pointerArrayLength * sizeof(void*));
+}
+
+
+void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement)
 {
     if(index >= *pointerArrayLength)
     {
@@ -39,23 +51,28 @@ void **IFF_removeElementFromPointerArray(void **pointerArray, const unsigned int
     }
     else
     {
-        unsigned int i;
-
         /* Update the obsolete element */
         *obsoleteElement = pointerArray[index];
 
         /* Move all elements after the index to the left */
-        *pointerArrayLength = *pointerArrayLength - 1;
-
-        for(i = index; i < *pointerArrayLength; i++)
-            pointerArray[i] = pointerArray[i + 1];
-
-        /* Decrease the pointer array size and return it */
-        return (void**)realloc(pointerArray, *pointerArrayLength * sizeof(void*));
+        return decreasePointerArrayAndShiftLeft(pointerArray, index, pointerArrayLength);
     }
 }
 
-void *IFF_replaceElementInPointerArray(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement)
+void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength)
+{
+    unsigned int i;
+
+    for(i = 0; i < *pointerArrayLength; i++)
+    {
+        if(pointerArray[i] == obsoleteElement)
+            return decreasePointerArrayAndShiftLeft(pointerArray, i, pointerArrayLength);
+    }
+
+    return NULL;
+}
+
+void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement)
 {
     if(index >= pointerArrayLength)
         return NULL;
@@ -64,5 +81,19 @@ void *IFF_replaceElementInPointerArray(void **pointerArray, const unsigned int p
         void *obsoleteElement = pointerArray[index];
         pointerArray[index] = newElement;
         return obsoleteElement;
+    }
+}
+
+void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement)
+{
+    unsigned int i;
+
+    for(i = 0; i < pointerArrayLength; i++)
+    {
+        if(pointerArray[i] == oldElement)
+        {
+            pointerArray[i] = newElement;
+            break;
+        }
     }
 }

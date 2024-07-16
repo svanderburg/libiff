@@ -74,7 +74,7 @@ void IFF_addPropToList(IFF_List *list, IFF_Prop *prop)
 static IFF_Prop *detachPropFromList(IFF_List *list, const unsigned int index)
 {
     IFF_Prop *obsoleteProp = NULL;
-    IFF_removeElementFromPointerArray((void**)list->props, index, &list->propsLength, (void**)&obsoleteProp);
+    IFF_removeElementFromPointerArrayByIndex((void**)list->props, index, &list->propsLength, (void**)&obsoleteProp);
 
     if(obsoleteProp != NULL)
         obsoleteProp->parent = NULL;
@@ -82,7 +82,7 @@ static IFF_Prop *detachPropFromList(IFF_List *list, const unsigned int index)
     return obsoleteProp;
 }
 
-IFF_Prop *IFF_removePropFromList(IFF_List *list, const unsigned int index)
+IFF_Prop *IFF_removePropFromListByIndex(IFF_List *list, const unsigned int index)
 {
     IFF_Prop *obsoleteProp = detachPropFromList(list, index);
 
@@ -94,7 +94,7 @@ IFF_Prop *IFF_removePropFromList(IFF_List *list, const unsigned int index)
 
 static IFF_Prop *replacePropInList(IFF_List *list, const unsigned int index, IFF_Prop *prop)
 {
-    IFF_Prop *obsoleteProp = (IFF_Prop*)IFF_replaceElementInPointerArray((void**)list->props, list->propsLength, index, (void*)prop);
+    IFF_Prop *obsoleteProp = (IFF_Prop*)IFF_replaceElementInPointerArrayByIndex((void**)list->props, list->propsLength, index, (void*)prop);
 
     if(obsoleteProp != NULL)
         obsoleteProp->parent = NULL;
@@ -102,7 +102,7 @@ static IFF_Prop *replacePropInList(IFF_List *list, const unsigned int index, IFF
     return obsoleteProp;
 }
 
-IFF_Prop *IFF_updatePropInList(IFF_List *list, unsigned int index, IFF_Prop *prop)
+IFF_Prop *IFF_updatePropInListByIndex(IFF_List *list, unsigned int index, IFF_Prop *prop)
 {
     IFF_Prop *obsoleteProp = replacePropInList(list, index, prop);
 
@@ -122,19 +122,19 @@ void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
     IFF_addChunkToCATAndUpdateContentsType((IFF_CAT*)list, chunk);
 }
 
-IFF_Chunk *IFF_removeChunkFromList(IFF_List *list, const unsigned int index)
+IFF_Chunk *IFF_removeChunkFromListByIndex(IFF_List *list, const unsigned int index)
 {
-    return IFF_removeChunkFromCAT((IFF_CAT*)list, index);
+    return IFF_removeChunkFromCATByIndex((IFF_CAT*)list, index);
 }
 
-IFF_Chunk *IFF_updateChunkInList(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInListByIndex(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInCAT((IFF_CAT*)list, index, chunk);
+    return IFF_updateChunkInCATByIndex((IFF_CAT*)list, index, chunk);
 }
 
-IFF_Chunk *IFF_updateChunkInListAndUpdateContentsType(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInListAndUpdateContentsTypeByIndex(IFF_List *list, const unsigned int index, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInCATAndUpdateContentsType((IFF_CAT*)list, index, chunk);
+    return IFF_updateChunkInCATAndUpdateContentsTypeByIndex((IFF_CAT*)list, index, chunk);
 }
 
 static IFF_Bool readListSubChunks(FILE *file, IFF_List *list, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

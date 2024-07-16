@@ -33,7 +33,7 @@ static IFF_Form *updateFormAndCheck(IFF_CAT *cat)
     IFF_QualityLevel qualityLevel;
     IFF_Form *newForm = IFF_createEmptyForm(ID_NEW);
     IFF_Chunk *previousMiddleChunk = cat->chunks[1];
-    IFF_Chunk *obsoleteChunk = IFF_updateChunkInCATAndUpdateContentsType(cat, 1, (IFF_Chunk*)newForm);
+    IFF_Chunk *obsoleteChunk = IFF_updateChunkInCATAndUpdateContentsTypeByIndex(cat, 1, (IFF_Chunk*)newForm);
 
     if(obsoleteChunk != previousMiddleChunk)
     {
@@ -62,7 +62,7 @@ static IFF_Bool removeForm(IFF_CAT *cat, const IFF_Form *newForm)
 {
     IFF_QualityLevel qualityLevel;
     IFF_Bool result = TRUE;
-    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromCAT(cat, 1);
+    IFF_Chunk *obsoleteChunk = IFF_removeChunkFromCATByIndex(cat, 1);
 
     if(obsoleteChunk != (IFF_Chunk*)newForm)
     {
