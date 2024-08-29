@@ -62,7 +62,7 @@ extern "C" {
  * @param chunkSize Length of the bytes array.
  * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
  */
-IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Copies the given data array to the chunk data
@@ -85,12 +85,13 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
  * Reads a raw chunk with the given chunk id and chunk size from a file.
  *
  * @param file File descriptor of the file
- * @param chunk A raw chunk instance
+ * @param chunkId A 4 character id
+ * @param chunkSize Size of the chunk in bytes
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_Bool IFF_readRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes the given raw chunk to a file descriptor.

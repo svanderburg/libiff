@@ -102,17 +102,6 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_I
 IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType);
 
 /**
- * Creates an empty group with no group type specified. This function should not
- * be directly used to create a group.
- * The resulting chunk must be freed by using IFF_free().
- *
- * @param chunkId A 4 character chunk id
- * @param chunkSize Size of the chunk data
- * @return Group chunk or NULL, if the memory for the struct can't be allocated
- */
-IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSize);
-
-/**
  * Attaches a chunk to the body of the given group.
  *
  * @param group An instance of a group chunk
@@ -159,16 +148,17 @@ IFF_Chunk *IFF_removeChunkFromGroupByIndex(IFF_Group *group, const unsigned int 
 IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk);
 
 /**
- * Reads a group chunk and its sub chunks from a file.
+ * Parses a group chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunk An instance of a group chunk
+ * @param chunkId A 4 character id
+ * @param chunkSize Size of the chunk in bytes
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes all sub chunks inside a group to a file.

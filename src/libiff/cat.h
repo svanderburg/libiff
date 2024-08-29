@@ -149,15 +149,16 @@ IFF_Chunk *IFF_updateChunkInCATByIndex(IFF_CAT *cat, const unsigned int index, I
 IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsTypeByIndex(IFF_CAT *cat, const unsigned int index, IFF_Chunk *chunk);
 
 /**
- * Reads a concatenation chunk and its sub chunks from a file.
+ * Parses a concatenation chunk and its sub chunks from a file.
  *
  * @param file File descriptor of the file
- * @param chunk An instance of a concatenation chunk
+ * @param chunkId A 4 character id
+ * @param chunkSize Size of the chunk in bytes
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readCATContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.

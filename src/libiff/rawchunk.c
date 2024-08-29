@@ -26,9 +26,9 @@
 #include "id.h"
 #include "util.h"
 
-IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_createRawChunk, &IFF_readRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
+IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
-IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk));
 
@@ -43,7 +43,7 @@ IFF_Chunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
         }
     }
 
-    return (IFF_Chunk*)rawChunk;
+    return rawChunk;
 }
 
 void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data)
@@ -57,20 +57,19 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
     rawChunk->chunkSize = chunkSize;
 }
 
-IFF_Bool IFF_readRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
+    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
 
-    if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
+    if(rawChunk != NULL)
     {
-        *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
-        return FALSE;
+        if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
+            *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
+        else
+            *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
     }
-    else
-    {
-        *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
-        return TRUE;
-    }
+
+    return (IFF_Chunk*)rawChunk;
 }
 
 IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

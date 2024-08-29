@@ -27,7 +27,7 @@
 
 #define CAT_GROUPTYPENAME "contentsType"
 
-IFF_ChunkInterface IFF_catInterface = {&IFF_createUnparsedGroup, &IFF_readCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearGroupContents, &IFF_printCATContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateGroupChunkSize};
+IFF_ChunkInterface IFF_catInterface = {&IFF_parseCATContents, &IFF_writeCATContents, &IFF_checkCATContents, &IFF_clearGroupContents, &IFF_printCATContents, &IFF_compareGroupContents, &IFF_traverseGroupChunkHierarchy, &IFF_recalculateGroupChunkSize};
 
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
@@ -90,9 +90,9 @@ IFF_Chunk *IFF_updateChunkInCATByIndex(IFF_CAT *cat, const unsigned int index, I
     return IFF_updateChunkInGroupByIndex((IFF_Group*)cat, index, chunk);
 }
 
-IFF_Bool IFF_readCATContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_readGroupContents(file, chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_parseGroupContents(file, chunkId, chunkSize, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

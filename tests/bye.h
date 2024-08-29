@@ -44,11 +44,11 @@ typedef struct
 }
 TEST_Bye;
 
-IFF_Chunk *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+TEST_Bye *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 TEST_Bye *TEST_createBye(const IFF_Long chunkSize);
 
-IFF_Bool TEST_readByeContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *TEST_readByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

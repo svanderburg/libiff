@@ -124,7 +124,7 @@ IFF_Chunk *IFF_updateChunkInFormByIndex(IFF_Form *form, const unsigned int index
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the FORM has been successfully read, or FALSE if an error has occured
  */
-IFF_Bool IFF_readFormContents(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a form chunk and its sub chunks to a file.

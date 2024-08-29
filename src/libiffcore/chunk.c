@@ -55,17 +55,14 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_
 static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunkId);
-    IFF_Chunk *chunk = chunkInterface->createChunk(chunkId, chunkSize);
+    IFF_Long bytesProcessed = 0;
+    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, chunkRegistry, attributePath, &bytesProcessed, error);
 
-    if(chunk != NULL)
+    if(*error == NULL && chunk != NULL)
     {
-        IFF_Long bytesProcessed = 0;
-
-        /* Read remaining bytes (procedure depends on chunk id type) */
-        if(!chunkInterface->readChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
-            || !IFF_skipUnknownBytes(file, chunk->chunkId, chunkSize, bytesProcessed, attributePath, error)
-            || !IFF_readPaddingByte(file, chunkSize, chunk->chunkId, attributePath, error))
-            return chunk;
+        if(IFF_skipUnknownBytes(file, chunk->chunkId, chunkSize, bytesProcessed, attributePath, error) &&
+            IFF_readPaddingByte(file, chunkSize, chunk->chunkId, attributePath, error))
+            ;
     }
 
     return chunk;

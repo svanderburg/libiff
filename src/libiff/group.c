@@ -53,11 +53,6 @@ IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType)
     return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType);
 }
 
-IFF_Chunk *IFF_createUnparsedGroup(const IFF_ID chunkId, const IFF_Long chunkSize)
-{
-    return (IFF_Chunk*)IFF_createGroup(chunkId, chunkSize, 0);
-}
-
 void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
 {
     chunk->parent = (IFF_Chunk*)group;
@@ -144,20 +139,16 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
     return TRUE;
 }
 
-IFF_Bool IFF_readGroupContents(FILE *file, IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_Group *group = (IFF_Group*)chunk;
-    IFF_FieldStatus status;
+    IFF_Group *group = IFF_createGroup(chunkId, chunkSize, 0);
 
     /* Read group type */
-    if((status = IFF_readIdField(file, &group->groupType, chunk, attributePath, groupTypeName, bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
+    if(IFF_readIdField(file, &group->groupType, (IFF_Chunk*)group, attributePath, groupTypeName, bytesProcessed, error) == IFF_FIELD_MORE &&
+        readGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error))
+        ;
 
-    /* Keep parsing sub chunks until we have read all bytes */
-    if(!readGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error))
-        return FALSE;
-
-    return TRUE;
+    return (IFF_Chunk*)group;
 }
 
 IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

@@ -41,11 +41,8 @@ typedef IFF_QualityLevel (*IFF_checkMainChunkFunction) (const IFF_Chunk *chunk, 
  */
 struct IFF_ChunkInterface
 {
-    /** Function responsible for creating the given chunk */
-    IFF_Chunk *(*createChunk) (const IFF_ID chunkId, const IFF_Long chunkSize);
-
-    /** Function responsible for reading the given chunk */
-    IFF_Bool (*readChunkContents) (FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    /** Function responsible for parsing the given chunk */
+    IFF_Chunk *(*parseChunkContents) (FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function responsible for writing the given chunk */
     IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);

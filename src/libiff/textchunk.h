@@ -36,6 +36,15 @@ extern "C" {
 #endif
 
 /**
+ * Creates a text chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().
+ *
+ * @param chunkId A 4 character id
+ * @param chunkSize Length of the bytes array.
+ * @return A raw chunk with the given chunk Id, or NULL if the memory can't be allocated
+ */
+IFF_TextChunk *IFF_createTextChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+
+/**
  * Copies the given string into the data of the chunk. Additionally, it makes
  * the chunk size equal to the given string.
  *
