@@ -45,14 +45,11 @@ EXPORTS
 	IFF_getDataChunkFromForm  @49
 	IFF_getChunkFromForm      @50
 	IFF_getChunksFromForm     @51
-	IFF_initGroup             @52
 	IFF_createGroup           @53
 	IFF_addChunkToGroup       @54
 	IFF_readGroup             @55
 	IFF_writeGroupSubChunks   @56
 	IFF_writeGroup            @57
-	IFF_checkGroupChunkSize   @58
-	IFF_checkGroupSubChunks   @59
 	IFF_checkGroup            @60
 	IFF_freeGroup             @61
 	IFF_printGroupType        @62

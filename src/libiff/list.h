@@ -32,8 +32,10 @@ typedef struct IFF_List IFF_List;
 #include "prop.h"
 #include "attributepath.h"
 #include "error.h"
+#include "groupstructure.h"
 
 extern IFF_ChunkInterface IFF_listInterface;
+extern IFF_GroupStructure listStructure;
 
 /**
  * @brief A special group chunk, which contains one or more FORM, LIST or CAT chunks and PROP chunks which share common data chunks with the nested group chunks.
@@ -102,15 +104,6 @@ IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType);
  * @return A list chunk or NULL, if the memory for the struct can't be allocated
  */
 IFF_List *IFF_createEmptyList(void);
-
-/**
- * Adds a PROP chunk to the body of the given list. This function also increments the
- * chunk size and PROP length counter.
- *
- * @param list An instance of a list struct
- * @param prop A PROP chunk
- */
-void IFF_addPropToList(IFF_List *list, IFF_Prop *prop);
 
 /**
  * Removes a PROP chunk from the body of the given list at the given index. This function also decrements
@@ -206,14 +199,6 @@ IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Lon
  * @return TRUE if the list has been successfully written, else FALSE
  */
 IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-
-/**
- * Computes the actual chunk size of the list.
- *
- * @param group An instance of a list chunk
- * @return The size of the list chunk in bytes
- */
-IFF_Long IFF_computeActualListChunkSize(const IFF_List *list);
 
 /**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.

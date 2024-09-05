@@ -91,7 +91,7 @@ static IFF_Bool addPropAndCheck(IFF_List *list)
 {
     IFF_QualityLevel qualityLevel;
     IFF_Prop *prop = IFF_createEmptyProp(ID_NEW);
-    IFF_addPropToList(list, prop);
+    IFF_addChunkToList(list, (IFF_Chunk*)prop);
 
     if(list->propsLength != 2)
     {

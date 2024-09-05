@@ -30,13 +30,10 @@ typedef struct IFF_Group IFF_Group;
 #include "form.h"
 #include "attributepath.h"
 #include "error.h"
+#include "groupstructure.h"
 
 typedef IFF_QualityLevel (*IFF_subChunkCheckFunction) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 typedef IFF_QualityLevel (*IFF_groupTypeCheckFunction) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * @brief An abstract group chunk, which contains all common properties of the compound chunk types. This chunk type should never be used directly.
@@ -71,13 +68,9 @@ typedef struct
 }
 IFF_PrintChunksArrayParameter;
 
-/**
- * Initializes the members of the group chunk instances with default values.
- *
- * @param group A group chunk instance
- * @param groupType A group type ID
- */
-void IFF_initGroup(IFF_Group *group, const IFF_ID groupType);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a new group chunk instance with the chunk id, chunk size and group type.
@@ -88,7 +81,7 @@ void IFF_initGroup(IFF_Group *group, const IFF_ID groupType);
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ID groupType);
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, const IFF_GroupStructure *groupStructure);
 
 /**
  * Creates a new empty group chunk instance with the chunk id and group type.
@@ -99,7 +92,7 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_I
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType);
+IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType, const IFF_GroupStructure *groupStructure);
 
 /**
  * Attaches a chunk to the body of the given group.
@@ -107,7 +100,7 @@ IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType);
  * @param group An instance of a group chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
+void IFF_attachChunkToGroup(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk);
 
 /**
  * Adds a chunk to the body of the given group. This function also increments the
@@ -116,7 +109,7 @@ void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
  * @param group An instance of a group chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
+void IFF_addChunkToGroup(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk);
 
 /**
  * Detaches a chunk from the body of the given group.
@@ -158,7 +151,7 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes all sub chunks inside a group to a file.
@@ -169,7 +162,7 @@ IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_ID chunkId, const IFF_Lo
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the sub chunks have been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a group chunk and its sub chunks to a file.
@@ -181,34 +174,7 @@ IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_C
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Chunk *chunk, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-
-/**
- * Computes the actual chunk size of the group.
- *
- * @param group An instance of a group chunk
- * @return The size of the group chunk in bytes
- */
-IFF_Long IFF_computeActualGroupChunkSize(const IFF_Group *group);
-
-/**
- * Checks whether the given chunk size matches the chunk size of the group
- *
- * @param group An instance of a group chunk
- * @param actualChunkSize The actual chunk size
- * @return TRUE if the chunk sizes are equal, else FALSE
- */
-IFF_QualityLevel IFF_checkGroupChunkSize(const IFF_Group *group, const IFF_Long actualChunkSize, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
-
-/**
- * Checks whether the group sub chunks are valid
- *
- * @param group An instance of a group chunk
- * @param subChunkCheck Pointer to a function, which checks an individual sub chunk for its validity
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
- * @return The size of the sub chunks together, or -1 if a failure has occured
- */
-IFF_QualityLevel IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks whether the group chunk and its sub chunks conform to the IFF specification.
@@ -219,7 +185,7 @@ IFF_QualityLevel IFF_checkGroupSubChunks(const IFF_Group *group, IFF_subChunkChe
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, const IFF_GroupStructure *groupStructure, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Recursively frees the memory of the sub chunks of the given group chunk.
@@ -227,7 +193,7 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
  * @param chunk An instance of a group chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_clearGroupContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearGroupContents(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Displays the group type on the standard output.
@@ -257,7 +223,7 @@ void IFF_printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned 
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroupContents(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Checks whether the given group chunks' contents is equal to each other.
@@ -267,16 +233,16 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given groups are equal, else FALSE
  */
-IFF_Bool IFF_compareGroupContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Group *group, const IFF_GroupStructure *groupStructure, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Recalculates the chunk size of the given group chunk.
  *
  * @param chunk An instance of a group chunk
  */
-void IFF_recalculateGroupChunkSize(IFF_Chunk *chunk);
+void IFF_recalculateGroupChunkSize(IFF_Group *group, const IFF_GroupStructure *groupStructure);
 
 #ifdef __cplusplus
 }
