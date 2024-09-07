@@ -19,30 +19,40 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "test.h"
-#include <stdio.h>
-#include "extensiondata-truncated.h"
+#ifndef __IFF_FORMREGISTRY_H
+#define __IFF_FORMREGISTRY_H
 
-int main(int argc, char *argv[])
+typedef struct IFF_FormType IFF_FormType;
+typedef struct IFF_FormTypesNode IFF_FormTypesNode;
+
+#include "id.h"
+#include "groupstructure.h"
+#include "chunkregistry.h"
+
+/**
+ * @brief Defines how sub chunks within a specific FORM chunk with a specify formType should be managed
+ */
+struct IFF_FormType
 {
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST", &error);
-    int status;
+    /** A 4 character formType id */
+    IFF_ID formType;
 
-    if(error == NULL)
-    {
-        TEST_Conversation *conversation = IFF_createTestConversation();
-        status = !TEST_compare(chunk, (IFF_Chunk*)conversation);
-        TEST_free((IFF_Chunk*)conversation);
-    }
-    else
-    {
-        IFF_printReadError(stderr, error);
-        IFF_freeIOError(error);
-        status = 1;
-    }
+    /** An object that specifies the structure of the FORM */
+    IFF_GroupStructure *formStructure;
+};
 
-    TEST_free(chunk);
+struct IFF_FormTypesNode
+{
+    /** Specifies the number of form types that have a specific meaning inside a FORM */
+    unsigned int formTypesLength;
 
-    return status;
-}
+    /** An array specifying how chunks within a FORM should be managed */
+    IFF_FormType *formTypes;
+
+    /** Link to the parent node that provides additional FORM chunks */
+    IFF_FormTypesNode *parent;
+};
+
+IFF_GroupStructure *IFF_findGroupStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType);
+
+#endif

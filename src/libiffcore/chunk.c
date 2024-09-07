@@ -127,7 +127,7 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
 {
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
 
-    IFF_printIndent(file, indentLevel, "{\n");
+    fputs("{\n", file);
     printChunkIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
     IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
     chunkInterface->printChunkContents(file, chunk, indentLevel + 1, chunkRegistry);
@@ -151,7 +151,7 @@ void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId, 
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
 
     if(chunkInterface->recalculateChunkSize != NULL)
-        chunkInterface->recalculateChunkSize(chunk);
+        chunkInterface->recalculateChunkSize(chunk, chunkRegistry);
 
     /* If the given chunk has a parent, recursively update these as well */
     if(chunk->parent != NULL)

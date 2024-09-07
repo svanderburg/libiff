@@ -27,8 +27,8 @@
 #include "rawchunk.h"
 #include "error.h"
 
-#define IFF_EXTEND_DEFAULT_REGISTRY_WITH_SCOPED_CHUNK_TYPES(numOfScopedChunkTypes, scopedChunkTypes) \
-    { numOfScopedChunkTypes, scopedChunkTypes, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk }
+#define IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(numOfScopedChunkTypes, scopedChunkTypes, formTypesNode) \
+    { numOfScopedChunkTypes, scopedChunkTypes, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk, &formTypesNode }
 
 #define IFF_NUM_OF_CHUNK_TYPES 5
 

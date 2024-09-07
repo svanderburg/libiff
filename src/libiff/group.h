@@ -34,6 +34,7 @@ typedef struct IFF_Group IFF_Group;
 
 typedef IFF_QualityLevel (*IFF_subChunkCheckFunction) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 typedef IFF_QualityLevel (*IFF_groupTypeCheckFunction) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
+typedef IFF_GroupStructure *(*IFF_lookupGroupStructureFunction) (const IFF_ChunkRegistry *chunkRegistry, const IFF_ID groupType);
 
 /**
  * @brief An abstract group chunk, which contains all common properties of the compound chunk types. This chunk type should never be used directly.
@@ -151,7 +152,7 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes all sub chunks inside a group to a file.

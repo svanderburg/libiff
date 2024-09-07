@@ -204,7 +204,7 @@ IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2
 
 IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void IFF_recalculateCATChunkSize(IFF_Chunk *chunk);
+void IFF_recalculateCATChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

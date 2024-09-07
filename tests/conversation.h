@@ -19,30 +19,35 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "test.h"
-#include <stdio.h>
-#include "extensiondata-truncated.h"
+#ifndef __TEST_CONVERSATION_H
+#define __TEST_CONVERSATION_H
 
-int main(int argc, char *argv[])
+typedef struct TEST_Conversation TEST_Conversation;
+
+#include "chunk.h"
+#include "id.h"
+#include "groupstructure.h"
+#include "hello.h"
+#include "bye.h"
+
+#define TEST_ID_CONV IFF_MAKEID('C', 'O', 'N', 'V')
+
+extern IFF_GroupStructure TEST_conversationStructure;
+
+struct TEST_Conversation
 {
-    IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST", &error);
-    int status;
+    IFF_Chunk *parent;
+    IFF_ID chunkId;
+    IFF_Long chunkSize;
+    IFF_ID formType;
+    unsigned int chunksLength;
+    IFF_Chunk **chunks;
+    TEST_Hello *hello;
+    TEST_Bye *bye;
+};
 
-    if(error == NULL)
-    {
-        TEST_Conversation *conversation = IFF_createTestConversation();
-        status = !TEST_compare(chunk, (IFF_Chunk*)conversation);
-        TEST_free((IFF_Chunk*)conversation);
-    }
-    else
-    {
-        IFF_printReadError(stderr, error);
-        IFF_freeIOError(error);
-        status = 1;
-    }
+TEST_Conversation *TEST_createConversation(void);
 
-    TEST_free(chunk);
+void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
 
-    return status;
-}
+#endif

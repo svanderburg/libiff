@@ -70,10 +70,10 @@ static IFF_Chunk *createBye2Chunk(void)
 
 static IFF_Chunk *createTestForm(IFF_Chunk *heloChunk, IFF_Chunk *byeChunk)
 {
-    IFF_Form *testForm = IFF_createEmptyForm(ID_TEST);
+    IFF_Form *testForm = IFF_createEmptyForm(ID_TEST, NULL);
 
-    IFF_addChunkToForm(testForm, heloChunk);
-    IFF_addChunkToForm(testForm, byeChunk);
+    IFF_addChunkToForm(testForm, NULL, heloChunk);
+    IFF_addChunkToForm(testForm, NULL, byeChunk);
 
     return (IFF_Chunk*)testForm;
 }

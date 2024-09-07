@@ -21,8 +21,8 @@
 
 #ifndef __EXTENSIONDATA_EXTENDED_H
 #define __EXTENSIONDATA_EXTENDED_H
-#include <form.h>
+#include "conversation.h"
 
-IFF_Form *IFF_createTestForm(void);
+TEST_Conversation *IFF_createTestConversation(void);
 
 #endif

@@ -1,4 +1,4 @@
-noinst_HEADERS = bye.h hello.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
+noinst_HEADERS = bye.h hello.h conversation.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
@@ -91,43 +91,43 @@ recalculatechunksizes_SOURCES = recalculatechunksizes.c
 recalculatechunksizes_LDADD = ../src/libiff/libiff.la
 recalculatechunksizes_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_SOURCES = hello.c bye.c test.c testregistry.c extensiondata.c writeextension.c
+writeextension_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata.c writeextension.c
 writeextension_LDADD = ../src/libiff/libiff.la
 writeextension_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_SOURCES = hello.c bye.c test.c testregistry.c extensiondata.c readextension.c
+readextension_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata.c readextension.c
 readextension_LDADD = ../src/libiff/libiff.la
 readextension_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-testcheck_SOURCES = hello.c bye.c test.c testregistry.c testcheck.c
+testcheck_SOURCES = hello.c bye.c conversation.c test.c testregistry.c testcheck.c
 testcheck_LDADD = ../src/libiff/libiff.la ../src/libiffcheck/libiffcheck.la
 testcheck_CFLAGS = -I../src/libiffcore -I../src/libiff -I../src/libiffcheck
 
-testpp_SOURCES = hello.c bye.c test.c testregistry.c testpp.c
+testpp_SOURCES = hello.c bye.c conversation.c test.c testregistry.c testpp.c
 testpp_LDADD = ../src/libiff/libiff.la ../src/libiffpp/libiffpp.la
 testpp_CFLAGS = -I../src/libiffcore -I../src/libiff -I../src/libiffpp
 
-writeextension_truncated_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-truncated.c writeextension-truncated.c
+writeextension_truncated_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated.c writeextension-truncated.c
 writeextension_truncated_LDADD = ../src/libiff/libiff.la
 writeextension_truncated_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_truncated_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-truncated.c readextension-truncated.c
+readextension_truncated_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated.c readextension-truncated.c
 readextension_truncated_LDADD = ../src/libiff/libiff.la
 readextension_truncated_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_truncated2_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-truncated2.c writeextension-truncated2.c
+writeextension_truncated2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated2.c writeextension-truncated2.c
 writeextension_truncated2_LDADD = ../src/libiff/libiff.la
 writeextension_truncated2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_truncated2_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-truncated2.c readextension-truncated2.c
+readextension_truncated2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated2.c readextension-truncated2.c
 readextension_truncated2_LDADD = ../src/libiff/libiff.la
 readextension_truncated2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_extended_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-extended.c writeextension-extended.c
+writeextension_extended_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-extended.c writeextension-extended.c
 writeextension_extended_LDADD = ../src/libiff/libiff.la
 writeextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_extended_SOURCES = hello.c bye.c test.c testregistry.c extensiondata-extended.c readextension-extended.c
+readextension_extended_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-extended.c readextension-extended.c
 readextension_extended_LDADD = ../src/libiff/libiff.la
 readextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 

@@ -20,8 +20,6 @@
  */
 
 #include "extensiondata-extended.h"
-#include <form.h>
-#include "test.h"
 #include "hello.h"
 #include "bye.h"
 
@@ -44,14 +42,14 @@ static IFF_Chunk *createByeChunk(void)
     return (IFF_Chunk*)bye;
 }
 
-IFF_Form *IFF_createTestForm(void)
+TEST_Conversation *IFF_createTestConversation(void)
 {
     IFF_Chunk *hello = createHelloChunk();
     IFF_Chunk *bye = createByeChunk();
-    IFF_Form *form = IFF_createEmptyForm(TEST_ID_TEST);
+    TEST_Conversation *conversation = TEST_createConversation();
 
-    IFF_addChunkToForm(form, hello);
-    IFF_addChunkToForm(form, bye);
+    TEST_addChunkToConversation(conversation, hello);
+    TEST_addChunkToConversation(conversation, bye);
 
-    return form;
+    return conversation;
 }

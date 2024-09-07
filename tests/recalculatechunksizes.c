@@ -47,8 +47,8 @@ static IFF_RawChunk *createABCDChunk(void)
 
 static IFF_Chunk *createABCDForm(IFF_RawChunk *abcdChunk)
 {
-    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
-    IFF_addChunkToForm(form, (IFF_Chunk*)abcdChunk);
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST, NULL);
+    IFF_addChunkToForm(form, NULL, (IFF_Chunk*)abcdChunk);
     return (IFF_Chunk*)form;
 }
 

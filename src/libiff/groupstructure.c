@@ -191,7 +191,7 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const IFF_Group
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
-                IFF_printChunk(file, chunk, indentLevel + 1, group->groupType, chunkRegistry);
+                IFF_printChunk(file, chunk, indentLevel, group->groupType, chunkRegistry);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {

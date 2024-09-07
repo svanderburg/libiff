@@ -7,7 +7,7 @@
 static IFF_Bool addFormAndCheck(IFF_CAT *cat)
 {
     IFF_QualityLevel qualityLevel;
-    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST, NULL);
     IFF_addChunkToCAT(cat, (IFF_Chunk*)form);
 
     if(cat->chunksLength != 3)
@@ -31,7 +31,7 @@ static IFF_Bool addFormAndCheck(IFF_CAT *cat)
 static IFF_Form *updateFormAndCheck(IFF_CAT *cat)
 {
     IFF_QualityLevel qualityLevel;
-    IFF_Form *newForm = IFF_createEmptyForm(ID_NEW);
+    IFF_Form *newForm = IFF_createEmptyForm(ID_NEW, NULL);
     IFF_Chunk *previousMiddleChunk = cat->chunks[1];
     IFF_Chunk *obsoleteChunk = IFF_updateChunkInCATAndUpdateContentsTypeByIndex(cat, 1, (IFF_Chunk*)newForm);
 

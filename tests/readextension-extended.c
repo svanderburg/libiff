@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
 
     if(error == NULL)
     {
-        IFF_Form *form = IFF_createTestForm();
-        status = !TEST_compare(chunk, (IFF_Chunk*)form);
-        TEST_free((IFF_Chunk*)form);
+        TEST_Conversation *conversation = IFF_createTestConversation();
+        status = !TEST_compare(chunk, (IFF_Chunk*)conversation);
+        TEST_free((IFF_Chunk*)conversation);
     }
     else
     {

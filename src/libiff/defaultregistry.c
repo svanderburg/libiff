@@ -56,5 +56,5 @@ IFF_QualityLevel IFF_checkMainIFFChunk(const IFF_Chunk *chunk, IFF_AttributePath
 }
 
 const IFF_ChunkRegistry IFF_defaultChunkRegistry = {
-    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk
+    0, NULL, &IFF_globalChunkTypesNode, &IFF_rawChunkInterface, &IFF_checkMainIFFChunk, NULL
 };

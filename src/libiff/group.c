@@ -151,16 +151,25 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Group
     return TRUE;
 }
 
-IFF_Chunk *IFF_parseGroupContents(FILE *file, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_Group *group = IFF_createGroup(chunkId, chunkSize, 0, groupStructure);
+    IFF_ID groupType;
 
     /* Read group type */
-    if(IFF_readIdField(file, &group->groupType, (IFF_Chunk*)group, attributePath, groupTypeName, bytesProcessed, error) == IFF_FIELD_MORE &&
-        readGroupSubChunks(file, group, groupStructure, chunkRegistry, attributePath, bytesProcessed, error))
-        ;
+    if(IFF_readId(file, &groupType, attributePath, groupTypeName, chunkId, error))
+    {
+        IFF_GroupStructure *groupStructure = lookupGroupStructure(chunkRegistry, groupType);
+        IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure);
 
-    return (IFF_Chunk*)group;
+        *bytesProcessed = *bytesProcessed + IFF_ID_SIZE; /* Initially, we have already read the group ID */
+
+        if(group != NULL)
+            readGroupSubChunks(file, group, groupStructure, chunkRegistry, attributePath, bytesProcessed, error);
+
+        return group;
+    }
+    else
+        return IFF_createGroup(chunkId, chunkSize, 0, NULL);
 }
 
 IFF_Bool IFF_writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -306,6 +315,7 @@ void IFF_printChunksArray(FILE *file, const void *value, const unsigned int inde
         if(i > 0)
             fputs(",\n", file);
 
+        IFF_printIndent(file, indentLevel + 1, "");
         IFF_printChunk(file, (const IFF_Chunk*)param->chunks[i], indentLevel + 1, param->groupType, param->chunkRegistry);
     }
 

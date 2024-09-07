@@ -63,7 +63,7 @@ struct IFF_ChunkInterface
     IFF_Bool (*traverseChunkHierarchy) (IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
     /** Recalculates the size of the given chunk and its parent chunks. This function is only relevant for chunks embedding other chunks. If it refers to NULL, then it lacks the ability to do it */
-    void (*recalculateChunkSize) (IFF_Chunk *chunk);
+    void (*recalculateChunkSize) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 };
 
 /**
@@ -121,6 +121,9 @@ struct IFF_ChunkRegistry
 
     /** Function that checks the main chunk's validity */
     IFF_checkMainChunkFunction checkMainChunk;
+
+    /** An arbitrary data structure extending the registry with custom functionality */
+    void *extension;
 };
 
 #ifdef __cplusplus

@@ -23,10 +23,9 @@
 #define __TESTREGISTRY_H
 #include "chunkregistry.h"
 
-#define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
-
 #define TEST_NUM_OF_SCOPED_CHUNK_TYPES 1
 #define TEST_NUM_OF_GLOBAL_CHUNK_TYPES 2
+#define TEST_NUM_OF_FORM_TYPES 1
 
 extern const IFF_ChunkRegistry TEST_chunkRegistry;
 

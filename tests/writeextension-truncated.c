@@ -24,9 +24,9 @@
 
 int main(int argc, char *argv[])
 {
-    IFF_Form *form = IFF_createTestForm();
+    TEST_Conversation *conversation = IFF_createTestConversation();
     IFF_IOError *error = NULL;
-    int status = !TEST_write("extension-truncated.TEST", (IFF_Chunk*)form, &error);
+    int status = !TEST_write("extension-truncated.TEST", (IFF_Chunk*)conversation, &error);
 
     if(error != NULL)
     {
@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
         IFF_freeIOError(error);
     }
 
-    TEST_free((IFF_Chunk*)form);
+    TEST_free((IFF_Chunk*)conversation);
     return status;
 }

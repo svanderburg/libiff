@@ -90,9 +90,14 @@ IFF_Chunk *IFF_updateChunkInCATByIndex(IFF_CAT *cat, const unsigned int index, I
     return IFF_updateChunkInGroupByIndex((IFF_Group*)cat, index, chunk);
 }
 
+static IFF_GroupStructure *lookupNullStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID groupType)
+{
+    return NULL;
+}
+
 IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_parseGroupContents(file, NULL, chunkId, chunkSize, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupNullStructure, chunkId, chunkSize, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -166,7 +171,7 @@ IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitCh
     return IFF_traverseGroupChunkHierarchy((IFF_Group*)chunk, NULL, data, visitChunk, chunkRegistry);
 }
 
-void IFF_recalculateCATChunkSize(IFF_Chunk *chunk)
+void IFF_recalculateCATChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_recalculateGroupChunkSize((IFF_Group*)chunk, NULL);
 }

@@ -39,7 +39,7 @@ static IFF_Chunk *addChunkAndCheck(const IFF_CAT *cat, IFF_Form *test2Form)
 
     /* Create and attach a data chunk */
     IFF_Chunk *hiChunk = createHiChunk();
-    IFF_addChunkToForm(test2Form, hiChunk);
+    IFF_addChunkToForm(test2Form, NULL, hiChunk);
 
     /* Check if the Hi chunk is the last chunk */
     if(test2Form->chunks[2] != hiChunk)

@@ -32,6 +32,7 @@ typedef struct IFF_Form IFF_Form;
 #include "attributepath.h"
 #include "error.h"
 #include "prop.h"
+#include "groupstructure.h"
 
 extern IFF_ChunkInterface IFF_formInterface;
 
@@ -74,7 +75,7 @@ extern "C" {
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
+IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, const IFF_GroupStructure *formStructure);
 
 /**
  * Creates a new empty form chunk instance with a given form type.
@@ -84,7 +85,7 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType);
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
+IFF_Form *IFF_createEmptyForm(const IFF_ID formType, const IFF_GroupStructure *formStructure);
 
 /**
  * Adds a chunk to the body of the given FORM. This function also increments the
@@ -93,7 +94,7 @@ IFF_Form *IFF_createEmptyForm(const IFF_ID formType);
  * @param form An instance of a FORM chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk);
+void IFF_addChunkToForm(IFF_Form *form, const IFF_GroupStructure *formStructure, IFF_Chunk *chunk);
 
 /**
  * Removes a chunk from the body of the given FORM at the given index. This function also decrements
@@ -169,7 +170,7 @@ IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
 
 IFF_Bool IFF_traverseFormChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
-void IFF_recalculateFormChunkSize(IFF_Chunk *chunk);
+void IFF_recalculateFormChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Searches for the first matching PROP chunk in the nearest enclosing LIST chunk.

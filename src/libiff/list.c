@@ -162,9 +162,14 @@ IFF_Chunk *IFF_updateChunkInListAndUpdateContentsTypeByIndex(IFF_List *list, con
     return IFF_updateChunkInCATAndUpdateContentsTypeByIndex((IFF_CAT*)list, index, chunk);
 }
 
+static IFF_GroupStructure *lookupListStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID groupType)
+{
+    return &listStructure;
+}
+
 IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_parseGroupContents(file, &listStructure, chunkId, chunkSize, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupListStructure, chunkId, chunkSize, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -192,7 +197,7 @@ IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
     return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, &listStructure, chunkRegistry);
 }
 
-void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
+void IFF_recalculateListChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
     IFF_recalculateGroupChunkSize((IFF_Group*)chunk, &listStructure);
 }

@@ -57,10 +57,10 @@ IFF_Form *IFF_createTestForm(void)
 {
     IFF_Chunk *heloChunk = createHelloChunk();
     IFF_Chunk *byeChunk = createByeChunk();
-    IFF_Form *form = IFF_createEmptyForm(ID_TEST);
+    IFF_Form *form = IFF_createEmptyForm(ID_TEST, NULL);
 
-    IFF_addChunkToForm(form, heloChunk);
-    IFF_addChunkToForm(form, byeChunk);
+    IFF_addChunkToForm(form, NULL, heloChunk);
+    IFF_addChunkToForm(form, NULL, byeChunk);
 
     return form;
 }

@@ -241,7 +241,7 @@ IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
  *
  * @param list An instance of a list chunk
  */
-void IFF_recalculateListChunkSize(IFF_Chunk *chunk);
+void IFF_recalculateListChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
 
 /**
  * Retrieves a PROP chunk with the given form type from a list.

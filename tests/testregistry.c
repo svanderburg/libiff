@@ -21,8 +21,10 @@
 
 #include "testregistry.h"
 #include "defaultregistry.h"
+#include "formregistry.h"
 #include "hello.h"
 #include "bye.h"
+#include "conversation.h"
 
 static IFF_ChunkType applicationChunkTypes[] = {
     {TEST_ID_BYE, &TEST_byeInterface},
@@ -34,7 +36,17 @@ static IFF_ChunkTypesNode applicationChunkTypesNode = {
 };
 
 static IFF_ScopedChunkTypes scopedChunkTypes[] = {
-    { TEST_ID_TEST, &applicationChunkTypesNode }
+    { TEST_ID_CONV, &applicationChunkTypesNode }
 };
 
-const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_SCOPED_CHUNK_TYPES(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes);
+static IFF_FormType formTypes[] = {
+    { TEST_ID_CONV, &TEST_conversationStructure }
+};
+
+static IFF_FormTypesNode formTypesNode = {
+    TEST_NUM_OF_FORM_TYPES,
+    formTypes,
+    NULL
+};
+
+const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes, formTypesNode);
