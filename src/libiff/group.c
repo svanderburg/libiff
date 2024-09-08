@@ -62,7 +62,7 @@ void IFF_attachChunkToGroup(IFF_Group *group, const IFF_GroupStructure *groupStr
 {
     chunk->parent = (IFF_Chunk*)group;
 
-    if(groupStructure == NULL || !groupStructure->attachChunkToGroup(group, chunk))
+    if(!IFF_attachChunkToGroupStructure(group, groupStructure, chunk))
         group->chunks = (IFF_Chunk**)IFF_addElementToPointerArray((void**)group->chunks, (void*)chunk, &group->chunksLength);
 }
 

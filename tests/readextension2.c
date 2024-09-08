@@ -19,35 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "testregistry.h"
-#include "defaultregistry.h"
-#include "formregistry.h"
-#include "hello.h"
-#include "bye.h"
-#include "conversation.h"
+#include "test.h"
+#include <stdio.h>
+#include "extensiondata2.h"
 
-static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_byeInterface},
-    {TEST_ID_HELO, &TEST_helloInterface},
-    {TEST_ID_MESG, &IFF_textChunkInterface}
-};
+int main(int argc, char *argv[])
+{
+    IFF_IOError *error = NULL;
+    IFF_Chunk *chunk = TEST_read("extension2.TEST", &error);
+    int status;
 
-static IFF_ChunkTypesNode applicationChunkTypesNode = {
-    TEST_NUM_OF_GLOBAL_CHUNK_TYPES, applicationChunkTypes, NULL
-};
+    if(error == NULL)
+    {
+        TEST_Conversation *conversation = IFF_createTestConversation();
+        status = !TEST_compare(chunk, (IFF_Chunk*)conversation);
+        TEST_free((IFF_Chunk*)conversation);
+    }
+    else
+    {
+        IFF_printReadError(stderr, error);
+        IFF_freeIOError(error);
+        status = 1;
+    }
 
-static IFF_ScopedChunkTypes scopedChunkTypes[] = {
-    { TEST_ID_CONV, &applicationChunkTypesNode }
-};
+    TEST_free(chunk);
 
-static IFF_FormType formTypes[] = {
-    { TEST_ID_CONV, &TEST_conversationStructure }
-};
-
-static IFF_FormTypesNode formTypesNode = {
-    TEST_NUM_OF_FORM_TYPES,
-    formTypes,
-    NULL
-};
-
-const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes, formTypesNode);
+    return status;
+}

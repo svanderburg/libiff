@@ -34,7 +34,11 @@ typedef struct IFF_GroupStructure IFF_GroupStructure;
 
 typedef void (*IFF_initGroupContentsFunction) (IFF_Group *group);
 
-typedef IFF_Bool (*IFF_attachChunkToGroupFunction) (IFF_Group *group, IFF_Chunk *chunk);
+typedef IFF_GroupMember *(*IFF_getGroupMemberByChunkIdFunction) (const IFF_GroupStructure *groupStructure, const IFF_ID chunkId);
+
+typedef IFF_Chunk **(*IFF_getFieldPointerByChunkIdFunction) (const IFF_Group *group, const IFF_ID chunkId);
+
+typedef IFF_Chunk ***(*IFF_getArrayFieldPointerByChunkIdFunction) (IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength);
 
 typedef IFF_Chunk *(*IFF_getChunkFromGroupFunction) (const IFF_Group *group, const unsigned int index);
 
@@ -60,7 +64,9 @@ struct IFF_GroupStructure
     unsigned int groupMembersLength;
     IFF_GroupMember *groupMembers;
     IFF_initGroupContentsFunction initGroupContents;
-    IFF_attachChunkToGroupFunction attachChunkToGroup;
+    IFF_getGroupMemberByChunkIdFunction getGroupMemberByChunkId;
+    IFF_getFieldPointerByChunkIdFunction getFieldPointerByChunkId;
+    IFF_getArrayFieldPointerByChunkIdFunction getArrayFieldPointerByChunkId;
     IFF_getChunkFromGroupFunction getChunkFromGroup;
     IFF_getChunksFromGroupFunction getChunksFromGroup;
 };
@@ -68,6 +74,8 @@ struct IFF_GroupStructure
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk);
 
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

@@ -44,6 +44,8 @@ extern "C" {
  */
 IFF_TextChunk *IFF_createTextChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
 
+IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *text);
+
 /**
  * Copies the given string into the data of the chunk. Additionally, it makes
  * the chunk size equal to the given string.

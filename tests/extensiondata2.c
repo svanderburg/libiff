@@ -19,35 +19,44 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "testregistry.h"
-#include "defaultregistry.h"
-#include "formregistry.h"
+#include "extensiondata.h"
+#include <textchunk.h>
 #include "hello.h"
 #include "bye.h"
-#include "conversation.h"
 
-static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_byeInterface},
-    {TEST_ID_HELO, &TEST_helloInterface},
-    {TEST_ID_MESG, &IFF_textChunkInterface}
-};
+static IFF_Chunk *createHelloChunk(void)
+{
+    TEST_Hello *hello = TEST_createHello(TEST_HELO_DEFAULT_SIZE);
 
-static IFF_ChunkTypesNode applicationChunkTypesNode = {
-    TEST_NUM_OF_GLOBAL_CHUNK_TYPES, applicationChunkTypes, NULL
-};
+    hello->a = 'a';
+    hello->b = 'b';
+    hello->c = 4096;
 
-static IFF_ScopedChunkTypes scopedChunkTypes[] = {
-    { TEST_ID_CONV, &applicationChunkTypesNode }
-};
+    return (IFF_Chunk*)hello;
+}
 
-static IFF_FormType formTypes[] = {
-    { TEST_ID_CONV, &TEST_conversationStructure }
-};
+static IFF_Chunk *createByeChunk(void)
+{
+    TEST_Bye *bye = TEST_createBye(TEST_BYE_DEFAULT_SIZE);
 
-static IFF_FormTypesNode formTypesNode = {
-    TEST_NUM_OF_FORM_TYPES,
-    formTypes,
-    NULL
-};
+    bye->one = 1;
+    bye->two = 2;
 
-const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes, formTypesNode);
+    return (IFF_Chunk*)bye;
+}
+
+TEST_Conversation *IFF_createTestConversation(void)
+{
+    IFF_Chunk *hello = createHelloChunk();
+    IFF_Chunk *bye = createByeChunk();
+    IFF_Chunk *message1 = (IFF_Chunk*)IFF_createTextChunkFromText(TEST_ID_MESG, "A random message!");
+    IFF_Chunk *message2 = (IFF_Chunk*)IFF_createTextChunkFromText(TEST_ID_MESG, "Another message!");
+    TEST_Conversation *conversation = TEST_createConversation();
+
+    TEST_addChunkToConversation(conversation, hello);
+    TEST_addChunkToConversation(conversation, message1);
+    TEST_addChunkToConversation(conversation, message2);
+    TEST_addChunkToConversation(conversation, bye);
+
+    return conversation;
+}

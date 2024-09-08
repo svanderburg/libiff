@@ -42,16 +42,29 @@ static void initListContents(IFF_Group *group)
     list->propsLength = 0;
 }
 
-static IFF_Bool attachChunkToList(IFF_Group *group, IFF_Chunk *chunk)
+static IFF_GroupMember *getGroupMemberByChunkId(const IFF_GroupStructure *groupStructure, const IFF_ID chunkId)
 {
-    if(chunk->chunkId == IFF_ID_PROP)
+    if(chunkId == IFF_ID_PROP)
+        return &groupStructure->groupMembers[0];
+    else
+        return NULL;
+}
+
+static IFF_Chunk **getFieldPointerByChunkId(const IFF_Group *group, const IFF_ID chunkId)
+{
+    return NULL;
+}
+
+static IFF_Chunk ***getArrayFieldPointerByChunkId(IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength)
+{
+    if(chunkId == IFF_ID_PROP)
     {
         IFF_List *list = (IFF_List*)group;
-        list->props = (IFF_Prop**)IFF_addElementToPointerArray((void**)list->props, (void*)chunk, &list->propsLength);
-        return TRUE;
+        *chunksLength = &list->propsLength;
+        return (IFF_Chunk***)&list->props;
     }
     else
-        return FALSE;
+        return NULL;
 }
 
 static IFF_Chunk *getChunkFromList(const IFF_Group *group, const unsigned int index)
@@ -76,7 +89,9 @@ IFF_GroupStructure listStructure = {
     1,
     listStructureMembers,
     initListContents,
-    attachChunkToList,
+    getGroupMemberByChunkId,
+    getFieldPointerByChunkId,
+    getArrayFieldPointerByChunkId,
     getChunkFromList,
     getChunksFromList
 };

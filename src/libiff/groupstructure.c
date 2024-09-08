@@ -21,7 +21,37 @@
 
 #include "groupstructure.h"
 #include <stdlib.h>
+#include <array.h>
 #include <util.h>
+
+IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk)
+{
+    IFF_GroupMember *groupMember;
+
+    if(groupStructure == NULL || (groupMember = groupStructure->getGroupMemberByChunkId(groupStructure, chunk->chunkId)) == NULL)
+        return FALSE;
+    else
+    {
+        if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
+        {
+            IFF_Chunk **chunkPointer = groupStructure->getFieldPointerByChunkId(group, chunk->chunkId);
+
+            /* If there was already a single member assigned, then put it in the chunks array so that it gets overridden */
+            if(*chunkPointer != NULL)
+                group->chunks = (IFF_Chunk**)IFF_addElementToPointerArray((void**)group->chunks, (void*)*chunkPointer, &group->chunksLength);
+
+            *chunkPointer = chunk;
+        }
+        else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
+        {
+            unsigned int *chunksLength;
+            IFF_Chunk ***chunksPointer = groupStructure->getArrayFieldPointerByChunkId(group, chunk->chunkId, &chunksLength);
+            *chunksPointer = (IFF_Chunk**)IFF_addElementToPointerArray((void**)*chunksPointer, (void*)chunk, chunksLength);
+        }
+
+        return TRUE;
+    }
+}
 
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
@@ -202,7 +232,13 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const IFF_Group
                 fprintf(file, "{\n");
 
                 for(j = 0; j < chunksLength; j++)
+                {
+                    if(j > 0)
+                        fputs(",\n", file);
+
+                    IFF_printIndent(file, indentLevel + 1, "");
                     IFF_printChunk(file, chunks[j], indentLevel + 1, group->groupType, chunkRegistry);
+                }
 
                 fprintf(file, "\n");
                 IFF_printIndent(file, indentLevel, "}");
@@ -241,7 +277,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
 
                     for(j = 0; j < chunks1Length; j++)
                     {
-                        if(!IFF_compareChunk(chunks1[i], chunks2[i], group1->groupType, chunkRegistry))
+                        if(!IFF_compareChunk(chunks1[j], chunks2[j], group1->groupType, chunkRegistry))
                             return FALSE;
                     }
                 }

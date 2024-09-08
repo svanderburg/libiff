@@ -53,6 +53,14 @@ struct IFF_FormTypesNode
     IFF_FormTypesNode *parent;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 IFF_GroupStructure *IFF_findGroupStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

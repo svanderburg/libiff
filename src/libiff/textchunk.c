@@ -31,6 +31,17 @@ IFF_TextChunk *IFF_createTextChunk(const IFF_ID chunkId, const IFF_Long chunkSiz
     return (IFF_TextChunk*)IFF_createRawChunk(chunkId, chunkSize);
 }
 
+IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *text)
+{
+    size_t textLength = strlen(text);
+    IFF_TextChunk *textChunk = IFF_createTextChunk(chunkId, textLength);
+
+    if(textChunk != NULL)
+        memcpy(textChunk->chunkData, text, textLength);
+
+    return textChunk;
+}
+
 void IFF_setTextData(IFF_TextChunk *textChunk, const char *text)
 {
     size_t textLength = strlen(text);

@@ -1,10 +1,10 @@
-noinst_HEADERS = bye.h hello.h conversation.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h
+noinst_HEADERS = bye.h hello.h conversation.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h extensiondata2.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     writeextension readextension testcheck testpp \
-    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended \
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
     catcrudoperations listcrudoperations formcrudoperations
 
 writeform_SOURCES = formdata.c writeform.c
@@ -131,6 +131,14 @@ readextension_extended_SOURCES = hello.c bye.c conversation.c test.c testregistr
 readextension_extended_LDADD = ../src/libiff/libiff.la
 readextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 
+writeextension2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata2.c writeextension2.c
+writeextension2_LDADD = ../src/libiff/libiff.la
+writeextension2_CFLAGS = -I../src/libiffcore -I../src/libiff
+
+readextension2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata2.c readextension2.c
+readextension2_LDADD = ../src/libiff/libiff.la
+readextension2_CFLAGS = -I../src/libiffcore -I../src/libiff
+
 catcrudoperations_SOURCES = catdata.c catcrudoperations.c
 catcrudoperations_LDADD = ../src/libiff/libiff.la
 catcrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
@@ -154,7 +162,7 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension testcheck.sh testpp-c.sh testpp-otherform.sh \
-    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended \
+    writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
     catcrudoperations listcrudoperations formcrudoperations
 
 EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \

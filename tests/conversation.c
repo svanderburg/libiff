@@ -27,22 +27,51 @@ static void initConversationContents(IFF_Group *group)
     TEST_Conversation *conversation = (TEST_Conversation*)group;
     conversation->hello = NULL;
     conversation->bye = NULL;
+    conversation->messagesLength = 0;
+    conversation->messages = NULL;
 }
 
-static IFF_Bool attachChunkToConversation(IFF_Group *group, IFF_Chunk *chunk)
+static IFF_GroupMember *getGroupMemberByChunkId(const IFF_GroupStructure *groupStructure, const IFF_ID chunkId)
+{
+    switch(chunkId)
+    {
+        case TEST_ID_HELO:
+            return &groupStructure->groupMembers[0];
+        case TEST_ID_BYE:
+            return &groupStructure->groupMembers[1];
+        case TEST_ID_MESG:
+            return &groupStructure->groupMembers[2];
+        default:
+            return NULL;
+    }
+}
+
+static IFF_Chunk **getFieldPointerByChunkId(const IFF_Group *group, const IFF_ID chunkId)
+{
+    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
+
+    switch(chunkId)
+    {
+        case TEST_ID_HELO:
+            return (IFF_Chunk**)&conversation->hello;
+        case TEST_ID_BYE:
+            return (IFF_Chunk**)&conversation->bye;
+        default:
+            return NULL;
+    }
+}
+
+static IFF_Chunk ***getArrayFieldPointerByChunkId(IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength)
 {
     TEST_Conversation *conversation = (TEST_Conversation*)group;
 
-    switch(chunk->chunkId)
+    switch(chunkId)
     {
-        case TEST_ID_HELO:
-            conversation->hello = (TEST_Hello*)chunk;
-            return TRUE;
-        case TEST_ID_BYE:
-            conversation->bye = (TEST_Bye*)chunk;
-            return TRUE;
+        case TEST_ID_MESG:
+            *chunksLength = &conversation->messagesLength;
+            return (IFF_Chunk***)&conversation->messages;
         default:
-            return FALSE;
+            return NULL;
     }
 }
 
@@ -63,20 +92,32 @@ static IFF_Chunk *getChunkFromConversation(const IFF_Group *group, const unsigne
 
 static IFF_Chunk **getChunksFromConversation(const IFF_Group *group, const unsigned int index, unsigned int *chunksLength)
 {
-    return NULL;
+    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
+
+    switch(index)
+    {
+        case 2:
+            *chunksLength = conversation->messagesLength;
+            return (IFF_Chunk**)conversation->messages;
+        default:
+            return NULL;
+    }
 }
 
 static IFF_GroupMember groupMembers[] = {
     { TEST_ID_HELO, "hello", IFF_GROUP_MEMBER_SINGLE },
-    { TEST_ID_BYE, "bye", IFF_GROUP_MEMBER_SINGLE }
+    { TEST_ID_BYE, "bye", IFF_GROUP_MEMBER_SINGLE },
+    { TEST_ID_MESG, "messages", IFF_GROUP_MEMBER_MULTIPLE },
 };
 
 IFF_GroupStructure TEST_conversationStructure = {
     sizeof(TEST_Conversation),
-    2,
+    TEST_NUM_OF_CONVERSATION_GROUP_MEMBERS,
     groupMembers,
     initConversationContents,
-    attachChunkToConversation,
+    getGroupMemberByChunkId,
+    getFieldPointerByChunkId,
+    getArrayFieldPointerByChunkId,
     getChunkFromConversation,
     getChunksFromConversation
 };
