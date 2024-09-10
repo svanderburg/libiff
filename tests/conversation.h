@@ -56,4 +56,12 @@ TEST_Conversation *TEST_createConversation(void);
 
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
 
+IFF_Chunk *TEST_updateChunkInConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
+
+IFF_Chunk *TEST_removeChunkFromConversation(TEST_Conversation *conversation, const IFF_ID chunkId);
+
+IFF_Chunk *TEST_updateChunkInConversationByIndex(TEST_Conversation *conversation, const unsigned int index, IFF_Chunk *chunk);
+
+IFF_Chunk *TEST_removeChunkFromConversationByIndex(TEST_Conversation *conversation, const IFF_ID chunkId, const unsigned int index);
+
 #endif

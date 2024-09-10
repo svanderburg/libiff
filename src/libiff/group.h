@@ -245,6 +245,8 @@ IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Group *group, const IFF_GroupStruct
  */
 void IFF_recalculateGroupChunkSize(IFF_Group *group, const IFF_GroupStructure *groupStructure);
 
+IFF_Bool IFF_searchLastChunkIndexInGroup(const IFF_Group *group, const IFF_ID chunkId, unsigned int *index);
+
 #ifdef __cplusplus
 }
 #endif

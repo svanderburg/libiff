@@ -53,6 +53,103 @@ IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, const IFF_GroupStruct
     }
 }
 
+IFF_Chunk *IFF_updateChunkInGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk)
+{
+    IFF_Chunk **obsoleteChunkPtr = groupStructure->getFieldPointerByChunkId(group, chunk->chunkId);
+
+    if(obsoleteChunkPtr == NULL)
+        return NULL;
+    else
+    {
+        IFF_Chunk *obsoleteChunk = *obsoleteChunkPtr;
+
+        if(obsoleteChunk != NULL)
+        {
+            obsoleteChunk->parent = NULL;
+            IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
+        }
+
+        *obsoleteChunkPtr = chunk;
+        chunk->parent = (IFF_Chunk*)group;
+        IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
+
+        return obsoleteChunk;
+    }
+}
+
+IFF_Chunk *IFF_removeChunkFromGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId)
+{
+    IFF_Chunk **obsoleteChunkPtr = groupStructure->getFieldPointerByChunkId(group, chunkId);
+
+    if(obsoleteChunkPtr == NULL)
+        return NULL;
+    else
+    {
+        unsigned int index;
+        IFF_Chunk *obsoleteChunk = *obsoleteChunkPtr;
+
+        if(obsoleteChunk != NULL)
+        {
+            obsoleteChunk->parent = NULL;
+            IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
+        }
+
+        if(IFF_searchLastChunkIndexInGroup((IFF_Group*)group, chunkId, &index))
+        {
+            IFF_Chunk *previousChunk;
+            group->chunks = (IFF_Chunk**)IFF_removeElementFromPointerArrayByIndex((void**)group->chunks, index, &group->chunksLength, (void**)&previousChunk);
+            *obsoleteChunkPtr = previousChunk;
+        }
+        else
+            *obsoleteChunkPtr = NULL;
+
+        return obsoleteChunk;
+    }
+}
+
+IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const IFF_GroupStructure *groupStructure, const unsigned int index, IFF_Chunk *chunk)
+{
+    unsigned int *chunksLength;
+    IFF_Chunk ***obsoleteChunkArrayPtr = groupStructure->getArrayFieldPointerByChunkId(group, chunk->chunkId, &chunksLength);
+
+    if(obsoleteChunkArrayPtr == NULL)
+        return NULL;
+    else
+    {
+        IFF_Chunk *obsoleteChunk = (IFF_Chunk*)IFF_replaceElementInPointerArrayByIndex((void**)*obsoleteChunkArrayPtr, *chunksLength, index, (void*)chunk);
+
+        if(obsoleteChunk != NULL)
+        {
+            obsoleteChunk->parent = NULL;
+            IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
+        }
+
+        return obsoleteChunk;
+    }
+}
+
+IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId, const unsigned int index)
+{
+    unsigned int *chunksLength;
+    IFF_Chunk ***obsoleteChunkArrayPtr = groupStructure->getArrayFieldPointerByChunkId(group, chunkId, &chunksLength);
+
+    if(obsoleteChunkArrayPtr == NULL)
+        return NULL;
+    else
+    {
+        IFF_Chunk *obsoleteChunk;
+        *obsoleteChunkArrayPtr = (IFF_Chunk**)IFF_removeElementFromPointerArrayByIndex((void**)*obsoleteChunkArrayPtr, index, chunksLength, (void**)&obsoleteChunk);
+
+        if(obsoleteChunk != NULL)
+        {
+            obsoleteChunk->parent = NULL;
+            IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
+        }
+
+        return obsoleteChunk;
+    }
+}
+
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     if(groupStructure != NULL)
@@ -69,11 +166,14 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_G
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
 
-                if(!IFF_writeChunk(file, chunk, group->groupType, chunkRegistry, attributePath, error))
-                    return FALSE;
+                if(chunk != NULL)
+                {
+                    if(!IFF_writeChunk(file, chunk, group->groupType, chunkRegistry, attributePath, error))
+                        return FALSE;
 
-                /* Increase the bytes processed counter */
-                *bytesProcessed = IFF_addChunkSize(*bytesProcessed, chunk);
+                    /* Increase the bytes processed counter */
+                    *bytesProcessed = IFF_addChunkSize(*bytesProcessed, chunk);
+                }
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -115,7 +215,9 @@ IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, const IFF_Group
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
-                chunkSize = IFF_addChunkSize(chunkSize, chunk);
+
+                if(chunk != NULL)
+                    chunkSize = IFF_addChunkSize(chunkSize, chunk);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -149,7 +251,9 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_Group
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
-                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
+
+                if(chunk != NULL)
+                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -185,7 +289,9 @@ void IFF_clearGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupSt
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
-                IFF_freeChunk(chunk, group->groupType, chunkRegistry);
+
+                if(chunk != NULL)
+                    IFF_freeChunk(chunk, group->groupType, chunkRegistry);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -221,7 +327,11 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const IFF_Group
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
-                IFF_printChunk(file, chunk, indentLevel, group->groupType, chunkRegistry);
+
+                if(chunk == NULL)
+                    fprintf(file, "NULL");
+                else
+                    IFF_printChunk(file, chunk, indentLevel, group->groupType, chunkRegistry);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -262,8 +372,11 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
                 IFF_Chunk *chunk1 = groupStructure->getChunkFromGroup(group1, i);
                 IFF_Chunk *chunk2 = groupStructure->getChunkFromGroup(group2, i);
 
-                if(!IFF_compareChunk(chunk1, chunk2, group1->groupType, chunkRegistry))
-                    return FALSE;
+                if(chunk1 != NULL && chunk2 != NULL)
+                {
+                    if(!IFF_compareChunk(chunk1, chunk2, group1->groupType, chunkRegistry))
+                        return FALSE;
+                }
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -304,8 +417,11 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, const IFF_G
             {
                 IFF_Chunk *chunk = groupStructure->getChunkFromGroup(group, i);
 
-                if(!IFF_traverseChunkHierarchy(chunk, group->groupType, data, visitChunk, chunkRegistry))
-                    return FALSE;
+                if(chunk != NULL)
+                {
+                    if(!IFF_traverseChunkHierarchy(chunk, group->groupType, data, visitChunk, chunkRegistry))
+                        return FALSE;
+                }
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
