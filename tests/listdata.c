@@ -67,7 +67,7 @@ static IFF_Chunk *createTestProp(void)
     IFF_Chunk *heloChunk = createHeloChunk();
     IFF_Prop *testProp = IFF_createEmptyProp(ID_TEST, NULL);
 
-    IFF_addChunkToProp(testProp, NULL, heloChunk);
+    IFF_addChunkToProp(testProp, heloChunk);
 
     return (IFF_Chunk*)testProp;
 }
@@ -75,7 +75,7 @@ static IFF_Chunk *createTestProp(void)
 static IFF_Chunk *createTestForm(IFF_Chunk *byeChunk)
 {
     IFF_Form *testForm = IFF_createEmptyForm(ID_TEST, NULL);
-    IFF_addChunkToForm(testForm, NULL, byeChunk);
+    IFF_addChunkToForm(testForm, byeChunk);
     return (IFF_Chunk*)testForm;
 }
 

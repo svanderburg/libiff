@@ -72,8 +72,8 @@ static IFF_Chunk *createTestForm(IFF_Chunk *heloChunk, IFF_Chunk *byeChunk)
 {
     IFF_Form *testForm = IFF_createEmptyForm(ID_TEST, NULL);
 
-    IFF_addChunkToForm(testForm, NULL, heloChunk);
-    IFF_addChunkToForm(testForm, NULL, byeChunk);
+    IFF_addChunkToForm(testForm, heloChunk);
+    IFF_addChunkToForm(testForm, byeChunk);
 
     return (IFF_Chunk*)testForm;
 }
@@ -100,8 +100,8 @@ IFF_Form *IFF_createTestForm(void)
     IFF_Chunk *test2Form = createTest2Form();
     IFF_Form *outerForm = IFF_createEmptyForm(ID_BLA, NULL);
 
-    IFF_addChunkToForm(outerForm, NULL, test1Form);
-    IFF_addChunkToForm(outerForm, NULL, test2Form);
+    IFF_addChunkToForm(outerForm, test1Form);
+    IFF_addChunkToForm(outerForm, test2Form);
 
     return outerForm;
 }

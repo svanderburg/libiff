@@ -65,6 +65,9 @@ struct IFF_List
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunks;
 
+    /** Defines the structure of the functional fields inside this struct */
+    IFF_GroupStructure *groupStructure;
+
     /** Contains the number of PROP chunks stored in this list chunk */
     unsigned int propsLength;
 

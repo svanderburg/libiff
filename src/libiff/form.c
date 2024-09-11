@@ -65,19 +65,19 @@
 
 IFF_ChunkInterface IFF_formInterface = {&IFF_parseFormContents, &IFF_writeFormContents, &IFF_checkFormContents, &IFF_clearFormContents, &IFF_printFormContents, &IFF_compareFormContents, &IFF_traverseFormChunkHierarchy, &IFF_recalculateFormChunkSize};
 
-IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, const IFF_GroupStructure *formStructure)
+IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
     return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, chunkSize, formType, formStructure);
 }
 
-IFF_Form *IFF_createEmptyForm(const IFF_ID formType, const IFF_GroupStructure *formStructure)
+IFF_Form *IFF_createEmptyForm(const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
     return (IFF_Form*)IFF_createEmptyGroup(IFF_ID_FORM, formType, formStructure);
 }
 
-void IFF_addChunkToForm(IFF_Form *form, const IFF_GroupStructure *formStructure, IFF_Chunk *chunk)
+void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk)
 {
-    IFF_addChunkToGroup((IFF_Group*)form, formStructure, chunk);
+    IFF_addChunkToGroup((IFF_Group*)form, chunk);
 }
 
 IFF_Chunk *IFF_updateChunkInFormByIndex(IFF_Form *form, const unsigned int index, IFF_Chunk *chunk)
@@ -97,9 +97,7 @@ IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Lon
 
 IFF_Bool IFF_writeFormContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, formStructure, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, FORM_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 static IFF_QualityLevel checkValidFormChars(const IFF_ID formType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId)
@@ -198,44 +196,32 @@ static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *s
 
 IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    return IFF_checkGroupContents((const IFF_Group*)chunk, formStructure, FORM_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, FORM_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
 void IFF_clearFormContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    IFF_clearGroupContents((IFF_Group*)chunk, formStructure, chunkRegistry);
+    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
 }
 
 void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    IFF_printGroupContents(file, (const IFF_Group*)chunk, formStructure, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, FORM_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form1 = (const IFF_Form*)chunk1;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form1->formType);
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, formStructure, chunkRegistry);
+    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 IFF_Bool IFF_traverseFormChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    const IFF_Form *form = (const IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    return IFF_traverseGroupChunkHierarchy((IFF_Group*)chunk, formStructure, data, visitChunk, chunkRegistry);
+    return IFF_traverseGroupChunkHierarchy((IFF_Group*)chunk, data, visitChunk, chunkRegistry);
 }
 
 void IFF_recalculateFormChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_Form *form = (IFF_Form*)chunk;
-    IFF_GroupStructure *formStructure = IFF_findGroupStructure(chunkRegistry, form->formType);
-    IFF_recalculateGroupChunkSize((IFF_Group*)chunk, formStructure);
+    IFF_recalculateGroupChunkSize((IFF_Group*)chunk);
 }
 
 /**

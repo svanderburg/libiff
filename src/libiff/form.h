@@ -61,6 +61,9 @@ struct IFF_Form
 
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunks;
+
+    /** Defines the structure of the functional fields inside this struct */
+    IFF_GroupStructure *groupStructure;
 };
 
 #ifdef __cplusplus
@@ -75,7 +78,7 @@ extern "C" {
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, const IFF_GroupStructure *formStructure);
+IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure);
 
 /**
  * Creates a new empty form chunk instance with a given form type.
@@ -85,7 +88,7 @@ IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, const 
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Form *IFF_createEmptyForm(const IFF_ID formType, const IFF_GroupStructure *formStructure);
+IFF_Form *IFF_createEmptyForm(const IFF_ID formType, IFF_GroupStructure *formStructure);
 
 /**
  * Adds a chunk to the body of the given FORM. This function also increments the
@@ -94,7 +97,7 @@ IFF_Form *IFF_createEmptyForm(const IFF_ID formType, const IFF_GroupStructure *f
  * @param form An instance of a FORM chunk
  * @param chunk An arbitrary group or data chunk
  */
-void IFF_addChunkToForm(IFF_Form *form, const IFF_GroupStructure *formStructure, IFF_Chunk *chunk);
+void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk);
 
 /**
  * Removes a chunk from the body of the given FORM at the given index. This function also decrements

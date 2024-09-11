@@ -46,6 +46,7 @@ struct TEST_Conversation
     IFF_ID formType;
     unsigned int chunksLength;
     IFF_Chunk **chunks;
+    IFF_GroupStructure *groupStructure;
     TEST_Hello *hello;
     TEST_Bye *bye;
     unsigned int messagesLength;

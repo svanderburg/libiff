@@ -61,6 +61,9 @@ struct IFF_CAT
 
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunks;
+
+    /** Defines the structure of the functional fields inside this struct */
+    IFF_GroupStructure *groupStructure;
 };
 
 #ifdef __cplusplus

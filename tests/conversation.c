@@ -130,25 +130,25 @@ TEST_Conversation *TEST_createConversation(void)
 
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk)
 {
-    IFF_addChunkToForm((IFF_Form*)conversation, &TEST_conversationStructure, chunk);
+    IFF_addChunkToForm((IFF_Form*)conversation, chunk);
 }
 
 IFF_Chunk *TEST_updateChunkInConversation(TEST_Conversation *conversation, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInGroupStructure((IFF_Group*)conversation, &TEST_conversationStructure, chunk);
+    return IFF_updateChunkInGroupStructure((IFF_Group*)conversation, chunk);
 }
 
 IFF_Chunk *TEST_removeChunkFromConversation(TEST_Conversation *conversation, const IFF_ID chunkId)
 {
-    return IFF_removeChunkFromGroupStructure((IFF_Group*)conversation, &TEST_conversationStructure, chunkId);
+    return IFF_removeChunkFromGroupStructure((IFF_Group*)conversation, chunkId);
 }
 
 IFF_Chunk *TEST_updateChunkInConversationByIndex(TEST_Conversation *conversation, const unsigned int index, IFF_Chunk *chunk)
 {
-    return IFF_updateChunkInGroupStructureByIndex((IFF_Group*)conversation, &TEST_conversationStructure, index, chunk);
+    return IFF_updateChunkInGroupStructureByIndex((IFF_Group*)conversation, index, chunk);
 }
 
 IFF_Chunk *TEST_removeChunkFromConversationByIndex(TEST_Conversation *conversation, const IFF_ID chunkId, const unsigned int index)
 {
-    return IFF_removeChunkFromGroupStructureByIndex((IFF_Group*)conversation, &TEST_conversationStructure, chunkId, index);
+    return IFF_removeChunkFromGroupStructureByIndex((IFF_Group*)conversation, chunkId, index);
 }

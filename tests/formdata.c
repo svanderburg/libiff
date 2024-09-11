@@ -59,8 +59,8 @@ IFF_Form *IFF_createTestForm(void)
     IFF_Chunk *heloChunk = createHelloChunk();
     IFF_Chunk *byeChunk = createByeChunk();
 
-    IFF_addChunkToForm(form, NULL, heloChunk);
-    IFF_addChunkToForm(form, NULL, byeChunk);
+    IFF_addChunkToForm(form, heloChunk);
+    IFF_addChunkToForm(form, byeChunk);
 
     return form;
 }

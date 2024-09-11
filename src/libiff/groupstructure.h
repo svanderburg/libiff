@@ -75,29 +75,29 @@ struct IFF_GroupStructure
 extern "C" {
 #endif
 
-IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk);
+IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, IFF_Chunk *chunk);
 
-IFF_Chunk *IFF_updateChunkInGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInGroupStructure(IFF_Group *group, IFF_Chunk *chunk);
 
-IFF_Chunk *IFF_removeChunkFromGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId);
+IFF_Chunk *IFF_removeChunkFromGroupStructure(IFF_Group *group, const IFF_ID chunkId);
 
-IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const IFF_GroupStructure *groupStructure, const unsigned int index, IFF_Chunk *chunk);
+IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk);
 
-IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ID chunkId, const unsigned int index);
+IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_ID chunkId, const unsigned int index);
 
-IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, const IFF_GroupStructure *groupStructure, IFF_Long chunkSize);
+IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, IFF_Long chunkSize);
 
-IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-void IFF_clearGroupStructure(IFF_Group *group, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearGroupStructure(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry);
 
-void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const IFF_GroupStructure *groupStructure, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *group2, const IFF_GroupStructure *groupStructure, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry);
 
-IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, const IFF_GroupStructure *groupStructure, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
 
 #ifdef __cplusplus
 }

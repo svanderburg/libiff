@@ -47,7 +47,7 @@ extern "C" {
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType, const IFF_GroupStructure *formStructure);
+IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure);
 
 /**
  * Creates a new empty PROP chunk instance with a given form type.
@@ -57,7 +57,7 @@ IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType, const 
  * @param formType Form type describing the purpose of the sub chunks.
  * @return FORM chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Prop *IFF_createEmptyProp(const IFF_ID formType, const IFF_GroupStructure *formStructure);
+IFF_Prop *IFF_createEmptyProp(const IFF_ID formType, IFF_GroupStructure *formStructure);
 
 /**
  * Adds a chunk to the body of the given PROP. This function also increments the
@@ -66,7 +66,7 @@ IFF_Prop *IFF_createEmptyProp(const IFF_ID formType, const IFF_GroupStructure *f
  * @param prop An instance of a PROP chunk
  * @param chunk A data chunk
  */
-void IFF_addChunkToProp(IFF_Prop *prop, const IFF_GroupStructure *formStructure, IFF_Chunk *chunk);
+void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk);
 
 /**
  * Removes a chunk from the body of the given PROP at the given index. This function also decrements

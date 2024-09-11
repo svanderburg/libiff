@@ -154,7 +154,7 @@ IFF_Prop *IFF_updatePropInListByIndex(IFF_List *list, unsigned int index, IFF_Pr
 
 void IFF_addChunkToList(IFF_List *list, IFF_Chunk *chunk)
 {
-    IFF_addChunkToGroup((IFF_Group*)list, &listStructure, chunk);
+    IFF_addChunkToGroup((IFF_Group*)list, chunk);
 }
 
 void IFF_addChunkToListAndUpdateContentsType(IFF_List *list, IFF_Chunk *chunk)
@@ -189,32 +189,32 @@ IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Lon
 
 IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, &listStructure, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
 }
 
 IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_checkGroupContents((const IFF_Group*)chunk, &listStructure, LIST_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, LIST_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
 }
 
 void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_clearGroupContents((IFF_Group*)chunk, &listStructure, chunkRegistry);
+    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
 }
 
 void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_printGroupContents(file, (const IFF_Group*)chunk, &listStructure, indentLevel, LIST_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, LIST_GROUPTYPENAME, chunkRegistry);
 }
 
 IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
 {
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, &listStructure, chunkRegistry);
+    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
 }
 
 void IFF_recalculateListChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
 {
-    IFF_recalculateGroupChunkSize((IFF_Group*)chunk, &listStructure);
+    IFF_recalculateGroupChunkSize((IFF_Group*)chunk);
 }
 
 IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType)
