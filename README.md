@@ -106,7 +106,7 @@ directory of this package.
 
 Reading IFF files
 -----------------
-To read IFF files, include the `iff.h` header file and call the `IFF_read()`
+To read IFF files, include the `iff.h` header file and call the `IFF_parse()`
 function:
 
 ```C
@@ -115,7 +115,7 @@ function:
 int main(int argc, char *argv[])
 {
     /* Read an IFF file */
-    IFF_Chunk *chunk = IFF_read("input.IFF", NULL);
+    IFF_Chunk *chunk = IFF_parse("input.IFF", NULL);
 
     if(chunk != NULL)
     {
@@ -379,7 +379,7 @@ interface of an imaginary TEST file format:
 
 #define TEST_ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
 
-IFF_Chunk *TEST_read(const char *filename);
+IFF_Chunk *TEST_parse(const char *filename);
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk);
 
@@ -414,8 +414,8 @@ The implementation of this interface (`test.c`) may look as follows:
  * algorithm.
  */
 static IFF_ChunkType applicationChunkTypes[] = {
-    {TEST_ID_BYE, &TEST_createBye, &TEST_readBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
-    {TEST_ID_HELO, &TEST_createHello, &TEST_readHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
+    {TEST_ID_BYE, &TEST_createBye, &TEST_parseBye, &TEST_writeBye, &TEST_checkBye, &TEST_freeBye, &TEST_printBye, &TEST_compareBye},
+    {TEST_ID_HELO, &TEST_createHello, &TEST_parseHello, &TEST_writeHello, &TEST_checkHello, &TEST_freeHello, &TEST_printHello, &TEST_compareHello}
 };
 
 /*
@@ -446,9 +446,9 @@ static IFF_ChunkRegistry chunkRegistry = {
 };
 
 /* The following functions hide the the extension parameters for this application format */
-IFF_Chunk *TEST_read(const char *filename)
+IFF_Chunk *TEST_parse(const char *filename)
 {
-    return IFF_read(filename, &chunkRegistry);
+    return IFF_parse(filename, &chunkRegistry);
 }
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk)
@@ -521,7 +521,7 @@ TEST_Hello;
 
 TEST_Hello *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize);
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
+IFF_Bool TEST_parseHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
 IFF_Bool TEST_writeHello(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed);
 
@@ -564,7 +564,7 @@ IFF_Chunk *TEST_createHello(const IFF_ID chunkId, const IFF_Long chunkSize)
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_readHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
+IFF_Bool TEST_parseHello(FILE *file, IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_Long *bytesProcessed)
 {
     TEST_Hello *hello = (TEST_Hello*)chunk;
     IFF_FieldStatus status;

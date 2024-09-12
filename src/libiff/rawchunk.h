@@ -41,6 +41,9 @@ struct IFF_RawChunk
     /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Chunk *parent;
 
+    /** Pointer to the chunk interface exposing operations to manage the chunk */
+    IFF_ChunkInterface *chunkInterface;
+
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;
 
@@ -54,6 +57,8 @@ struct IFF_RawChunk
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ChunkInterface *chunkInterface);
 
 /**
  * Creates a raw chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().
@@ -91,35 +96,32 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes the given raw chunk to a file descriptor.
  *
  * @param file File descriptor of the file
  * @param chunk A raw chunk instance
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks the given raw chunk
  *
  * @param chunk A raw chunk instance
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the chunk is valid, else FALSE
  */
-IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Frees the raw chunk data of the given raw chunk.
  *
  * @param chunk A raw chunk instance
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearRawChunkContents(IFF_Chunk *chunk);
 
 void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue);
 
@@ -130,19 +132,17 @@ void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned in
  *
  * @param chunk A raw chunk instance
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Checks whether two given raw chunks are equal.
  *
  * @param chunk1 Raw chunk to compare
  * @param chunk2 Raw chunk to compare
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the raw chunks are equal, else FALSE
  */
-IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #ifdef __cplusplus
 }

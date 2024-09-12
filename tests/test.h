@@ -24,7 +24,7 @@
 #include "testregistry.h"
 #include "chunk.h"
 
-IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error);
+IFF_Chunk *TEST_parse(const char *filename, IFF_IOError **error);
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
 

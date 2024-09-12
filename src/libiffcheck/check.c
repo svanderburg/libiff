@@ -26,7 +26,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_readCore(filename, chunkRegistry, &error);
+    IFF_Chunk *chunk = IFF_parseCore(filename, chunkRegistry, &error);
 
     IFF_QualityLevel qualityLevel;
     IFF_Bool status;
@@ -49,7 +49,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
     status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
 
     /* Free the chunk structure */
-    IFF_freeCore(chunk, chunkRegistry);
+    IFF_freeCore(chunk);
 
     return !status;
 }

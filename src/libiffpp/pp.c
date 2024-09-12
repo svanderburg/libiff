@@ -28,7 +28,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
 
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_readCore(inputFilename, chunkRegistry, &error);
+    IFF_Chunk *chunk = IFF_parseCore(inputFilename, chunkRegistry, &error);
 
     if(error != NULL)
     {
@@ -40,7 +40,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
     if(IFF_checkCore(chunk, chunkRegistry) < IFF_QUALITY_GARBAGE)
     {
         /* Print the file */
-        if(IFF_printCore(outputFilename, chunk, 0, chunkRegistry))
+        if(IFF_printCore(outputFilename, chunk, 0))
             status = 0;
         else
         {
@@ -52,7 +52,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
         status = 1;
 
     /* Free the chunk structure */
-    IFF_freeCore(chunk, chunkRegistry);
+    IFF_freeCore(chunk);
 
     return status;
 }

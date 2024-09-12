@@ -26,7 +26,7 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = TEST_read("extension-truncated.TEST", &error);
+    IFF_Chunk *chunk = TEST_parse("extension-truncated.TEST", &error);
     int status;
 
     if(error == NULL)

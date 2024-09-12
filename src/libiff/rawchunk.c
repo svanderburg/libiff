@@ -28,9 +28,9 @@
 
 IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
-IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ChunkInterface *chunkInterface)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk));
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk), chunkInterface);
 
     if(rawChunk != NULL)
     {
@@ -46,6 +46,11 @@ IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
     return rawChunk;
 }
 
+IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+{
+    return IFF_createRawChunkWithInterface(chunkId, chunkSize, &IFF_rawChunkInterface);
+}
+
 void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data)
 {
     memcpy(rawChunk->chunkData, data, rawChunk->chunkSize);
@@ -57,9 +62,9 @@ void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long 
     rawChunk->chunkSize = chunkSize;
 }
 
-IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_RawChunk *rawChunk = IFF_createRawChunk(chunkId, chunkSize);
+    IFF_RawChunk *rawChunk = IFF_createRawChunkWithInterface(chunkId, chunkSize, chunkInterface);
 
     if(rawChunk != NULL)
     {
@@ -72,7 +77,7 @@ IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF
     return (IFF_Chunk*)rawChunk;
 }
 
-IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
 
@@ -88,12 +93,12 @@ IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, const IFF
     }
 }
 
-IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_QUALITY_PERFECT;
 }
 
-void IFF_clearRawChunkContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearRawChunkContents(IFF_Chunk *chunk)
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
     free(rawChunk->chunkData);
@@ -132,12 +137,12 @@ void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned in
     IFF_printChunkDataBytes(file, value, indentLevel, IFF_printUByteHex);
 }
 
-void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     IFF_printField(file, indentLevel, "chunkData", chunk, IFF_printChunkDataUByteHex);
 }
 
-IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const IFF_RawChunk *rawChunk1 = (const IFF_RawChunk*)chunk1;
     const IFF_RawChunk *rawChunk2 = (const IFF_RawChunk*)chunk2;

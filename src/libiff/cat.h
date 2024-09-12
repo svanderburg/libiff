@@ -42,6 +42,9 @@ struct IFF_CAT
     /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Chunk *parent;
 
+    /** Pointer to the chunk interface exposing operations to manage the chunk */
+    IFF_ChunkInterface *chunkInterface;
+
     /** Contains a 4 character ID of this chunk, which equals to 'CAT ' */
     IFF_ID chunkId;
 
@@ -161,18 +164,17 @@ IFF_Chunk *IFF_updateChunkInCATAndUpdateContentsTypeByIndex(IFF_CAT *cat, const 
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a concatenation chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param chunk An instance of a concatenation chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the CAT has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks a sub chunk in a CAT for its validity.
@@ -187,27 +189,25 @@ IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *s
  * Checks whether the concatenation chunk and its sub chunks conform to the IFF specification.
  *
  * @param chunk An instance of a concatenation chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the CAT is valid, else FALSE.
  */
-IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-void IFF_clearCATContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearCATContents(IFF_Chunk *chunk);
 
 /**
  * Displays a textual representation of the concatenation chunk and its sub chunks on the standard output.
  *
  * @param chunk An instance of a concatenation chunk
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
-IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
-void IFF_recalculateCATChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateCATChunkSize(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }

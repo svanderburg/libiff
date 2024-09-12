@@ -42,28 +42,28 @@ typedef IFF_QualityLevel (*IFF_checkMainChunkFunction) (const IFF_Chunk *chunk, 
 struct IFF_ChunkInterface
 {
     /** Function responsible for parsing the given chunk */
-    IFF_Chunk *(*parseChunkContents) (FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    IFF_Chunk *(*parseChunkContents) (FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function responsible for writing the given chunk */
-    IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function responsible for checking the given chunk */
-    IFF_QualityLevel (*checkChunkContents) (const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+    IFF_QualityLevel (*checkChunkContents) (const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
     /** Function responsible for freeing the contents of the given chunk */
-    void (*clearChunkContents) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+    void (*clearChunkContents) (IFF_Chunk *chunk);
 
     /** Function responsible for printing the contents of the given chunk */
-    void (*printChunkContents) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+    void (*printChunkContents) (FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
     /** Function responsible for comparing the contents of the given chunk */
-    IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+    IFF_Bool (*compareChunkContents) (const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
     /** Function responsible for traversing the chunk and its sub chunks. This function is only relevant for chunks embedding other chunks. If it refers to NULL, then it lacks the ability to do it */
-    IFF_Bool (*traverseChunkHierarchy) (IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+    IFF_Bool (*traverseChunkHierarchy) (IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
     /** Recalculates the size of the given chunk and its parent chunks. This function is only relevant for chunks embedding other chunks. If it refers to NULL, then it lacks the ability to do it */
-    void (*recalculateChunkSize) (IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+    void (*recalculateChunkSize) (IFF_Chunk *chunk);
 };
 
 /**

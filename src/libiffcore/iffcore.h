@@ -37,7 +37,7 @@ extern "C" {
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename. The resulting chunk must be freed using IFF_free().
@@ -46,7 +46,7 @@ IFF_Chunk *IFF_readFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IF
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename or from the standard input when no filename was provided.
@@ -56,45 +56,41 @@ IFF_Chunk *IFF_readFileCore(const char *filename, const IFF_ChunkRegistry *chunk
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a given file descriptor.
  *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a file with the given filename.
  *
  * @param filename Filename of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a file with the given filename or to the standard output if no filename was provided.
  *
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_freeCore(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeCore(IFF_Chunk *chunk);
 
 IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
@@ -113,9 +109,8 @@ IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Prints a textual representation of an IFF file to a file with a given filename.
@@ -123,10 +118,9 @@ void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int inde
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Prints a textual representation of an IFF file to a file with a given filename or to the standard output if no filename was provided.
@@ -134,20 +128,18 @@ IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const u
  * @param filename Filename of the file or NULL to write to the standard output
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Checks whether two given IFF files are equal.
  *
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 /**
  * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
@@ -155,18 +147,16 @@ IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const
  * @param chunk A chunk hierarchy representing an IFF file
  * @param data An arbitrary data structure propagated to the visitor function
  * @param visitChunk Function that gets invoked for each chunk that is encountered
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
  */
-IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_recalculateChunkSizesCore(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateChunkSizesCore(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }

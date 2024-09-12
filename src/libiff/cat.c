@@ -31,12 +31,12 @@ IFF_ChunkInterface IFF_catInterface = {&IFF_parseCATContents, &IFF_writeCATConte
 
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, chunkSize, contentsType, NULL);
+    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, chunkSize, contentsType, NULL, &IFF_catInterface);
 }
 
 IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createEmptyGroup(IFF_ID_CAT, contentsType, NULL);
+    return (IFF_CAT*)IFF_createEmptyGroup(IFF_ID_CAT, contentsType, NULL, &IFF_catInterface);
 }
 
 IFF_CAT *IFF_createEmptyCAT(void)
@@ -95,14 +95,14 @@ static IFF_GroupStructure *lookupNullStructure(const IFF_ChunkRegistry *chunkReg
     return NULL;
 }
 
-IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupNullStructure, chunkId, chunkSize, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupNullStructure, chunkId, chunkSize, CAT_GROUPTYPENAME, chunkRegistry, chunkInterface, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, CAT_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, CAT_GROUPTYPENAME, attributePath, bytesProcessed, error);
 }
 
 static IFF_QualityLevel checkSubChunkGroupTypeMatchesContentType(const IFF_CAT *cat, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -146,32 +146,32 @@ IFF_QualityLevel IFF_checkCATSubChunk(const IFF_Group *group, const IFF_Chunk *s
     }
 }
 
-IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkCATContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_checkGroupContents((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, CAT_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, attributePath, printCheckMessage, data);
 }
 
-void IFF_clearCATContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearCATContents(IFF_Chunk *chunk)
 {
-    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
+    IFF_clearGroupContents((IFF_Group*)chunk);
 }
 
-void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printCATContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, CAT_GROUPTYPENAME);
 }
 
-IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareCATContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
+    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2);
 }
 
-IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_traverseCATChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
 {
-    return IFF_traverseGroupChunkHierarchy((IFF_Group*)chunk, data, visitChunk, chunkRegistry);
+    return IFF_traverseGroupChunkHierarchy((IFF_Group*)chunk, data, visitChunk);
 }
 
-void IFF_recalculateCATChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_recalculateCATChunkSize(IFF_Chunk *chunk)
 {
     IFF_recalculateGroupChunkSize((IFF_Group*)chunk);
 }

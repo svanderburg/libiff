@@ -26,11 +26,11 @@
 #include <util.h>
 #include "test.h"
 
-IFF_ChunkInterface TEST_byeInterface = {&TEST_readByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents, NULL, NULL};
+IFF_ChunkInterface TEST_byeInterface = {&TEST_parseByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents, NULL, NULL};
 
 TEST_Bye *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Bye));
+    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Bye), &TEST_byeInterface);
 
     if(bye != NULL)
     {
@@ -46,7 +46,7 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
-IFF_Chunk *TEST_readByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Bye *bye = TEST_createByeChunk(chunkId, chunkSize);
 
@@ -57,10 +57,12 @@ IFF_Chunk *TEST_readByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long
     return (IFF_Chunk*)bye;
 }
 
-IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
     IFF_FieldStatus status;
+
+    fprintf(stderr, "ABOUT TO WRITE BYE\n");
 
     if((status = IFF_writeLongField(file, bye->one, chunk, attributePath, "one", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
@@ -71,16 +73,16 @@ IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, const IFF_Chu
     return TRUE;
 }
 
-IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     return IFF_QUALITY_PERFECT;
 }
 
-void TEST_clearByeContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_clearByeContents(IFF_Chunk *chunk)
 {
 }
 
-void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
 
@@ -88,7 +90,7 @@ void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned in
     IFF_printLongField(stdout, indentLevel, "two", bye->two);
 }
 
-IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
     const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;

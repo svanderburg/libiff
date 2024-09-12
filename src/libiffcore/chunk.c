@@ -28,23 +28,14 @@
 #include "error.h"
 #include "field.h"
 
-IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
-{
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
-
-    if(chunkInterface->traverseChunkHierarchy == NULL)
-        return TRUE;
-    else
-        return chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk, chunkRegistry);
-}
-
-IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
+IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize, IFF_ChunkInterface *chunkInterface)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)malloc(structSize);
 
     if(chunk != NULL)
     {
         chunk->parent = NULL;
+        chunk->chunkInterface = chunkInterface;
         chunk->chunkId = chunkId;
         chunk->chunkSize = chunkSize;
     }
@@ -56,7 +47,7 @@ static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long
 {
     IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunkId);
     IFF_Long bytesProcessed = 0;
-    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, chunkRegistry, attributePath, &bytesProcessed, error);
+    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, chunkRegistry, chunkInterface, attributePath, &bytesProcessed, error);
 
     if(*error == NULL && chunk != NULL)
     {
@@ -68,7 +59,7 @@ static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long
     return chunk;
 }
 
-IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     IFF_ID chunkId;
     IFF_Long chunkSize;
@@ -80,40 +71,37 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegist
     return readChunkBody(file, chunkId, chunkSize, scopeId, chunkRegistry, attributePath, error);
 }
 
-static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
+static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
     IFF_Long bytesProcessed = 0;
 
-    return chunkInterface->writeChunkContents(file, chunk, chunkRegistry, attributePath, &bytesProcessed, error)
+    return chunk->chunkInterface->writeChunkContents(file, chunk, attributePath, &bytesProcessed, error)
         && IFF_writeZeroFillerBytes(file, chunk->chunkId, chunk->chunkSize, bytesProcessed, attributePath, error)
         && IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId, attributePath, error);
 }
 
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     return IFF_writeId(file, chunk->chunkId, attributePath, "chunkId", chunk->chunkId, error)
         && IFF_writeLong(file, chunk->chunkSize, attributePath, "chunkSize", chunk->chunkId, error)
-        && writeChunkBody(file, chunk, scopeId, chunkRegistry, attributePath, error);
+        && writeChunkBody(file, chunk, scopeId, attributePath, error);
 }
 
-IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
 
     qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkId(chunk->chunkId, attributePath, "chunkId", printCheckMessage, data, 0));
-    qualityLevel = IFF_degradeQualityLevel(qualityLevel, chunkInterface->checkChunkContents(chunk, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, chunk->chunkInterface->checkChunkContents(chunk, attributePath, printCheckMessage, data));
 
     return qualityLevel;
 }
 
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId)
 {
     if(chunk != NULL)
     {
-        IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
-        chunkInterface->clearChunkContents(chunk, chunkRegistry);
+        chunk->chunkInterface->clearChunkContents(chunk);
         free(chunk);
     }
 }
@@ -123,39 +111,40 @@ static void printChunkIdField(FILE *file, const unsigned int indentLevel, const 
     IFF_printFirstField(file, indentLevel, attributeName, &chunkId, IFF_printIdValue);
 }
 
-void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId)
 {
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
-
     fputs("{\n", file);
     printChunkIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
     IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
-    chunkInterface->printChunkContents(file, chunk, indentLevel + 1, chunkRegistry);
+    chunk->chunkInterface->printChunkContents(file, chunk, indentLevel + 1);
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }
 
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId)
 {
     if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
-    {
-        IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk1->chunkId);
-        return chunkInterface->compareChunkContents(chunk1, chunk2, chunkRegistry);
-    }
+        return chunk1->chunkInterface->compareChunkContents(chunk1, chunk2);
     else
         return FALSE;
 }
 
-void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk)
 {
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunk->chunkId);
+    if(chunk->chunkInterface->traverseChunkHierarchy == NULL)
+        return TRUE;
+    else
+        return chunk->chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk);
+}
 
-    if(chunkInterface->recalculateChunkSize != NULL)
-        chunkInterface->recalculateChunkSize(chunk, chunkRegistry);
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId)
+{
+    if(chunk->chunkInterface->recalculateChunkSize != NULL)
+        chunk->chunkInterface->recalculateChunkSize(chunk);
 
     /* If the given chunk has a parent, recursively update these as well */
     if(chunk->parent != NULL)
-        IFF_recalculateChunkHierarchySizes(chunk->parent, scopeId, chunkRegistry);
+        IFF_recalculateChunkHierarchySizes(chunk->parent, scopeId);
 }
 
 IFF_Long IFF_computeActualChunkSize(const IFF_Chunk *chunk)

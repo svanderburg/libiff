@@ -31,14 +31,14 @@
 #include "util.h"
 #include "array.h"
 
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
+IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface)
 {
     IFF_Group *group;
 
     if(groupStructure == NULL)
-        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_Group));
+        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_Group), chunkInterface);
     else
-        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, groupStructure->groupSize);
+        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, groupStructure->groupSize, chunkInterface);
 
     if(group != NULL)
     {
@@ -54,9 +54,9 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const
     return group;
 }
 
-IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
+IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface)
 {
-    return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType, groupStructure);
+    return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType, groupStructure, chunkInterface);
 }
 
 void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
@@ -114,7 +114,7 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
     return obsoleteChunk;
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;
 
@@ -132,7 +132,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
         IFF_visitAttributeByIndex(attributePath, index);
 
         /* Read sub chunk */
-        chunk = IFF_readChunk(file, group->groupType, chunkRegistry, attributePath, error);
+        chunk = IFF_parseChunk(file, group->groupType, chunkRegistry, attributePath, error);
 
         if(chunk == NULL)
             return FALSE;
@@ -152,7 +152,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
     return TRUE;
 }
 
-IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_ID groupType;
 
@@ -160,20 +160,20 @@ IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction l
     if(IFF_readId(file, &groupType, attributePath, groupTypeName, chunkId, error))
     {
         IFF_GroupStructure *groupStructure = lookupGroupStructure(chunkRegistry, groupType);
-        IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure);
+        IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure, chunkInterface);
 
         *bytesProcessed = *bytesProcessed + IFF_ID_SIZE; /* Initially, we have already read the group ID */
 
         if(group != NULL)
-            readGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error);
+            readGroupSubChunks(file, group, chunkRegistry, chunkInterface, attributePath, bytesProcessed, error);
 
         return group;
     }
     else
-        return IFF_createGroup(chunkId, chunkSize, 0, NULL);
+        return IFF_createGroup(chunkId, chunkSize, 0, NULL, chunkInterface);
 }
 
-static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -183,7 +183,7 @@ static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, const IF
     {
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_writeChunk(file, group->chunks[i], group->groupType, chunkRegistry, attributePath, error))
+        if(!IFF_writeChunk(file, group->chunks[i], group->groupType, attributePath, error))
             return FALSE;
 
         /* Increase the bytes processed counter */
@@ -197,17 +197,17 @@ static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, const IF
     return TRUE;
 }
 
-IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Group *group, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Group *group, char *groupTypeName, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_FieldStatus status;
 
     if((status = IFF_writeIdField(file, group->groupType, (const IFF_Chunk*)group, attributePath, groupTypeName, bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
-    if(!IFF_writeGroupStructure(file, group, chunkRegistry, attributePath, bytesProcessed, error))
+    if(!IFF_writeGroupStructure(file, group, attributePath, bytesProcessed, error))
         return FALSE;
 
-    if(!writeGroupSubChunks(file, group, chunkRegistry, attributePath, bytesProcessed, error))
+    if(!writeGroupSubChunks(file, group, attributePath, bytesProcessed, error))
         return FALSE;
 
     return TRUE;
@@ -243,7 +243,7 @@ static IFF_QualityLevel checkGroupChunkSize(const IFF_Group *group, const IFF_Lo
     }
 }
 
-static IFF_QualityLevel checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+static IFF_QualityLevel checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     unsigned int i;
@@ -257,7 +257,7 @@ static IFF_QualityLevel checkGroupSubChunks(const IFF_Group *group, IFF_subChunk
         IFF_visitAttributeByIndex(attributePath, i);
 
         qualityLevel = IFF_degradeQualityLevel(qualityLevel, subChunkCheck(group, subChunk, attributePath, printCheckMessage, data));
-        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(subChunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(subChunk, group->groupType, attributePath, printCheckMessage, data));
 
         IFF_unvisitAttribute(attributePath);
     }
@@ -267,14 +267,14 @@ static IFF_QualityLevel checkGroupSubChunks(const IFF_Group *group, IFF_subChunk
     return qualityLevel;
 }
 
-IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeName, IFF_groupTypeCheckFunction groupTypeCheck, IFF_subChunkCheckFunction subChunkCheck, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     IFF_Long actualChunkSize;
 
     qualityLevel = IFF_degradeQualityLevel(qualityLevel, groupTypeCheck(group->groupType, attributePath, groupTypeName, printCheckMessage, data, group->chunkId));
-    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupStructure(group, chunkRegistry, attributePath, printCheckMessage, data));
-    qualityLevel = IFF_degradeQualityLevel(qualityLevel, checkGroupSubChunks(group, subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkGroupStructure(group, attributePath, printCheckMessage, data));
+    qualityLevel = IFF_degradeQualityLevel(qualityLevel, checkGroupSubChunks(group, subChunkCheck, attributePath, printCheckMessage, data));
 
     actualChunkSize = computeActualGroupChunkSize(group);
 
@@ -283,20 +283,20 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
     return qualityLevel;
 }
 
-static void clearGroupSubChunks(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+static void clearGroupSubChunks(IFF_Group *group)
 {
     unsigned int i;
 
     for(i = 0; i < group->chunksLength; i++)
-        IFF_freeChunk(group->chunks[i], group->groupType, chunkRegistry);
+        IFF_freeChunk(group->chunks[i], group->groupType);
 
     free(group->chunks);
 }
 
-void IFF_clearGroupContents(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearGroupContents(IFF_Group *group)
 {
-    clearGroupSubChunks(group, chunkRegistry);
-    IFF_clearGroupStructure(group, chunkRegistry);
+    clearGroupSubChunks(group);
+    IFF_clearGroupStructure(group);
 }
 
 static void printGroupType(FILE *file, const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
@@ -317,32 +317,31 @@ void IFF_printChunksArray(FILE *file, const void *value, const unsigned int inde
             fputs(",\n", file);
 
         IFF_printIndent(file, indentLevel + 1, "");
-        IFF_printChunk(file, (const IFF_Chunk*)param->chunks[i], indentLevel + 1, param->groupType, param->chunkRegistry);
+        IFF_printChunk(file, (const IFF_Chunk*)param->chunks[i], indentLevel + 1, param->groupType);
     }
 
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }
 
-static void printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+static void printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel)
 {
     IFF_PrintChunksArrayParameter param;
     param.groupType = group->groupType;
     param.chunksLength = group->chunksLength;
     param.chunks = group->chunks;
-    param.chunkRegistry = chunkRegistry;
 
     IFF_printField(file, indentLevel, "chunks", &param, IFF_printChunksArray);
 }
 
-void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName)
 {
     printGroupType(file, groupTypeName, group->groupType, indentLevel);
-    IFF_printGroupStructure(file, group, indentLevel, chunkRegistry);
-    printGroupSubChunks(file, group, indentLevel, chunkRegistry);
+    IFF_printGroupStructure(file, group, indentLevel);
+    printGroupSubChunks(file, group, indentLevel);
 }
 
-static IFF_Bool compareGroupSubChunks(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool compareGroupSubChunks(const IFF_Group *group1, const IFF_Group *group2)
 {
     if(group1->chunksLength == group2->chunksLength)
     {
@@ -350,7 +349,7 @@ static IFF_Bool compareGroupSubChunks(const IFF_Group *group1, const IFF_Group *
 
         for(i = 0; i < group1->chunksLength; i++)
         {
-            if(!IFF_compareChunk(group1->chunks[i], group2->chunks[i], group1->groupType, chunkRegistry))
+            if(!IFF_compareChunk(group1->chunks[i], group2->chunks[i], group1->groupType))
                 return FALSE;
         }
 
@@ -360,32 +359,32 @@ static IFF_Bool compareGroupSubChunks(const IFF_Group *group1, const IFF_Group *
         return FALSE;
 }
 
-IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2)
 {
     return (group1->groupType == group2->groupType &&
-        compareGroupSubChunks(group1, group2, chunkRegistry) &&
-        IFF_compareGroupStructure(group1, group2, chunkRegistry));
+        compareGroupSubChunks(group1, group2) &&
+        IFF_compareGroupStructure(group1, group2));
 }
 
-static IFF_Bool traverseGroupSubChunkHierarchy(IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+static IFF_Bool traverseGroupSubChunkHierarchy(IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk)
 {
     unsigned int i;
 
     for(i = 0; i < group->chunksLength; i++)
     {
-        if(!IFF_traverseChunkHierarchy(group->chunks[i], group->groupType, data, visitChunk, chunkRegistry))
+        if(!IFF_traverseChunkHierarchy(group->chunks[i], group->groupType, data, visitChunk))
             return FALSE;
     }
 
     return TRUE;
 }
 
-IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk)
 {
     visitChunk((IFF_Chunk*)group, data);
 
-    return (IFF_traverseGroupStructureHierarchy(group, data, visitChunk, chunkRegistry) &&
-        traverseGroupSubChunkHierarchy(group, data, visitChunk, chunkRegistry));
+    return (IFF_traverseGroupStructureHierarchy(group, data, visitChunk) &&
+        traverseGroupSubChunkHierarchy(group, data, visitChunk));
 }
 
 static IFF_Long addGroupSubChunksSize(IFF_Group *group, IFF_Long chunkSize)

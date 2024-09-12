@@ -35,6 +35,7 @@ extern IFF_ChunkInterface TEST_byeInterface;
 typedef struct
 {
     IFF_Chunk *parent;
+    IFF_ChunkInterface *chunkInterface;
 
     IFF_ID chunkId;
     IFF_Long chunkSize;
@@ -48,16 +49,16 @@ TEST_Bye *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
 
 TEST_Bye *TEST_createBye(const IFF_Long chunkSize);
 
-IFF_Chunk *TEST_readByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-void TEST_clearByeContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void TEST_clearByeContents(IFF_Chunk *chunk);
 
-void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif

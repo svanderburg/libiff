@@ -22,7 +22,7 @@ static IFF_Bool addHelloChunkAndCheck(TEST_Conversation *conversation)
 
     if(conversation->chunksLength != 0)
     {
-        fprintf(stderr, "There should not be any arbitrary chunks attached!\n");
+        fprintf(stderr, "There should not be any arbitrary chunks attached, instead we have: %u\n", conversation->chunksLength);
         return FALSE;
     }
 
@@ -57,7 +57,7 @@ static IFF_Bool updateHelloChunkAndCheck(TEST_Conversation *conversation)
 
     if(conversation->chunksLength != 0)
     {
-        fprintf(stderr, "There should not be any arbitrary chunks attached!\n");
+        fprintf(stderr, "There should not be any arbitrary chunks attached, instead we have: %u\n", conversation->chunksLength);
         return FALSE;
     }
 
@@ -67,7 +67,7 @@ static IFF_Bool updateHelloChunkAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    /*TEST_free(obsoleteChunk); TODO: triggers an invalid free because an orphaned chunk with a scoped chunkId needs to know its parent formType. now it calls IFF_clearRawChunkContents() */
+    TEST_free(obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -82,7 +82,7 @@ static IFF_Bool removeHelloChunkAndCheck(TEST_Conversation *conversation)
 
     if(conversation->chunksLength != 0)
     {
-        fprintf(stderr, "There should not be any arbitrary chunks attached to hello!\n");
+        fprintf(stderr, "There should not be any arbitrary chunks attached, instead we have: %u\n", conversation->chunksLength);
         return FALSE;
     }
 
@@ -92,7 +92,7 @@ static IFF_Bool removeHelloChunkAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    /* TEST_free(obsoleteChunk); TODO: triggers an invalid free because an orphaned chunk with a scoped chunkId needs to know its parent formType. now it calls IFF_clearRawChunkContents() */
+    TEST_free(obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -111,7 +111,7 @@ static IFF_Bool addTwoHelloChunksAndCheck(TEST_Conversation *conversation)
 
     if(conversation->chunksLength != 1)
     {
-        fprintf(stderr, "There should be one arbitrary chunk attached!\n");
+        fprintf(stderr, "There should be one arbitrary chunk attached, instead we have: %u\n", conversation->chunksLength);
         return FALSE;
     }
 
@@ -139,7 +139,7 @@ static IFF_Bool removeTwoHelloChunksAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    /*TEST_free((IFF_Chunk*)obsoleteChunk); TODO: triggers an invalid free because an orphaned chunk with a scoped chunkId needs to know its parent formType. now it calls IFF_clearRawChunkContents() */
+    TEST_free((IFF_Chunk*)obsoleteChunk);
 
     /* Check if the second removed chunk is the first added */
     obsoleteChunk = (TEST_Hello*)TEST_removeChunkFromConversation(conversation, TEST_ID_HELO);
@@ -150,7 +150,7 @@ static IFF_Bool removeTwoHelloChunksAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    /*TEST_free((IFF_Chunk*)obsoleteChunk); TODO: triggers an invalid free because an orphaned chunk with a scoped chunkId needs to know its parent formType. now it calls IFF_clearRawChunkContents() */
+    TEST_free((IFF_Chunk*)obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -166,7 +166,7 @@ static IFF_Bool addMessageAndCheck(TEST_Conversation *conversation)
 
     if(conversation->messagesLength != 1)
     {
-        fprintf(stderr, "There should be one message attached!\n");
+        fprintf(stderr, "There should be one message attached, instead we have: %u\n", conversation->messagesLength);
         return FALSE;
     }
 
@@ -186,7 +186,7 @@ static IFF_Bool updateMessageAndCheck(TEST_Conversation *conversation)
 
     if(conversation->messagesLength != 1)
     {
-        fprintf(stderr, "There should be one message attached!\n");
+        fprintf(stderr, "There should be one message attached, instead we have: %u\n", conversation->messagesLength);
         return FALSE;
     }
 
@@ -207,7 +207,7 @@ static IFF_Bool removeMessageAndCheck(TEST_Conversation *conversation)
 
     if(conversation->messagesLength != 0)
     {
-        fprintf(stderr, "There should not be any message attached!\n");
+        fprintf(stderr, "There should not be any message attached, instead we have: %u\n", conversation->messagesLength);
         return FALSE;
     }
 

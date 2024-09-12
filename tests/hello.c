@@ -30,7 +30,7 @@ IFF_ChunkInterface TEST_helloInterface = {&TEST_parseHelloContents, &TEST_writeH
 
 TEST_Hello *TEST_createHelloChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello));
+    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello), &TEST_helloInterface);
 
     if(hello != NULL)
     {
@@ -47,7 +47,7 @@ TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
     return TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
-IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Hello *hello = TEST_createHelloChunk(chunkId, chunkSize);
 
@@ -59,10 +59,12 @@ IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_L
     return (IFF_Chunk*)hello;
 }
 
-IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
     IFF_FieldStatus status;
+
+    fprintf(stderr, "ABOUT TO WRITE HELLO\n");
 
     if((status = IFF_writeUByteField(file, hello->a, chunk, attributePath, "a", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
@@ -76,7 +78,7 @@ IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, const IFF_C
     return TRUE;
 }
 
-IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
@@ -90,11 +92,11 @@ IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, const IFF_Chunk
     return qualityLevel;
 }
 
-void TEST_clearHelloContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_clearHelloContents(IFF_Chunk *chunk)
 {
 }
 
-void TEST_printHelloContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void TEST_printHelloContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
 
@@ -103,7 +105,7 @@ void TEST_printHelloContents(FILE *file, const IFF_Chunk *chunk, const unsigned 
     IFF_printUWordField(file, indentLevel, "c", hello->c);
 }
 
-IFF_Bool TEST_compareHelloContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool TEST_compareHelloContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
     const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;

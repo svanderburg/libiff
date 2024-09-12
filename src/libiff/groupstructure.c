@@ -150,7 +150,7 @@ IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_
     }
 }
 
-IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     if(group->groupStructure != NULL)
     {
@@ -168,7 +168,7 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_C
 
                 if(chunk != NULL)
                 {
-                    if(!IFF_writeChunk(file, chunk, group->groupType, chunkRegistry, attributePath, error))
+                    if(!IFF_writeChunk(file, chunk, group->groupType, attributePath, error))
                         return FALSE;
 
                     /* Increase the bytes processed counter */
@@ -185,7 +185,7 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, const IFF_C
                 {
                     IFF_visitAttributeByIndex(attributePath, j);
 
-                    if(!IFF_writeChunk(file, chunks[j], group->groupType, chunkRegistry, attributePath, error))
+                    if(!IFF_writeChunk(file, chunks[j], group->groupType, attributePath, error))
                         return FALSE;
 
                     /* Increase the bytes processed counter */
@@ -234,7 +234,7 @@ IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, IFF_Long chunkS
     return chunkSize;
 }
 
-IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
@@ -253,7 +253,7 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_Chunk
                 IFF_Chunk *chunk = group->groupStructure->getChunkFromGroup(group, i);
 
                 if(chunk != NULL)
-                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
+                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, group->groupType, attributePath, printCheckMessage, data));
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -264,7 +264,7 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_Chunk
                 for(j = 0; j < chunksLength; j++)
                 {
                     IFF_visitAttributeByIndex(attributePath, j);
-                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunks[j], group->groupType, chunkRegistry, attributePath, printCheckMessage, data));
+                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunks[j], group->groupType, attributePath, printCheckMessage, data));
                     IFF_unvisitAttribute(attributePath);
                 }
             }
@@ -276,7 +276,7 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, const IFF_Chunk
     return qualityLevel;
 }
 
-void IFF_clearGroupStructure(IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearGroupStructure(IFF_Group *group)
 {
     if(group->groupStructure != NULL)
     {
@@ -291,7 +291,7 @@ void IFF_clearGroupStructure(IFF_Group *group, const IFF_ChunkRegistry *chunkReg
                 IFF_Chunk *chunk = group->groupStructure->getChunkFromGroup(group, i);
 
                 if(chunk != NULL)
-                    IFF_freeChunk(chunk, group->groupType, chunkRegistry);
+                    IFF_freeChunk(chunk, group->groupType);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -300,7 +300,7 @@ void IFF_clearGroupStructure(IFF_Group *group, const IFF_ChunkRegistry *chunkReg
                 unsigned int j;
 
                 for(j = 0; j < chunksLength; j++)
-                    IFF_freeChunk(chunks[j], group->groupType, chunkRegistry);
+                    IFF_freeChunk(chunks[j], group->groupType);
 
                 free(chunks);
             }
@@ -308,7 +308,7 @@ void IFF_clearGroupStructure(IFF_Group *group, const IFF_ChunkRegistry *chunkReg
     }
 }
 
-void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned int indentLevel)
 {
     if(group->groupStructure != NULL)
     {
@@ -331,7 +331,7 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
                 if(chunk == NULL)
                     fprintf(file, "NULL");
                 else
-                    IFF_printChunk(file, chunk, indentLevel, group->groupType, chunkRegistry);
+                    IFF_printChunk(file, chunk, indentLevel, group->groupType);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
@@ -347,7 +347,7 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
                         fputs(",\n", file);
 
                     IFF_printIndent(file, indentLevel + 1, "");
-                    IFF_printChunk(file, chunks[j], indentLevel + 1, group->groupType, chunkRegistry);
+                    IFF_printChunk(file, chunks[j], indentLevel + 1, group->groupType);
                 }
 
                 fprintf(file, "\n");
@@ -357,7 +357,7 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
     }
 }
 
-IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *group2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *group2)
 {
     if(group1->groupStructure != group2->groupStructure)
         return FALSE;
@@ -376,7 +376,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
 
                 if(chunk1 != NULL && chunk2 != NULL)
                 {
-                    if(!IFF_compareChunk(chunk1, chunk2, group1->groupType, chunkRegistry))
+                    if(!IFF_compareChunk(chunk1, chunk2, group1->groupType))
                         return FALSE;
                 }
             }
@@ -392,7 +392,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
 
                     for(j = 0; j < chunks1Length; j++)
                     {
-                        if(!IFF_compareChunk(chunks1[j], chunks2[j], group1->groupType, chunkRegistry))
+                        if(!IFF_compareChunk(chunks1[j], chunks2[j], group1->groupType))
                             return FALSE;
                     }
                 }
@@ -405,7 +405,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
     return TRUE;
 }
 
-IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk)
 {
     if(group->groupStructure != NULL)
     {
@@ -421,7 +421,7 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data,
 
                 if(chunk != NULL)
                 {
-                    if(!IFF_traverseChunkHierarchy(chunk, group->groupType, data, visitChunk, chunkRegistry))
+                    if(!IFF_traverseChunkHierarchy(chunk, group->groupType, data, visitChunk))
                         return FALSE;
                 }
             }
@@ -433,7 +433,7 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data,
 
                 for(j = 0; j < chunksLength; j++)
                 {
-                    if(!IFF_traverseChunkHierarchy(chunks[j], group->groupType, data, visitChunk, chunkRegistry))
+                    if(!IFF_traverseChunkHierarchy(chunks[j], group->groupType, data, visitChunk))
                         return FALSE;
                 }
             }

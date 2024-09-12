@@ -28,11 +28,11 @@
 extern "C" {
 #endif
 
-IFF_Chunk *IFF_readFd(FILE *file, IFF_IOError **error);
+IFF_Chunk *IFF_parseFd(FILE *file, IFF_IOError **error);
 
-IFF_Chunk *IFF_readFile(const char *filename, IFF_IOError **error);
+IFF_Chunk *IFF_parseFile(const char *filename, IFF_IOError **error);
 
-IFF_Chunk *IFF_read(const char *filename, IFF_IOError **error);
+IFF_Chunk *IFF_parse(const char *filename, IFF_IOError **error);
 
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error);
 

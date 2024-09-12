@@ -39,7 +39,7 @@ int IFF_join(char **inputFilenames, const unsigned int inputFilenamesLength, con
     {
         /* Open each input IFF file */
         IFF_IOError *error = NULL;
-        IFF_Chunk *chunk = IFF_readFile(inputFilenames[i], &error);
+        IFF_Chunk *chunk = IFF_parseFile(inputFilenames[i], &error);
 
         /* Check whether the IFF file is valid */
         if(error == NULL || IFF_check(chunk))

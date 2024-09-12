@@ -117,7 +117,7 @@ static IFF_Bool lookupPropertyAndCheck(const IFF_Chunk *chunk)
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("lookupproperty-override-local.TEST", &error);
+    IFF_Chunk *chunk = IFF_parse("lookupproperty-override-local.TEST", &error);
     int status;
 
     if(error == NULL)

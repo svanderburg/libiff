@@ -41,6 +41,7 @@ extern IFF_GroupStructure TEST_conversationStructure;
 struct TEST_Conversation
 {
     IFF_Chunk *parent;
+    IFF_ChunkInterface *chunkInterface;
     IFF_ID chunkId;
     IFF_Long chunkSize;
     IFF_ID formType;

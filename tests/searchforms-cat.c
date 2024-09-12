@@ -31,7 +31,7 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("cat.TEST", &error);
+    IFF_Chunk *chunk = IFF_parse("cat.TEST", &error);
     int status;
 
     if(error == NULL)

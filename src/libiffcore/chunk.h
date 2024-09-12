@@ -39,6 +39,9 @@ struct IFF_Chunk
     /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Chunk *parent;
 
+    /** Pointer to the chunk interface exposing operations to manage the chunk */
+    IFF_ChunkInterface *chunkInterface;
+
     /** Contains a 4 character ID of this chunk */
     IFF_ID chunkId;
 
@@ -59,7 +62,7 @@ extern "C" {
  * @param structSize The size of the struct that provides the data in bytes
  * @return A generic chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
  */
-IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize);
+IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize, IFF_ChunkInterface *chunkInterface);
 
 /**
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()
@@ -69,7 +72,7 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t stru
  * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.
@@ -77,29 +80,26 @@ IFF_Chunk *IFF_readChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegist
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId);
 
 /**
  * Displays a textual representation of an IFF chunk hierarchy on the standard output.
@@ -107,9 +107,8 @@ void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegist
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId);
 
 /**
  * Checks whether two given chunk hierarchies are equal.
@@ -117,10 +116,9 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId);
 
 /**
  * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
@@ -129,19 +127,17 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @param data An arbitrary data structure propagated to the visitor function
  * @param visitChunk Function that gets invoked for each chunk that is encountered
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
  */
-IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
  */
-void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId);
 
 /**
  * Computes how much memory a chunk really needs. The chunkSize field of a chunk only indicates how many bytes its contents is.

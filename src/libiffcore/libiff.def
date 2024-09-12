@@ -10,7 +10,7 @@ EXPORTS
 	IFF_compare               @8
 	IFF_createCAT             @9
 	IFF_addChunkToCAT         @10
-	IFF_readCAT               @11
+	IFF_parseCAT              @11
 	IFF_writeCAT              @12
 	IFF_checkCATSubChunk      @13
 	IFF_checkCAT              @14
@@ -20,7 +20,7 @@ EXPORTS
 	IFF_searchFormsInCAT      @18
 	IFF_updateCATChunkSizes   @19
 	IFF_createChunk           @20
-	IFF_readChunk             @21
+	IFF_parseChunk            @21
 	IFF_writeChunk            @22
 	IFF_checkChunk            @23
 	IFF_freeChunk             @24
@@ -33,7 +33,7 @@ EXPORTS
 	IFF_findFormExtension     @36
 	IFF_createForm            @37
 	IFF_addChunkToForm        @38
-	IFF_readForm              @39
+	IFF_parseForm             @39
 	IFF_writeForm             @40
 	IFF_checkFormType         @41
 	IFF_checkForm             @42
@@ -47,7 +47,7 @@ EXPORTS
 	IFF_getChunksFromForm     @51
 	IFF_createGroup           @53
 	IFF_addChunkToGroup       @54
-	IFF_readGroup             @55
+	IFF_parseGroup            @55
 	IFF_writeGroupSubChunks   @56
 	IFF_writeGroup            @57
 	IFF_checkGroup            @60

@@ -35,12 +35,12 @@ IFF_ChunkInterface IFF_propInterface = {&IFF_parseFormContents, &IFF_writeFormCo
 
 IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, chunkSize, formType, formStructure);
+    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, chunkSize, formType, formStructure, &IFF_propInterface);
 }
 
 IFF_Prop *IFF_createEmptyProp(const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Prop*)IFF_createEmptyGroup(IFF_ID_PROP, formType, formStructure);
+    return (IFF_Prop*)IFF_createEmptyGroup(IFF_ID_PROP, formType, formStructure, &IFF_propInterface);
 }
 
 void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk)
@@ -74,9 +74,9 @@ static IFF_QualityLevel subChunkCheck(const IFF_Group *group, const IFF_Chunk *s
         return IFF_QUALITY_PERFECT;
 }
 
-IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_checkGroupContents((const IFF_Group*)chunk, PROP_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, PROP_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, attributePath, printCheckMessage, data);
 }
 
 IFF_Chunk *IFF_searchChunkInProp(const IFF_Prop *prop, const IFF_ID chunkId)

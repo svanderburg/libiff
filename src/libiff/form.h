@@ -44,6 +44,9 @@ struct IFF_Form
     /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Chunk *parent;
 
+    /** Pointer to the chunk interface exposing operations to manage the chunk */
+    IFF_ChunkInterface *chunkInterface;
+
     /** Contains the ID of this chunk, which equals to 'FORM' */
     IFF_ID chunkId;
 
@@ -128,18 +131,17 @@ IFF_Chunk *IFF_updateChunkInFormByIndex(IFF_Form *form, const unsigned int index
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the FORM has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a form chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param chunk An instance of a form chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the FORM has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeFormContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeFormContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks whether the given form type conforms to the IFF specification.
@@ -153,27 +155,25 @@ IFF_QualityLevel IFF_checkFormType(const IFF_ID formType, IFF_AttributePath *att
  * Checks whether the form chunk and its sub chunks conform to the IFF specification.
  *
  * @param chunk An instance of a form chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the form is valid, else FALSE.
  */
-IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkFormContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-void IFF_clearFormContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearFormContents(IFF_Chunk *chunk);
 
 /**
  * Displays a textual representation of the form chunk and its sub chunks on the standard output.
  *
  * @param chunk An instance of a form chunk
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printFormContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
-IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareFormContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
-IFF_Bool IFF_traverseFormChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_traverseFormChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
-void IFF_recalculateFormChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateFormChunkSize(IFF_Chunk *chunk);
 
 /**
  * Searches for the first matching PROP chunk in the nearest enclosing LIST chunk.

@@ -22,19 +22,19 @@
 #include "test.h"
 #include "iffcore.h"
 
-IFF_Chunk *TEST_read(const char *filename, IFF_IOError **error)
+IFF_Chunk *TEST_parse(const char *filename, IFF_IOError **error)
 {
-    return IFF_readCore(filename, &TEST_chunkRegistry, error);
+    return IFF_parseCore(filename, &TEST_chunkRegistry, error);
 }
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
-    return IFF_writeCore(filename, chunk, &TEST_chunkRegistry, error);
+    return IFF_writeCore(filename, chunk, error);
 }
 
 void TEST_free(IFF_Chunk *chunk)
 {
-    IFF_freeCore(chunk, &TEST_chunkRegistry);
+    IFF_freeCore(chunk);
 }
 
 IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
@@ -44,10 +44,10 @@ IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
 
 void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printFdCore(file, chunk, indentLevel, &TEST_chunkRegistry);
+    IFF_printFdCore(file, chunk, indentLevel);
 }
 
 IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compareCore(chunk1, chunk2, &TEST_chunkRegistry);
+    return IFF_compareCore(chunk1, chunk2);
 }

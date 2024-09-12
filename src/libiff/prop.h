@@ -92,10 +92,9 @@ IFF_Chunk *IFF_updateChunkInPropByIndex(IFF_Prop *prop, const unsigned int index
  * Checks whether the PROP chunk and its sub chunks conform to the IFF specification.
  *
  * @param chunk An instance of a PROP chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the PROP is valid, else FALSE.
  */
-IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Searches for the last occurence of a chunk with the given chunk ID in the given PROP chunk.

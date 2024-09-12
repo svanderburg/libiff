@@ -133,7 +133,7 @@ static IFF_Bool lookupPropertyAndCheck(IFF_Chunk *chunk)
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("lookupproperty-array-shared.TEST", &error);
+    IFF_Chunk *chunk = IFF_parse("lookupproperty-array-shared.TEST", &error);
     int status;
 
     if(error == NULL)

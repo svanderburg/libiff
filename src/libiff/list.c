@@ -98,7 +98,7 @@ IFF_GroupStructure listStructure = {
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    return (IFF_List*)IFF_createGroup(IFF_ID_LIST, chunkSize, contentsType, &listStructure);
+    return (IFF_List*)IFF_createGroup(IFF_ID_LIST, chunkSize, contentsType, &listStructure, &IFF_listInterface);
 }
 
 IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType)
@@ -182,37 +182,37 @@ static IFF_GroupStructure *lookupListStructure(const IFF_ChunkRegistry *chunkReg
     return &listStructure;
 }
 
-IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupListStructure, chunkId, chunkSize, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupListStructure, chunkId, chunkSize, LIST_GROUPTYPENAME, chunkRegistry, chunkInterface, attributePath, bytesProcessed, error);
 }
 
-IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, LIST_GROUPTYPENAME, chunkRegistry, attributePath, bytesProcessed, error);
+    return IFF_writeGroupContents(file, (const IFF_Group*)chunk, LIST_GROUPTYPENAME, attributePath, bytesProcessed, error);
 }
 
-IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_checkGroupContents((const IFF_Group*)chunk, LIST_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, chunkRegistry, attributePath, printCheckMessage, data);
+    return IFF_checkGroupContents((const IFF_Group*)chunk, LIST_GROUPTYPENAME, &IFF_checkId, &IFF_checkCATSubChunk, attributePath, printCheckMessage, data);
 }
 
-void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_clearListContents(IFF_Chunk *chunk)
 {
-    IFF_clearGroupContents((IFF_Group*)chunk, chunkRegistry);
+    IFF_clearGroupContents((IFF_Group*)chunk);
 }
 
-void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, LIST_GROUPTYPENAME, chunkRegistry);
+    IFF_printGroupContents(file, (const IFF_Group*)chunk, indentLevel, LIST_GROUPTYPENAME);
 }
 
-IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry)
+IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2, chunkRegistry);
+    return IFF_compareGroupContents((const IFF_Group*)chunk1, (const IFF_Group*)chunk2);
 }
 
-void IFF_recalculateListChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
 {
     IFF_recalculateGroupChunkSize((IFF_Group*)chunk);
 }

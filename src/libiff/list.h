@@ -45,6 +45,9 @@ struct IFF_List
     /** Pointer to the parent chunk, in which this chunk is located. The parent points to NULL if there is no parent. */
     IFF_Chunk *parent;
 
+    /** Pointer to the chunk interface exposing operations to manage the chunk */
+    IFF_ChunkInterface *chunkInterface;
+
     /** Contains the ID of this chunk, which equals to 'LIST' */
     IFF_ID chunkId;
 
@@ -190,61 +193,56 @@ IFF_Chunk *IFF_updateChunkInListAndUpdateContentsTypeByIndex(IFF_List *list, con
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the list has been successfully read, or FALSE if an error has occured
  */
-IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseListContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a list chunk and its sub chunks to a file.
  *
  * @param file File descriptor of the file
  * @param chunk An instance of a list chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the list has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeListContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Checks whether the list chunk and its sub chunks conform to the IFF specification.
  *
  * @param chunk An instance of a list chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the list is valid, else FALSE.
  */
-IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkListContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Recursively frees the memory of the sub chunks and PROP chunks of the given list chunk.
  *
  * @param chunk An instance of a list chunk
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_clearListContents(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_clearListContents(IFF_Chunk *chunk);
 
 /**
  * Displays a textual representation of the list chunk and its sub chunks on the standard output.
  *
  * @param chunk An instance of a list chunk
  * @param indentLevel Indent level of the textual representation
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  */
-void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_printListContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Checks whether the given lists' contents is equal to each other.
  *
  * @param chunk1 List to compare
  * @param chunk2 List to compare
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return TRUE if the given concatenations are equal, else FALSE
  */
-IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ChunkRegistry *chunkRegistry);
+IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 /**
  * Recalculates the chunk size of the given list chunk.
  *
  * @param list An instance of a list chunk
  */
-void IFF_recalculateListChunkSize(IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+void IFF_recalculateListChunkSize(IFF_Chunk *chunk);
 
 /**
  * Retrieves a PROP chunk with the given form type from a list.

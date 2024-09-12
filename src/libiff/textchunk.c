@@ -28,13 +28,13 @@ IFF_ChunkInterface IFF_textChunkInterface = {&IFF_parseRawChunkContents, &IFF_wr
 
 IFF_TextChunk *IFF_createTextChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    return (IFF_TextChunk*)IFF_createRawChunk(chunkId, chunkSize);
+    return (IFF_TextChunk*)IFF_createRawChunkWithInterface(chunkId, chunkSize, &IFF_textChunkInterface);
 }
 
 IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *text)
 {
     size_t textLength = strlen(text);
-    IFF_TextChunk *textChunk = IFF_createTextChunk(chunkId, textLength);
+    IFF_TextChunk *textChunk = IFF_createRawChunkWithInterface(chunkId, textLength, &IFF_textChunkInterface);
 
     if(textChunk != NULL)
         memcpy(textChunk->chunkData, text, textLength);
@@ -71,7 +71,7 @@ static void printChunkDataText(FILE *file, const void *value, const unsigned int
     fputc('"', file);
 }
 
-void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ChunkRegistry *chunkRegistry)
+void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     IFF_printField(file, indentLevel, "chunkData", (const IFF_RawChunk*)chunk, printChunkDataText);
 }

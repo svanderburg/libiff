@@ -26,7 +26,7 @@
 int main(int argc, char *argv[])
 {
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_read("nestedform.TEST", &error);
+    IFF_Chunk *chunk = IFF_parse("nestedform.TEST", &error);
     int status;
 
     if(error == NULL)
