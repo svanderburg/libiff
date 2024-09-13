@@ -124,6 +124,8 @@ IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const unsign
             IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
         }
 
+        IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
+
         return obsoleteChunk;
     }
 }

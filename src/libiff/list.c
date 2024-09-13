@@ -111,45 +111,14 @@ IFF_List *IFF_createEmptyList(void)
     return IFF_createEmptyListWithContentsType(IFF_ID_JJJJ);
 }
 
-static IFF_Prop *detachPropFromList(IFF_List *list, const unsigned int index)
-{
-    IFF_Prop *obsoleteProp = NULL;
-    IFF_removeElementFromPointerArrayByIndex((void**)list->props, index, &list->propsLength, (void**)&obsoleteProp);
-
-    if(obsoleteProp != NULL)
-        obsoleteProp->parent = NULL;
-
-    return obsoleteProp;
-}
-
 IFF_Prop *IFF_removePropFromListByIndex(IFF_List *list, const unsigned int index)
 {
-    IFF_Prop *obsoleteProp = detachPropFromList(list, index);
-
-    if(obsoleteProp != NULL)
-        IFF_decreaseChunkSize((IFF_Chunk*)list, (IFF_Chunk*)obsoleteProp);
-
-    return obsoleteProp;
+    return (IFF_Prop*)IFF_removeChunkFromGroupStructureByIndex((IFF_Group*)list, IFF_ID_PROP, index);
 }
 
-static IFF_Prop *replacePropInList(IFF_List *list, const unsigned int index, IFF_Prop *prop)
+IFF_Prop *IFF_updatePropInListByIndex(IFF_List *list, const unsigned int index, IFF_Prop *prop)
 {
-    IFF_Prop *obsoleteProp = (IFF_Prop*)IFF_replaceElementInPointerArrayByIndex((void**)list->props, list->propsLength, index, (void*)prop);
-
-    if(obsoleteProp != NULL)
-        obsoleteProp->parent = NULL;
-
-    return obsoleteProp;
-}
-
-IFF_Prop *IFF_updatePropInListByIndex(IFF_List *list, unsigned int index, IFF_Prop *prop)
-{
-    IFF_Prop *obsoleteProp = replacePropInList(list, index, prop);
-
-    if(obsoleteProp != NULL)
-        IFF_updateChunkSize((IFF_Chunk*)list, (IFF_Chunk*)obsoleteProp, (IFF_Chunk*)prop);
-
-    return obsoleteProp;
+    return (IFF_Prop*)IFF_updateChunkInGroupStructureByIndex((IFF_Group*)list, index, (IFF_Chunk*)prop);
 }
 
 void IFF_addChunkToList(IFF_List *list, IFF_Chunk *chunk)
