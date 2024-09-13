@@ -82,9 +82,11 @@ void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data);
  *
  * @param rawChunk A raw chunk
  * @param chunkData An array of bytes
- * @param chunkSize Length of the bytes array.
+ * @param chunkSize Length of the bytes array
+ * @param obsoleteChunkSize Pointer to an integer containing the length of the obsolete data array
+ * @return The obsolete chunk data. The data must be freed with free()
  */
-void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize);
+IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize, IFF_Long *obsoleteChunkDataSize);
 
 /**
  * Reads a raw chunk with the given chunk id and chunk size from a file.

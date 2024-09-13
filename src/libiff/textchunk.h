@@ -21,6 +21,7 @@
 
 #ifndef __IFF_TEXTCHUNK_H
 #define __IFF_TEXTCHUNK_H
+#include "rawchunk.h"
 
 typedef struct IFF_RawChunk IFF_TextChunk;
 
@@ -52,8 +53,10 @@ IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *tex
  *
  * @param textChunk A text chunk
  * @param text Text to store in the body
+ * @param obsoleteTextLength Pointer to a value that stores the length of the previous text data
+ * @return The previous text data that must be freed with free()
  */
-void IFF_setTextData(IFF_TextChunk *textChunk, const char *text);
+char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *obsoleteTextLength);
 
 /**
  * Prints the data of the raw chunk as text

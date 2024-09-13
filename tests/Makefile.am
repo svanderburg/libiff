@@ -5,7 +5,8 @@ check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform r
     lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     writeextension readextension testcheck testpp \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
-    catcrudoperations listcrudoperations formcrudoperations extensioncrudoperations
+    catcrudoperations listcrudoperations formcrudoperations extensioncrudoperations \
+    testtextchunk
 
 writeform_SOURCES = formdata.c writeform.c
 writeform_LDADD = ../src/libiff/libiff.la
@@ -155,6 +156,10 @@ extensioncrudoperations_SOURCES = hello.c bye.c conversation.c test.c testregist
 extensioncrudoperations_LDADD = ../src/libiff/libiff.la
 extensioncrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
 
+testtextchunk_SOURCES = testtextchunk.c
+testtextchunk_LDADD = ../src/libiff/libiff.la
+testtextchunk_CFLAGS = -I../src/libiffcore -I../src/libiff
+
 TESTS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     validform.sh validcat.sh validcat-wildcard.sh validlist.sh validlist-wildcard.sh invalidiff.sh \
     invalidid1.sh invalidid2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh \
@@ -167,7 +172,8 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     join-identical.sh join-different.sh \
     writeextension readextension testcheck.sh testpp-c.sh testpp-otherform.sh \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
-    catcrudoperations listcrudoperations formcrudoperations extensioncrudoperations
+    catcrudoperations listcrudoperations formcrudoperations extensioncrudoperations \
+    testtextchunk
 
 EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh invalidcat-size.sh invalidform-prop.sh invalidform-size1.sh \
     invalidform-size2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh invalidid1.sh invalidid2.sh \

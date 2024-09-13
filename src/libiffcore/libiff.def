@@ -97,8 +97,8 @@ EXPORTS
 	IFF_updatePropChunkSizes  @105
 	IFF_getChunkFromProp      @106
 	IFF_createRawChunk        @107
-	IFF_setRawChunkData       @108
-	IFF_setTextData           @109
+	IFF_updateRawChunkData    @108
+	IFF_updateTextData        @109
 	IFF_readRawChunk          @110
 	IFF_writeRawChunk         @111
 	IFF_freeRawChunk          @112

@@ -22,7 +22,6 @@
 #include "textchunk.h"
 #include <string.h>
 #include <stdlib.h>
-#include "rawchunk.h"
 
 IFF_ChunkInterface IFF_textChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
@@ -42,13 +41,12 @@ IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *tex
     return textChunk;
 }
 
-void IFF_setTextData(IFF_TextChunk *textChunk, const char *text)
+char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *obsoleteTextLength)
 {
     size_t textLength = strlen(text);
     IFF_UByte *chunkData = (IFF_UByte*)malloc(textLength * sizeof(IFF_UByte));
-
     memcpy(chunkData, text, textLength);
-    IFF_setRawChunkData((IFF_RawChunk*)textChunk, chunkData, textLength);
+    return (char*)IFF_updateRawChunkData((IFF_RawChunk*)textChunk, chunkData, textLength, obsoleteTextLength);
 }
 
 static void printChunkDataText(FILE *file, const void *value, const unsigned int indentLevel)

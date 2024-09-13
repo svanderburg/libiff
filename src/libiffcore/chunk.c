@@ -163,32 +163,32 @@ IFF_Long IFF_addChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk)
     return chunkSize + IFF_computeActualChunkSize(chunk);
 }
 
-static void increaseChunkSize(IFF_Chunk *chunk, IFF_Long increment)
+void IFF_increaseChunkSizeByValue(IFF_Chunk *chunk, IFF_Long increment)
 {
     chunk->chunkSize += increment;
 
     if(chunk->parent != NULL)
-        increaseChunkSize(chunk->parent, increment);
+        IFF_increaseChunkSizeByValue(chunk->parent, increment);
 }
 
 void IFF_increaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk)
 {
     IFF_Long actualChunkSize = IFF_computeActualChunkSize(attachedChunk);
-    increaseChunkSize(chunk, actualChunkSize);
+    IFF_increaseChunkSizeByValue(chunk, actualChunkSize);
 }
 
-static void decreaseChunkSize(IFF_Chunk *chunk, IFF_Long decrement)
+void IFF_decreaseChunkSizeByValue(IFF_Chunk *chunk, IFF_Long decrement)
 {
     chunk->chunkSize -= decrement;
 
     if(chunk->parent != NULL)
-        decreaseChunkSize(chunk->parent, decrement);
+        IFF_decreaseChunkSizeByValue(chunk->parent, decrement);
 }
 
 void IFF_decreaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk)
 {
     IFF_Long actualChunkSize = IFF_computeActualChunkSize(attachedChunk);
-    decreaseChunkSize(chunk, actualChunkSize);
+    IFF_decreaseChunkSizeByValue(chunk, actualChunkSize);
 }
 
 void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const IFF_Chunk *attachedChunk)
@@ -204,7 +204,7 @@ void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const
             decrement--;
 
         if(decrement > 0)
-            decreaseChunkSize(chunk, decrement);
+            IFF_decreaseChunkSizeByValue(chunk, decrement);
     }
     else if(detachedChunk->chunkSize < attachedChunk->chunkSize)
     {
@@ -217,6 +217,6 @@ void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const
             increment++;
 
         if(increment > 0)
-            increaseChunkSize(chunk, increment);
+            IFF_increaseChunkSizeByValue(chunk, increment);
     }
 }

@@ -56,10 +56,16 @@ void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data)
     memcpy(rawChunk->chunkData, data, rawChunk->chunkSize);
 }
 
-void IFF_setRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize)
+IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize, IFF_Long *obsoleteChunkDataSize)
 {
+    IFF_UByte *obsoleteChunkData = rawChunk->chunkData;
+    *obsoleteChunkDataSize = rawChunk->chunkSize;
+    IFF_decreaseChunkSizeByValue((IFF_Chunk*)rawChunk, *obsoleteChunkDataSize);
+
     rawChunk->chunkData = chunkData;
-    rawChunk->chunkSize = chunkSize;
+    IFF_increaseChunkSizeByValue((IFF_Chunk*)rawChunk, chunkSize);
+
+    return obsoleteChunkData;
 }
 
 IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

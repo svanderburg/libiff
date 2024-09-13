@@ -157,6 +157,8 @@ IFF_Long IFF_computeActualChunkSize(const IFF_Chunk *chunk);
  */
 IFF_Long IFF_addChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
 
+void IFF_increaseChunkSizeByValue(IFF_Chunk *chunk, IFF_Long increment);
+
 /**
  * Increases the chunk size by the actual size of another chunk that is to be attached.
  *
@@ -164,6 +166,8 @@ IFF_Long IFF_addChunkSize(const IFF_Long chunkSize, const IFF_Chunk *chunk);
  * @param attachedChunk Chunk to be attached
  */
 void IFF_increaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk);
+
+void IFF_decreaseChunkSizeByValue(IFF_Chunk *chunk, IFF_Long decrement);
 
 /**
  * Decreases the chunk size by the actual size of another chunk that is to be attached.
