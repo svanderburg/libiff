@@ -73,7 +73,7 @@ static void printUsage(const char *command, const char *fileFormat)
     );
 }
 
-int IFF_checkCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_ChunkRegistry *chunkRegistry, void (*printVersion) (const char *command))
+int IFF_checkCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_Registry *registry, void (*printVersion) (const char *command))
 {
     char *filename;
     int minLevel = IFF_QUALITY_PERFECT;
@@ -161,5 +161,5 @@ int IFF_checkCmdLineInterface(const char *command, const char *fileFormat, int a
         filename = argv[optind];
 
     /* Pretty print the IFF file */
-    return IFF_conformanceCheck(filename, minLevel, maxLevel, chunkRegistry);
+    return IFF_conformanceCheck(filename, minLevel, maxLevel, registry);
 }

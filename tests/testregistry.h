@@ -21,12 +21,12 @@
 
 #ifndef __TESTREGISTRY_H
 #define __TESTREGISTRY_H
-#include "chunkregistry.h"
+#include "registry.h"
 
 #define TEST_NUM_OF_SCOPED_CHUNK_TYPES 1
 #define TEST_NUM_OF_GLOBAL_CHUNK_TYPES 3
 #define TEST_NUM_OF_FORM_TYPES 1
 
-extern const IFF_ChunkRegistry TEST_chunkRegistry;
+extern const IFF_Registry TEST_registry;
 
 #endif

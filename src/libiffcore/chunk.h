@@ -27,7 +27,7 @@ typedef struct IFF_Chunk IFF_Chunk;
 typedef IFF_Bool (*IFF_visitChunkFunction) (IFF_Chunk *chunk, void *data);
 
 #include <stdio.h>
-#include "chunkregistry.h"
+#include "registry.h"
 #include "attributepath.h"
 #include "error.h"
 
@@ -69,10 +69,10 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t stru
  *
  * @param file File descriptor of the file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
+ * @param registry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.

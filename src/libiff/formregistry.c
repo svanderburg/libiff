@@ -54,9 +54,9 @@ static IFF_FormType *getFormType(const IFF_ID formType, const IFF_FormTypesNode 
     }
 }
 
-IFF_GroupStructure *IFF_findGroupStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType)
+IFF_GroupStructure *IFF_findGroupStructure(const IFF_Registry *registry, const IFF_ID formType)
 {
-    IFF_FormTypesNode *formTypesNode = (IFF_FormTypesNode*)chunkRegistry->extension;
+    IFF_FormTypesNode *formTypesNode = (IFF_FormTypesNode*)registry->extension;
     IFF_FormType *result = getFormType(formType, formTypesNode);
 
     if(result == NULL)

@@ -25,17 +25,17 @@
 
 IFF_Chunk *IFF_parseFd(FILE *file, IFF_IOError **error)
 {
-    return IFF_parseFdCore(file, &IFF_defaultChunkRegistry, error);
+    return IFF_parseFdCore(file, &IFF_defaultRegistry, error);
 }
 
 IFF_Chunk *IFF_parseFile(const char *filename, IFF_IOError **error)
 {
-    return IFF_parseFileCore(filename, &IFF_defaultChunkRegistry, error);
+    return IFF_parseFileCore(filename, &IFF_defaultRegistry, error);
 }
 
 IFF_Chunk *IFF_parse(const char *filename, IFF_IOError **error)
 {
-    return IFF_parseCore(filename, &IFF_defaultChunkRegistry, error);
+    return IFF_parseCore(filename, &IFF_defaultRegistry, error);
 }
 
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
@@ -60,12 +60,12 @@ void IFF_free(IFF_Chunk *chunk)
 
 IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_advancedCheckCore(chunk, &IFF_defaultChunkRegistry, printCheckMessage, data);
+    return IFF_advancedCheckCore(chunk, &IFF_defaultRegistry, printCheckMessage, data);
 }
 
 IFF_QualityLevel IFF_check(const IFF_Chunk *chunk)
 {
-    return IFF_checkCore(chunk, &IFF_defaultChunkRegistry);
+    return IFF_checkCore(chunk, &IFF_defaultRegistry);
 }
 
 void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)

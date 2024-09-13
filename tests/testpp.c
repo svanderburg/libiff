@@ -33,5 +33,5 @@ static void printVersion(const char *command)
 
 int main(int argc, char *argv[])
 {
-    return IFF_prettyPrintCmdLineInterface("testpp", "TEST", argc, argv, &TEST_chunkRegistry, printVersion);
+    return IFF_prettyPrintCmdLineInterface("testpp", "TEST", argc, argv, &TEST_registry, printVersion);
 }

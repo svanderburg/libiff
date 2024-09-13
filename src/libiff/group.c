@@ -114,7 +114,7 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
     return obsoleteChunk;
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_ChunkRegistry *chunkRegistry, const IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Registry *registry, const IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;
 
@@ -132,7 +132,7 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
         IFF_visitAttributeByIndex(attributePath, index);
 
         /* Read sub chunk */
-        chunk = IFF_parseChunk(file, group->groupType, chunkRegistry, attributePath, error);
+        chunk = IFF_parseChunk(file, group->groupType, registry, attributePath, error);
 
         if(chunk == NULL)
             return FALSE;
@@ -152,20 +152,20 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Chunk
     return TRUE;
 }
 
-IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_ID groupType;
 
     /* Read group type */
     if(IFF_readId(file, &groupType, attributePath, groupTypeName, chunkId, error))
     {
-        IFF_GroupStructure *groupStructure = lookupGroupStructure(chunkRegistry, groupType);
+        IFF_GroupStructure *groupStructure = lookupGroupStructure(registry, groupType);
         IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure, chunkInterface);
 
         *bytesProcessed = *bytesProcessed + IFF_ID_SIZE; /* Initially, we have already read the group ID */
 
         if(group != NULL)
-            readGroupSubChunks(file, group, chunkRegistry, chunkInterface, attributePath, bytesProcessed, error);
+            readGroupSubChunks(file, group, registry, chunkInterface, attributePath, bytesProcessed, error);
 
         return group;
     }

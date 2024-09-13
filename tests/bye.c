@@ -46,7 +46,7 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
-IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Bye *bye = TEST_createByeChunk(chunkId, chunkSize);
 
@@ -61,8 +61,6 @@ IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, IFF_Attribute
 {
     const TEST_Bye *bye = (const TEST_Bye*)chunk;
     IFF_FieldStatus status;
-
-    fprintf(stderr, "ABOUT TO WRITE BYE\n");
 
     if((status = IFF_writeLongField(file, bye->one, chunk, attributePath, "one", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);

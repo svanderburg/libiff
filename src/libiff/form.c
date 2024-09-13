@@ -90,9 +90,9 @@ IFF_Chunk *IFF_removeChunkFromFormByIndex(IFF_Form *form, const unsigned int ind
     return IFF_removeChunkFromGroupByIndex((IFF_Group*)form, index);
 }
 
-IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseFormContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return (IFF_Chunk*)IFF_parseGroupContents(file, IFF_findGroupStructure, chunkId, chunkSize, FORM_GROUPTYPENAME, chunkRegistry, chunkInterface, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, IFF_findGroupStructure, chunkId, chunkSize, FORM_GROUPTYPENAME, registry, chunkInterface, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_writeFormContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

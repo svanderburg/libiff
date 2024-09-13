@@ -34,29 +34,29 @@ extern "C" {
  * Reads an IFF file from a given file descriptor. The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
+ * @param registry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_Registry *registry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename. The resulting chunk must be freed using IFF_free().
  *
  * @param filename Filename of the file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
+ * @param registry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_Registry *registry, IFF_IOError **error);
 
 /**
  * Reads an IFF file from a file with the given filename or from the standard input when no filename was provided.
  * The resulting chunk must be freed using IFF_free().
  *
  * @param filename Filename of the file or NULL to read from the standard input
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
+ * @param registry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_parseCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error);
+IFF_Chunk *IFF_parseCore(const char *filename, const IFF_Registry *registry, IFF_IOError **error);
 
 /**
  * Writes an IFF file to a given file descriptor.
@@ -92,16 +92,16 @@ IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, IFF_IOError
  */
 void IFF_freeCore(IFF_Chunk *chunk);
 
-IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_Registry *registry, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Checks whether an IFF file conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type within a specified scope
+ * @param registry A registry that determines how to handle a chunk of a certain type within a specified scope
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry);
+IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_Registry *registry);
 
 /**
  * Prints a textual representation of an IFF file to the given file descriptor.

@@ -32,5 +32,5 @@ static void printVersion(const char *command)
 
 int main(int argc, char *argv[])
 {
-    return IFF_checkCmdLineInterface("iffcheck", "IFF", argc, argv, &IFF_defaultChunkRegistry, printVersion);
+    return IFF_checkCmdLineInterface("iffcheck", "IFF", argc, argv, &IFF_defaultRegistry, printVersion);
 }

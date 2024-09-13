@@ -24,7 +24,7 @@
 
 IFF_Chunk *TEST_parse(const char *filename, IFF_IOError **error)
 {
-    return IFF_parseCore(filename, &TEST_chunkRegistry, error);
+    return IFF_parseCore(filename, &TEST_registry, error);
 }
 
 IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
@@ -39,7 +39,7 @@ void TEST_free(IFF_Chunk *chunk)
 
 IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
 {
-    return IFF_checkCore(chunk, &TEST_chunkRegistry);
+    return IFF_checkCore(chunk, &TEST_registry);
 }
 
 void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)

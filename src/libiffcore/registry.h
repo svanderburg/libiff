@@ -19,14 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __IFF_CHUNKREGISTRY_H
-#define __IFF_CHUNKREGISTRY_H
+#ifndef __IFF_REGISTRY_H
+#define __IFF_REGISTRY_H
 
 typedef struct IFF_ChunkInterface IFF_ChunkInterface;
 typedef struct IFF_ChunkType IFF_ChunkType;
 typedef struct IFF_ChunkTypesNode IFF_ChunkTypesNode;
 typedef struct IFF_ScopedChunkTypes IFF_ScopedChunkTypes;
-typedef struct IFF_ChunkRegistry IFF_ChunkRegistry;
+typedef struct IFF_Registry IFF_Registry;
 
 #include <stdio.h>
 #include "ifftypes.h"
@@ -42,7 +42,7 @@ typedef IFF_QualityLevel (*IFF_checkMainChunkFunction) (const IFF_Chunk *chunk, 
 struct IFF_ChunkInterface
 {
     /** Function responsible for parsing the given chunk */
-    IFF_Chunk *(*parseChunkContents) (FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+    IFF_Chunk *(*parseChunkContents) (FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
     /** Function responsible for writing the given chunk */
     IFF_Bool (*writeChunkContents) (FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
@@ -105,7 +105,7 @@ struct IFF_ScopedChunkTypes
 /**
  * @brief Defines a registry of chunk types that should be managed in a certain way
  */
-struct IFF_ChunkRegistry
+struct IFF_Registry
 {
     /** Specifies the number of scoped types that have their own chunk types */
     unsigned int scopedChunkTypesLength;
@@ -133,12 +133,12 @@ extern "C" {
 /**
  * Searches for a chunk interface that can deal with a chunk in a given form with a form type and a given chunk id
  *
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of another chunk
+ * @param registry A registry that determines how to handle a chunk of a certain type, optionally in the scope of another chunk
  * @param scopeId A 4 character scope id. If the scopeId is 0 then only the global chunk types will be considered
  * @param chunkId A 4 character chunk id
  * @return The chunk interface that specifies how a chunk type within a form should be handled
  */
-IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID scopeId, const IFF_ID chunkId);
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_Registry *registry, const IFF_ID scopeId, const IFF_ID chunkId);
 
 #ifdef __cplusplus
 }

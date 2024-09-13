@@ -30,7 +30,7 @@ typedef struct IFF_GroupStructure IFF_GroupStructure;
 #include "chunk.h"
 #include "attributepath.h"
 #include "error.h"
-#include "chunkregistry.h"
+#include "registry.h"
 
 typedef void (*IFF_initGroupContentsFunction) (IFF_Group *group);
 

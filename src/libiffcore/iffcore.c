@@ -24,13 +24,13 @@
 #include <stdlib.h>
 #include "util.h"
 
-IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_Registry *registry, IFF_IOError **error)
 {
     int byte;
     IFF_AttributePath *attributePath = IFF_createAttributePath();
 
     /* Read the chunk */
-    IFF_Chunk *chunk = IFF_parseChunk(file, 0, chunkRegistry, attributePath, error);
+    IFF_Chunk *chunk = IFF_parseChunk(file, 0, registry, attributePath, error);
 
     /* We should have reached the EOF now */
     if((byte = fgetc(file)) != EOF)
@@ -44,7 +44,7 @@ IFF_Chunk *IFF_parseFdCore(FILE *file, const IFF_ChunkRegistry *chunkRegistry, I
     return chunk;
 }
 
-IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_Registry *registry, IFF_IOError **error)
 {
     FILE *file = fopen(filename, "rb");
 
@@ -55,18 +55,18 @@ IFF_Chunk *IFF_parseFileCore(const char *filename, const IFF_ChunkRegistry *chun
     }
     else
     {
-        IFF_Chunk *chunk = IFF_parseFdCore(file, chunkRegistry, error);
+        IFF_Chunk *chunk = IFF_parseFdCore(file, registry, error);
         fclose(file);
         return chunk;
     }
 }
 
-IFF_Chunk *IFF_parseCore(const char *filename, const IFF_ChunkRegistry *chunkRegistry, IFF_IOError **error)
+IFF_Chunk *IFF_parseCore(const char *filename, const IFF_Registry *registry, IFF_IOError **error)
 {
     if(filename == NULL)
-        return IFF_parseFdCore(stdin, chunkRegistry, error);
+        return IFF_parseFdCore(stdin, registry, error);
     else
-        return IFF_parseFileCore(filename, chunkRegistry, error);
+        return IFF_parseFileCore(filename, registry, error);
 }
 
 IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
@@ -110,7 +110,7 @@ void IFF_freeCore(IFF_Chunk *chunk)
     IFF_freeChunk(chunk, 0);
 }
 
-IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_Registry *registry, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_AttributePath *attributePath = IFF_createAttributePath();
     IFF_QualityLevel qualityLevel;
@@ -122,7 +122,7 @@ IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRe
     }
     else
     {
-        qualityLevel = chunkRegistry->checkMainChunk(chunk, attributePath, printCheckMessage, data);
+        qualityLevel = registry->checkMainChunk(chunk, attributePath, printCheckMessage, data);
         qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, 0, attributePath, printCheckMessage, data));
     }
 
@@ -130,9 +130,9 @@ IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_ChunkRe
     return qualityLevel;
 }
 
-IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_ChunkRegistry *chunkRegistry)
+IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_Registry *registry)
 {
-    return IFF_advancedCheckCore(chunk, chunkRegistry, IFF_printCheckMessageOnStderr, NULL);
+    return IFF_advancedCheckCore(chunk, registry, IFF_printCheckMessageOnStderr, NULL);
 }
 
 void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)

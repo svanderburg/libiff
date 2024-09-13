@@ -21,8 +21,8 @@
 
 #ifndef __IFF_PPINTERFACE_H
 #define __IFF_PPINTERFACE_H
-#include "chunkregistry.h"
+#include "registry.h"
 
-int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_ChunkRegistry *chunkRegistry, void (*printVersion) (const char *command));
+int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_Registry *registry, void (*printVersion) (const char *command));
 
 #endif

@@ -22,7 +22,7 @@
 #ifndef __IFF_DEFAULTREGISTRY_H
 #define __IFF_DEFAULTREGISTRY_H
 
-#include "chunkregistry.h"
+#include "registry.h"
 #include "chunk.h"
 #include "rawchunk.h"
 #include "error.h"
@@ -36,7 +36,7 @@ extern IFF_ChunkTypesNode IFF_globalChunkTypesNode;
 
 extern IFF_ChunkType IFF_defaultChunkType;
 
-extern const IFF_ChunkRegistry IFF_defaultChunkRegistry;
+extern const IFF_Registry IFF_defaultRegistry;
 
 #ifdef __cplusplus
 extern "C" {

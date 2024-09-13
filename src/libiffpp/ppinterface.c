@@ -57,7 +57,7 @@ static void printUsage(const char *command, const char *fileFormat)
     );
 }
 
-int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_ChunkRegistry *chunkRegistry, void (*printVersion) (const char *command))
+int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat, int argc, char **argv, const IFF_Registry *registry, void (*printVersion) (const char *command))
 {
     char *inputFilename;
     char *outputFilename = NULL;
@@ -131,5 +131,5 @@ int IFF_prettyPrintCmdLineInterface(const char *command, const char *fileFormat,
         inputFilename = argv[optind];
 
     /* Pretty print the IFF file */
-    return IFF_prettyPrint(inputFilename, outputFilename, chunkRegistry);
+    return IFF_prettyPrint(inputFilename, outputFilename, registry);
 }

@@ -34,7 +34,7 @@ typedef struct IFF_Group IFF_Group;
 
 typedef IFF_QualityLevel (*IFF_subChunkCheckFunction) (const IFF_Group *group, const IFF_Chunk *subChunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 typedef IFF_QualityLevel (*IFF_groupTypeCheckFunction) (const IFF_ID groupType, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
-typedef IFF_GroupStructure *(*IFF_lookupGroupStructureFunction) (const IFF_ChunkRegistry *chunkRegistry, const IFF_ID groupType);
+typedef IFF_GroupStructure *(*IFF_lookupGroupStructureFunction) (const IFF_Registry *registry, const IFF_ID groupType);
 
 /**
  * @brief An abstract group chunk, which contains all common properties of the compound chunk types. This chunk type should never be used directly.
@@ -153,11 +153,11 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
  * @param chunkId A 4 character id
  * @param chunkSize Size of the chunk in bytes
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param registry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the group has been successfully read, or FALSE if an error has occured
  */
-IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes a group chunk and its sub chunks to a file.

@@ -43,11 +43,11 @@ IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_
     return chunk;
 }
 
-static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
+static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(chunkRegistry, scopeId, chunkId);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(registry, scopeId, chunkId);
     IFF_Long bytesProcessed = 0;
-    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, chunkRegistry, chunkInterface, attributePath, &bytesProcessed, error);
+    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, registry, chunkInterface, attributePath, &bytesProcessed, error);
 
     if(*error == NULL && chunk != NULL)
     {
@@ -59,7 +59,7 @@ static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long
     return chunk;
 }
 
-IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     IFF_ID chunkId;
     IFF_Long chunkSize;
@@ -68,7 +68,7 @@ IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_ChunkRegis
         || !IFF_readLong(file, &chunkSize, attributePath, "chunkSize", chunkId, error))
         return NULL;
 
-    return readChunkBody(file, chunkId, chunkSize, scopeId, chunkRegistry, attributePath, error);
+    return readChunkBody(file, chunkId, chunkSize, scopeId, registry, attributePath, error);
 }
 
 static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error)

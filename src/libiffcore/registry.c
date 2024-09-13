@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "chunkregistry.h"
+#include "registry.h"
 #include <stdlib.h>
 #include "io.h"
 #include "id.h"
@@ -37,12 +37,12 @@ static int compareScopedChunkTypes(const void *a, const void *b)
         return 0;
 }
 
-const static IFF_ScopedChunkTypes *getScopedChunkTypes(const IFF_ID scopeId, const IFF_ChunkRegistry *chunkRegistry)
+const static IFF_ScopedChunkTypes *getScopedChunkTypes(const IFF_ID scopeId, const IFF_Registry *registry)
 {
     IFF_ScopedChunkTypes key;
     key.scopeId = scopeId;
 
-    return (IFF_ScopedChunkTypes*)bsearch(&key, chunkRegistry->scopedChunkTypes, chunkRegistry->scopedChunkTypesLength, sizeof(IFF_ScopedChunkTypes), &compareScopedChunkTypes);
+    return (IFF_ScopedChunkTypes*)bsearch(&key, registry->scopedChunkTypes, registry->scopedChunkTypesLength, sizeof(IFF_ScopedChunkTypes), &compareScopedChunkTypes);
 }
 
 static int compareChunkTypes(const void *a, const void *b)
@@ -77,20 +77,20 @@ static IFF_ChunkType *getChunkType(const IFF_ID chunkId, const IFF_ChunkTypesNod
     }
 }
 
-IFF_ChunkInterface *IFF_findChunkInterface(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID scopeId, const IFF_ID chunkId)
+IFF_ChunkInterface *IFF_findChunkInterface(const IFF_Registry *registry, const IFF_ID scopeId, const IFF_ID chunkId)
 {
     /* Search for the requested scoped chunk types */
-    const IFF_ScopedChunkTypes *scopedChunkTypes = getScopedChunkTypes(scopeId, chunkRegistry);
+    const IFF_ScopedChunkTypes *scopedChunkTypes = getScopedChunkTypes(scopeId, registry);
     IFF_ChunkType *result;
 
     /* Search for the chunk type that handles the chunk with the given chunk id */
     if(scopedChunkTypes == NULL)
-        result = getChunkType(chunkId, chunkRegistry->globalChunkTypesNode);
+        result = getChunkType(chunkId, registry->globalChunkTypesNode);
     else
         result = getChunkType(chunkId, scopedChunkTypes->chunkTypesNode);
 
     if(result == NULL)
-        return chunkRegistry->defaultChunkInterface;
+        return registry->defaultChunkInterface;
     else
         return result->chunkInterface;
 }

@@ -27,7 +27,7 @@ typedef struct IFF_FormTypesNode IFF_FormTypesNode;
 
 #include "id.h"
 #include "groupstructure.h"
-#include "chunkregistry.h"
+#include "registry.h"
 
 /**
  * @brief Defines how sub chunks within a specific FORM chunk with a specify formType should be managed
@@ -57,7 +57,7 @@ struct IFF_FormTypesNode
 extern "C" {
 #endif
 
-IFF_GroupStructure *IFF_findGroupStructure(const IFF_ChunkRegistry *chunkRegistry, const IFF_ID formType);
+IFF_GroupStructure *IFF_findGroupStructure(const IFF_Registry *registry, const IFF_ID formType);
 
 #ifdef __cplusplus
 }

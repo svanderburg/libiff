@@ -21,16 +21,16 @@
 
 #ifndef __IFF_PP_H
 #define __IFF_PP_H
-#include "chunkregistry.h"
+#include "registry.h"
 
 /**
  * Displays a textual representation of the given IFF file.
  *
  * @param inputFilename Path to the IFF file, or NULL to read from the standard input
  * @param outputFilename Path to the file in which the textual representation is stored, or NULL to write to the standard output
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param registry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return 0 if the file has been successfully printed, else 1
  */
-int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_ChunkRegistry *chunkRegistry);
+int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const IFF_Registry *registry);
 
 #endif

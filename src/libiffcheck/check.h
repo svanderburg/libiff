@@ -21,7 +21,7 @@
 
 #ifndef __IFF_CHECK_H
 #define __IFF_CHECK_H
-#include "chunkregistry.h"
+#include "registry.h"
 
 /**
  * Performs a conformance check of the given IFF file and outputs its quality
@@ -30,9 +30,9 @@
  * @param filename Path to the IFF file to check or NULL to read from the standard input
  * @param minLevel Specifies the desired minimum quality level
  * @param maxLevel Specifies the desired maximum quality level
- * @param chunkRegistry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
+ * @param registry A registry that determines how to handle a chunk of a certain type, optionally in the scope of a FORM with a certain formType
  * @return 0 if the file was successfully checked and the quality level is between the minimum and maximum, else 1
  */
-int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_ChunkRegistry *chunkRegistry);
+int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_Registry *registry);
 
 #endif

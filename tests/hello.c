@@ -47,7 +47,7 @@ TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
     return TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
-IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ChunkRegistry *chunkRegistry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Hello *hello = TEST_createHelloChunk(chunkId, chunkSize);
 

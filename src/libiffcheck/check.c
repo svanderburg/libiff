@@ -22,11 +22,11 @@
 #include "check.h"
 #include "iffcore.h"
 
-int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_ChunkRegistry *chunkRegistry)
+int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const IFF_Registry *registry)
 {
     /* Parse the chunk */
     IFF_IOError *error = NULL;
-    IFF_Chunk *chunk = IFF_parseCore(filename, chunkRegistry, &error);
+    IFF_Chunk *chunk = IFF_parseCore(filename, registry, &error);
 
     IFF_QualityLevel qualityLevel;
     IFF_Bool status;
@@ -38,7 +38,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
     }
 
     /* Check the file and print the quality level */
-    qualityLevel = IFF_checkCore(chunk, chunkRegistry);
+    qualityLevel = IFF_checkCore(chunk, registry);
 
     if(qualityLevel == IFF_QUALITY_PERFECT)
         fprintf(stderr, "No conformance issues were found!\n");

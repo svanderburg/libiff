@@ -50,4 +50,4 @@ static IFF_FormTypesNode formTypesNode = {
     NULL
 };
 
-const IFF_ChunkRegistry TEST_chunkRegistry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes, formTypesNode);
+const IFF_Registry TEST_registry = IFF_EXTEND_DEFAULT_REGISTRY_WITH_APPLICATION_FORMS(TEST_NUM_OF_SCOPED_CHUNK_TYPES, scopedChunkTypes, formTypesNode);
