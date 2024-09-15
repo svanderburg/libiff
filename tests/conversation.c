@@ -20,8 +20,17 @@
  */
 
 #include "conversation.h"
+#include <stdlib.h>
 #include "form.h"
 #include "array.h"
+
+typedef enum
+{
+    CONVERSATION_FIELD_HELLO = 0,
+    CONVERSATION_FIELD_BYE = 1,
+    CONVERSATION_FIELD_MESSAGES = 2
+}
+FieldIndex;
 
 static void initConversationContents(IFF_Group *group)
 {
@@ -37,11 +46,11 @@ static IFF_GroupMember *getGroupMemberByChunkId(const IFF_GroupStructure *groupS
     switch(chunkId)
     {
         case TEST_ID_HELO:
-            return &groupStructure->groupMembers[0];
+            return &groupStructure->groupMembers[CONVERSATION_FIELD_HELLO];
         case TEST_ID_BYE:
-            return &groupStructure->groupMembers[1];
+            return &groupStructure->groupMembers[CONVERSATION_FIELD_BYE];
         case TEST_ID_MESG:
-            return &groupStructure->groupMembers[2];
+            return &groupStructure->groupMembers[CONVERSATION_FIELD_MESSAGES];
         default:
             return NULL;
     }
@@ -82,9 +91,9 @@ static IFF_Chunk *getChunkFromConversation(const IFF_Group *group, const unsigne
 
     switch(index)
     {
-        case 0:
+        case CONVERSATION_FIELD_HELLO:
             return (IFF_Chunk*)conversation->hello;
-        case 1:
+        case CONVERSATION_FIELD_BYE:
             return (IFF_Chunk*)conversation->bye;
         default:
             return NULL;
@@ -97,7 +106,7 @@ static IFF_Chunk **getChunksFromConversation(const IFF_Group *group, const unsig
 
     switch(index)
     {
-        case 2:
+        case CONVERSATION_FIELD_MESSAGES:
             *chunksLength = conversation->messagesLength;
             return (IFF_Chunk**)conversation->messages;
         default:
@@ -128,6 +137,11 @@ TEST_Conversation *TEST_createConversation(void)
     return (TEST_Conversation*)IFF_createEmptyForm(TEST_ID_CONV, &TEST_conversationStructure);
 }
 
+TEST_Conversation *TEST_createSharedConversation(void)
+{
+    return (TEST_Conversation*)IFF_createEmptyProp(TEST_ID_CONV, &TEST_conversationStructure);
+}
+
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk)
 {
     IFF_addChunkToForm((IFF_Form*)conversation, chunk);
@@ -151,4 +165,19 @@ IFF_Chunk *TEST_updateChunkInConversationByIndex(TEST_Conversation *conversation
 IFF_Chunk *TEST_removeChunkFromConversationByIndex(TEST_Conversation *conversation, const IFF_ID chunkId, const unsigned int index)
 {
     return IFF_removeChunkFromGroupStructureByIndex((IFF_Group*)conversation, chunkId, index);
+}
+
+TEST_Hello *TEST_getHello(const TEST_Conversation *conversation)
+{
+    return (TEST_Hello*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_HELLO);
+}
+
+TEST_Bye *TEST_getBye(const TEST_Conversation *conversation)
+{
+    return (TEST_Bye*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_BYE);
+}
+
+IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, unsigned int *messagesLength)
+{
+    return (IFF_TextChunk**)IFF_getPropertiesFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_MESSAGES, messagesLength);
 }

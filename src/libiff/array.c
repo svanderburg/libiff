@@ -97,3 +97,16 @@ void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned
         }
     }
 }
+
+void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength)
+{
+    unsigned int i;
+    basePointerArray = (void**)realloc(basePointerArray, (basePointerArrayLength + appendPointerArrayLength) * sizeof(void*));
+
+    for(i = 0; i < appendPointerArrayLength; i++)
+        basePointerArray[basePointerArrayLength + i] = appendPointerArray[i];
+
+    *resultPointerArrayLength = basePointerArrayLength + appendPointerArrayLength;
+
+    return basePointerArray;
+}

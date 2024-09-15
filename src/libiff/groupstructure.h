@@ -85,6 +85,10 @@ IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const unsign
 
 IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_ID chunkId, const unsigned int index);
 
+IFF_Chunk *IFF_getPropertyFromGroupStructure(const IFF_Group *group, const unsigned int index);
+
+IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, unsigned int *propertiesLength);
+
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, IFF_Long chunkSize);

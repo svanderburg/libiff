@@ -36,6 +36,8 @@ void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigne
 
 void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement);
 
+void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength);
+
 #ifdef __cplusplus
 }
 #endif

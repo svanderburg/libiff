@@ -56,6 +56,8 @@ struct TEST_Conversation
 
 TEST_Conversation *TEST_createConversation(void);
 
+TEST_Conversation *TEST_createSharedConversation(void);
+
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
 
 IFF_Chunk *TEST_updateChunkInConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
@@ -65,5 +67,11 @@ IFF_Chunk *TEST_removeChunkFromConversation(TEST_Conversation *conversation, con
 IFF_Chunk *TEST_updateChunkInConversationByIndex(TEST_Conversation *conversation, const unsigned int index, IFF_Chunk *chunk);
 
 IFF_Chunk *TEST_removeChunkFromConversationByIndex(TEST_Conversation *conversation, const IFF_ID chunkId, const unsigned int index);
+
+TEST_Hello *TEST_getHello(const TEST_Conversation *conversation);
+
+TEST_Bye *TEST_getBye(const TEST_Conversation *conversation);
+
+IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, unsigned int *messagesLength);
 
 #endif

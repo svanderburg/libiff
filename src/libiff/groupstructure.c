@@ -152,6 +152,52 @@ IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_
     }
 }
 
+IFF_Chunk *IFF_getPropertyFromGroupStructure(const IFF_Group *group, const unsigned int index)
+{
+    if(group->groupStructure == NULL)
+        return NULL;
+    else
+    {
+        IFF_Chunk *chunk = group->groupStructure->getChunkFromGroup(group, index);
+
+        if(chunk == NULL)
+        {
+            IFF_Group *parentGroup = (IFF_Group*)IFF_searchEnclosingProp((IFF_Chunk*)group, group->groupType);
+
+            if(parentGroup == NULL)
+                return NULL;
+            else
+                return IFF_getPropertyFromGroupStructure(parentGroup, index);
+        }
+        else
+            return chunk;
+    }
+}
+
+static IFF_Chunk **appendPropertiesToResult(const IFF_Group *group, const unsigned int index, IFF_Chunk **properties, unsigned int *propertiesLength)
+{
+    IFF_Group *parentGroup = (IFF_Group*)IFF_searchEnclosingProp((const IFF_Chunk*)group, group->groupType);
+
+    if(parentGroup != NULL)
+        properties = appendPropertiesToResult(parentGroup, index, properties, propertiesLength);
+
+    if(group->groupStructure == NULL)
+        return properties;
+    else
+    {
+        unsigned int appendPropertiesLength;
+        IFF_Chunk **appendProperties = group->groupStructure->getChunksFromGroup(group, index, &appendPropertiesLength);
+
+        return (IFF_Chunk**)IFF_appendPointerArrayToPointerArray((void**)properties, *propertiesLength, (void**)appendProperties, appendPropertiesLength, propertiesLength);
+    }
+}
+
+IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, unsigned int *propertiesLength)
+{
+    *propertiesLength = 0;
+    return appendPropertiesToResult(group, index, NULL, propertiesLength);
+}
+
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     if(group->groupStructure != NULL)

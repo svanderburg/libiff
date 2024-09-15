@@ -64,8 +64,6 @@ IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, IFF_Attribu
     const TEST_Hello *hello = (const TEST_Hello*)chunk;
     IFF_FieldStatus status;
 
-    fprintf(stderr, "ABOUT TO WRITE HELLO\n");
-
     if((status = IFF_writeUByteField(file, hello->a, chunk, attributePath, "a", bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 

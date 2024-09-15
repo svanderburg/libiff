@@ -236,6 +236,13 @@ static IFF_List *searchEnclosingList(const IFF_Chunk *chunk)
 
     if(parent == NULL)
         return NULL;
+    else if(chunk->chunkId == IFF_ID_PROP)
+    {
+        if(parent->parent == NULL)
+            return NULL;
+        else
+            return searchEnclosingList(parent->parent);
+    }
     else if(parent->chunkId == IFF_ID_LIST)
         return (IFF_List*)parent;
     else
