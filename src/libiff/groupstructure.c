@@ -198,6 +198,56 @@ IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const un
     return appendPropertiesToResult(group, index, NULL, propertiesLength);
 }
 
+void IFF_evaluateGroupStructure(const IFF_Group *group, IFF_Group *evaluatedGroup)
+{
+    if(group->groupStructure != NULL)
+    {
+        unsigned int i;
+
+        for(i = 0; i < group->groupStructure->groupMembersLength; i++)
+        {
+            IFF_GroupMember *groupMember = &group->groupStructure->groupMembers[i];
+
+            if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
+            {
+                IFF_Chunk *chunk = group->groupStructure->getChunkFromGroup(group, i);
+                IFF_Chunk **targetChunk = evaluatedGroup->groupStructure->getFieldPointerByChunkId(evaluatedGroup, groupMember->chunkId);
+
+                *targetChunk = chunk;
+            }
+            else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
+            {
+                unsigned int appendChunksLength;
+                IFF_Chunk **appendChunks = group->groupStructure->getChunksFromGroup(group, i, &appendChunksLength);
+                unsigned int *baseChunksLength;
+                IFF_Chunk ***baseChunks = evaluatedGroup->groupStructure->getArrayFieldPointerByChunkId(evaluatedGroup, groupMember->chunkId, &baseChunksLength);
+
+                *baseChunks = IFF_mergeChunksArrayIntoGroup(evaluatedGroup, *baseChunks, *baseChunksLength, appendChunks, appendChunksLength, baseChunksLength);
+            }
+        }
+    }
+}
+
+void IFF_freeEvaluatedGroupStructure(IFF_Group *evaluatedGroup)
+{
+    if(evaluatedGroup->groupStructure != NULL)
+    {
+        unsigned int i;
+
+        for(i = 0; i < evaluatedGroup->groupStructure->groupMembersLength; i++)
+        {
+            IFF_GroupMember *groupMember = &evaluatedGroup->groupStructure->groupMembers[i];
+
+            if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
+            {
+                unsigned int chunksLength;
+                IFF_Chunk **chunks = evaluatedGroup->groupStructure->getChunksFromGroup(evaluatedGroup, i, &chunksLength);
+                free(chunks);
+            }
+        }
+    }
+}
+
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     if(group->groupStructure != NULL)

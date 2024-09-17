@@ -114,6 +114,49 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
     return obsoleteChunk;
 }
 
+IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const unsigned int baseChunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength)
+{
+    unsigned int i;
+
+    baseChunks = (IFF_Chunk**)realloc(baseChunks, ((baseChunksLength + appendChunksLength) * sizeof(IFF_Chunk*)));
+
+    for(i = 0; i < appendChunksLength; i++)
+    {
+        IFF_Chunk *appendChunk = appendChunks[i];
+        baseChunks[baseChunksLength + i] = appendChunk;
+        IFF_increaseChunkSize((IFF_Chunk*)group, appendChunk);
+    }
+
+    *resultChunksLength = baseChunksLength + appendChunksLength;
+
+    return baseChunks;
+}
+
+static void evaluateGroupSubChunks(IFF_Group *group, IFF_Group *evaluatedGroup)
+{
+    IFF_Group *parentGroup = (IFF_Group*)IFF_searchEnclosingProp((const IFF_Chunk*)group, group->groupType);
+
+    if(parentGroup != NULL)
+        evaluateGroupSubChunks(parentGroup, evaluatedGroup);
+
+    evaluatedGroup->chunks = IFF_mergeChunksArrayIntoGroup(evaluatedGroup, evaluatedGroup->chunks, evaluatedGroup->chunksLength, group->chunks, group->chunksLength, &evaluatedGroup->chunksLength);
+    IFF_evaluateGroupStructure(group, evaluatedGroup);
+}
+
+IFF_Group *IFF_evaluateGroup(IFF_Group *group)
+{
+    IFF_Group *evaluatedGroup = IFF_createEmptyGroup(group->chunkId, group->groupType, group->groupStructure, group->chunkInterface);
+    evaluateGroupSubChunks(group, evaluatedGroup);
+    return evaluatedGroup;
+}
+
+void IFF_freeEvaluatedGroup(IFF_Group *evaluatedGroup)
+{
+    free(evaluatedGroup->chunks);
+    IFF_freeEvaluatedGroupStructure(evaluatedGroup);
+    free(evaluatedGroup);
+}
+
 static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Registry *registry, const IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;

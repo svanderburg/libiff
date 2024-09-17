@@ -142,6 +142,16 @@ TEST_Conversation *TEST_createSharedConversation(void)
     return (TEST_Conversation*)IFF_createEmptyProp(TEST_ID_CONV, &TEST_conversationStructure);
 }
 
+TEST_Conversation *TEST_evaluateConversation(TEST_Conversation *conversation)
+{
+    return (TEST_Conversation*)IFF_evaluateGroup((IFF_Group*)conversation);
+}
+
+void TEST_freeEvaluatedConversation(TEST_Conversation *evaluatedConversation)
+{
+    IFF_freeEvaluatedGroup((IFF_Group*)evaluatedConversation);
+}
+
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk)
 {
     IFF_addChunkToForm((IFF_Form*)conversation, chunk);

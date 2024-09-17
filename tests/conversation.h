@@ -58,6 +58,10 @@ TEST_Conversation *TEST_createConversation(void);
 
 TEST_Conversation *TEST_createSharedConversation(void);
 
+TEST_Conversation *TEST_evaluateConversation(TEST_Conversation *conversation);
+
+void TEST_freeEvaluatedConversation(TEST_Conversation *evaluatedConversation);
+
 void TEST_addChunkToConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);
 
 IFF_Chunk *TEST_updateChunkInConversation(TEST_Conversation *conversation, IFF_Chunk *chunk);

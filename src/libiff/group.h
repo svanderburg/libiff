@@ -146,6 +146,12 @@ IFF_Chunk *IFF_removeChunkFromGroupByIndex(IFF_Group *group, const unsigned int 
  */
 IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk);
 
+IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const unsigned int baseChunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength);
+
+IFF_Group *IFF_evaluateGroup(IFF_Group *group);
+
+void IFF_freeEvaluatedGroup(IFF_Group *evaluatedGroup);
+
 /**
  * Parses a group chunk and its sub chunks from a file.
  *

@@ -24,6 +24,8 @@
 #include "test.h"
 #include <list.h>
 
+#define ID_RNDM IFF_MAKEID('R', 'N', 'D', 'M')
+
 static TEST_Hello *createSharedHello(void)
 {
     TEST_Hello *hello = TEST_createHello(TEST_HELO_DEFAULT_SIZE);
@@ -59,11 +61,11 @@ static TEST_Conversation *createConversation(TEST_Bye *bye)
     return conversation;
 }
 
-static IFF_List *createListWithSharedProperty(TEST_Conversation *conversation, TEST_Conversation *sharedConversation)
+static IFF_List *createConversationList(TEST_Conversation *sharedConversation, TEST_Conversation *conversation)
 {
     IFF_List *list = IFF_createEmptyList();
-    IFF_addChunkToListAndUpdateContentsType(list, (IFF_Chunk*)conversation);
     IFF_addChunkToListAndUpdateContentsType(list, (IFF_Chunk*)sharedConversation);
+    IFF_addChunkToListAndUpdateContentsType(list, (IFF_Chunk*)conversation);
     return list;
 }
 
@@ -73,7 +75,7 @@ static IFF_Bool testListWithSharedProperty(void)
     TEST_Conversation *conversation = createConversation(bye);
     TEST_Hello *sharedHello = createSharedHello();
     TEST_Conversation *sharedConversation = createSharedConversation(sharedHello);
-    IFF_List *list = createListWithSharedProperty(conversation, sharedConversation);
+    IFF_List *list = createConversationList(sharedConversation, conversation);
 
     if(TEST_getHello(conversation) != sharedHello)
     {
@@ -118,7 +120,7 @@ static IFF_Bool testListWithOverriddenProperty(void)
     TEST_Conversation *conversation = createConversation2(hello, bye);
     TEST_Hello *sharedHello = createSharedHello();
     TEST_Conversation *sharedConversation = createSharedConversation(sharedHello);
-    IFF_List *list = createListWithSharedProperty(conversation, sharedConversation);
+    IFF_List *list = createConversationList(sharedConversation, conversation);
 
     if(TEST_getHello(conversation) != hello)
     {
@@ -157,16 +159,6 @@ static TEST_Conversation *createConversatonWithMessages(IFF_TextChunk *message1,
     return conversation;
 }
 
-static IFF_List *createListWithMessages(TEST_Conversation *sharedConversation, TEST_Conversation *conversation)
-{
-    IFF_List *list = IFF_createEmptyList();
-
-    IFF_addChunkToListAndUpdateContentsType(list, (IFF_Chunk*)sharedConversation);
-    IFF_addChunkToListAndUpdateContentsType(list, (IFF_Chunk*)conversation);
-
-    return list;
-}
-
 static IFF_Bool testListWithSharedMessages(void)
 {
     IFF_TextChunk *sharedMessage1 = IFF_createTextChunkFromText(TEST_ID_MESG, "Hi");
@@ -178,7 +170,7 @@ static IFF_Bool testListWithSharedMessages(void)
     TEST_Conversation *sharedConversation = createSharedConversatonWithMessages(sharedMessage1, sharedMessage2);
     TEST_Conversation *conversation = createConversatonWithMessages(message1, message2);
 
-    IFF_List *list = createListWithMessages(sharedConversation, conversation);
+    IFF_List *list = createConversationList(sharedConversation, conversation);
 
     IFF_TextChunk **allMessages;
     unsigned int allMessagesLength;
@@ -221,11 +213,99 @@ static IFF_Bool testListWithSharedMessages(void)
     return TRUE;
 }
 
+static TEST_Conversation *createSharedConversationWithHelloAndMessage(TEST_Hello *hello, IFF_TextChunk *message, IFF_TextChunk *randomChunk)
+{
+    TEST_Conversation *conversation = TEST_createSharedConversation();
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)hello);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)message);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)randomChunk);
+    return conversation;
+}
+
+static TEST_Conversation *createConversationWithHelloByeAndMessage(TEST_Hello *hello, TEST_Bye *bye, IFF_TextChunk *message, IFF_TextChunk *randomChunk)
+{
+    TEST_Conversation *conversation = TEST_createConversation();
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)hello);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)bye);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)message);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)randomChunk);
+    return conversation;
+}
+
+static IFF_Bool evaluateAndCheckConversation(void)
+{
+    TEST_Hello *sharedHello = createSharedHello();
+    IFF_TextChunk *sharedMessage = IFF_createTextChunkFromText(TEST_ID_MESG, "Hi");
+    IFF_TextChunk *sharedRandomChunk = IFF_createTextChunkFromText(ID_RNDM, "Shared random chunk");
+    TEST_Conversation *sharedConversation = createSharedConversationWithHelloAndMessage(sharedHello, sharedMessage, sharedRandomChunk);
+    TEST_Hello *hello = createHello();
+    TEST_Bye *bye = createBye();
+    IFF_TextChunk *message = IFF_createTextChunkFromText(TEST_ID_MESG, "everybody");
+    IFF_TextChunk *randomChunk = IFF_createTextChunkFromText(ID_RNDM, "Random chunk");
+    TEST_Conversation *conversation = createConversationWithHelloByeAndMessage(hello, bye, message, randomChunk);
+    IFF_List *list = createConversationList(sharedConversation, conversation);
+    TEST_Conversation *evaluatedConversation = TEST_evaluateConversation(conversation);
+
+    if(evaluatedConversation->chunksLength != 2)
+    {
+        fprintf(stderr, "The evaluated conversation should contain 2 arbitrary chunks, instead we have: %u\n", evaluatedConversation->chunksLength);
+        return FALSE;
+    }
+
+    if(evaluatedConversation->chunks[0] != (IFF_Chunk*)sharedRandomChunk)
+    {
+        fprintf(stderr, "chunks[0] should be a shared random chunk!\n");
+        return FALSE;
+    }
+
+    if(evaluatedConversation->chunks[1] != (IFF_Chunk*)randomChunk)
+    {
+        fprintf(stderr, "chunks[1] should be a random chunk!\n");
+        return FALSE;
+    }
+
+    if(evaluatedConversation->hello != hello)
+    {
+        fprintf(stderr, "Evaluated hello should refer to the non-shared hello chunk!\n");
+        return FALSE;
+    }
+
+    if(evaluatedConversation->bye != bye)
+    {
+        fprintf(stderr, "Evaluated bye should refer to the non-shared bye chunk!\n");
+        return FALSE;
+    }
+
+    if(evaluatedConversation->messagesLength != 2)
+    {
+        fprintf(stderr, "The evaluated conversation should contain 2 messages, instead we have: %u\n", evaluatedConversation->messagesLength);
+        return FALSE;
+    }
+
+    if(evaluatedConversation->messages[0] != sharedMessage)
+    {
+        fprintf(stderr, "messages[0] should be a shared message!\n");
+        return FALSE;
+    }
+
+    if(evaluatedConversation->messages[1] != message)
+    {
+        fprintf(stderr, "messages[1] should be a non-shared message!\n");
+        return FALSE;
+    }
+
+    TEST_freeEvaluatedConversation(evaluatedConversation);
+    TEST_free((IFF_Chunk*)list);
+
+    return TRUE;
+}
+
 int main(int argc, char *argv[])
 {
     if(testListWithSharedProperty() &&
         testListWithOverriddenProperty() &&
-        testListWithSharedMessages())
+        testListWithSharedMessages() &&
+        evaluateAndCheckConversation())
         return 0;
     else
         return 1;
