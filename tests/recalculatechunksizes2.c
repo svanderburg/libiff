@@ -19,68 +19,56 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "conversation.h"
 #include <stdlib.h>
-#include "iff.h"
-#include "chunk.h"
-#include "form.h"
-#include "cat.h"
-#include "rawchunk.h"
-#include "id.h"
+#include <textchunk.h>
+#include <iff.h>
+#include "test.h"
 
-#define ABCD_BYTES_SIZE 4
-
-#define ID_ABCD IFF_MAKEID('A', 'B', 'C', 'D')
-#define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')
-
-static IFF_RawChunk *createABCDChunk(void)
+static TEST_Hello *createHello(void)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createRawChunk(ID_ABCD, ABCD_BYTES_SIZE);
+    TEST_Hello *hello = TEST_createHello(TEST_HELO_DEFAULT_SIZE);
 
-    IFF_UByte *chunkData = rawChunk->chunkData;
-    chunkData[0] = 'A';
-    chunkData[1] = 'B';
-    chunkData[2] = 'C';
-    chunkData[3] = 'D';
+    hello->a = 'a';
+    hello->b = 'b';
+    hello->c = 1;
 
-    return rawChunk;
+    return hello;
 }
 
-static IFF_Chunk *createABCDForm(IFF_RawChunk *abcdChunk)
+static TEST_Conversation *createTestConversation(TEST_Hello *hello, IFF_TextChunk *message)
 {
-    IFF_Form *form = IFF_createEmptyForm(ID_TEST, NULL);
-    IFF_addChunkToForm(form, (IFF_Chunk*)abcdChunk);
-    return (IFF_Chunk*)form;
-}
+    TEST_Conversation *conversation = TEST_createConversation();
 
-static IFF_CAT *createABCDCAT(IFF_RawChunk *abcdChunk)
-{
-    IFF_Chunk *form = createABCDForm(abcdChunk);
-    IFF_CAT *cat = IFF_createEmptyCATWithContentsType(ID_TEST);
-    IFF_addChunkToCAT(cat, form);
-    return cat;
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)hello);
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)message);
+
+    return conversation;
 }
 
 int main(int argc, char *argv[])
 {
-    IFF_RawChunk *abcdChunk = createABCDChunk();
-    IFF_CAT *cat = createABCDCAT(abcdChunk);
     int status = 0;
     IFF_QualityLevel qualityLevel;
+    TEST_Hello *hello = createHello();
+    IFF_TextChunk *message1 = IFF_createTextChunkFromText(TEST_ID_MESG, "Message 1");
+    IFF_TextChunk *message2 = IFF_createTextChunkFromText(TEST_ID_MESG, "Message 2");
+    TEST_Conversation *conversation = createTestConversation(hello, message1);
 
-    /* Intentionally increase the size of the ABCD chunk */
+    /* Intentionally increase the size of the messages array without updating the chunk size */
+    conversation->messages = (IFF_TextChunk**)realloc(conversation->messages, (conversation->messagesLength + 1) * sizeof(IFF_TextChunk*));
+    conversation->messages[conversation->messagesLength] = message2;
+    conversation->messagesLength++;
 
-    abcdChunk->chunkData = (IFF_UByte*)realloc(abcdChunk->chunkData, (ABCD_BYTES_SIZE + 1) * sizeof(IFF_UByte));
-    abcdChunk->chunkSize++;
-
-    /* The IFF file should be invalid now as the form chunk size is too small */
-    if((qualityLevel = IFF_check((IFF_Chunk*)cat)) == IFF_QUALITY_RECOVERED)
+    /* The IFF file should be invalid now as the conversation chunk size is too small */
+    if((qualityLevel = TEST_check((IFF_Chunk*)conversation)) == IFF_QUALITY_RECOVERED)
     {
         /* Recalculate the chunk sizes */
-        IFF_recalculateChunkSizes((IFF_Chunk*)abcdChunk);
+        IFF_recalculateChunkSizes((IFF_Chunk*)conversation);
 
         /* Now the IFF file should be valid */
 
-        if((qualityLevel = IFF_check((IFF_Chunk*)cat)) != IFF_QUALITY_PERFECT)
+        if((qualityLevel = TEST_check((IFF_Chunk*)conversation)) != IFF_QUALITY_PERFECT)
         {
             fprintf(stderr, "The IFF file should be in state: %d, but is in: %d!\n", IFF_QUALITY_PERFECT, qualityLevel);
             status = 1;
@@ -92,7 +80,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    IFF_free((IFF_Chunk*)cat);
+    TEST_free((IFF_Chunk*)conversation);
 
     return status;
 }

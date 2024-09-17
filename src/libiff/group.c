@@ -443,8 +443,8 @@ static IFF_Long addGroupSubChunksSize(IFF_Group *group, IFF_Long chunkSize)
 void IFF_recalculateGroupChunkSize(IFF_Group *group)
 {
     group->chunkSize = IFF_ID_SIZE;
-    group->chunkSize = IFF_addActualGroupStructureSize(group, group->chunkSize);
     group->chunkSize = addGroupSubChunksSize(group, group->chunkSize);
+    group->chunkSize = IFF_addActualGroupStructureSize(group, group->chunkSize);
 }
 
 IFF_Bool IFF_searchLastChunkIndexInGroup(const IFF_Group *group, const IFF_ID chunkId, unsigned int *index)
