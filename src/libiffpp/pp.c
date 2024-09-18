@@ -40,7 +40,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
     if(IFF_checkCore(chunk, registry) < IFF_QUALITY_GARBAGE)
     {
         /* Print the file */
-        if(IFF_printCore(outputFilename, chunk, 0))
+        if(IFF_print(outputFilename, chunk, 0))
             status = 0;
         else
         {
@@ -52,7 +52,7 @@ int IFF_prettyPrint(const char *inputFilename, const char *outputFilename, const
         status = 1;
 
     /* Free the chunk structure */
-    IFF_freeCore(chunk);
+    IFF_free(chunk);
 
     return status;
 }

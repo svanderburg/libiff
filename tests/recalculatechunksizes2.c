@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    TEST_free((IFF_Chunk*)conversation);
+    IFF_free((IFF_Chunk*)conversation);
 
     return status;
 }

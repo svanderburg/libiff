@@ -21,19 +21,11 @@
 
 #ifndef __TEST_H
 #define __TEST_H
-#include "testregistry.h"
+#include "iffcore.h"
 #include "chunk.h"
 
 IFF_Chunk *TEST_parse(const char *filename, IFF_IOError **error);
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
-
-void TEST_free(IFF_Chunk *chunk);
-
 IFF_QualityLevel TEST_check(const IFF_Chunk *chunk);
-
-void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 #endif

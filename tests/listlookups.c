@@ -89,7 +89,7 @@ static IFF_Bool testListWithSharedProperty(void)
         return FALSE;
     }
 
-    TEST_free((IFF_Chunk*)list);
+    IFF_free((IFF_Chunk*)list);
 
     return TRUE;
 }
@@ -134,7 +134,7 @@ static IFF_Bool testListWithOverriddenProperty(void)
         return FALSE;
     }
 
-    TEST_free((IFF_Chunk*)list);
+    IFF_free((IFF_Chunk*)list);
 
     return TRUE;
 }
@@ -208,7 +208,7 @@ static IFF_Bool testListWithSharedMessages(void)
     }
 
     free(allMessages);
-    TEST_free((IFF_Chunk*)list);
+    IFF_free((IFF_Chunk*)list);
 
     return TRUE;
 }
@@ -295,7 +295,7 @@ static IFF_Bool evaluateAndCheckConversation(void)
     }
 
     TEST_freeEvaluatedConversation(evaluatedConversation);
-    TEST_free((IFF_Chunk*)list);
+    IFF_free((IFF_Chunk*)list);
 
     return TRUE;
 }

@@ -69,7 +69,7 @@ IFF_Chunk *IFF_parseCore(const char *filename, const IFF_Registry *registry, IFF
         return IFF_parseFileCore(filename, registry, error);
 }
 
-IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
+IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
 {
     IFF_AttributePath *attributePath = IFF_createAttributePath();
     IFF_Bool status = IFF_writeChunk(file, chunk, 0, attributePath, error);
@@ -80,7 +80,7 @@ IFF_Bool IFF_writeFdCore(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error
     return status;
 }
 
-IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
+IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
     FILE *file = fopen(filename, "wb");
 
@@ -91,21 +91,21 @@ IFF_Bool IFF_writeFileCore(const char *filename, const IFF_Chunk *chunk, IFF_IOE
     }
     else
     {
-        IFF_Bool status = IFF_writeFdCore(file, chunk, error);
+        IFF_Bool status = IFF_writeFd(file, chunk, error);
         fclose(file);
         return status;
     }
 }
 
-IFF_Bool IFF_writeCore(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
+IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
 {
     if(filename == NULL)
-        return IFF_writeFdCore(stdout, chunk, error);
+        return IFF_writeFd(stdout, chunk, error);
     else
-        return IFF_writeFileCore(filename, chunk, error);
+        return IFF_writeFile(filename, chunk, error);
 }
 
-void IFF_freeCore(IFF_Chunk *chunk)
+void IFF_free(IFF_Chunk *chunk)
 {
     IFF_freeChunk(chunk, 0);
 }
@@ -135,12 +135,12 @@ IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_Registry *regis
     return IFF_advancedCheckCore(chunk, registry, IFF_printCheckMessageOnStderr, NULL);
 }
 
-void IFF_printFdCore(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
+void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     IFF_printChunk(file, chunk, indentLevel, 0);
 }
 
-IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
+IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     FILE *file = fopen(filename, "wb");
 
@@ -148,34 +148,34 @@ IFF_Bool IFF_printFileCore(const char *filename, const IFF_Chunk *chunk, const u
         return FALSE;
     else
     {
-        IFF_printFdCore(file, chunk, indentLevel);
+        IFF_printFd(file, chunk, indentLevel);
         fclose(file);
         return TRUE;
     }
 }
 
-IFF_Bool IFF_printCore(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
+IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     if(filename == NULL)
     {
-        IFF_printFdCore(stdout, chunk, indentLevel);
+        IFF_printFd(stdout, chunk, indentLevel);
         return TRUE;
     }
     else
-        return IFF_printFileCore(filename, chunk, indentLevel);
+        return IFF_printFile(filename, chunk, indentLevel);
 }
 
-IFF_Bool IFF_compareCore(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
+IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     return IFF_compareChunk(chunk1, chunk2, 0);
 }
 
-IFF_Bool IFF_traverseCore(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
+IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
 {
     return IFF_traverseChunkHierarchy(chunk, 0, data, visitChunk);
 }
 
-void IFF_recalculateChunkSizesCore(IFF_Chunk *chunk)
+void IFF_recalculateChunkSizes(IFF_Chunk *chunk)
 {
     IFF_recalculateChunkHierarchySizes(chunk, 0);
 }

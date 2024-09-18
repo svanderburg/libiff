@@ -20,34 +20,14 @@
  */
 
 #include "test.h"
-#include "iffcore.h"
+#include "testregistry.h"
 
 IFF_Chunk *TEST_parse(const char *filename, IFF_IOError **error)
 {
     return IFF_parseCore(filename, &TEST_registry, error);
 }
 
-IFF_Bool TEST_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error)
-{
-    return IFF_writeCore(filename, chunk, error);
-}
-
-void TEST_free(IFF_Chunk *chunk)
-{
-    IFF_freeCore(chunk);
-}
-
 IFF_QualityLevel TEST_check(const IFF_Chunk *chunk)
 {
     return IFF_checkCore(chunk, &TEST_registry);
-}
-
-void TEST_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
-{
-    IFF_printFdCore(file, chunk, indentLevel);
-}
-
-IFF_Bool TEST_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
-{
-    return IFF_compareCore(chunk1, chunk2);
 }

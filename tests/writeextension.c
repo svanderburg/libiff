@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
     TEST_Conversation *conversation = IFF_createTestConversation();
     IFF_IOError *error = NULL;
-    int status = !TEST_write("extension.TEST", (IFF_Chunk*)conversation, &error);
+    int status = !IFF_write("extension.TEST", (IFF_Chunk*)conversation, &error);
 
     if(error != NULL)
     {
@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
         IFF_freeIOError(error);
     }
 
-    TEST_free((IFF_Chunk*)conversation);
+    IFF_free((IFF_Chunk*)conversation);
     return status;
 }

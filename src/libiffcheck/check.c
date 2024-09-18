@@ -49,7 +49,7 @@ int IFF_conformanceCheck(const char *filename, int minLevel, int maxLevel, const
     status = qualityLevel >= minLevel && qualityLevel <= maxLevel;
 
     /* Free the chunk structure */
-    IFF_freeCore(chunk);
+    IFF_free(chunk);
 
     return !status;
 }

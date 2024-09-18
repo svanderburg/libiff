@@ -21,6 +21,7 @@
 
 #ifndef __IFF_H
 #define __IFF_H
+#include "iffcore.h"
 #include "chunk.h"
 #include "error.h"
 
@@ -34,29 +35,9 @@ IFF_Chunk *IFF_parseFile(const char *filename, IFF_IOError **error);
 
 IFF_Chunk *IFF_parse(const char *filename, IFF_IOError **error);
 
-IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error);
-
-IFF_Bool IFF_writeFile(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
-
-IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **error);
-
-void IFF_free(IFF_Chunk *chunk);
-
 IFF_QualityLevel IFF_advancedCheck(const IFF_Chunk *chunk, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 IFF_QualityLevel IFF_check(const IFF_Chunk *chunk);
-
-void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel);
-
-IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
-
-IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
-
-void IFF_recalculateChunkSizes(IFF_Chunk *chunk);
 
 #ifdef __cplusplus
 }

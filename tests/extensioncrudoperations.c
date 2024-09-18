@@ -67,7 +67,7 @@ static IFF_Bool updateHelloChunkAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free(obsoleteChunk);
+    IFF_free(obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -92,7 +92,7 @@ static IFF_Bool removeHelloChunkAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free(obsoleteChunk);
+    IFF_free(obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -139,7 +139,7 @@ static IFF_Bool removeTwoHelloChunksAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free((IFF_Chunk*)obsoleteChunk);
+    IFF_free((IFF_Chunk*)obsoleteChunk);
 
     /* Check if the second removed chunk is the first added */
     obsoleteChunk = (TEST_Hello*)TEST_removeChunkFromConversation(conversation, TEST_ID_HELO);
@@ -150,7 +150,7 @@ static IFF_Bool removeTwoHelloChunksAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free((IFF_Chunk*)obsoleteChunk);
+    IFF_free((IFF_Chunk*)obsoleteChunk);
 
     /* Check if the quality is still perfect, because the parents' chunk sizes should all have been updated */
     qualityLevel = TEST_check((IFF_Chunk*)conversation);
@@ -196,7 +196,7 @@ static IFF_Bool updateMessageAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free(obsoleteChunk);
+    IFF_free(obsoleteChunk);
 
     return TRUE;
 }
@@ -211,7 +211,7 @@ static IFF_Bool removeMessageAndCheck(TEST_Conversation *conversation)
         return FALSE;
     }
 
-    TEST_free(obsoleteChunk);
+    IFF_free(obsoleteChunk);
 
     return TRUE;
 }
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
     else
         status = 1;
 
-    TEST_free((IFF_Chunk*)conversation);
+    IFF_free((IFF_Chunk*)conversation);
 
     return status;
 }

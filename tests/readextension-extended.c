@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     if(error == NULL)
     {
         TEST_Conversation *conversation = IFF_createTestConversation();
-        status = !TEST_compare(chunk, (IFF_Chunk*)conversation);
-        TEST_free((IFF_Chunk*)conversation);
+        status = !IFF_compare(chunk, (IFF_Chunk*)conversation);
+        IFF_free((IFF_Chunk*)conversation);
     }
     else
     {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         status = 1;
     }
 
-    TEST_free(chunk);
+    IFF_free(chunk);
 
     return status;
 }
