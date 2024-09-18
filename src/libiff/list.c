@@ -38,50 +38,46 @@ static IFF_GroupMember listStructureMembers[] = {
 static void initListContents(IFF_Group *group)
 {
     IFF_List *list = (IFF_List*)group;
+
     list->props = NULL;
     list->propsLength = 0;
 }
 
-static IFF_GroupMember *getGroupMemberByChunkId(const IFF_GroupStructure *groupStructure, const IFF_ID chunkId)
+typedef enum
+{
+    FIELD_INDEX_PROPS = 0
+}
+FieldIndex;
+
+static IFF_Bool mapChunkIdToFieldIndex(const IFF_ID chunkId, unsigned int *index)
 {
     if(chunkId == IFF_ID_PROP)
-        return &groupStructure->groupMembers[0];
+    {
+        *index = FIELD_INDEX_PROPS;
+        return TRUE;
+    }
     else
-        return NULL;
+        return FALSE;
 }
 
-static IFF_Chunk **getFieldPointerByChunkId(const IFF_Group *group, const IFF_ID chunkId)
+static IFF_Chunk **getFieldPointer(const IFF_Group *group, const unsigned index)
 {
     return NULL;
 }
 
-static IFF_Chunk ***getArrayFieldPointerByChunkId(IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength)
+static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned index, unsigned int **chunksLength)
 {
-    if(chunkId == IFF_ID_PROP)
+    if(index == 0)
     {
         IFF_List *list = (IFF_List*)group;
         *chunksLength = &list->propsLength;
         return (IFF_Chunk***)&list->props;
     }
     else
-        return NULL;
-}
-
-static IFF_Chunk *getChunkFromList(const IFF_Group *group, const unsigned int index)
-{
-    return NULL;
-}
-
-static IFF_Chunk **getChunksFromList(const IFF_Group *group, const unsigned int index, unsigned int *chunksLength)
-{
-    if(index == 0)
     {
-        const IFF_List *list = (const IFF_List*)group;
-        *chunksLength = list->propsLength;
-        return (IFF_Chunk**)list->props;
-    }
-    else
+        *chunksLength = 0;
         return NULL;
+    }
 }
 
 IFF_GroupStructure listStructure = {
@@ -89,11 +85,9 @@ IFF_GroupStructure listStructure = {
     1,
     listStructureMembers,
     initListContents,
-    getGroupMemberByChunkId,
-    getFieldPointerByChunkId,
-    getArrayFieldPointerByChunkId,
-    getChunkFromList,
-    getChunksFromList
+    mapChunkIdToFieldIndex,
+    getFieldPointer,
+    getArrayFieldPointer
 };
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)

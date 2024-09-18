@@ -24,112 +24,86 @@
 #include "form.h"
 #include "array.h"
 
-typedef enum
-{
-    CONVERSATION_FIELD_HELLO = 0,
-    CONVERSATION_FIELD_BYE = 1,
-    CONVERSATION_FIELD_MESSAGES = 2
-}
-FieldIndex;
-
-static void initConversationContents(IFF_Group *group)
-{
-    TEST_Conversation *conversation = (TEST_Conversation*)group;
-    conversation->hello = NULL;
-    conversation->bye = NULL;
-    conversation->messagesLength = 0;
-    conversation->messages = NULL;
-}
-
-static IFF_GroupMember *getGroupMemberByChunkId(const IFF_GroupStructure *groupStructure, const IFF_ID chunkId)
-{
-    switch(chunkId)
-    {
-        case TEST_ID_HELO:
-            return &groupStructure->groupMembers[CONVERSATION_FIELD_HELLO];
-        case TEST_ID_BYE:
-            return &groupStructure->groupMembers[CONVERSATION_FIELD_BYE];
-        case TEST_ID_MESG:
-            return &groupStructure->groupMembers[CONVERSATION_FIELD_MESSAGES];
-        default:
-            return NULL;
-    }
-}
-
-static IFF_Chunk **getFieldPointerByChunkId(const IFF_Group *group, const IFF_ID chunkId)
-{
-    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
-
-    switch(chunkId)
-    {
-        case TEST_ID_HELO:
-            return (IFF_Chunk**)&conversation->hello;
-        case TEST_ID_BYE:
-            return (IFF_Chunk**)&conversation->bye;
-        default:
-            return NULL;
-    }
-}
-
-static IFF_Chunk ***getArrayFieldPointerByChunkId(IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength)
-{
-    TEST_Conversation *conversation = (TEST_Conversation*)group;
-
-    switch(chunkId)
-    {
-        case TEST_ID_MESG:
-            *chunksLength = &conversation->messagesLength;
-            return (IFF_Chunk***)&conversation->messages;
-        default:
-            return NULL;
-    }
-}
-
-static IFF_Chunk *getChunkFromConversation(const IFF_Group *group, const unsigned int index)
-{
-    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
-
-    switch(index)
-    {
-        case CONVERSATION_FIELD_HELLO:
-            return (IFF_Chunk*)conversation->hello;
-        case CONVERSATION_FIELD_BYE:
-            return (IFF_Chunk*)conversation->bye;
-        default:
-            return NULL;
-    }
-}
-
-static IFF_Chunk **getChunksFromConversation(const IFF_Group *group, const unsigned int index, unsigned int *chunksLength)
-{
-    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
-
-    switch(index)
-    {
-        case CONVERSATION_FIELD_MESSAGES:
-            *chunksLength = conversation->messagesLength;
-            return (IFF_Chunk**)conversation->messages;
-        default:
-            return NULL;
-    }
-}
-
 static IFF_GroupMember groupMembers[] = {
     { TEST_ID_HELO, "hello", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_BYE, "bye", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_MESG, "messages", IFF_GROUP_MEMBER_MULTIPLE },
 };
 
+static void initConversationContents(IFF_Group *group)
+{
+    TEST_Conversation *conversation = (TEST_Conversation*)group;
+
+    conversation->hello = NULL;
+    conversation->bye = NULL;
+    conversation->messagesLength = 0;
+    conversation->messages = NULL;
+}
+
+typedef enum
+{
+    FIELD_INDEX_HELLO = 0,
+    FIELD_INDEX_BYE = 1,
+    FIELD_INDEX_MESSAGES = 2
+}
+FieldIndex;
+
+static IFF_Bool mapChunkIdToFieldIndex(const IFF_ID chunkId, unsigned int *index)
+{
+    switch(chunkId)
+    {
+        case TEST_ID_HELO:
+            *index = FIELD_INDEX_HELLO;
+            return TRUE;
+        case TEST_ID_BYE:
+            *index = FIELD_INDEX_BYE;
+            return TRUE;
+        case TEST_ID_MESG:
+            *index = FIELD_INDEX_MESSAGES;
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+static IFF_Chunk **getFieldPointer(const IFF_Group *group, const unsigned int index)
+{
+    const TEST_Conversation *conversation = (const TEST_Conversation*)group;
+
+    switch(index)
+    {
+        case FIELD_INDEX_HELLO:
+            return (IFF_Chunk**)&conversation->hello;
+        case FIELD_INDEX_BYE:
+            return (IFF_Chunk**)&conversation->bye;
+        default:
+            return NULL;
+    }
+}
+
+static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned int index, unsigned int **chunksLength)
+{
+    TEST_Conversation *conversation = (TEST_Conversation*)group;
+
+    switch(index)
+    {
+        case FIELD_INDEX_MESSAGES:
+            *chunksLength = &conversation->messagesLength;
+            return (IFF_Chunk***)&conversation->messages;
+        default:
+            *chunksLength = 0;
+            return NULL;
+    }
+}
+
 IFF_GroupStructure TEST_conversationStructure = {
     sizeof(TEST_Conversation),
     TEST_NUM_OF_CONVERSATION_GROUP_MEMBERS,
     groupMembers,
     initConversationContents,
-    getGroupMemberByChunkId,
-    getFieldPointerByChunkId,
-    getArrayFieldPointerByChunkId,
-    getChunkFromConversation,
-    getChunksFromConversation
+    mapChunkIdToFieldIndex,
+    getFieldPointer,
+    getArrayFieldPointer
 };
 
 TEST_Conversation *TEST_createConversation(void)
@@ -179,15 +153,15 @@ IFF_Chunk *TEST_removeChunkFromConversationByIndex(TEST_Conversation *conversati
 
 TEST_Hello *TEST_getHello(const TEST_Conversation *conversation)
 {
-    return (TEST_Hello*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_HELLO);
+    return (TEST_Hello*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, FIELD_INDEX_HELLO);
 }
 
 TEST_Bye *TEST_getBye(const TEST_Conversation *conversation)
 {
-    return (TEST_Bye*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_BYE);
+    return (TEST_Bye*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, FIELD_INDEX_BYE);
 }
 
 IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, unsigned int *messagesLength)
 {
-    return (IFF_TextChunk**)IFF_getPropertiesFromGroupStructure((const IFF_Group*)conversation, CONVERSATION_FIELD_MESSAGES, messagesLength);
+    return (IFF_TextChunk**)IFF_getPropertiesFromGroupStructure((const IFF_Group*)conversation, FIELD_INDEX_MESSAGES, messagesLength);
 }

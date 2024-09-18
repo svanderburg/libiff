@@ -34,15 +34,11 @@ typedef struct IFF_GroupStructure IFF_GroupStructure;
 
 typedef void (*IFF_initGroupContentsFunction) (IFF_Group *group);
 
-typedef IFF_GroupMember *(*IFF_getGroupMemberByChunkIdFunction) (const IFF_GroupStructure *groupStructure, const IFF_ID chunkId);
+typedef IFF_Bool (*IFF_mapChunkIdToFieldIndexFunction) (const IFF_ID chunkId, unsigned int *index);
 
-typedef IFF_Chunk **(*IFF_getFieldPointerByChunkIdFunction) (const IFF_Group *group, const IFF_ID chunkId);
+typedef IFF_Chunk **(*IFF_getFieldPointerFunction) (const IFF_Group *group, const unsigned int index);
 
-typedef IFF_Chunk ***(*IFF_getArrayFieldPointerByChunkIdFunction) (IFF_Group *group, const IFF_ID chunkId, unsigned int **chunksLength);
-
-typedef IFF_Chunk *(*IFF_getChunkFromGroupFunction) (const IFF_Group *group, const unsigned int index);
-
-typedef IFF_Chunk **(*IFF_getChunksFromGroupFunction) (const IFF_Group *group, const unsigned int index, unsigned int *chunksLength);
+typedef IFF_Chunk ***(*IFF_getArrayFieldPointerFunction) (const IFF_Group *group, const unsigned int index, unsigned int **chunksLength);
 
 typedef enum
 {
@@ -64,11 +60,9 @@ struct IFF_GroupStructure
     unsigned int groupMembersLength;
     IFF_GroupMember *groupMembers;
     IFF_initGroupContentsFunction initGroupContents;
-    IFF_getGroupMemberByChunkIdFunction getGroupMemberByChunkId;
-    IFF_getFieldPointerByChunkIdFunction getFieldPointerByChunkId;
-    IFF_getArrayFieldPointerByChunkIdFunction getArrayFieldPointerByChunkId;
-    IFF_getChunkFromGroupFunction getChunkFromGroup;
-    IFF_getChunksFromGroupFunction getChunksFromGroup;
+    IFF_mapChunkIdToFieldIndexFunction mapChunkIdToFieldIndex;
+    IFF_getFieldPointerFunction getFieldPointer;
+    IFF_getArrayFieldPointerFunction getArrayFieldPointer;
 };
 
 #ifdef __cplusplus
