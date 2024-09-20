@@ -71,7 +71,7 @@ IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *
     return readChunkBody(file, chunkId, chunkSize, scopeId, registry, attributePath, error);
 }
 
-static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error)
+static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     IFF_Long bytesProcessed = 0;
 
@@ -80,14 +80,14 @@ static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, const IFF_ID 
         && IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId, attributePath, error);
 }
 
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
     return IFF_writeId(file, chunk->chunkId, attributePath, "chunkId", chunk->chunkId, error)
         && IFF_writeLong(file, chunk->chunkSize, attributePath, "chunkSize", chunk->chunkId, error)
-        && writeChunkBody(file, chunk, scopeId, attributePath, error);
+        && writeChunkBody(file, chunk, attributePath, error);
 }
 
-IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
 
@@ -97,7 +97,7 @@ IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IF
     return qualityLevel;
 }
 
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId)
+void IFF_freeChunk(IFF_Chunk *chunk)
 {
     if(chunk != NULL)
     {
@@ -111,7 +111,7 @@ static void printChunkIdField(FILE *file, const unsigned int indentLevel, const 
     IFF_printFirstField(file, indentLevel, attributeName, &chunkId, IFF_printIdValue);
 }
 
-void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId)
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     fputs("{\n", file);
     printChunkIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
@@ -121,7 +121,7 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
     IFF_printIndent(file, indentLevel, "}");
 }
 
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId)
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
     if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
         return chunk1->chunkInterface->compareChunkContents(chunk1, chunk2);
@@ -129,7 +129,7 @@ IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, cons
         return FALSE;
 }
 
-IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk)
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
 {
     if(chunk->chunkInterface->traverseChunkHierarchy == NULL)
         return TRUE;
@@ -137,14 +137,14 @@ IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void
         return chunk->chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk);
 }
 
-void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId)
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk)
 {
     if(chunk->chunkInterface->recalculateChunkSize != NULL)
         chunk->chunkInterface->recalculateChunkSize(chunk);
 
     /* If the given chunk has a parent, recursively update these as well */
     if(chunk->parent != NULL)
-        IFF_recalculateChunkHierarchySizes(chunk->parent, scopeId);
+        IFF_recalculateChunkHierarchySizes(chunk->parent);
 }
 
 IFF_Long IFF_computeActualChunkSize(const IFF_Chunk *chunk)

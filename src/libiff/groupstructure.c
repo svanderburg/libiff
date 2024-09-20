@@ -325,7 +325,7 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_Attribu
 
                 if(chunk != NULL)
                 {
-                    if(!IFF_writeChunk(file, chunk, group->groupType, attributePath, error))
+                    if(!IFF_writeChunk(file, chunk, attributePath, error))
                         return FALSE;
 
                     /* Increase the bytes processed counter */
@@ -337,7 +337,7 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_Attribu
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                if(!IFF_writeChunksArray(file, chunks, chunksLength, group->groupType, attributePath, bytesProcessed, error))
+                if(!IFF_writeChunksArray(file, chunks, chunksLength, attributePath, bytesProcessed, error))
                     return FALSE;
             }
 
@@ -397,14 +397,14 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, IFF_AttributePa
                 IFF_Chunk *chunk = getFieldValue(group, i);
 
                 if(chunk != NULL)
-                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, group->groupType, attributePath, printCheckMessage, data));
+                    qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, attributePath, printCheckMessage, data));
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunksArray(chunks, chunksLength, group->groupType, attributePath, printCheckMessage, data));
+                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunksArray(chunks, chunksLength, attributePath, printCheckMessage, data));
             }
 
             IFF_unvisitAttribute(attributePath);
@@ -429,14 +429,14 @@ void IFF_clearGroupStructure(IFF_Group *group)
                 IFF_Chunk *chunk = getFieldValue(group, i);
 
                 if(chunk != NULL)
-                    IFF_freeChunk(chunk, group->groupType);
+                    IFF_freeChunk(chunk);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                IFF_freeChunksArray(chunks, chunksLength, group->groupType);
+                IFF_freeChunksArray(chunks, chunksLength);
             }
         }
     }
@@ -465,14 +465,14 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
                 if(chunk == NULL)
                     fprintf(file, "NULL");
                 else
-                    IFF_printChunk(file, chunk, indentLevel, group->groupType);
+                    IFF_printChunk(file, chunk, indentLevel);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                IFF_printChunksArray(file, chunks, chunksLength, indentLevel, group->groupType);
+                IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
             }
         }
     }
@@ -497,7 +497,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
 
                 if(chunk1 != NULL && chunk2 != NULL)
                 {
-                    if(!IFF_compareChunk(chunk1, chunk2, group1->groupType))
+                    if(!IFF_compareChunk(chunk1, chunk2))
                         return FALSE;
                 }
             }
@@ -507,7 +507,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
                 IFF_Chunk **chunks1 = getArrayFieldValue(group1, i, &chunks1Length);
                 IFF_Chunk **chunks2 = getArrayFieldValue(group2, i, &chunks2Length);
 
-                if(!IFF_compareChunksArray(chunks1, chunks1Length, chunks2, chunks2Length, group1->groupType))
+                if(!IFF_compareChunksArray(chunks1, chunks1Length, chunks2, chunks2Length))
                     return FALSE;
             }
         }
@@ -532,7 +532,7 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data,
 
                 if(chunk != NULL)
                 {
-                    if(!IFF_traverseChunkHierarchy(chunk, group->groupType, data, visitChunk))
+                    if(!IFF_traverseChunkHierarchy(chunk, data, visitChunk))
                         return FALSE;
                 }
             }
@@ -541,7 +541,7 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data,
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                if(!IFF_traverseChunksArray(chunks, chunksLength, group->groupType, data, visitChunk))
+                if(!IFF_traverseChunksArray(chunks, chunksLength, data, visitChunk))
                     return FALSE;
             }
         }

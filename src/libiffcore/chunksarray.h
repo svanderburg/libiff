@@ -39,17 +39,17 @@ IFF_Chunk **IFF_removeChunkFromChunksArrayByIndex(IFF_Chunk **chunks, unsigned i
 
 IFF_Chunk **IFF_appendChunksArrayToChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength);
 
-IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId);
+void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength);
 
-void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int indentLevel, const IFF_ID scopeId);
+void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int indentLevel);
 
-IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1Length, IFF_Chunk **chunks2, const unsigned int chunks2Length, const IFF_ID scopeId);
+IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1Length, IFF_Chunk **chunks2, const unsigned int chunks2Length);
 
-IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk);
+IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, void *data, IFF_visitChunkFunction visitChunk);
 
 IFF_Long IFF_addChunksArraySize(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_Long chunkSize);
 

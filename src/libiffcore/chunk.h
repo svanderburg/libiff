@@ -79,19 +79,17 @@ IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *
  *
  * @param file File descriptor of the file
  * @param chunk A chunk hierarchy representing an IFF file
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @return TRUE if the file has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_IOError **error);
+IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error);
 
 /**
  * Checks whether a chunk hierarchy conforms to the IFF specification.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @return TRUE if the IFF file conforms to the IFF specification, else FALSE
  */
-IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
+IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 /**
  * Frees an IFF chunk hierarchy from memory.
@@ -99,45 +97,41 @@ IFF_QualityLevel IFF_checkChunk(const IFF_Chunk *chunk, const IFF_ID scopeId, IF
  * @param chunk A chunk hierarchy representing an IFF file
  * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  */
-void IFF_freeChunk(IFF_Chunk *chunk, const IFF_ID scopeId);
+void IFF_freeChunk(IFF_Chunk *chunk);
 
 /**
  * Displays a textual representation of an IFF chunk hierarchy on the standard output.
  *
  * @param chunk A chunk hierarchy representing an IFF file
  * @param indentLevel Indent level of the textual representation
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  */
-void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel, const IFF_ID scopeId);
+void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel);
 
 /**
  * Checks whether two given chunk hierarchies are equal.
  *
  * @param chunk1 Chunk hierarchy to compare
  * @param chunk2 Chunk hierarchy to compare
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @return TRUE if the given chunk hierarchies are equal, else FALSE
  */
-IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2, const IFF_ID scopeId);
+IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2);
 
 /**
  * Traverses over the chunk and its sub chunks, invoking a visitor function for each chunk that it encounters
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  * @param data An arbitrary data structure propagated to the visitor function
  * @param visitChunk Function that gets invoked for each chunk that is encountered
  * @return TRUE if the entire chunk hierarchy was traversed, else FALSE
  */
-IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk);
+IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk);
 
 /**
  * Recalculates the chunk size of the given chunk and recursively updates the chunk sizes of the parent group chunks.
  *
  * @param chunk A chunk hierarchy representing an IFF file
- * @param scopeId Specifies the ID of the scope of the chunk. 0 is used to force the global scope.
  */
-void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk, const IFF_ID scopeId);
+void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk);
 
 /**
  * Computes how much memory a chunk really needs. The chunkSize field of a chunk only indicates how many bytes its contents is.

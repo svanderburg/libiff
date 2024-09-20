@@ -72,7 +72,7 @@ IFF_Chunk *IFF_parseCore(const char *filename, const IFF_Registry *registry, IFF
 IFF_Bool IFF_writeFd(FILE *file, const IFF_Chunk *chunk, IFF_IOError **error)
 {
     IFF_AttributePath *attributePath = IFF_createAttributePath();
-    IFF_Bool status = IFF_writeChunk(file, chunk, 0, attributePath, error);
+    IFF_Bool status = IFF_writeChunk(file, chunk, attributePath, error);
 
     if(*error == NULL)
         IFF_freeAttributePath(attributePath);
@@ -107,7 +107,7 @@ IFF_Bool IFF_write(const char *filename, const IFF_Chunk *chunk, IFF_IOError **e
 
 void IFF_free(IFF_Chunk *chunk)
 {
-    IFF_freeChunk(chunk, 0);
+    IFF_freeChunk(chunk);
 }
 
 IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_Registry *registry, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -123,7 +123,7 @@ IFF_QualityLevel IFF_advancedCheckCore(const IFF_Chunk *chunk, const IFF_Registr
     else
     {
         qualityLevel = registry->checkMainChunk(chunk, attributePath, printCheckMessage, data);
-        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, 0, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunk, attributePath, printCheckMessage, data));
     }
 
     IFF_freeAttributePath(attributePath);
@@ -137,7 +137,7 @@ IFF_QualityLevel IFF_checkCore(const IFF_Chunk *chunk, const IFF_Registry *regis
 
 void IFF_printFd(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printChunk(file, chunk, indentLevel, 0);
+    IFF_printChunk(file, chunk, indentLevel);
 }
 
 IFF_Bool IFF_printFile(const char *filename, const IFF_Chunk *chunk, const unsigned int indentLevel)
@@ -167,15 +167,15 @@ IFF_Bool IFF_print(const char *filename, const IFF_Chunk *chunk, const unsigned 
 
 IFF_Bool IFF_compare(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    return IFF_compareChunk(chunk1, chunk2, 0);
+    return IFF_compareChunk(chunk1, chunk2);
 }
 
 IFF_Bool IFF_traverse(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
 {
-    return IFF_traverseChunkHierarchy(chunk, 0, data, visitChunk);
+    return IFF_traverseChunkHierarchy(chunk, data, visitChunk);
 }
 
 void IFF_recalculateChunkSizes(IFF_Chunk *chunk)
 {
-    IFF_recalculateChunkHierarchySizes(chunk, 0);
+    IFF_recalculateChunkHierarchySizes(chunk);
 }

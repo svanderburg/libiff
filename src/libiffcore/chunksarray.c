@@ -44,7 +44,7 @@ IFF_Chunk **IFF_appendChunksArrayToChunksArray(IFF_Chunk **chunks, const unsigne
     return (IFF_Chunk**)IFF_appendPointerArrayToPointerArray((void**)chunks, chunksLength, (void**)appendChunks, appendChunksLength, resultChunksLength);
 }
 
-IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -54,7 +54,7 @@ IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int
 
         IFF_visitAttributeByIndex(attributePath, i);
 
-        if(!IFF_writeChunk(file, chunk, scopeId, attributePath, error))
+        if(!IFF_writeChunk(file, chunk, attributePath, error))
             return FALSE;
 
         /* Increase the bytes processed counter */
@@ -66,7 +66,7 @@ IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int
     return TRUE;
 }
 
-IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
     unsigned int i;
@@ -74,24 +74,24 @@ IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chu
     for(i = 0; i < chunksLength; i++)
     {
         IFF_visitAttributeByIndex(attributePath, i);
-        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunks[i], scopeId, attributePath, printCheckMessage, data));
+        qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunk(chunks[i], attributePath, printCheckMessage, data));
         IFF_unvisitAttribute(attributePath);
     }
 
     return qualityLevel;
 }
 
-void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId)
+void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength)
 {
     unsigned int i;
 
     for(i = 0; i < chunksLength; i++)
-        IFF_freeChunk(chunks[i], scopeId);
+        IFF_freeChunk(chunks[i]);
 
     free(chunks);
 }
 
-void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int indentLevel, const IFF_ID scopeId)
+void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int indentLevel)
 {
     unsigned int i;
 
@@ -103,14 +103,14 @@ void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chu
             fputs(",\n", file);
 
         IFF_printIndent(file, indentLevel + 1, "");
-        IFF_printChunk(file, (const IFF_Chunk*)chunks[i], indentLevel + 1, scopeId);
+        IFF_printChunk(file, (const IFF_Chunk*)chunks[i], indentLevel + 1);
     }
 
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }
 
-IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1Length, IFF_Chunk **chunks2, const unsigned int chunks2Length, const IFF_ID scopeId)
+IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1Length, IFF_Chunk **chunks2, const unsigned int chunks2Length)
 {
     if(chunks1Length == chunks2Length)
     {
@@ -118,7 +118,7 @@ IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1L
 
         for(i = 0; i < chunks1Length; i++)
         {
-            if(!IFF_compareChunk(chunks1[i], chunks2[i], scopeId))
+            if(!IFF_compareChunk(chunks1[i], chunks2[i]))
                 return FALSE;
         }
 
@@ -128,13 +128,13 @@ IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1L
         return FALSE;
 }
 
-IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_ID scopeId, void *data, IFF_visitChunkFunction visitChunk)
+IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, void *data, IFF_visitChunkFunction visitChunk)
 {
     unsigned int i;
 
     for(i = 0; i < chunksLength; i++)
     {
-        if(!IFF_traverseChunkHierarchy(chunks[i], scopeId, data, visitChunk))
+        if(!IFF_traverseChunkHierarchy(chunks[i], data, visitChunk))
             return FALSE;
     }
 
