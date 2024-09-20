@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include "array.h"
 #include "chunksarray.h"
+#include "field.h"
 #include "util.h"
 
 static IFF_Chunk *getFieldValue(const IFF_Group *group, const unsigned int index)
@@ -456,23 +457,18 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
                 fprintf(file, ",");
 
             fprintf(file, "\n");
-            IFF_printIndent(file, indentLevel, ".%s = ", groupMember->attributeName);
 
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = getFieldValue(group, i);
-
-                if(chunk == NULL)
-                    fprintf(file, "NULL");
-                else
-                    IFF_printChunk(file, chunk, indentLevel);
+                IFF_printChunkField(file, indentLevel, groupMember->attributeName, chunk);
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
-                IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
+                IFF_printChunksArrayField(file, indentLevel, groupMember->attributeName, chunks, chunksLength);
             }
         }
     }

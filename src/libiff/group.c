@@ -315,23 +315,12 @@ static void printGroupType(FILE *file, const char *groupTypeName, const IFF_ID g
     IFF_printIdField(file, indentLevel, groupTypeName, groupType);
 }
 
-void IFF_printChunksArrayField(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    const IFF_Group *group = (const IFF_Group*)value;
-
-    IFF_printChunksArray(file, group->chunks, group->chunksLength, indentLevel);
-}
-
-static void printGroupSubChunks(FILE *file, const IFF_Group *group, const unsigned int indentLevel)
-{
-    IFF_printField(file, indentLevel, "chunks", group, IFF_printChunksArrayField);
-}
-
 void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName)
 {
     printGroupType(file, groupTypeName, group->groupType, indentLevel);
     IFF_printGroupStructure(file, group, indentLevel);
-    printGroupSubChunks(file, group, indentLevel);
+    fputs(",\n", file);
+    IFF_printChunksArrayField(file, indentLevel, "chunks", group->chunks, group->chunksLength);
 }
 
 IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2)

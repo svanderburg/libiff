@@ -185,8 +185,6 @@ IFF_QualityLevel IFF_checkGroupContents(const IFF_Group *group, char *groupTypeN
  */
 void IFF_clearGroupContents(IFF_Group *group);
 
-void IFF_printChunksArrayField(FILE *file, const void *value, const unsigned int indentLevel);
-
 /**
  * Displays a textual representation of the group chunk and its sub chunks on the standard output.
  *

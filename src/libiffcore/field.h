@@ -92,6 +92,10 @@ void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *
 
 void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID value);
 
+void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk);
+
+void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength);
+
 #ifdef __cplusplus
 }
 #endif

@@ -23,6 +23,7 @@
 #include "value.h"
 #include "id.h"
 #include "util.h"
+#include "chunksarray.h"
 
 IFF_Bool IFF_deriveSuccess(const IFF_FieldStatus status)
 {
@@ -219,9 +220,14 @@ IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk
         return IFF_FIELD_FAILURE;
 }
 
-void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue)
+static void printAttributeName(FILE *file, const unsigned int indentLevel, const char *attributeName)
 {
     IFF_printIndent(file, indentLevel, ".%s = ", attributeName);
+}
+
+void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue)
+{
+    printAttributeName(file, indentLevel, attributeName);
     printValue(file, value, indentLevel);
 }
 
@@ -269,4 +275,20 @@ void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *
 void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID value)
 {
     IFF_printField(file, indentLevel, attributeName, &value, IFF_printIdValue);
+}
+
+void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk)
+{
+    printAttributeName(file, indentLevel, attributeName);
+
+    if(chunk == NULL)
+        fprintf(stderr, "NULL");
+    else
+        IFF_printChunk(file, chunk, indentLevel);
+}
+
+void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength)
+{
+    printAttributeName(file, indentLevel, attributeName);
+    IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
 }
