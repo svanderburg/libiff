@@ -20,7 +20,7 @@
  */
 
 #include "field.h"
-#include "io.h"
+#include "value.h"
 #include "id.h"
 #include "util.h"
 
@@ -217,63 +217,6 @@ IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk
     }
     else
         return IFF_FIELD_FAILURE;
-}
-
-void IFF_printCharValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "'%c'", *((const IFF_UByte*)value));
-}
-
-void IFF_printUByteValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "(UBYTE)%uU", *((const IFF_UByte*)value));
-}
-
-void IFF_printUByteHex(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    const IFF_UByte byte = *((const IFF_UByte*)value);
-
-    fputs("0x", file);
-
-    /* Print 0 prefix for small numbers */
-
-    if(byte <= 0xf)
-        fputs("0", file);
-
-    fprintf(file, "%x", byte);
-}
-
-void IFF_printByteValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "(BYTE)%d", *((const IFF_Byte*)value));
-}
-
-void IFF_printUWordValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "(UWORD)%uU", *((const IFF_UWord*)value));
-}
-
-void IFF_printWordValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "(WORD)%d", *((const IFF_Word*)value));
-}
-
-void IFF_printULongValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "%uU", *((const IFF_ULong*)value));
-}
-
-void IFF_printLongValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    fprintf(file, "%d", *((const IFF_Long*)value));
-}
-
-void IFF_printIdValue(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    const IFF_ID *idValue = (const IFF_ID*)value;
-    IFF_ID2 value2;
-    IFF_idToString(*idValue, value2);
-    fprintf(file, "\"%.4s\"", value2);
 }
 
 void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue)

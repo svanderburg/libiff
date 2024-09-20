@@ -21,7 +21,7 @@
 
 #include "id.h"
 #include <string.h>
-#include "io.h"
+#include "value.h"
 
 IFF_Bool IFF_readId(FILE *file, IFF_ID *id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
@@ -68,4 +68,12 @@ IFF_QualityLevel IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, 
     }
 
     return IFF_QUALITY_PERFECT;
+}
+
+void IFF_printIdValue(FILE *file, const void *value, const unsigned int indentLevel)
+{
+    const IFF_ID *idValue = (const IFF_ID*)value;
+    IFF_ID2 value2;
+    IFF_idToString(*idValue, value2);
+    fprintf(file, "\"%.4s\"", value2);
 }

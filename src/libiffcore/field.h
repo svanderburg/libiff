@@ -72,24 +72,6 @@ IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chun
 
 IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-void IFF_printCharValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printUByteValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printUByteHex(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printByteValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printUWordValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printWordValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printULongValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printLongValue(FILE *file, const void *value, const unsigned int indentLevel);
-
-void IFF_printIdValue(FILE *file, const void *value, const unsigned int indentLevel);
-
 void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue);
 
 void IFF_printField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue);

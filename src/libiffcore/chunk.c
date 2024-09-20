@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "io.h"
+#include "value.h"
 #include "id.h"
 #include "util.h"
 #include "error.h"
