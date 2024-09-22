@@ -29,7 +29,7 @@
 #include "prop.h"
 #include "field.h"
 #include "util.h"
-#include "array.h"
+#include "pointerarray.h"
 #include "chunksarray.h"
 
 IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface)
@@ -48,8 +48,7 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const
         group->chunks = NULL;
         group->groupStructure = groupStructure;
 
-        if(groupStructure != NULL)
-            groupStructure->initGroupContents(group);
+        IFF_initGroupStructure(group);
     }
 
     return group;

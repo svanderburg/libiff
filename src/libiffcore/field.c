@@ -20,9 +20,9 @@
  */
 
 #include "field.h"
-#include "value.h"
 #include "id.h"
 #include "util.h"
+#include "array.h"
 #include "chunksarray.h"
 
 IFF_Bool IFF_deriveSuccess(const IFF_FieldStatus status)
@@ -175,6 +175,7 @@ IFF_FieldStatus IFF_readLongField(FILE *file, IFF_Long *value, const IFF_Chunk *
         return IFF_FIELD_FAILURE;
 }
 
+
 IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Long value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     size_t fieldSize = sizeof(IFF_Long);
@@ -212,6 +213,36 @@ IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk
     if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
     else if(IFF_writeId(file, value, attributePath, attributeName, chunk->chunkId, error))
+    {
+        increaseBytesProcessed(bytesProcessed, fieldSize);
+        return IFF_FIELD_MORE;
+    }
+    else
+        return IFF_FIELD_FAILURE;
+}
+
+IFF_FieldStatus IFF_readUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    size_t fieldSize = length * sizeof(IFF_UByte);
+
+    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+        return IFF_FIELD_LAST;
+    else if(IFF_readUByteArray(file, ubyteArray, length, attributePath, attributeName, chunk->chunkId, error))
+    {
+        increaseBytesProcessed(bytesProcessed, fieldSize);
+        return IFF_FIELD_MORE;
+    }
+    else
+        return IFF_FIELD_FAILURE;
+}
+
+IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    size_t fieldSize = length * sizeof(IFF_UByte);
+
+    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+        return IFF_FIELD_LAST;
+    else if(IFF_writeUByteArray(file, ubyteArray, length, attributePath, attributeName, chunk->chunkId, error))
     {
         increaseBytesProcessed(bytesProcessed, fieldSize);
         return IFF_FIELD_MORE;
@@ -279,16 +310,29 @@ void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *at
 
 void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk)
 {
-    printAttributeName(file, indentLevel, attributeName);
-
-    if(chunk == NULL)
-        fprintf(stderr, "NULL");
-    else
+    if(chunk != NULL)
+    {
+        printAttributeName(file, indentLevel, attributeName);
         IFF_printChunk(file, chunk, indentLevel);
+    }
 }
 
 void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength)
 {
     printAttributeName(file, indentLevel, attributeName);
     IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
+}
+
+void IFF_printUByteArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue)
+{
+    fputs(",\n", file);
+    printAttributeName(file, indentLevel, attributeName);
+    IFF_printUByteValueArray(file, indentLevel, array, arrayLength, elementsPerRow, printByteValue);
+}
+
+void IFF_printTextField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength)
+{
+    fputs(",\n", file);
+    printAttributeName(file, indentLevel, attributeName);
+    IFF_printText(file, indentLevel, array, arrayLength);
 }

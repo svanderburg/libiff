@@ -32,8 +32,6 @@ typedef struct IFF_GroupStructure IFF_GroupStructure;
 #include "error.h"
 #include "registry.h"
 
-typedef void (*IFF_initGroupContentsFunction) (IFF_Group *group);
-
 typedef IFF_Bool (*IFF_mapChunkIdToFieldIndexFunction) (const IFF_ID chunkId, unsigned int *index);
 
 typedef IFF_Chunk **(*IFF_getFieldPointerFunction) (const IFF_Group *group, const unsigned int index);
@@ -59,7 +57,6 @@ struct IFF_GroupStructure
     unsigned int groupSize;
     unsigned int groupMembersLength;
     IFF_GroupMember *groupMembers;
-    IFF_initGroupContentsFunction initGroupContents;
     IFF_mapChunkIdToFieldIndexFunction mapChunkIdToFieldIndex;
     IFF_getFieldPointerFunction getFieldPointer;
     IFF_getArrayFieldPointerFunction getArrayFieldPointer;
@@ -86,6 +83,8 @@ IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const un
 void IFF_evaluateGroupStructure(const IFF_Group *group, IFF_Group *evaluatedGroup);
 
 void IFF_freeEvaluatedGroupStructure(IFF_Group *evaluatedGroup);
+
+void IFF_initGroupStructure(IFF_Group *group);
 
 IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

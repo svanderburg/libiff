@@ -28,7 +28,7 @@
 #include "cat.h"
 #include "io.h"
 #include "iff.h"
-#include "array.h"
+#include "pointerarray.h"
 #include "formregistry.h"
 
 #define FORM_GROUPTYPENAME "formType"

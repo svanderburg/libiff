@@ -74,10 +74,8 @@ IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF
 
     if(rawChunk != NULL)
     {
-        if(fread(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
-            *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
-        else
-            *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
+        if(IFF_readUByteArrayField(file, rawChunk->chunkData, rawChunk->chunkSize, (const IFF_Chunk*)rawChunk, attributePath, "chunkData", bytesProcessed, error) == IFF_FIELD_MORE)
+            ;
     }
 
     return (IFF_Chunk*)rawChunk;
@@ -86,17 +84,12 @@ IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF
 IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+    IFF_FieldStatus status;
 
-    if(fwrite(rawChunk->chunkData, sizeof(IFF_UByte), rawChunk->chunkSize, file) < rawChunk->chunkSize)
-    {
-        *error = IFF_createDataIOError(file, rawChunk->chunkSize, attributePath, "chunkData", "raw data", rawChunk->chunkId);
-        return FALSE;
-    }
-    else
-    {
-        *bytesProcessed = *bytesProcessed + rawChunk->chunkSize;
-        return TRUE;
-    }
+    if((status = IFF_writeUByteArrayField(file, rawChunk->chunkData, rawChunk->chunkSize, (const IFF_Chunk*)rawChunk, attributePath, "chunkData", bytesProcessed, error)) != IFF_FIELD_MORE)
+        return IFF_deriveSuccess(status);
+
+    return TRUE;
 }
 
 IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -110,42 +103,10 @@ void IFF_clearRawChunkContents(IFF_Chunk *chunk)
     free(rawChunk->chunkData);
 }
 
-void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue)
-{
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)value;
-    IFF_Long i;
-
-    fputs("{\n", file);
-    IFF_printIndent(file, indentLevel + 1, "");
-
-    for(i = 0; i < rawChunk->chunkSize; i++)
-    {
-        if(i > 0)
-        {
-            fputs(", ", file);
-
-            if(i % 10 == 0)
-            {
-                fputc('\n', file);
-                IFF_printIndent(file, indentLevel + 1, "");
-            }
-        }
-
-        printByteValue(file, &rawChunk->chunkData[i], indentLevel + 1);
-    }
-
-    fputc('\n', file);
-    IFF_printIndent(file, indentLevel, "}");
-}
-
-void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    IFF_printChunkDataBytes(file, value, indentLevel, IFF_printUByteHex);
-}
-
 void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printField(file, indentLevel, "chunkData", chunk, IFF_printChunkDataUByteHex);
+    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
+    IFF_printUByteArrayField(file, indentLevel, "chunkData", rawChunk->chunkData, rawChunk->chunkSize, 10, IFF_printUByteHex);
 }
 
 IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)

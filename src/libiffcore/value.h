@@ -21,11 +21,14 @@
 
 #ifndef __IFF_VALUE_H
 #define __IFF_VALUE_H
+
 #include <stdio.h>
 #include "ifftypes.h"
 #include "attributepath.h"
 #include "error.h"
 #include "id.h"
+
+typedef void (*IFF_printValueFunction) (FILE *file, const void *value, const unsigned int indentLevel);
 
 #ifdef __cplusplus
 extern "C" {

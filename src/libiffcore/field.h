@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "chunk.h"
 #include "attributepath.h"
+#include "value.h"
 
 typedef enum
 {
@@ -33,8 +34,6 @@ typedef enum
     IFF_FIELD_LAST = 2
 }
 IFF_FieldStatus;
-
-typedef void (*IFF_printValueFunction) (FILE *file, const void *value, const unsigned int indentLevel);
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,6 +71,10 @@ IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chun
 
 IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
 
+IFF_FieldStatus IFF_readUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
+
+IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
+
 void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue);
 
 void IFF_printField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue);
@@ -95,6 +98,10 @@ void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *at
 void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk);
 
 void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength);
+
+void IFF_printUByteArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
+
+void IFF_printTextField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength);
 
 #ifdef __cplusplus
 }

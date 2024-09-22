@@ -125,10 +125,6 @@ IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_Attribute
  */
 void IFF_clearRawChunkContents(IFF_Chunk *chunk);
 
-void IFF_printChunkDataBytes(FILE *file, const void *value, const unsigned int indentLevel, IFF_printValueFunction printByteValue);
-
-void IFF_printChunkDataUByteHex(FILE *file, const void *value, const unsigned int indentLevel);
-
 /**
  * Prints the data of the raw chunk as numeric values
  *

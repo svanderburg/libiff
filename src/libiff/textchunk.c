@@ -49,27 +49,8 @@ char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *o
     return (char*)IFF_updateRawChunkData((IFF_RawChunk*)textChunk, chunkData, textLength, obsoleteTextLength);
 }
 
-static void printChunkDataText(FILE *file, const void *value, const unsigned int indentLevel)
-{
-    const IFF_TextChunk *textChunk = (const IFF_TextChunk*)value;
-    IFF_Long i;
-
-    fputc('"', file);
-
-    for(i = 0; i < textChunk->chunkSize; i++)
-    {
-        char character = textChunk->chunkData[i];
-
-        if(character == '"')
-            fputs("\\\"", file);
-        else
-            fputc(character, file);
-    }
-
-    fputc('"', file);
-}
-
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    IFF_printField(file, indentLevel, "chunkData", (const IFF_RawChunk*)chunk, printChunkDataText);
+    const IFF_TextChunk *textChunk = (const IFF_TextChunk*)chunk;
+    IFF_printTextField(file, indentLevel, "chunkData", textChunk->chunkData, textChunk->chunkSize);
 }

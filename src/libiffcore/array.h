@@ -22,21 +22,28 @@
 #ifndef __IFF_ARRAY_H
 #define __IFF_ARRAY_H
 
+#include <stdio.h>
+#include "ifftypes.h"
+#include "id.h"
+#include "attributepath.h"
+#include "error.h"
+#include "value.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned int *pointerArrayLength);
+IFF_Bool IFF_readValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error);
 
-void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement);
+IFF_Bool IFF_readUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
-void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength);
+IFF_Bool IFF_writeValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error);
 
-void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement);
+IFF_Bool IFF_writeUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
 
-void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement);
+void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
 
-void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength);
+void IFF_printText(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength);
 
 #ifdef __cplusplus
 }

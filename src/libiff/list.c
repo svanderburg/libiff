@@ -25,7 +25,7 @@
 #include "field.h"
 #include "util.h"
 #include "cat.h"
-#include "array.h"
+#include "pointerarray.h"
 
 #define LIST_GROUPTYPENAME "contentsType"
 
@@ -34,14 +34,6 @@ IFF_ChunkInterface IFF_listInterface = {&IFF_parseListContents, &IFF_writeListCo
 static IFF_GroupMember listStructureMembers[] = {
     { IFF_ID_PROP, "props", IFF_GROUP_MEMBER_MULTIPLE }
 };
-
-static void initListContents(IFF_Group *group)
-{
-    IFF_List *list = (IFF_List*)group;
-
-    list->props = NULL;
-    list->propsLength = 0;
-}
 
 typedef enum
 {
@@ -84,7 +76,6 @@ IFF_GroupStructure listStructure = {
     sizeof(IFF_List),
     1,
     listStructureMembers,
-    initListContents,
     mapChunkIdToFieldIndex,
     getFieldPointer,
     getArrayFieldPointer

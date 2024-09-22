@@ -21,7 +21,7 @@
 
 #include "groupstructure.h"
 #include <stdlib.h>
-#include "array.h"
+#include "pointerarray.h"
 #include "chunksarray.h"
 #include "field.h"
 #include "util.h"
@@ -303,6 +303,33 @@ void IFF_freeEvaluatedGroupStructure(IFF_Group *evaluatedGroup)
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(evaluatedGroup, i, &chunksLength);
                 free(chunks);
+            }
+        }
+    }
+}
+
+void IFF_initGroupStructure(IFF_Group *group)
+{
+    if(group->groupStructure != NULL)
+    {
+        unsigned int i;
+
+        for(i = 0; i < group->groupStructure->groupMembersLength; i++)
+        {
+            IFF_GroupMember *groupMember = &group->groupStructure->groupMembers[i];
+
+            if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
+            {
+                IFF_Chunk **chunkPointer = group->groupStructure->getFieldPointer(group, i);
+                *chunkPointer = NULL;
+            }
+            else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
+            {
+                unsigned int *chunksLength;
+                IFF_Chunk ***chunksPointer = group->groupStructure->getArrayFieldPointer(group, i, &chunksLength);
+
+                *chunksPointer = NULL;
+                *chunksLength = 0;
             }
         }
     }

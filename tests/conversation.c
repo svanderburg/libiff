@@ -22,23 +22,13 @@
 #include "conversation.h"
 #include <stdlib.h>
 #include "form.h"
-#include "array.h"
+#include "pointerarray.h"
 
 static IFF_GroupMember groupMembers[] = {
     { TEST_ID_HELO, "hello", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_BYE, "bye", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_MESG, "messages", IFF_GROUP_MEMBER_MULTIPLE },
 };
-
-static void initConversationContents(IFF_Group *group)
-{
-    TEST_Conversation *conversation = (TEST_Conversation*)group;
-
-    conversation->hello = NULL;
-    conversation->bye = NULL;
-    conversation->messagesLength = 0;
-    conversation->messages = NULL;
-}
 
 typedef enum
 {
@@ -100,7 +90,6 @@ IFF_GroupStructure TEST_conversationStructure = {
     sizeof(TEST_Conversation),
     TEST_NUM_OF_CONVERSATION_GROUP_MEMBERS,
     groupMembers,
-    initConversationContents,
     mapChunkIdToFieldIndex,
     getFieldPointer,
     getArrayFieldPointer

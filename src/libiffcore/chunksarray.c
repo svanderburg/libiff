@@ -21,7 +21,7 @@
 
 #include "chunksarray.h"
 #include <stdlib.h>
-#include "array.h"
+#include "pointerarray.h"
 #include "util.h"
 
 IFF_Chunk **IFF_addChunkToChunksArray(IFF_Chunk **chunks, unsigned int *chunksLength, IFF_Chunk *chunk)

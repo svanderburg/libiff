@@ -20,93 +20,86 @@
  */
 
 #include "array.h"
-#include <stdlib.h>
+#include "util.h"
 
-void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned int *pointerArrayLength)
+IFF_Bool IFF_readValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error)
 {
-    void **result = (void**)realloc(pointerArray, (*pointerArrayLength + 1) * sizeof(void*));
-    result[*pointerArrayLength] = element;
-    *pointerArrayLength = *pointerArrayLength + 1;
-    return result;
-}
+    size_t arraySize = length * elementSize;
 
-static void **decreasePointerArrayAndShiftLeft(void **pointerArray, const unsigned index, unsigned int *pointerArrayLength)
-{
-    unsigned int i;
-    *pointerArrayLength = *pointerArrayLength - 1;
-
-    for(i = index; i < *pointerArrayLength; i++)
-        pointerArray[i] = pointerArray[i + 1];
-
-    return (void**)realloc(pointerArray, *pointerArrayLength * sizeof(void*));
-}
-
-
-void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement)
-{
-    if(index >= *pointerArrayLength)
+    if(fread(pointer, elementSize, length, file) < arraySize)
     {
-        *obsoleteElement = NULL;
-        return pointerArray;
+        *error = IFF_createDataIOError(file, length, attributePath, attributeName, description, chunkId);
+        return FALSE;
     }
     else
-    {
-        /* Update the obsolete element */
-        *obsoleteElement = pointerArray[index];
-
-        /* Move all elements after the index to the left */
-        return decreasePointerArrayAndShiftLeft(pointerArray, index, pointerArrayLength);
-    }
+        return TRUE;
 }
 
-void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength)
+IFF_Bool IFF_readUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
 {
-    unsigned int i;
-
-    for(i = 0; i < *pointerArrayLength; i++)
-    {
-        if(pointerArray[i] == obsoleteElement)
-            return decreasePointerArrayAndShiftLeft(pointerArray, i, pointerArrayLength);
-    }
-
-    return NULL;
+    return IFF_readValueArray(file, ubyteArray, sizeof(IFF_UByte), length, attributePath, attributeName, "UBYTE[]", chunkId, error);
 }
 
-void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement)
+IFF_Bool IFF_writeValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error)
 {
-    if(index >= pointerArrayLength)
-        return NULL;
+    size_t arraySize = length * elementSize;
+
+    if(fwrite(pointer, elementSize, length, file) < arraySize)
+    {
+        *error = IFF_createDataIOError(file, length, attributePath, attributeName, description, chunkId);
+        return FALSE;
+    }
     else
-    {
-        void *obsoleteElement = pointerArray[index];
-        pointerArray[index] = newElement;
-        return obsoleteElement;
-    }
+        return TRUE;
 }
 
-void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement)
+IFF_Bool IFF_writeUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
+{
+    return IFF_writeValueArray(file, ubyteArray, sizeof(IFF_UByte), length, attributePath, attributeName, "UBYTE[]", chunkId, error);
+}
+
+void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue)
 {
     unsigned int i;
 
-    for(i = 0; i < pointerArrayLength; i++)
+    fputs("{\n", file);
+    IFF_printIndent(file, indentLevel + 1, "");
+
+    for(i = 0; i < arrayLength; i++)
     {
-        if(pointerArray[i] == oldElement)
+        if(i > 0)
         {
-            pointerArray[i] = newElement;
-            break;
+            fputs(", ", file);
+
+            if(i % elementsPerRow == 0)
+            {
+                fputc('\n', file);
+                IFF_printIndent(file, indentLevel + 1, "");
+            }
         }
+
+        printByteValue(file, &array[i], indentLevel + 1);
     }
+
+    fputc('\n', file);
+    IFF_printIndent(file, indentLevel, "}");
 }
 
-void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength)
+void IFF_printText(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength)
 {
     unsigned int i;
-    basePointerArray = (void**)realloc(basePointerArray, (basePointerArrayLength + appendPointerArrayLength) * sizeof(void*));
 
-    for(i = 0; i < appendPointerArrayLength; i++)
-        basePointerArray[basePointerArrayLength + i] = appendPointerArray[i];
+    fputc('"', file);
 
-    *resultPointerArrayLength = basePointerArrayLength + appendPointerArrayLength;
+    for(i = 0; i < arrayLength; i++)
+    {
+        char character = array[i];
 
-    return basePointerArray;
+        if(character == '"')
+            fputs("\\\"", file);
+        else
+            fputc(character, file);
+    }
+
+    fputc('"', file);
 }
