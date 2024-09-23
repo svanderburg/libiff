@@ -78,13 +78,3 @@ IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, IFF_AttributePath
 {
     return IFF_checkGroupContents((const IFF_Group*)chunk, PROP_GROUPTYPENAME, &IFF_checkFormType, &subChunkCheck, attributePath, printCheckMessage, data);
 }
-
-IFF_Chunk *IFF_searchChunkInProp(const IFF_Prop *prop, const IFF_ID chunkId)
-{
-    return IFF_searchChunkInForm((const IFF_Form*)prop, chunkId);
-}
-
-IFF_Chunk **IFF_searchChunksInProp(IFF_Chunk **chunks, const IFF_Prop *prop, const IFF_ID chunkId, unsigned int *chunksLength)
-{
-    return IFF_searchChunksInForm(chunks, (const IFF_Form*)prop, chunkId, chunksLength);
-}

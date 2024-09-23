@@ -245,13 +245,13 @@ IFF_Bool IFF_compareListContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk
 void IFF_recalculateListChunkSize(IFF_Chunk *chunk);
 
 /**
- * Retrieves a PROP chunk with the given form type from a list.
+ * Searches for the first matching PROP chunk in the nearest enclosing LIST chunk.
  *
- * @param list An instance of a list chunk
- * @param formType Form type describing the purpose of the sub chunks.
- * @return The requested PROP chunk, or NULL if the PROP chunk does not exists.
+ * @param chunk An instance of a form chunk
+ * @param formType Form type of the PROP chunk
+ * @return The nearest PROP chunk with the given formType or NULL if such a PROP chunk does not exists
  */
-IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType);
+IFF_Prop *IFF_searchEnclosingProp(const IFF_Chunk *chunk, const IFF_ID formType);
 
 #ifdef __cplusplus
 }

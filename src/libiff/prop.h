@@ -96,26 +96,6 @@ IFF_Chunk *IFF_updateChunkInPropByIndex(IFF_Prop *prop, const unsigned int index
  */
 IFF_QualityLevel IFF_checkPropContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
-/**
- * Searches for the last occurence of a chunk with the given chunk ID in the given PROP chunk.
- *
- * @param prop An instance of a PROP chunk
- * @param chunkId An arbitrary chunk ID
- * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
- */
-IFF_Chunk *IFF_searchChunkInProp(const IFF_Prop *prop, const IFF_ID chunkId);
-
-/**
- * Searches for all occurences of a chunk with the given chunk ID in the given form.
- *
- * @param chunks An array of chunks to which matched chunks will be appended
- * @param prop An instance of a PROP chunk
- * @param chunkId An arbitrary chunk ID
- * @param chunksLength A pointer to a variable in which the length of the array is stored
- * @return An array containing pointers to all chunks that have been found
- */
-IFF_Chunk **IFF_searchChunksInProp(IFF_Chunk **chunks, const IFF_Prop *prop, const IFF_ID chunkId, unsigned int *chunksLength);
-
 #ifdef __cplusplus
 }
 #endif

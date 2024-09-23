@@ -1,4 +1,5 @@
 #include <iff.h>
+#include <form.h>
 #include "catdata.h"
 
 #define ID_TEST IFF_MAKEID('T', 'E', 'S', 'T')

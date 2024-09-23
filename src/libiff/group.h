@@ -27,7 +27,6 @@ typedef struct IFF_Group IFF_Group;
 #include <stdio.h>
 #include "ifftypes.h"
 #include "chunk.h"
-#include "form.h"
 #include "attributepath.h"
 #include "error.h"
 #include "groupstructure.h"

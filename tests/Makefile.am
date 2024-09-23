@@ -2,7 +2,6 @@ noinst_HEADERS = bye.h hello.h conversation.h test.h testregistry.h catdata.h fo
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
-    lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     writeextension readextension testcheck testpp \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
     catcrudoperations listcrudoperations formcrudoperations extensioncrudoperations \
@@ -47,34 +46,6 @@ writelist_CFLAGS = -I../src/libiffcore -I../src/libiff
 readlist_SOURCES = listdata.c readlist.c
 readlist_LDADD = ../src/libiff/libiff.la
 readlist_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_simple_SOURCES = lookupproperty-simple.c
-lookupproperty_simple_LDADD = ../src/libiff/libiff.la
-lookupproperty_simple_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_array_SOURCES = lookupproperty-array.c
-lookupproperty_array_LDADD = ../src/libiff/libiff.la
-lookupproperty_array_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_array_shared_SOURCES = lookupproperty-array-shared.c
-lookupproperty_array_shared_LDADD = ../src/libiff/libiff.la
-lookupproperty_array_shared_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_prop_SOURCES = lookupproperty-prop.c
-lookupproperty_prop_LDADD = ../src/libiff/libiff.la
-lookupproperty_prop_CFLAGS  = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_override_shared_SOURCES = lookupproperty-override-shared.c
-lookupproperty_override_shared_LDADD = ../src/libiff/libiff.la
-lookupproperty_override_shared_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_override_local_SOURCES = lookupproperty-override-local.c
-lookupproperty_override_local_LDADD = ../src/libiff/libiff.la
-lookupproperty_override_local_CFLAGS = -I../src/libiffcore -I../src/libiff
-
-lookupproperty_nested_SOURCES = lookupproperty-nested.c
-lookupproperty_nested_LDADD = ../src/libiff/libiff.la
-lookupproperty_nested_CFLAGS = -I../src/libiffcore -I../src/libiff
 
 searchforms_form_SOURCES = searchforms-form.c
 searchforms_form_LDADD = ../src/libiff/libiff.la
@@ -176,7 +147,6 @@ TESTS = writeform readform writeform-pad readform-pad writenestedform readnested
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
     invalidprop.sh invalidprop-size.sh invalidlist-negsize.sh \
     pp-text.sh searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
-    lookupproperty-simple lookupproperty-array lookupproperty-array-shared lookupproperty-prop lookupproperty-override-local lookupproperty-override-shared lookupproperty-nested \
     join-identical.sh join-different.sh \
     writeextension readextension testcheck.sh testpp-c.sh testpp-otherform.sh \
     writeextension-truncated readextension-truncated writeextension-truncated2 readextension-truncated2 writeextension-extended readextension-extended writeextension2 readextension2 \
@@ -190,5 +160,5 @@ EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh inv
     extension-otherform.TEST invalidcat-contentstype.TEST invalidcat-prop.TEST invalidcat-raw.TEST invalidcat-size.TEST invalidform-prop.TEST \
     invalidform-size1.TEST invalidform-size2.TEST invalidformtype1.TEST invalidformtype2.TEST invalidformtype3.TEST invalidformtype4.TEST \
     invalidid1.TEST invalidid2.TEST invalidlist-contentstype.TEST invalidlist-raw.TEST invalidlist-size.TEST invalidprop-size.TEST invalidprop.TEST \
-    lookupproperty-array-shared.TEST lookupproperty-nested.TEST lookupproperty-override-local.TEST lookupproperty-override-shared.TEST pp-text.TEST validcat-wildcard.TEST validlist-wildcard.TEST \
+    pp-text.TEST validcat-wildcard.TEST validlist-wildcard.TEST \
     join.HELO join.BYE invalidlist-negsize.sh invalidlist-negsize.TEST

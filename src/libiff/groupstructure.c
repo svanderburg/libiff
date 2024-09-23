@@ -21,6 +21,7 @@
 
 #include "groupstructure.h"
 #include <stdlib.h>
+#include "list.h"
 #include "pointerarray.h"
 #include "chunksarray.h"
 #include "field.h"

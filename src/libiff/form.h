@@ -176,60 +176,6 @@ IFF_Bool IFF_traverseFormChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitC
 void IFF_recalculateFormChunkSize(IFF_Chunk *chunk);
 
 /**
- * Searches for the first matching PROP chunk in the nearest enclosing LIST chunk.
- *
- * @param chunk An instance of a form chunk
- * @param formType Form type of the PROP chunk
- * @return The nearest PROP chunk with the given formType or NULL if such a PROP chunk does not exists
- */
-IFF_Prop *IFF_searchEnclosingProp(const IFF_Chunk *chunk, const IFF_ID formType);
-
-/**
- * Searches for the last occurence of a chunk with the given chunk ID in the given form.
- *
- * @param form An instance of a form chunk
- * @param chunkId An arbitrary chunk ID
- * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
- */
-IFF_Chunk *IFF_searchChunkInForm(const IFF_Form *form, const IFF_ID chunkId);
-
-/**
- * Retrieves a chunk with the given chunk ID from the given form.
- * If the chunk does not exist and the form is member of a list with shared
- * properties, this function will recursively lookup the chunk from the
- * shared list properties. If a chunk with the same chunk ID appears multiple times,
- * then the last will be used.
- *
- * @param form An instance of a form chunk
- * @param chunkId An arbitrary chunk ID
- * @return The chunk with the given chunk ID, or NULL if the chunk can't be found
- */
-IFF_Chunk *IFF_getChunkFromForm(const IFF_Form *form, const IFF_ID chunkId);
-
-/**
- * Searches for all occurences of a chunk with the given chunk ID in the given form.
- *
- * @param chunks An array of chunks to which matched chunks will be appended
- * @param form An instance of a form chunk
- * @param chunkId An arbitrary chunk ID
- * @param chunksLength A pointer to a variable in which the length of the array is stored
- * @return An array containing pointers to all chunks that have been found
- */
-IFF_Chunk **IFF_searchChunksInForm(IFF_Chunk **chunks, const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength);
-
-/**
- * Searches for all the chunks with the given chunk ID from the given form or from any
- * of the shared properties of the lists that the form is embedded in.
- * The resulting array must be freed by using free().
- *
- * @param form An instance of a form chunk
- * @param chunkId An arbitrary chunk ID
- * @param chunksLength A pointer to a variable in which the length of the array is stored
- * @return An array with pointers to the chunks with the requested chunk ID, or NULL if there can't be any chunk found
- */
-IFF_Chunk **IFF_getChunksFromForm(const IFF_Form *form, const IFF_ID chunkId, unsigned int *chunksLength);
-
-/**
  * Recursively searches for all FORMs with the given form types in a chunk hierarchy.
  *
  * @param chunk A chunk hierarchy representing an IFF file

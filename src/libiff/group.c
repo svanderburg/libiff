@@ -23,10 +23,7 @@
 #include <stdlib.h>
 #include "id.h"
 #include "io.h"
-#include "form.h"
-#include "cat.h"
 #include "list.h"
-#include "prop.h"
 #include "field.h"
 #include "util.h"
 #include "pointerarray.h"

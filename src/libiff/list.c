@@ -171,7 +171,7 @@ void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
     IFF_recalculateGroupChunkSize((IFF_Group*)chunk);
 }
 
-IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType)
+static IFF_Prop *searchPropInList(const IFF_List *list, const IFF_ID formType)
 {
     unsigned int i;
 
@@ -182,4 +182,39 @@ IFF_Prop *IFF_searchPropInList(const IFF_List *list, const IFF_ID formType)
     }
 
     return NULL;
+}
+
+static IFF_List *searchEnclosingList(const IFF_Chunk *chunk)
+{
+    if(chunk == NULL)
+        return NULL;
+    else if(chunk->chunkId == IFF_ID_LIST)
+        return (IFF_List*)chunk;
+    else if(chunk->chunkId == IFF_ID_PROP)
+    {
+        if(chunk->parent == NULL || chunk->parent->parent == NULL)
+            return NULL;
+        else
+            return searchEnclosingList(chunk->parent->parent);
+    }
+    else
+        return searchEnclosingList(chunk->parent);
+}
+
+IFF_Prop *IFF_searchEnclosingProp(const IFF_Chunk *chunk, const IFF_ID formType)
+{
+    IFF_List *list = searchEnclosingList(chunk);
+
+    if(list == NULL)
+        return NULL; /* If the chunk is not (indirectly) embedded in a list, we have no PROPs at all */
+    else
+    {
+        /* Try requesting the PROP chunk for the given form type */
+        IFF_Prop *prop = searchPropInList(list, formType);
+
+        if(prop == NULL)
+            return IFF_searchEnclosingProp((const IFF_Chunk*)list, formType); /* If we can't find a PROP in the given list, try the parent list */
+        else
+            return prop;
+    }
 }
