@@ -23,14 +23,14 @@
 #include <string.h>
 #include "value.h"
 
-IFF_Bool IFF_readId(FILE *file, IFF_ID *id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
+IFF_Bool IFF_readId(FILE *file, void *value)
 {
-    return IFF_readULong(file, id, attributePath, attributeName, chunkId, error);
+    return IFF_readULong(file, value);
 }
 
-IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
+IFF_Bool IFF_writeId(FILE *file, const void *value)
 {
-    return IFF_writeULong(file, id, attributePath, attributeName, chunkId, error);
+    return IFF_writeULong(file, value);
 }
 
 void IFF_idToString(const IFF_ID id, IFF_ID2 id2)

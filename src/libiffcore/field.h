@@ -23,6 +23,7 @@
 #define __IFF_FIELD_H
 
 #include <stdio.h>
+#include "id.h"
 #include "chunk.h"
 #include "attributepath.h"
 #include "value.h"
@@ -46,6 +47,14 @@ extern "C" {
  * @return TRUE if it is a success, else FALSE
  */
 IFF_Bool IFF_deriveSuccess(const IFF_FieldStatus status);
+
+IFF_Bool IFF_readChunkIdField(FILE *file, void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
+
+IFF_Bool IFF_writeChunkIdField(FILE *file, const void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
+
+IFF_Bool IFF_readChunkSizeField(FILE *file, void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
+
+IFF_Bool IFF_writeChunkSizeField(FILE *file, const void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
 
 IFF_FieldStatus IFF_readUByteField(FILE *file, IFF_UByte *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error);
 
@@ -99,9 +108,9 @@ void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char 
 
 void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength);
 
-void IFF_printUByteArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
+void IFF_printUByteHexArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
-void IFF_printTextField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength);
+void IFF_printTextField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 }

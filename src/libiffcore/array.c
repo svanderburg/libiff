@@ -22,43 +22,36 @@
 #include "array.h"
 #include "util.h"
 
-IFF_Bool IFF_readValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error)
+static size_t computeArraySize(size_t elementSize, size_t arrayLength)
 {
-    size_t arraySize = length * elementSize;
-
-    if(fread(pointer, elementSize, length, file) < arraySize)
-    {
-        *error = IFF_createDataIOError(file, length, attributePath, attributeName, description, chunkId);
-        return FALSE;
-    }
-    else
-        return TRUE;
+    return arrayLength * elementSize;
 }
 
-IFF_Bool IFF_readUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
+static IFF_Bool readValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
 {
-    return IFF_readValueArray(file, ubyteArray, sizeof(IFF_UByte), length, attributePath, attributeName, "UBYTE[]", chunkId, error);
+    size_t arraySize = computeArraySize(elementSize, arrayLength);
+
+    return fread(array, elementSize, arrayLength, file) == arraySize;
 }
 
-IFF_Bool IFF_writeValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error)
+IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength)
 {
-    size_t arraySize = length * elementSize;
-
-    if(fwrite(pointer, elementSize, length, file) < arraySize)
-    {
-        *error = IFF_createDataIOError(file, length, attributePath, attributeName, description, chunkId);
-        return FALSE;
-    }
-    else
-        return TRUE;
+    return readValueArray(file, array, sizeof(IFF_UByte), arrayLength);
 }
 
-IFF_Bool IFF_writeUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error)
+static IFF_Bool writeValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
 {
-    return IFF_writeValueArray(file, ubyteArray, sizeof(IFF_UByte), length, attributePath, attributeName, "UBYTE[]", chunkId, error);
+    size_t arraySize = computeArraySize(elementSize, arrayLength);
+
+    return fwrite(array, elementSize, arrayLength, file) == arraySize;
 }
 
-void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue)
+IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
+{
+    return writeValueArray(file, array, sizeof(IFF_UByte), arrayLength);
+}
+
+void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printByteValue)
 {
     unsigned int i;
 
@@ -85,15 +78,21 @@ void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UB
     IFF_printIndent(file, indentLevel, "}");
 }
 
-void IFF_printText(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength)
+void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
+    IFF_printUByteValueArray(file, indentLevel, array, arrayLength, elementsPerRow, IFF_printUByteHex);
+}
+
+void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
+{
+    IFF_UByte *ubyteArray = (IFF_UByte*)array;
     unsigned int i;
 
     fputc('"', file);
 
     for(i = 0; i < arrayLength; i++)
     {
-        char character = array[i];
+        char character = ubyteArray[i];
 
         if(character == '"')
             fputs("\\\"", file);

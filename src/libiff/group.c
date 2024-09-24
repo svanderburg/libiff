@@ -70,44 +70,18 @@ void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
     IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
 }
 
-IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, const unsigned int index)
+IFF_Chunk *IFF_removeChunkFromGroupByIndex(IFF_Group *group, const unsigned int index)
 {
     IFF_Chunk *obsoleteChunk = NULL;
     group->chunks = IFF_removeChunkFromChunksArrayByIndex(group->chunks, &group->chunksLength, index, &obsoleteChunk);
-
-    if(obsoleteChunk != NULL)
-        obsoleteChunk->parent = NULL;
-
-    return obsoleteChunk;
-}
-
-IFF_Chunk *IFF_removeChunkFromGroupByIndex(IFF_Group *group, const unsigned int index)
-{
-    IFF_Chunk *obsoleteChunk = IFF_detachChunkFromGroup(group, index);
-
-    if(obsoleteChunk != NULL)
-        IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
-
-    return obsoleteChunk;
-}
-
-IFF_Chunk *IFF_replaceChunkInGroup(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk)
-{
-    IFF_Chunk *obsoleteChunk = IFF_replaceChunkInChunksArrayByIndex(group->chunks, group->chunksLength, index, chunk);
-
-    if(obsoleteChunk != NULL)
-        obsoleteChunk->parent = NULL;
-
+    IFF_detachSubChunkFromChunk(obsoleteChunk);
     return obsoleteChunk;
 }
 
 IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk)
 {
-    IFF_Chunk *obsoleteChunk = IFF_replaceChunkInGroup(group, index, chunk);
-
-    if(obsoleteChunk != NULL)
-        IFF_updateChunkSize((IFF_Chunk*)group, obsoleteChunk, chunk);
-
+    IFF_Chunk *obsoleteChunk = IFF_replaceChunkInChunksArrayByIndex(group->chunks, group->chunksLength, index, chunk);
+    IFF_replaceSubChunkOfChunk((IFF_Chunk*)group, obsoleteChunk, chunk);
     return obsoleteChunk;
 }
 
@@ -195,22 +169,24 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Regis
 IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_ID groupType;
+    IFF_FieldStatus status;
 
-    /* Read group type */
-    if(IFF_readId(file, &groupType, attributePath, groupTypeName, chunkId, error))
+    IFF_Chunk chunk;
+    chunk.chunkId = chunkId;
+    chunk.chunkSize = chunkSize;
+
+    if((status = IFF_readIdField(file, &groupType, &chunk, attributePath, groupTypeName, bytesProcessed, error)) == IFF_FIELD_FAILURE)
+        return IFF_createGroup(chunkId, chunkSize, 0, NULL, chunkInterface);
+    else
     {
         IFF_GroupStructure *groupStructure = lookupGroupStructure(registry, groupType);
         IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure, chunkInterface);
-
-        *bytesProcessed = *bytesProcessed + IFF_ID_SIZE; /* Initially, we have already read the group ID */
 
         if(group != NULL)
             readGroupSubChunks(file, group, registry, chunkInterface, attributePath, bytesProcessed, error);
 
         return group;
     }
-    else
-        return IFF_createGroup(chunkId, chunkSize, 0, NULL, chunkInterface);
 }
 
 static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -315,7 +291,6 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
 {
     printGroupType(file, groupTypeName, group->groupType, indentLevel);
     IFF_printGroupStructure(file, group, indentLevel);
-    fputs(",\n", file);
     IFF_printChunksArrayField(file, indentLevel, "chunks", group->chunks, group->chunksLength);
 }
 

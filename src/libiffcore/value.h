@@ -24,10 +24,9 @@
 
 #include <stdio.h>
 #include "ifftypes.h"
-#include "attributepath.h"
-#include "error.h"
-#include "id.h"
 
+typedef IFF_Bool (*IFF_readValueFunction) (FILE *file, void *value);
+typedef IFF_Bool (*IFF_writeValueFunction) (FILE *file, const void *value);
 typedef void (*IFF_printValueFunction) (FILE *file, const void *value, const unsigned int indentLevel);
 
 #ifdef __cplusplus
@@ -39,110 +38,90 @@ extern "C" {
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readUByte(FILE *file, IFF_UByte *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readUByte(FILE *file, void *value);
 
 /**
  * Writes an unsigned byte to a file.
  *
  * @param file File descriptor of the file
  * @param value Value written to the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeUByte(FILE *file, const IFF_UByte value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeUByte(FILE *file, const void *value);
 
 /**
  * Reads an unsigned word from a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readUWord(FILE *file, IFF_UWord *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readUWord(FILE *file, void *value);
 
 /**
  * Writes an unsigned word to a file.
  *
  * @param file File descriptor of the file
  * @param value Value written to the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeUWord(FILE *file, const IFF_UWord value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeUWord(FILE *file, const void *value);
 
 /**
  * Reads a signed word from a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readWord(FILE *file, IFF_Word *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readWord(FILE *file, void *value);
 
 /**
  * Writes a signed word to a file.
  *
  * @param file File descriptor of the file
  * @param value Value written to the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeWord(FILE *file, const IFF_Word value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeWord(FILE *file, const void *value);
 
 /**
  * Reads an unsigned long from a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readULong(FILE *file, IFF_ULong *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readULong(FILE *file, void *value);
 
 /**
  * Writes an unsigned long to a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeULong(FILE *file, const IFF_ULong value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeULong(FILE *file, const void *value);
 
 /**
  * Reads a signed long from a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-IFF_Bool IFF_readLong(FILE *file, IFF_Long *value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readLong(FILE *file, void *value);
 
 /**
  * Writes a signed long to a file.
  *
  * @param file File descriptor of the file
  * @param value Value read from the file
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully written, else FALSE
  */
-IFF_Bool IFF_writeLong(FILE *file, const IFF_Long value, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeLong(FILE *file, const void *value);
 
 void IFF_printCharValue(FILE *file, const void *value, const unsigned int indentLevel);
 

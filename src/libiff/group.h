@@ -109,15 +109,6 @@ void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
 void IFF_addChunkToGroup(IFF_Group *group, IFF_Chunk *chunk);
 
 /**
- * Detaches a chunk from the body of the given group.
- *
- * @param group An instance of a group chunk
- * @param index Index of a chunk
- * @return The chunk that was detached or NULL if it cannot be detached
- */
-IFF_Chunk *IFF_detachChunkFromGroup(IFF_Group *group, const unsigned int index);
-
-/**
  * Removes a chunk at the given index from the body of the given group. This function also decrements
  * the chunk size and chunk length counter.
  *

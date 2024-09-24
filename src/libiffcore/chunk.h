@@ -172,13 +172,31 @@ void IFF_decreaseChunkSizeByValue(IFF_Chunk *chunk, IFF_Long decrement);
 void IFF_decreaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk);
 
 /**
- * Updates the chunk size by differences of the actual size of the detached chunk and attached chunk.
+ * Attaches a given sub chunk to another chunk, in which the latter gets adopted as the parent of the former.
+ * As a side effect, it will also recursively increase the chunk sizes of all parents.
  *
- * @param chunk A chunk to be updated
- * @param detachedChunk Chunk to be detached
- * @param attachedChunk Chunk to be attached
+ * @param chunk Chunk to attach a sub chunk to
+ * @param subChunk Chunk to attach
  */
-void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const IFF_Chunk *attachedChunk);
+void IFF_attachSubChunkToChunk(IFF_Chunk *chunk, IFF_Chunk *subChunk);
+
+/**
+ * Detaches a given sub chunk to the former chunk, in which the latter becomes orphaned.
+ * As a side effect, it will also recursively decrease the chunk sizes of all parents.
+ *
+ * @param obsoleteChunk Chunk to detach or NULL to take no action
+ */
+void IFF_detachSubChunkFromChunk(IFF_Chunk *obsoleteChunk);
+
+/**
+ * Detaches a chunk orphaning it and attaching a different sub chunk making the first its parent in one go.
+ * As a side effect, it will also recursively update the chunk sizes of all parents.
+ *
+ * @param chunk Chunk that is the parent of the latter two
+ * @param obsoleteChunk Chunk to detach or NULL to take no action
+ * @param subChunk Chunk to attach or NULL to take no action
+ */
+void IFF_replaceSubChunkOfChunk(IFF_Chunk *chunk, IFF_Chunk *obsoleteChunk, IFF_Chunk *subChunk);
 
 #ifdef __cplusplus
 }

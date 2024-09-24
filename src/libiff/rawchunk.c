@@ -106,7 +106,7 @@ void IFF_clearRawChunkContents(IFF_Chunk *chunk)
 void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
-    IFF_printUByteArrayField(file, indentLevel, "chunkData", rawChunk->chunkData, rawChunk->chunkSize, 10, IFF_printUByteHex);
+    IFF_printUByteHexArrayField(file, indentLevel, "chunkData", rawChunk->chunkData, rawChunk->chunkSize, 10);
 }
 
 IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)

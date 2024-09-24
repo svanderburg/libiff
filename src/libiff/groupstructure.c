@@ -84,23 +84,15 @@ IFF_Chunk *IFF_updateChunkInGroupStructure(IFF_Group *group, IFF_Chunk *chunk)
 
     if(group->groupStructure->mapChunkIdToFieldIndex(chunk->chunkId, &index))
     {
-        IFF_Chunk **obsoleteChunkPtr = group->groupStructure->getFieldPointer(group, index);
+        IFF_Chunk **chunkPtr = group->groupStructure->getFieldPointer(group, index);
 
-        if(obsoleteChunkPtr == NULL)
+        if(chunkPtr == NULL)
             return NULL;
         else
         {
-            IFF_Chunk *obsoleteChunk = *obsoleteChunkPtr;
-
-            if(obsoleteChunk != NULL)
-            {
-                obsoleteChunk->parent = NULL;
-                IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
-            }
-
-            *obsoleteChunkPtr = chunk;
-            chunk->parent = (IFF_Chunk*)group;
-            IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
+            IFF_Chunk *obsoleteChunk = *chunkPtr;
+            IFF_replaceSubChunkOfChunk((IFF_Chunk*)group, obsoleteChunk, chunk);
+            *chunkPtr = chunk;
 
             return obsoleteChunk;
         }
@@ -115,29 +107,25 @@ IFF_Chunk *IFF_removeChunkFromGroupStructure(IFF_Group *group, const IFF_ID chun
 
     if(group->groupStructure->mapChunkIdToFieldIndex(chunkId, &index))
     {
-        IFF_Chunk **obsoleteChunkPtr = group->groupStructure->getFieldPointer(group, index);
+        IFF_Chunk **chunkPtr = group->groupStructure->getFieldPointer(group, index);
 
-        if(obsoleteChunkPtr == NULL)
+        if(chunkPtr == NULL)
             return NULL;
         else
         {
             unsigned int index;
-            IFF_Chunk *obsoleteChunk = *obsoleteChunkPtr;
+            IFF_Chunk *obsoleteChunk = *chunkPtr;
 
-            if(obsoleteChunk != NULL)
-            {
-                obsoleteChunk->parent = NULL;
-                IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
-            }
+            IFF_detachSubChunkFromChunk(obsoleteChunk);
 
             if(IFF_searchLastChunkIndexInGroup((IFF_Group*)group, chunkId, &index))
             {
                 IFF_Chunk *previousChunk;
                 group->chunks = IFF_removeChunkFromChunksArrayByIndex(group->chunks, &group->chunksLength, index, &previousChunk);
-                *obsoleteChunkPtr = previousChunk;
+                *chunkPtr = previousChunk;
             }
             else
-                *obsoleteChunkPtr = NULL;
+                *chunkPtr = NULL;
 
             return obsoleteChunk;
         }
@@ -160,15 +148,7 @@ IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const unsign
         else
         {
             IFF_Chunk *obsoleteChunk = IFF_replaceChunkInChunksArrayByIndex(*obsoleteChunkArrayPtr, *chunksLength, index, chunk);
-
-            if(obsoleteChunk != NULL)
-            {
-                obsoleteChunk->parent = NULL;
-                IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
-            }
-
-            IFF_increaseChunkSize((IFF_Chunk*)group, chunk);
-
+            IFF_replaceSubChunkOfChunk((IFF_Chunk*)group, obsoleteChunk, chunk);
             return obsoleteChunk;
         }
     }
@@ -183,21 +163,15 @@ IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_
     if(group->groupStructure->mapChunkIdToFieldIndex(chunkId, &groupMemberIndex))
     {
         unsigned int *chunksLength;
-        IFF_Chunk ***obsoleteChunkArrayPtr = group->groupStructure->getArrayFieldPointer(group, groupMemberIndex, &chunksLength);
+        IFF_Chunk ***chunkArrayPtr = group->groupStructure->getArrayFieldPointer(group, groupMemberIndex, &chunksLength);
 
-        if(obsoleteChunkArrayPtr == NULL)
+        if(chunkArrayPtr == NULL)
             return NULL;
         else
         {
             IFF_Chunk *obsoleteChunk;
-            *obsoleteChunkArrayPtr = IFF_removeChunkFromChunksArrayByIndex(*obsoleteChunkArrayPtr, chunksLength, index, &obsoleteChunk);
-
-            if(obsoleteChunk != NULL)
-            {
-                obsoleteChunk->parent = NULL;
-                IFF_decreaseChunkSize((IFF_Chunk*)group, obsoleteChunk);
-            }
-
+            *chunkArrayPtr = IFF_removeChunkFromChunksArrayByIndex(*chunkArrayPtr, chunksLength, index, &obsoleteChunk);
+            IFF_detachSubChunkFromChunk(obsoleteChunk);
             return obsoleteChunk;
         }
     }
@@ -480,11 +454,6 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
         for(i = 0; i < group->groupStructure->groupMembersLength; i++)
         {
             IFF_GroupMember *groupMember = &group->groupStructure->groupMembers[i];
-
-            if(i > 0)
-                fprintf(file, ",");
-
-            fprintf(file, "\n");
 
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {

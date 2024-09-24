@@ -65,8 +65,8 @@ IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *
     IFF_ID chunkId;
     IFF_Long chunkSize;
 
-    if(!IFF_readId(file, &chunkId, attributePath, "chunkId", 0, error)
-        || !IFF_readLong(file, &chunkSize, attributePath, "chunkSize", chunkId, error))
+    if(!IFF_readChunkIdField(file, &chunkId, 0, attributePath, "chunkId", error)
+        || !IFF_readChunkSizeField(file, &chunkSize, chunkId, attributePath, "chunkSize", error))
         return NULL;
 
     return readChunkBody(file, chunkId, chunkSize, scopeId, registry, attributePath, error);
@@ -83,8 +83,8 @@ static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, IFF_Attribute
 
 IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    return IFF_writeId(file, chunk->chunkId, attributePath, "chunkId", chunk->chunkId, error)
-        && IFF_writeLong(file, chunk->chunkSize, attributePath, "chunkSize", chunk->chunkId, error)
+    return IFF_writeChunkIdField(file, &chunk->chunkId, chunk->chunkId, attributePath, "chunkId", error)
+        && IFF_writeChunkSizeField(file, &chunk->chunkSize, chunk->chunkId, attributePath, "chunkSize", error)
         && writeChunkBody(file, chunk, attributePath, error);
 }
 
@@ -192,32 +192,23 @@ void IFF_decreaseChunkSize(IFF_Chunk *chunk, const IFF_Chunk *attachedChunk)
     IFF_decreaseChunkSizeByValue(chunk, actualChunkSize);
 }
 
-void IFF_updateChunkSize(IFF_Chunk *chunk, const IFF_Chunk *detachedChunk, const IFF_Chunk *attachedChunk)
+void IFF_attachSubChunkToChunk(IFF_Chunk *chunk, IFF_Chunk *subChunk)
 {
-    if(detachedChunk->chunkSize > attachedChunk->chunkSize)
+    subChunk->parent = chunk;
+    IFF_increaseChunkSize(chunk, subChunk);
+}
+
+void IFF_detachSubChunkFromChunk(IFF_Chunk *obsoleteChunk)
+{
+    if(obsoleteChunk != NULL && obsoleteChunk->parent != NULL)
     {
-        IFF_Long decrement = detachedChunk->chunkSize - attachedChunk->chunkSize;
-
-        if(detachedChunk->chunkSize % 2 != 0)
-            decrement++;
-
-        if(attachedChunk->chunkSize % 2 != 0)
-            decrement--;
-
-        if(decrement > 0)
-            IFF_decreaseChunkSizeByValue(chunk, decrement);
+        IFF_decreaseChunkSize(obsoleteChunk->parent, obsoleteChunk);
+        obsoleteChunk->parent = NULL;
     }
-    else if(detachedChunk->chunkSize < attachedChunk->chunkSize)
-    {
-        IFF_Long increment = attachedChunk->chunkSize - detachedChunk->chunkSize;
+}
 
-        if(detachedChunk->chunkSize % 2 != 0)
-            increment--;
-
-        if(attachedChunk->chunkSize % 2 != 0)
-            increment++;
-
-        if(increment > 0)
-            IFF_increaseChunkSizeByValue(chunk, increment);
-    }
+void IFF_replaceSubChunkOfChunk(IFF_Chunk *chunk, IFF_Chunk *obsoleteChunk, IFF_Chunk *subChunk)
+{
+    IFF_detachSubChunkFromChunk(obsoleteChunk);
+    IFF_attachSubChunkToChunk(chunk, subChunk);
 }

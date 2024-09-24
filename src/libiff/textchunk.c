@@ -52,5 +52,5 @@ char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *o
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const IFF_TextChunk *textChunk = (const IFF_TextChunk*)chunk;
-    IFF_printTextField(file, indentLevel, "chunkData", textChunk->chunkData, textChunk->chunkSize);
+    IFF_printTextField(file, indentLevel, "chunkData", textChunk->chunkData, textChunk->chunkSize, 0);
 }

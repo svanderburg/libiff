@@ -24,26 +24,25 @@
 
 #include <stdio.h>
 #include "ifftypes.h"
-#include "id.h"
-#include "attributepath.h"
-#include "error.h"
 #include "value.h"
+
+typedef IFF_Bool (*IFF_readArrayFunction) (FILE *file, void *array, size_t arrayLength);
+typedef IFF_Bool (*IFF_writeArrayFunction) (FILE *file, void *array, size_t arrayLength);
+typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-IFF_Bool IFF_readValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength);
 
-IFF_Bool IFF_readUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength);
 
-IFF_Bool IFF_writeValueArray(FILE *file, void *pointer, size_t elementSize, size_t length, IFF_AttributePath *attributePath, char *attributeName, char *description, const IFF_ID chunkId, IFF_IOError **error);
+void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
 
-IFF_Bool IFF_writeUByteArray(FILE *file, IFF_UByte *ubyteArray, size_t length, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
-void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
-
-void IFF_printText(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength);
+void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 }

@@ -48,6 +48,7 @@ struct TEST_Conversation
     unsigned int chunksLength;
     IFF_Chunk **chunks;
     IFF_GroupStructure *groupStructure;
+
     TEST_Hello *hello;
     TEST_Bye *bye;
     unsigned int messagesLength;

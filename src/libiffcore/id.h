@@ -40,22 +40,18 @@ extern "C" {
  *
  * @param file File descriptor of the file
  * @param id A 4 character IFF id
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
-IFF_Bool IFF_readId(FILE *file, IFF_ID *id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_readId(FILE *file, void *value);
 
 /**
  * Writes an IFF id to a file
  *
  * @param file File descriptor of the file
  * @param id A 4 character IFF id
- * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
- * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully written, else FALSE
  */
-IFF_Bool IFF_writeId(FILE *file, const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, const IFF_ID chunkId, IFF_IOError **error);
+IFF_Bool IFF_writeId(FILE *file, const void *value);
 
 /**
  * Converts a given ID to a string representation

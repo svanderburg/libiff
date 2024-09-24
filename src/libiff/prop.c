@@ -53,7 +53,7 @@ IFF_Chunk *IFF_removeChunkFromPropByIndex(IFF_Prop *prop, const unsigned int ind
     return IFF_removeChunkFromFormByIndex((IFF_Form*)prop, index);
 }
 
-IFF_Chunk *IFF_updateInPropByIndex(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_updateChunkInPropByIndex(IFF_Prop *prop, const unsigned int index, IFF_Chunk *chunk)
 {
     return IFF_updateChunkInFormByIndex((IFF_Form*)prop, index, chunk);
 }
