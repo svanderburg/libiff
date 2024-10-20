@@ -23,7 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "value.h"
+#include "structure.h"
 #include "id.h"
+#include "string.h"
 #include "util.h"
 
 IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
@@ -68,28 +70,42 @@ IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, 
     return obsoleteChunkData;
 }
 
+static IFF_Field fields[] = {
+    { "chunkData", &IFF_Type_UByte, IFF_CARDINALITY_MULTIPLE }
+};
+
+static void **getArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
+{
+    if(index == 0)
+    {
+        IFF_RawChunk *rawChunk = (IFF_RawChunk*)object;
+        *arrayLength = rawChunk->chunkSize;
+        return (void**)&rawChunk->chunkData;
+    }
+    else
+        return NULL;
+}
+
+static IFF_Structure rawChunkStructure = {
+    1,
+    fields,
+    NULL,
+    getArrayFieldPointer
+};
+
 IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_RawChunk *rawChunk = IFF_createRawChunkWithInterface(chunkId, chunkSize, chunkInterface);
 
     if(rawChunk != NULL)
-    {
-        if(IFF_readUByteArrayField(file, rawChunk->chunkData, rawChunk->chunkSize, (const IFF_Chunk*)rawChunk, attributePath, "chunkData", bytesProcessed, error) == IFF_FIELD_MORE)
-            ;
-    }
+        IFF_readStructure(file, &rawChunkStructure, rawChunk, (IFF_Chunk*)rawChunk, attributePath, bytesProcessed, error);
 
     return (IFF_Chunk*)rawChunk;
 }
 
 IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
-    IFF_FieldStatus status;
-
-    if((status = IFF_writeUByteArrayField(file, rawChunk->chunkData, rawChunk->chunkSize, (const IFF_Chunk*)rawChunk, attributePath, "chunkData", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    return TRUE;
+    return IFF_writeStructure(file, &rawChunkStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
 }
 
 IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -99,20 +115,15 @@ IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_Attribute
 
 void IFF_clearRawChunkContents(IFF_Chunk *chunk)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)chunk;
-    free(rawChunk->chunkData);
+    IFF_clearStructure(&rawChunkStructure, chunk);
 }
 
 void IFF_printRawChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    const IFF_RawChunk *rawChunk = (const IFF_RawChunk*)chunk;
-    IFF_printUByteHexArrayField(file, indentLevel, "chunkData", rawChunk->chunkData, rawChunk->chunkSize, 10);
+    IFF_printStructureContents(file, indentLevel, &rawChunkStructure, (void*)chunk);
 }
 
 IFF_Bool IFF_compareRawChunkContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    const IFF_RawChunk *rawChunk1 = (const IFF_RawChunk*)chunk1;
-    const IFF_RawChunk *rawChunk2 = (const IFF_RawChunk*)chunk2;
-
-    return memcmp(rawChunk1->chunkData, rawChunk2->chunkData, rawChunk1->chunkSize) == 0;
+    return IFF_compareStructure(&rawChunkStructure, (void*)chunk1, (void*)chunk2);
 }

@@ -81,101 +81,58 @@ IFF_Bool IFF_writeChunkSizeField(FILE *file, const void *value, const IFF_ID chu
     return writeValueHeaderField(file, IFF_writeLong, value, sizeof(IFF_Long), chunkId, attributePath, attributeName, "LONG", error);
 }
 
-static IFF_FieldStatus readValueField(FILE *file, IFF_readValueFunction readValue, void *value, size_t fieldSize, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, char *description, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_FieldStatus readValueField(FILE *file, const IFF_Field *field, IFF_readValueFunction readValue, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+    if(fieldDoesNotFitInChunk(field->type->elementSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
     else if(readValue(file, value))
     {
-        increaseBytesProcessed(bytesProcessed, fieldSize);
+        increaseBytesProcessed(bytesProcessed, field->type->elementSize);
         return IFF_FIELD_MORE;
     }
     else
     {
-        *error = IFF_createDataIOError(file, fieldSize, attributePath, attributeName, description, chunk->chunkId);
+        *error = IFF_createDataIOError(file, field->type->elementSize, attributePath, field->attributeName, field->type->description, chunk->chunkId);
         return IFF_FIELD_FAILURE;
     }
 }
 
-static IFF_FieldStatus writeValueField(FILE *file, IFF_writeValueFunction writeValue, const void *value, size_t fieldSize, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, char *description, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_FieldStatus writeValueField(FILE *file, const IFF_Field *field, IFF_writeValueFunction writeValue, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
+    if(fieldDoesNotFitInChunk(field->type->elementSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
     else if(writeValue(file, value))
     {
-        increaseBytesProcessed(bytesProcessed, fieldSize);
+        increaseBytesProcessed(bytesProcessed, field->type->elementSize);
         return IFF_FIELD_MORE;
     }
     else
     {
-        *error = IFF_createDataIOError(file, fieldSize, attributePath, attributeName, description, chunk->chunkId);
+        *error = IFF_createDataIOError(file, field->type->elementSize, attributePath, field->attributeName, field->type->description, chunk->chunkId);
         return IFF_FIELD_FAILURE;
     }
 }
 
-IFF_FieldStatus IFF_readUByteField(FILE *file, IFF_UByte *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+static void printAttributeName(FILE *file, const unsigned int indentLevel, const char *attributeName)
 {
-    return readValueField(file, IFF_readUByte, value, sizeof(IFF_UByte), chunk, attributePath, attributeName, "UBYTE", bytesProcessed, error);
+    IFF_printIndent(file, indentLevel, ".%s = ", attributeName);
 }
 
-IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_UByte value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue)
 {
-    return writeValueField(file, IFF_writeUByte, &value, sizeof(IFF_UByte), chunk, attributePath, attributeName, "UBYTE", bytesProcessed, error);
+    printAttributeName(file, indentLevel, field->attributeName);
+    printValue(file, value, indentLevel);
 }
 
-IFF_FieldStatus IFF_readUWordField(FILE *file, IFF_UWord *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue)
 {
-    return readValueField(file, IFF_readUWord, value, sizeof(IFF_UWord), chunk, attributePath, attributeName, "UWORD", bytesProcessed, error);
+    fputs(",\n", file);
+    IFF_printFirstField(file, indentLevel, field, value, printValue);
 }
 
-IFF_FieldStatus IFF_writeUWordField(FILE *file, const IFF_UWord value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_FieldStatus readArrayField(FILE *file, const IFF_Field *field, IFF_readArrayFunction readArray, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return writeValueField(file, IFF_writeUWord, &value, sizeof(IFF_UWord), chunk, attributePath, attributeName, "UWORD", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_readWordField(FILE *file, IFF_Word *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return readValueField(file, IFF_readWord, value, sizeof(IFF_Word), chunk, attributePath, attributeName, "WORD", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_writeWordField(FILE *file, const IFF_Word value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return writeValueField(file, IFF_writeWord, &value, sizeof(IFF_Word), chunk, attributePath, attributeName, "WORD", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_readULongField(FILE *file, IFF_ULong *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return readValueField(file, IFF_readULong, value, sizeof(IFF_ULong), chunk, attributePath, attributeName, "ULONG", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_writeULongField(FILE *file, const IFF_ULong value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return writeValueField(file, IFF_writeULong, &value, sizeof(IFF_ULong), chunk, attributePath, attributeName, "ULONG", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_readLongField(FILE *file, IFF_Long *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return readValueField(file, IFF_readLong, value, sizeof(IFF_Long), chunk, attributePath, attributeName, "LONG", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Long value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return writeValueField(file, IFF_writeLong, &value, sizeof(IFF_Long), chunk, attributePath, attributeName, "LONG", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_readIdField(FILE *file, IFF_ID *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return readValueField(file, IFF_readId, value, sizeof(IFF_ID), chunk, attributePath, attributeName, "ID", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_ID value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return writeValueField(file, IFF_writeId, &value, sizeof(IFF_ID), chunk, attributePath, attributeName, "ID", bytesProcessed, error);
-}
-
-static IFF_FieldStatus readArrayField(FILE *file, IFF_readArrayFunction readArray, void *array, size_t elementSize, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, char *description, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    size_t fieldSize = length * elementSize;
+    size_t fieldSize = length * field->type->elementSize;
 
     if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
@@ -186,14 +143,14 @@ static IFF_FieldStatus readArrayField(FILE *file, IFF_readArrayFunction readArra
     }
     else
     {
-        *error = IFF_createDataIOError(file, fieldSize, attributePath, attributeName, description, chunk->chunkId);
+        *error = IFF_createDataIOError(file, fieldSize, attributePath, field->attributeName, field->type->description, chunk->chunkId);
         return IFF_FIELD_FAILURE;
     }
 }
 
-static IFF_FieldStatus writeArrayField(FILE *file, IFF_writeArrayFunction writeArray, void *array, size_t elementSize, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, char *description, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_FieldStatus writeArrayField(FILE *file, const IFF_Field *field, IFF_writeArrayFunction writeArray, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    size_t fieldSize = length * elementSize;
+    size_t fieldSize = length * field->type->elementSize;
 
     if(fieldDoesNotFitInChunk(fieldSize, chunk->chunkSize, *bytesProcessed))
         return IFF_FIELD_LAST;
@@ -204,76 +161,241 @@ static IFF_FieldStatus writeArrayField(FILE *file, IFF_writeArrayFunction writeA
     }
     else
     {
-        *error = IFF_createDataIOError(file, fieldSize, attributePath, attributeName, description, chunk->chunkId);
+        *error = IFF_createDataIOError(file, fieldSize, attributePath, field->attributeName, field->type->description, chunk->chunkId);
         return IFF_FIELD_FAILURE;
     }
 }
 
-IFF_FieldStatus IFF_readUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return readArrayField(file, IFF_readUByteArray, ubyteArray, sizeof(IFF_UByte), length, chunk, attributePath, attributeName, "UBYTE[]", bytesProcessed, error);
-}
-
-IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, IFF_UByte *ubyteArray, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, char *attributeName, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return writeArrayField(file, IFF_writeUByteArray, ubyteArray, sizeof(IFF_UByte), length, chunk, attributePath, attributeName, "UBYTE[]", bytesProcessed, error);
-}
-
-static void printAttributeName(FILE *file, const unsigned int indentLevel, const char *attributeName)
-{
-    IFF_printIndent(file, indentLevel, ".%s = ", attributeName);
-}
-
-void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue)
-{
-    printAttributeName(file, indentLevel, attributeName);
-    printValue(file, value, indentLevel);
-}
-
-void IFF_printField(FILE *file, const unsigned int indentLevel, const char *attributeName, const void *value, IFF_printValueFunction printValue)
+static void printArrayField(FILE *file, const IFF_Field *field, IFF_printArrayFunction printArray, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
     fputs(",\n", file);
-    IFF_printFirstField(file, indentLevel, attributeName, value, printValue);
+    printAttributeName(file, indentLevel, field->attributeName);
+    printArray(file, indentLevel, array, arrayLength, elementsPerRow);
 }
 
-void IFF_printCharField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value)
+IFF_Type IFF_Type_UByte = {
+    "UBYTE",
+    sizeof(IFF_UByte),
+    IFF_readUByteField,
+    IFF_writeUByteField,
+    IFF_clearValue,
+    IFF_compareUByte,
+    IFF_printUByteField,
+    IFF_readUByteArrayField,
+    IFF_writeUByteArrayField,
+    IFF_clearValueArray,
+    IFF_compareUByteArray,
+    IFF_printUByteHexArrayField
+};
+
+IFF_Type IFF_Type_Char = {
+    "UBYTE",
+    sizeof(IFF_UByte),
+    IFF_readUByteField,
+    IFF_writeUByteField,
+    IFF_clearValue,
+    IFF_compareUByte,
+    IFF_printCharField,
+    IFF_readUByteArrayField,
+    IFF_writeUByteArrayField,
+    IFF_clearValueArray,
+    IFF_compareUByteArray,
+    IFF_printTextField
+};
+
+IFF_FieldStatus IFF_readUByteField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printCharValue);
+    return readValueField(file, field, IFF_readUByte, value, chunk, attributePath, bytesProcessed, error);
 }
 
-void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UByte value)
+IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printUByteValue);
+    return writeValueField(file, field, IFF_writeUByte, value, chunk, attributePath, bytesProcessed, error);
 }
 
-void IFF_printByteField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Byte value)
+void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printByteValue);
+    IFF_printField(file, indentLevel, field, value, IFF_printUByteValue);
 }
 
-void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_UWord value)
+void IFF_printCharField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printUWordValue);
+    IFF_printField(file, indentLevel, field, value, IFF_printCharValue);
 }
 
-void IFF_printWordField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Word value)
+void IFF_printByteField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printWordValue);
+    IFF_printField(file, indentLevel, field, value, IFF_printByteValue);
 }
 
-void IFF_printULongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ULong value)
+IFF_FieldStatus IFF_readUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printULongValue);
+    return readArrayField(file, field, IFF_readUByteArray, array, length, chunk, attributePath, bytesProcessed, error);
 }
 
-void IFF_printLongField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Long value)
+IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printLongValue);
+    return writeArrayField(file, field, IFF_writeUByteArray, array, length, chunk, attributePath, bytesProcessed, error);
 }
 
-void IFF_printIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID value)
+void IFF_printUByteHexArrayField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
-    IFF_printField(file, indentLevel, attributeName, &value, IFF_printIdValue);
+    printArrayField(file, field, IFF_printUByteHexArray, indentLevel, array, arrayLength, elementsPerRow);
+}
+
+void IFF_printTextField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
+{
+    printArrayField(file, field, IFF_printText, indentLevel, array, arrayLength, elementsPerRow);
+}
+
+IFF_Type IFF_Type_UWord = {
+    "UWORD",
+    sizeof(IFF_UWord),
+    IFF_readUWordField,
+    IFF_writeUWordField,
+    IFF_clearValue,
+    IFF_compareUWord,
+    IFF_printUWordField,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+IFF_FieldStatus IFF_readUWordField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return readValueField(file, field, IFF_readUWord, value, chunk, attributePath, bytesProcessed, error);
+}
+
+IFF_FieldStatus IFF_writeUWordField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return writeValueField(file, field, IFF_writeUWord, value, chunk, attributePath, bytesProcessed, error);
+}
+
+void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+{
+    IFF_printField(file, indentLevel, field, value, IFF_printUWordValue);
+}
+
+IFF_Type IFF_Type_Word = {
+    "WORD",
+    sizeof(IFF_Word),
+    IFF_readWordField,
+    IFF_writeWordField,
+    IFF_clearValue,
+    IFF_compareWord,
+    IFF_printWordField,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+IFF_FieldStatus IFF_readWordField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return readValueField(file, field, IFF_readWord, value, chunk, attributePath, bytesProcessed, error);
+}
+
+IFF_FieldStatus IFF_writeWordField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return writeValueField(file, field, IFF_writeWord, value, chunk, attributePath, bytesProcessed, error);
+}
+
+void IFF_printWordField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+{
+    IFF_printField(file, indentLevel, field, value, IFF_printWordValue);
+}
+
+IFF_Type IFF_Type_ULong = {
+    "ULONG",
+    sizeof(IFF_ULong),
+    IFF_readULongField,
+    IFF_writeULongField,
+    IFF_clearValue,
+    IFF_compareULong,
+    IFF_printULongField,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+IFF_FieldStatus IFF_readULongField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return readValueField(file, field, IFF_readULong, value, chunk, attributePath, bytesProcessed, error);
+}
+
+IFF_FieldStatus IFF_writeULongField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return writeValueField(file, field, IFF_writeULong, value, chunk, attributePath, bytesProcessed, error);
+}
+
+void IFF_printULongField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+{
+    IFF_printField(file, indentLevel, field, value, IFF_printULongValue);
+}
+
+IFF_Type IFF_Type_Long = {
+    "LONG",
+    sizeof(IFF_Long),
+    IFF_readLongField,
+    IFF_writeLongField,
+    IFF_clearValue,
+    IFF_compareLong,
+    IFF_printLongField,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+IFF_FieldStatus IFF_readLongField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return readValueField(file, field, IFF_readLong, value, chunk, attributePath, bytesProcessed, error);
+}
+
+IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return writeValueField(file, field, IFF_writeLong, value, chunk, attributePath, bytesProcessed, error);
+}
+
+void IFF_printLongField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+{
+    IFF_printField(file, indentLevel, field, value, IFF_printLongValue);
+}
+
+IFF_Type IFF_Type_ID = {
+    "ID",
+    sizeof(IFF_ID),
+    IFF_readIdField,
+    IFF_writeIdField,
+    IFF_clearValue,
+    IFF_compareId,
+    IFF_printIdField,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+IFF_FieldStatus IFF_readIdField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return readValueField(file, field, IFF_readId, value, chunk, attributePath, bytesProcessed, error);
+}
+
+IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+{
+    return writeValueField(file, field, IFF_writeId, value, chunk, attributePath, bytesProcessed, error);
+}
+
+void IFF_printIdField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+{
+    IFF_printField(file, indentLevel, field, value, IFF_printIdValue);
 }
 
 void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk)
@@ -291,21 +413,4 @@ void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const
     fputs(",\n", file);
     printAttributeName(file, indentLevel, attributeName);
     IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
-}
-
-static void printArrayField(FILE *file, IFF_printArrayFunction printArray, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
-{
-    fputs(",\n", file);
-    printAttributeName(file, indentLevel, attributeName);
-    printArray(file, indentLevel, array, arrayLength, elementsPerRow);
-}
-
-void IFF_printUByteHexArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
-{
-    printArrayField(file, IFF_printUByteHexArray, indentLevel, attributeName, array, arrayLength, elementsPerRow);
-}
-
-void IFF_printTextField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
-{
-    printArrayField(file, IFF_printText, indentLevel, attributeName, array, arrayLength, elementsPerRow);
 }

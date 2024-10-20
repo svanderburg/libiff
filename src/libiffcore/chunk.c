@@ -107,16 +107,19 @@ void IFF_freeChunk(IFF_Chunk *chunk)
     }
 }
 
-static void printChunkIdField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_ID chunkId)
+static IFF_Field chunkIdField = { "chunkId", &IFF_Type_ID, IFF_CARDINALITY_SINGLE };
+static IFF_Field chunkSizeField = { "chunkSize", &IFF_Type_Long, IFF_CARDINALITY_SINGLE };
+
+static void printChunkIdField(FILE *file, const unsigned int indentLevel, const IFF_ID chunkId)
 {
-    IFF_printFirstField(file, indentLevel, attributeName, &chunkId, IFF_printIdValue);
+    IFF_printFirstField(file, indentLevel, &chunkIdField, &chunkId, IFF_printIdValue);
 }
 
 void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     fputs("{\n", file);
-    printChunkIdField(file, indentLevel + 1, "chunkId", chunk->chunkId);
-    IFF_printLongField(file, indentLevel + 1, "chunkSize", chunk->chunkSize);
+    printChunkIdField(file, indentLevel + 1, chunk->chunkId);
+    IFF_printLongField(file, indentLevel + 1, &chunkSizeField, &chunk->chunkSize);
     chunk->chunkInterface->printChunkContents(file, chunk, indentLevel + 1);
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");

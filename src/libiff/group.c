@@ -166,8 +166,16 @@ static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Regis
     return TRUE;
 }
 
+static void initGroupTypeField(IFF_Field *groupTypeField, char *groupTypeName)
+{
+    groupTypeField->attributeName = groupTypeName;
+    groupTypeField->type = &IFF_Type_ID;
+    groupTypeField->cardinality = IFF_CARDINALITY_SINGLE;
+}
+
 IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
+    IFF_Field groupTypeField;
     IFF_ID groupType;
     IFF_FieldStatus status;
 
@@ -175,7 +183,9 @@ IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction l
     chunk.chunkId = chunkId;
     chunk.chunkSize = chunkSize;
 
-    if((status = IFF_readIdField(file, &groupType, &chunk, attributePath, groupTypeName, bytesProcessed, error)) == IFF_FIELD_FAILURE)
+    initGroupTypeField(&groupTypeField, groupTypeName);
+
+    if((status = groupTypeField.type->readField(file, &groupTypeField, &groupType, &chunk, attributePath, bytesProcessed, error)) == IFF_FIELD_FAILURE)
         return IFF_createGroup(chunkId, chunkSize, 0, NULL, chunkInterface);
     else
     {
@@ -204,8 +214,11 @@ static IFF_Bool writeGroupSubChunks(FILE *file, const IFF_Group *group, IFF_Attr
 IFF_Bool IFF_writeGroupContents(FILE *file, const IFF_Group *group, char *groupTypeName, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_FieldStatus status;
+    IFF_Field groupTypeField;
 
-    if((status = IFF_writeIdField(file, group->groupType, (const IFF_Chunk*)group, attributePath, groupTypeName, bytesProcessed, error)) != IFF_FIELD_MORE)
+    initGroupTypeField(&groupTypeField, groupTypeName);
+
+    if((status = groupTypeField.type->writeField(file, &groupTypeField, &group->groupType, (const IFF_Chunk*)group, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
         return IFF_deriveSuccess(status);
 
     if(!IFF_writeGroupStructure(file, group, attributePath, bytesProcessed, error))
@@ -282,12 +295,16 @@ void IFF_clearGroupContents(IFF_Group *group)
     IFF_clearGroupStructure(group);
 }
 
-static void printGroupType(FILE *file, const char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
+static void printGroupType(FILE *file, char *groupTypeName, const IFF_ID groupType, const unsigned int indentLevel)
 {
-    IFF_printIdField(file, indentLevel, groupTypeName, groupType);
+    IFF_Field groupTypeField;
+
+    initGroupTypeField(&groupTypeField, groupTypeName);
+
+    groupTypeField.type->printField(file, indentLevel, &groupTypeField, &groupType);
 }
 
-void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName)
+void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, char *groupTypeName)
 {
     printGroupType(file, groupTypeName, group->groupType, indentLevel);
     IFF_printGroupStructure(file, group, indentLevel);

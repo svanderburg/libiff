@@ -21,7 +21,7 @@
 
 #include "hello.h"
 #include <stdlib.h>
-#include <field.h>
+#include <structure.h>
 #include <error.h>
 #include <util.h>
 #include "test.h"
@@ -47,33 +47,48 @@ TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
     return TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
+static void *getFieldPointer(void *object, const unsigned int index)
+{
+    TEST_Hello *hello = (TEST_Hello*)object;
+
+    switch(index)
+    {
+        case 0:
+            return &hello->a;
+        case 1:
+            return &hello->b;
+        case 2:
+            return &hello->c;
+        default:
+            return NULL;
+    }
+}
+
+static IFF_Field fields[] = {
+    { "a", &IFF_Type_UByte, IFF_CARDINALITY_SINGLE },
+    { "b", &IFF_Type_UByte, IFF_CARDINALITY_SINGLE },
+    { "c", &IFF_Type_UWord, IFF_CARDINALITY_SINGLE }
+};
+
+static IFF_Structure helloStructure = {
+    3,
+    fields,
+    getFieldPointer,
+    NULL
+};
+
 IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Hello *hello = TEST_createHelloChunk(chunkId, chunkSize);
 
-    if(IFF_readUByteField(file, &hello->a, (const IFF_Chunk*)hello, attributePath, "a", bytesProcessed, error) == IFF_FIELD_MORE &&
-        IFF_readUByteField(file, &hello->b, (const IFF_Chunk*)hello, attributePath, "b", bytesProcessed, error) == IFF_FIELD_MORE &&
-        IFF_readUWordField(file, &hello->c, (const IFF_Chunk*)hello, attributePath, "c", bytesProcessed, error) == IFF_FIELD_MORE)
-        ;
+    IFF_readStructure(file, &helloStructure, hello, (IFF_Chunk*)hello, attributePath, bytesProcessed, error);
 
     return (IFF_Chunk*)hello;
 }
 
 IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    const TEST_Hello *hello = (const TEST_Hello*)chunk;
-    IFF_FieldStatus status;
-
-    if((status = IFF_writeUByteField(file, hello->a, chunk, attributePath, "a", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    if((status = IFF_writeUByteField(file, hello->b, chunk, attributePath, "b", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    if((status = IFF_writeUWordField(file, hello->c, chunk, attributePath, "c", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    return TRUE;
+    return IFF_writeStructure(file, &helloStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
 }
 
 IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -96,19 +111,10 @@ void TEST_clearHelloContents(IFF_Chunk *chunk)
 
 void TEST_printHelloContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    const TEST_Hello *hello = (const TEST_Hello*)chunk;
-
-    IFF_printCharField(file, indentLevel, "a", hello->a);
-    IFF_printCharField(file, indentLevel, "b", hello->b);
-    IFF_printUWordField(file, indentLevel, "c", hello->c);
+    IFF_printStructureContents(file, indentLevel, &helloStructure, (void*)chunk);
 }
 
 IFF_Bool TEST_compareHelloContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    const TEST_Hello *hello1 = (const TEST_Hello*)chunk1;
-    const TEST_Hello *hello2 = (const TEST_Hello*)chunk2;
-
-    return (hello1->a == hello2->a
-        && hello1->b == hello2->b
-        && hello1->c == hello2->c);
+    return IFF_compareStructure(&helloStructure, (void*)chunk1, (void*)chunk2);
 }

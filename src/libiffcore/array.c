@@ -20,6 +20,8 @@
  */
 
 #include "array.h"
+#include <string.h>
+#include <stdlib.h>
 #include "util.h"
 
 static size_t computeArraySize(size_t elementSize, size_t arrayLength)
@@ -49,6 +51,21 @@ static IFF_Bool writeValueArray(FILE *file, void *array, size_t elementSize, siz
 IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
 {
     return writeValueArray(file, array, sizeof(IFF_UByte), arrayLength);
+}
+
+static IFF_Bool compareValueArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length, size_t elementSize)
+{
+    return array1Length == array2Length && memcmp(array1, array2, array1Length * elementSize) == 0;
+}
+
+void IFF_clearValueArray(void *array, const unsigned int arrayLength)
+{
+    free(array);
+}
+
+IFF_Bool IFF_compareUByteArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length)
+{
+    return compareValueArray(array1, array1Length, array2, array2Length, sizeof(IFF_UByte));
 }
 
 void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printByteValue)

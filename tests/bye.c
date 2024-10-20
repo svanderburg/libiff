@@ -21,7 +21,7 @@
 
 #include "bye.h"
 #include <stdlib.h>
-#include <field.h>
+#include <structure.h>
 #include <error.h>
 #include <util.h>
 #include "test.h"
@@ -46,29 +46,45 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
+static void *getFieldPointer(void *object, const unsigned int index)
+{
+    TEST_Bye *bye = (TEST_Bye*)object;
+
+    switch(index)
+    {
+        case 0:
+            return &bye->one;
+        case 1:
+            return &bye->two;
+        default:
+            return NULL;
+    }
+}
+
+static IFF_Field fields[] = {
+    { "one", &IFF_Type_Long, IFF_CARDINALITY_SINGLE },
+    { "two", &IFF_Type_Long, IFF_CARDINALITY_SINGLE }
+};
+
+static IFF_Structure byeStructure = {
+    2,
+    fields,
+    getFieldPointer,
+    NULL
+};
+
 IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     TEST_Bye *bye = TEST_createByeChunk(chunkId, chunkSize);
 
-    if(IFF_readLongField(file, &bye->one, (IFF_Chunk*)bye, attributePath, "one", bytesProcessed, error) == IFF_FIELD_MORE &&
-        IFF_readLongField(file, &bye->two, (IFF_Chunk*)bye, attributePath, "two", bytesProcessed, error) == IFF_FIELD_MORE)
-        ;
+    IFF_readStructure(file, &byeStructure, bye, (IFF_Chunk*)bye, attributePath, bytesProcessed, error);
 
     return (IFF_Chunk*)bye;
 }
 
 IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    const TEST_Bye *bye = (const TEST_Bye*)chunk;
-    IFF_FieldStatus status;
-
-    if((status = IFF_writeLongField(file, bye->one, chunk, attributePath, "one", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    if((status = IFF_writeLongField(file, bye->two, chunk, attributePath, "two", bytesProcessed, error)) != IFF_FIELD_MORE)
-        return IFF_deriveSuccess(status);
-
-    return TRUE;
+    return IFF_writeStructure(file, &byeStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
 }
 
 IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
@@ -82,17 +98,10 @@ void TEST_clearByeContents(IFF_Chunk *chunk)
 
 void TEST_printByeContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    const TEST_Bye *bye = (const TEST_Bye*)chunk;
-
-    IFF_printLongField(stdout, indentLevel, "one", bye->one);
-    IFF_printLongField(stdout, indentLevel, "two", bye->two);
+    IFF_printStructureContents(file, indentLevel, &byeStructure, (void*)chunk);
 }
 
 IFF_Bool TEST_compareByeContents(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    const TEST_Bye *bye1 = (const TEST_Bye*)chunk1;
-    const TEST_Bye *bye2 = (const TEST_Bye*)chunk2;
-
-    return (bye1->one == bye2->one
-        && bye1->two == bye2->two);
+    return IFF_compareStructure(&byeStructure, (void*)chunk1, (void*)chunk2);
 }

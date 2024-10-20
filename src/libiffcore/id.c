@@ -70,6 +70,11 @@ IFF_QualityLevel IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, 
     return IFF_QUALITY_PERFECT;
 }
 
+IFF_Bool IFF_compareId(const void *value1, const void *value2)
+{
+    return IFF_compareULong(value1, value2);
+}
+
 void IFF_printIdValue(FILE *file, const void *value, const unsigned int indentLevel)
 {
     const IFF_ID *idValue = (const IFF_ID*)value;

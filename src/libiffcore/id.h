@@ -69,6 +69,8 @@ void IFF_idToString(const IFF_ID id, IFF_ID2 id2);
  */
 IFF_QualityLevel IFF_checkId(const IFF_ID id, IFF_AttributePath *attributePath, char *attributeName, IFF_printCheckMessageFunction printCheckMessage, void *data, const IFF_ID chunkId);
 
+IFF_Bool IFF_compareId(const void *value1, const void *value2);
+
 void IFF_printIdValue(FILE *file, const void *value, const unsigned int indentLevel);
 
 #ifdef __cplusplus

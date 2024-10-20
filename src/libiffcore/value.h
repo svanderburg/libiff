@@ -123,6 +123,18 @@ IFF_Bool IFF_readLong(FILE *file, void *value);
  */
 IFF_Bool IFF_writeLong(FILE *file, const void *value);
 
+IFF_Bool IFF_compareUByte(const void *value1, const void *value2);
+
+IFF_Bool IFF_compareUWord(const void *value1, const void *value2);
+
+IFF_Bool IFF_compareWord(const void *value1, const void *value2);
+
+IFF_Bool IFF_compareULong(const void *value1, const void *value2);
+
+IFF_Bool IFF_compareLong(const void *value1, const void *value2);
+
+void IFF_clearValue(void *value);
+
 void IFF_printCharValue(FILE *file, const void *value, const unsigned int indentLevel);
 
 void IFF_printUByteValue(FILE *file, const void *value, const unsigned int indentLevel);

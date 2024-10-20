@@ -182,7 +182,7 @@ void IFF_clearGroupContents(IFF_Group *group);
  * @param indentLevel Indent level of the textual representation
  * @param groupTypeName Specifies what the group type is called. Could be 'formType' or 'contentsType'
  */
-void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, const char *groupTypeName);
+void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, char *groupTypeName);
 
 /**
  * Checks whether the given group chunks' contents is equal to each other.

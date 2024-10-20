@@ -156,6 +156,50 @@ IFF_Bool IFF_writeLong(FILE *file, const void *value)
     return fwrite(&longValue, sizeof(IFF_Long), 1, file) == 1;
 }
 
+void IFF_clearValue(void *value)
+{
+}
+
+IFF_Bool IFF_compareUByte(const void *value1, const void *value2)
+{
+    const IFF_UByte *uByte1Value = (const IFF_UByte*)value1;
+    const IFF_UByte *uByte2Value = (const IFF_UByte*)value2;
+
+    return *uByte1Value == *uByte2Value;
+}
+
+IFF_Bool IFF_compareUWord(const void *value1, const void *value2)
+{
+    const IFF_UWord *uWord1Value = (const IFF_UWord*)value1;
+    const IFF_UWord *uWord2Value = (const IFF_UWord*)value2;
+
+    return *uWord1Value == *uWord2Value;
+}
+
+IFF_Bool IFF_compareWord(const void *value1, const void *value2)
+{
+    const IFF_Word *word1Value = (const IFF_Word*)value1;
+    const IFF_Word *word2Value = (const IFF_Word*)value2;
+
+    return *word1Value == *word2Value;
+}
+
+IFF_Bool IFF_compareULong(const void *value1, const void *value2)
+{
+    const IFF_ULong *uLong1Value = (const IFF_ULong*)value1;
+    const IFF_ULong *uLong2Value = (const IFF_ULong*)value2;
+
+    return *uLong1Value == *uLong2Value;
+}
+
+IFF_Bool IFF_compareLong(const void *value1, const void *value2)
+{
+    const IFF_Long *long1Value = (const IFF_Long*)value1;
+    const IFF_Long *long2Value = (const IFF_Long*)value2;
+
+    return *long1Value == *long2Value;
+}
+
 void IFF_printCharValue(FILE *file, const void *value, const unsigned int indentLevel)
 {
     fprintf(file, "'%c'", *((const IFF_UByte*)value));

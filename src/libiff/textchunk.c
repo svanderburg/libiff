@@ -49,8 +49,10 @@ char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *o
     return (char*)IFF_updateRawChunkData((IFF_RawChunk*)textChunk, chunkData, textLength, obsoleteTextLength);
 }
 
+static IFF_Field chunkDataField = { "chunkData", &IFF_Type_Char, IFF_CARDINALITY_MULTIPLE };
+
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     const IFF_TextChunk *textChunk = (const IFF_TextChunk*)chunk;
-    IFF_printTextField(file, indentLevel, "chunkData", textChunk->chunkData, textChunk->chunkSize, 0);
+    chunkDataField.type->printArrayField(file, indentLevel, &chunkDataField, textChunk->chunkData, textChunk->chunkSize, 0);
 }

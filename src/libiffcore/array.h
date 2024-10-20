@@ -38,6 +38,10 @@ IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength);
 
 IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength);
 
+void IFF_clearValueArray(void *array, const unsigned int arrayLength);
+
+IFF_Bool IFF_compareUByteArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
+
 void IFF_printUByteValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printByteValue);
 
 void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
