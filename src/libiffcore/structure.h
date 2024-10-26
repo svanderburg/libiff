@@ -46,15 +46,17 @@ struct IFF_Structure
 extern "C" {
 #endif
 
-IFF_Bool IFF_readStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_readStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_Bool IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 void IFF_clearStructure(const IFF_Structure *structure, void *object);
 
 IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, void *object2);
 
 void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);
+
+void IFF_printStructure(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);
 
 #ifdef __cplusplus
 }

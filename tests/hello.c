@@ -88,7 +88,7 @@ IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_L
 
 IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeStructure(file, &helloStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
+    return IFF_deriveSuccess(IFF_writeStructure(file, &helloStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error));
 }
 
 IFF_QualityLevel TEST_checkHelloContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)

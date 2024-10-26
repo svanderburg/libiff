@@ -1,4 +1,4 @@
-noinst_HEADERS = bye.h hello.h conversation.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h extensiondata2.h
+noinst_HEADERS = greet.h bye.h hello.h greetings.h conversation.h test.h testregistry.h catdata.h formdata.h listdata.h formdata-pad.h nestedformdata.h extensiondata.h extensiondata-truncated.h extensiondata-truncated2.h extensiondata-extended.h extensiondata2.h
 
 check_PROGRAMS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     searchforms-form searchforms-cat searchforms-nestedform recalculatechunksizes \
@@ -63,51 +63,51 @@ recalculatechunksizes_SOURCES = recalculatechunksizes.c
 recalculatechunksizes_LDADD = ../src/libiff/libiff.la
 recalculatechunksizes_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata.c writeextension.c
+writeextension_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata.c writeextension.c
 writeextension_LDADD = ../src/libiff/libiff.la
 writeextension_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata.c readextension.c
+readextension_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata.c readextension.c
 readextension_LDADD = ../src/libiff/libiff.la
 readextension_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-testcheck_SOURCES = hello.c bye.c conversation.c test.c testregistry.c testcheck.c
+testcheck_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c testcheck.c
 testcheck_LDADD = ../src/libiff/libiff.la ../src/libiffcheck/libiffcheck.la
 testcheck_CFLAGS = -I../src/libiffcore -I../src/libiff -I../src/libiffcheck
 
-testpp_SOURCES = hello.c bye.c conversation.c test.c testregistry.c testpp.c
+testpp_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c testpp.c
 testpp_LDADD = ../src/libiff/libiff.la ../src/libiffpp/libiffpp.la
 testpp_CFLAGS = -I../src/libiffcore -I../src/libiff -I../src/libiffpp
 
-writeextension_truncated_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated.c writeextension-truncated.c
+writeextension_truncated_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-truncated.c writeextension-truncated.c
 writeextension_truncated_LDADD = ../src/libiff/libiff.la
 writeextension_truncated_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_truncated_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated.c readextension-truncated.c
+readextension_truncated_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-truncated.c readextension-truncated.c
 readextension_truncated_LDADD = ../src/libiff/libiff.la
 readextension_truncated_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_truncated2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated2.c writeextension-truncated2.c
+writeextension_truncated2_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-truncated2.c writeextension-truncated2.c
 writeextension_truncated2_LDADD = ../src/libiff/libiff.la
 writeextension_truncated2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_truncated2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-truncated2.c readextension-truncated2.c
+readextension_truncated2_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-truncated2.c readextension-truncated2.c
 readextension_truncated2_LDADD = ../src/libiff/libiff.la
 readextension_truncated2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension_extended_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-extended.c writeextension-extended.c
+writeextension_extended_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-extended.c writeextension-extended.c
 writeextension_extended_LDADD = ../src/libiff/libiff.la
 writeextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension_extended_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata-extended.c readextension-extended.c
+readextension_extended_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata-extended.c readextension-extended.c
 readextension_extended_LDADD = ../src/libiff/libiff.la
 readextension_extended_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-writeextension2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata2.c writeextension2.c
+writeextension2_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata2.c writeextension2.c
 writeextension2_LDADD = ../src/libiff/libiff.la
 writeextension2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-readextension2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensiondata2.c readextension2.c
+readextension2_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensiondata2.c readextension2.c
 readextension2_LDADD = ../src/libiff/libiff.la
 readextension2_CFLAGS = -I../src/libiffcore -I../src/libiff
 
@@ -123,7 +123,7 @@ formcrudoperations_SOURCES = catdata.c formcrudoperations.c
 formcrudoperations_LDADD = ../src/libiff/libiff.la
 formcrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-extensioncrudoperations_SOURCES = hello.c bye.c conversation.c test.c testregistry.c extensioncrudoperations.c
+extensioncrudoperations_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c extensioncrudoperations.c
 extensioncrudoperations_LDADD = ../src/libiff/libiff.la
 extensioncrudoperations_CFLAGS = -I../src/libiffcore -I../src/libiff
 
@@ -131,11 +131,11 @@ testtextchunk_SOURCES = testtextchunk.c
 testtextchunk_LDADD = ../src/libiff/libiff.la
 testtextchunk_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-listlookups_SOURCES = hello.c bye.c conversation.c test.c testregistry.c listlookups.c
+listlookups_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c listlookups.c
 listlookups_LDADD = ../src/libiff/libiff.la
 listlookups_CFLAGS = -I../src/libiffcore -I../src/libiff
 
-recalculatechunksizes2_SOURCES = hello.c bye.c conversation.c test.c testregistry.c recalculatechunksizes2.c
+recalculatechunksizes2_SOURCES = greet.c hello.c bye.c greetings.c conversation.c test.c testregistry.c recalculatechunksizes2.c
 recalculatechunksizes2_LDADD = ../src/libiff/libiff.la
 recalculatechunksizes2_CFLAGS = -I../src/libiffcore -I../src/libiff
 

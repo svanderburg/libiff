@@ -24,10 +24,12 @@
 #include "formregistry.h"
 #include "hello.h"
 #include "bye.h"
+#include "greetings.h"
 #include "conversation.h"
 
 static IFF_ChunkType applicationChunkTypes[] = {
     {TEST_ID_BYE, &TEST_byeInterface},
+    {TEST_ID_GRTS, &TEST_greetingsInterface},
     {TEST_ID_HELO, &TEST_helloInterface},
     {TEST_ID_MESG, &IFF_textChunkInterface}
 };

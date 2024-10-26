@@ -22,6 +22,7 @@
 #include "extensiondata.h"
 #include "hello.h"
 #include "bye.h"
+#include "greetings.h"
 
 static IFF_Chunk *createHelloChunk(void)
 {
@@ -44,14 +45,32 @@ static IFF_Chunk *createByeChunk(void)
     return (IFF_Chunk*)bye;
 }
 
+static IFF_Chunk *createGreetingsChunk(void)
+{
+    TEST_Greet *greet1, *greet2;
+    TEST_Greetings *greetings = TEST_createGreetings();
+
+    greet1 = TEST_addGreetToGreetings(greetings);
+    greet1->opening = TEST_OPENING_HELLO;
+    greet1->closure = TEST_CLOSURE_BYE;
+
+    greet2 = TEST_addGreetToGreetings(greetings);
+    greet2->opening = TEST_OPENING_HI;
+    greet2->closure = TEST_CLOSURE_SEEYA;
+
+    return (IFF_Chunk*)greetings;
+}
+
 TEST_Conversation *IFF_createTestConversation(void)
 {
     IFF_Chunk *hello = createHelloChunk();
     IFF_Chunk *bye = createByeChunk();
+    IFF_Chunk *greetings = createGreetingsChunk();
     TEST_Conversation *conversation = TEST_createConversation();
 
     TEST_addChunkToConversation(conversation, hello);
     TEST_addChunkToConversation(conversation, bye);
+    TEST_addChunkToConversation(conversation, greetings);
 
     return conversation;
 }

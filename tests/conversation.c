@@ -27,6 +27,7 @@
 static IFF_GroupMember groupMembers[] = {
     { TEST_ID_HELO, "hello", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_BYE, "bye", IFF_GROUP_MEMBER_SINGLE },
+    { TEST_ID_GRTS, "greetings", IFF_GROUP_MEMBER_SINGLE },
     { TEST_ID_MESG, "messages", IFF_GROUP_MEMBER_MULTIPLE },
 };
 
@@ -34,7 +35,8 @@ typedef enum
 {
     FIELD_INDEX_HELLO = 0,
     FIELD_INDEX_BYE = 1,
-    FIELD_INDEX_MESSAGES = 2
+    FIELD_INDEX_GREETINGS = 2,
+    FIELD_INDEX_MESSAGES = 3
 }
 FieldIndex;
 
@@ -47,6 +49,9 @@ static IFF_Bool mapChunkIdToFieldIndex(const IFF_ID chunkId, unsigned int *index
             return TRUE;
         case TEST_ID_BYE:
             *index = FIELD_INDEX_BYE;
+            return TRUE;
+        case TEST_ID_GRTS:
+            *index = FIELD_INDEX_GREETINGS;
             return TRUE;
         case TEST_ID_MESG:
             *index = FIELD_INDEX_MESSAGES;
@@ -66,6 +71,8 @@ static IFF_Chunk **getFieldPointer(const IFF_Group *group, const unsigned int in
             return (IFF_Chunk**)&conversation->hello;
         case FIELD_INDEX_BYE:
             return (IFF_Chunk**)&conversation->bye;
+        case FIELD_INDEX_GREETINGS:
+            return (IFF_Chunk**)&conversation->greetings;
         default:
             return NULL;
     }

@@ -84,7 +84,7 @@ IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Lon
 
 IFF_Bool TEST_writeByeContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeStructure(file, &byeStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
+    return IFF_deriveSuccess(IFF_writeStructure(file, &byeStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error));
 }
 
 IFF_QualityLevel TEST_checkByeContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)

@@ -21,8 +21,9 @@
 
 #include "structure.h"
 #include <stdlib.h>
+#include <util.h>
 
-IFF_Bool IFF_readStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_FieldStatus IFF_readStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -36,7 +37,7 @@ IFF_Bool IFF_readStructure(FILE *file, const IFF_Structure *structure, void *obj
             void *value = structure->getFieldPointer(object, i);
 
             if((status = field->type->readField(file, field, value, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-                return IFF_deriveSuccess(status);
+                return status;
         }
         else
         {
@@ -47,14 +48,14 @@ IFF_Bool IFF_readStructure(FILE *file, const IFF_Structure *structure, void *obj
             *arrayPtr = (void**)malloc(arrayLength * field->type->elementSize);
 
             if((status = field->type->readArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-                return IFF_deriveSuccess(status);
+                return status;
         }
     }
 
-    return TRUE;
+    return IFF_FIELD_MORE;
 }
 
-IFF_Bool IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_FieldStatus IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int i;
 
@@ -68,7 +69,7 @@ IFF_Bool IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *ob
             void *value = structure->getFieldPointer(object, i);
 
             if((status = field->type->writeField(file, field, value, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-                return IFF_deriveSuccess(status);
+                return status;
         }
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
@@ -77,11 +78,11 @@ IFF_Bool IFF_writeStructure(FILE *file, const IFF_Structure *structure, void *ob
             void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
 
             if((status = field->type->writeArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-                return IFF_deriveSuccess(status);
+                return status;
         }
     }
 
-    return TRUE;
+    return IFF_FIELD_MORE;
 }
 
 void IFF_clearStructure(const IFF_Structure *structure, void *object)
@@ -159,4 +160,12 @@ void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, cons
             field->type->printArrayField(file, indentLevel, field, *arrayPtr, arrayLength, 10);
         }
     }
+}
+
+void IFF_printStructure(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
+{
+    fputs("{\n", file);
+    IFF_printStructureContents(file, indentLevel, structure, object);
+    fputc('\n', file);
+    IFF_printIndent(file, indentLevel, "}");
 }

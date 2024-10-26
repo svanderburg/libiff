@@ -105,7 +105,7 @@ IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF
 
 IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return IFF_writeStructure(file, &rawChunkStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error);
+    return IFF_deriveSuccess(IFF_writeStructure(file, &rawChunkStructure, (void*)chunk, chunk, attributePath, bytesProcessed, error));
 }
 
 IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)

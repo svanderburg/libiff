@@ -30,11 +30,12 @@ typedef struct TEST_Conversation TEST_Conversation;
 #include "textchunk.h"
 #include "hello.h"
 #include "bye.h"
+#include "greetings.h"
 
 #define TEST_ID_CONV IFF_MAKEID('C', 'O', 'N', 'V')
 #define TEST_ID_MESG IFF_MAKEID('M', 'E', 'S', 'G')
 
-#define TEST_NUM_OF_CONVERSATION_GROUP_MEMBERS 3
+#define TEST_NUM_OF_CONVERSATION_GROUP_MEMBERS 4
 
 extern IFF_GroupStructure TEST_conversationStructure;
 
@@ -51,6 +52,7 @@ struct TEST_Conversation
 
     TEST_Hello *hello;
     TEST_Bye *bye;
+    TEST_Greetings *greetings;
     unsigned int messagesLength;
     IFF_TextChunk **messages;
 };

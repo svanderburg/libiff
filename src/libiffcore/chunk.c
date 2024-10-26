@@ -215,3 +215,13 @@ void IFF_replaceSubChunkOfChunk(IFF_Chunk *chunk, IFF_Chunk *obsoleteChunk, IFF_
     IFF_detachSubChunkFromChunk(obsoleteChunk);
     IFF_attachSubChunkToChunk(chunk, subChunk);
 }
+
+void *IFF_addArrayElementToChunk(IFF_Chunk *chunk, void **array, size_t elementSize, unsigned int *arrayLength)
+{
+    void *newElement;
+    *array = realloc(*array, (*arrayLength + 1) * elementSize);
+    newElement = (IFF_UByte*)*array + (*arrayLength * elementSize);
+    *arrayLength = *arrayLength + 1;
+    chunk->chunkSize += elementSize;
+    return newElement;
+}
