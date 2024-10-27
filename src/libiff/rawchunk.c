@@ -74,7 +74,7 @@ static IFF_Field fields[] = {
     { "chunkData", &IFF_Type_UByte, IFF_CARDINALITY_MULTIPLE }
 };
 
-static void **getArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
+void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
 {
     if(index == 0)
     {
@@ -90,7 +90,7 @@ static IFF_Structure rawChunkStructure = {
     1,
     fields,
     NULL,
-    getArrayFieldPointer
+    IFF_getRawChunkArrayFieldPointer
 };
 
 IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

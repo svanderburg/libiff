@@ -22,6 +22,7 @@
 #include "textchunk.h"
 #include <string.h>
 #include <stdlib.h>
+#include "structure.h"
 
 IFF_ChunkInterface IFF_textChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printTextChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
@@ -49,10 +50,18 @@ char *IFF_updateTextData(IFF_TextChunk *textChunk, const char *text, IFF_Long *o
     return (char*)IFF_updateRawChunkData((IFF_RawChunk*)textChunk, chunkData, textLength, obsoleteTextLength);
 }
 
-static IFF_Field chunkDataField = { "chunkData", &IFF_Type_Char, IFF_CARDINALITY_MULTIPLE };
+static IFF_Field fields[] = {
+    { "chunkData", &IFF_Type_Char, IFF_CARDINALITY_MULTIPLE }
+};
+
+static IFF_Structure textChunkStructure = {
+    1,
+    fields,
+    NULL,
+    IFF_getRawChunkArrayFieldPointer
+};
 
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
-    const IFF_TextChunk *textChunk = (const IFF_TextChunk*)chunk;
-    chunkDataField.type->printArrayField(file, indentLevel, &chunkDataField, textChunk->chunkData, textChunk->chunkSize, 0);
+    IFF_printStructureContents(file, indentLevel, &textChunkStructure, (void*)chunk);
 }

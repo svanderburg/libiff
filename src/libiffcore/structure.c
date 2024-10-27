@@ -138,13 +138,16 @@ IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, voi
     return TRUE;
 }
 
-void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
+static void printStructureFields(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
 {
     unsigned int i;
 
     for(i = 0; i < structure->fieldsLength; i++)
     {
         IFF_Field *field = &structure->fields[i];
+
+        if(i > 0)
+            fputs(",\n", file);
 
         if(field->cardinality == IFF_CARDINALITY_SINGLE)
         {
@@ -162,10 +165,16 @@ void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, cons
     }
 }
 
+void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
+{
+    fputs(",\n", file);
+    printStructureFields(file, indentLevel, structure, object);
+}
+
 void IFF_printStructure(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
 {
     fputs("{\n", file);
-    IFF_printStructureContents(file, indentLevel, structure, object);
+    printStructureFields(file, indentLevel + 1, structure, object);
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }

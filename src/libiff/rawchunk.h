@@ -88,6 +88,8 @@ void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data);
  */
 IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize, IFF_Long *obsoleteChunkDataSize);
 
+void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength);
+
 /**
  * Reads a raw chunk with the given chunk id and chunk size from a file.
  *

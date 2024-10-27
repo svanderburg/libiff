@@ -111,8 +111,6 @@ IFF_Bool IFF_readChunkSizeField(FILE *file, void *value, const IFF_ID chunkId, I
 
 IFF_Bool IFF_writeChunkSizeField(FILE *file, const void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
 
-void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue);
-
 void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue);
 
 IFF_FieldStatus IFF_readUByteField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);

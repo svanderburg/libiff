@@ -145,6 +145,7 @@ void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, const IFF_
     TEST_Greet *greetArray = (TEST_Greet*)array;
     unsigned int i;
 
+    IFF_printIndent(file, indentLevel, ".%s = ", field->attributeName);
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
 
@@ -152,16 +153,11 @@ void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, const IFF_
     {
         if(i > 0)
         {
-            fputs(", ", file);
-
-            if(i % elementsPerRow == 0)
-            {
-                fputc('\n', file);
-                IFF_printIndent(file, indentLevel + 1, "");
-            }
+            fputs(",\n", file);
+            IFF_printIndent(file, indentLevel + 1, "");
         }
 
-        TEST_printGreet(file, indentLevel, field, &greetArray[i]);
+        TEST_printGreet(file, indentLevel + 1, field, &greetArray[i]);
     }
 
     fputc('\n', file);

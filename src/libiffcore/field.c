@@ -118,16 +118,10 @@ static void printAttributeName(FILE *file, const unsigned int indentLevel, const
     IFF_printIndent(file, indentLevel, ".%s = ", attributeName);
 }
 
-void IFF_printFirstField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue)
+void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue)
 {
     printAttributeName(file, indentLevel, field->attributeName);
     printValue(file, value, indentLevel);
-}
-
-void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue)
-{
-    fputs(",\n", file);
-    IFF_printFirstField(file, indentLevel, field, value, printValue);
 }
 
 static IFF_FieldStatus readArrayField(FILE *file, const IFF_Field *field, IFF_readArrayFunction readArray, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -168,7 +162,6 @@ static IFF_FieldStatus writeArrayField(FILE *file, const IFF_Field *field, IFF_w
 
 static void printArrayField(FILE *file, const IFF_Field *field, IFF_printArrayFunction printArray, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
-    fputs(",\n", file);
     printAttributeName(file, indentLevel, field->attributeName);
     printArray(file, indentLevel, array, arrayLength, elementsPerRow);
 }
@@ -402,7 +395,6 @@ void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char 
 {
     if(chunk != NULL)
     {
-        fputs(",\n", file);
         printAttributeName(file, indentLevel, attributeName);
         IFF_printChunk(file, chunk, indentLevel);
     }
@@ -410,7 +402,6 @@ void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char 
 
 void IFF_printChunksArrayField(FILE *file, const unsigned int indentLevel, const char *attributeName, IFF_Chunk **chunks, unsigned int chunksLength)
 {
-    fputs(",\n", file);
     printAttributeName(file, indentLevel, attributeName);
     IFF_printChunksArray(file, chunks, chunksLength, indentLevel);
 }

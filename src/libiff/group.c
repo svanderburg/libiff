@@ -306,8 +306,10 @@ static void printGroupType(FILE *file, char *groupTypeName, const IFF_ID groupTy
 
 void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, char *groupTypeName)
 {
+    fputs(",\n", file);
     printGroupType(file, groupTypeName, group->groupType, indentLevel);
     IFF_printGroupStructure(file, group, indentLevel);
+    fputs(",\n", file);
     IFF_printChunksArrayField(file, indentLevel, "chunks", group->chunks, group->chunksLength);
 }
 

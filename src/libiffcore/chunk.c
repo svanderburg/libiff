@@ -112,13 +112,14 @@ static IFF_Field chunkSizeField = { "chunkSize", &IFF_Type_Long, IFF_CARDINALITY
 
 static void printChunkIdField(FILE *file, const unsigned int indentLevel, const IFF_ID chunkId)
 {
-    IFF_printFirstField(file, indentLevel, &chunkIdField, &chunkId, IFF_printIdValue);
+    IFF_printField(file, indentLevel, &chunkIdField, &chunkId, IFF_printIdValue);
 }
 
 void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     fputs("{\n", file);
     printChunkIdField(file, indentLevel + 1, chunk->chunkId);
+    fputs(",\n", file);
     IFF_printLongField(file, indentLevel + 1, &chunkSizeField, &chunk->chunkSize);
     chunk->chunkInterface->printChunkContents(file, chunk, indentLevel + 1);
     fputc('\n', file);
