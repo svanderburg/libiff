@@ -82,7 +82,7 @@ IFF_Bool TEST_compareGreet(const void *value1, const void *value2)
     return IFF_compareStructure(&greetStructure, (void*)value1, (void*)value2);
 }
 
-void TEST_printGreet(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value)
+void TEST_printGreet(FILE *file, const void *value, const unsigned int indentLevel)
 {
     IFF_printStructure(file, indentLevel, &greetStructure, (void*)value);
 }
@@ -140,12 +140,11 @@ IFF_Bool TEST_compareGreetArray(const void *array1, const unsigned int array1Len
         return FALSE;
 }
 
-void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
+void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
     TEST_Greet *greetArray = (TEST_Greet*)array;
     unsigned int i;
 
-    IFF_printIndent(file, indentLevel, ".%s = ", field->attributeName);
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
 
@@ -157,7 +156,7 @@ void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, const IFF_
             IFF_printIndent(file, indentLevel + 1, "");
         }
 
-        TEST_printGreet(file, indentLevel + 1, field, &greetArray[i]);
+        TEST_printGreet(file, &greetArray[i], indentLevel + 1);
     }
 
     fputc('\n', file);

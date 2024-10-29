@@ -301,7 +301,7 @@ static void printGroupType(FILE *file, char *groupTypeName, const IFF_ID groupTy
 
     initGroupTypeField(&groupTypeField, groupTypeName);
 
-    groupTypeField.type->printField(file, indentLevel, &groupTypeField, &groupType);
+    IFF_printField(file, indentLevel, &groupTypeField, &groupType);
 }
 
 void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned int indentLevel, char *groupTypeName)

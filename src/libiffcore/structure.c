@@ -138,7 +138,7 @@ IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, voi
     return TRUE;
 }
 
-static void printStructureFields(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
+void IFF_printStructureFields(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
 {
     unsigned int i;
 
@@ -153,14 +153,14 @@ static void printStructureFields(FILE *file, const unsigned int indentLevel, con
         {
             void *value = structure->getFieldPointer(object, i);
 
-            field->type->printField(file, indentLevel, field, value);
+            IFF_printField(file, indentLevel, field, value);
         }
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
             unsigned int arrayLength;
             void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
 
-            field->type->printArrayField(file, indentLevel, field, *arrayPtr, arrayLength, 10);
+            IFF_printArrayField(file, field, indentLevel, *arrayPtr, arrayLength, 10);
         }
     }
 }
@@ -168,13 +168,13 @@ static void printStructureFields(FILE *file, const unsigned int indentLevel, con
 void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
 {
     fputs(",\n", file);
-    printStructureFields(file, indentLevel, structure, object);
+    IFF_printStructureFields(file, indentLevel, structure, object);
 }
 
 void IFF_printStructure(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object)
 {
     fputs("{\n", file);
-    printStructureFields(file, indentLevel + 1, structure, object);
+    IFF_printStructureFields(file, indentLevel + 1, structure, object);
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
 }

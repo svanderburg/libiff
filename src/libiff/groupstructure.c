@@ -455,18 +455,22 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
         {
             IFF_GroupMember *groupMember = &group->groupStructure->groupMembers[i];
 
-            fputs(",\n", file);
-
             if(groupMember->cardinality == IFF_GROUP_MEMBER_SINGLE)
             {
                 IFF_Chunk *chunk = getFieldValue(group, i);
-                IFF_printChunkField(file, indentLevel, groupMember->attributeName, chunk);
+
+                if(chunk != NULL)
+                {
+                    fputs(",\n", file);
+                    IFF_printChunkField(file, indentLevel, groupMember->attributeName, chunk);
+                }
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
                 unsigned int chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
+                fputs(",\n", file);
                 IFF_printChunksArrayField(file, indentLevel, groupMember->attributeName, chunks, chunksLength);
             }
         }

@@ -54,6 +54,8 @@ void IFF_clearStructure(const IFF_Structure *structure, void *object);
 
 IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, void *object2);
 
+void IFF_printStructureFields(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);
+
 void IFF_printStructureContents(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);
 
 void IFF_printStructure(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);

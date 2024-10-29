@@ -30,6 +30,7 @@ typedef struct IFF_Field IFF_Field;
 #include "chunk.h"
 #include "attributepath.h"
 #include "value.h"
+#include "array.h"
 
 typedef enum
 {
@@ -41,15 +42,9 @@ IFF_FieldStatus;
 
 typedef IFF_FieldStatus (*IFF_readFieldFunction) (FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 typedef IFF_FieldStatus (*IFF_writeFieldFunction) (FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-typedef void (*IFF_clearFieldFunction) (void *value);
-typedef IFF_Bool (*IFF_compareFieldFunction) (const void *value1, const void *value2);
-typedef void (*IFF_printFieldFunction) (FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
 
 typedef IFF_FieldStatus (*IFF_readArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 typedef IFF_FieldStatus (*IFF_writeArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-typedef IFF_Bool (*IFF_compareArrayFieldFunction) (const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
-typedef void (*IFF_clearArrayFieldFunction) (void *array, const unsigned int arrayLength);
-typedef void (*IFF_printArrayFieldFunction) (FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 struct IFF_Type
 {
@@ -58,15 +53,15 @@ struct IFF_Type
 
     IFF_readFieldFunction readField;
     IFF_writeFieldFunction writeField;
-    IFF_clearFieldFunction clearField;
-    IFF_compareFieldFunction compareField;
-    IFF_printFieldFunction printField;
+    IFF_clearValueFunction clearField;
+    IFF_compareValueFunction compareField;
+    IFF_printValueFunction printField;
 
     IFF_readArrayFieldFunction readArrayField;
     IFF_writeArrayFieldFunction writeArrayField;
-    IFF_clearArrayFieldFunction clearArrayField;
-    IFF_compareArrayFieldFunction compareArrayField;
-    IFF_printArrayFieldFunction printArrayField;
+    IFF_clearArrayFunction clearArrayField;
+    IFF_compareArrayFunction compareArrayField;
+    IFF_printArrayFunction printArrayField;
 };
 
 typedef enum
@@ -111,55 +106,37 @@ IFF_Bool IFF_readChunkSizeField(FILE *file, void *value, const IFF_ID chunkId, I
 
 IFF_Bool IFF_writeChunkSizeField(FILE *file, const void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
 
-void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value, IFF_printValueFunction printValue);
+void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
+
+void IFF_printArrayField(FILE *file, const IFF_Field *field, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 IFF_FieldStatus IFF_readUByteField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-void IFF_printUByteField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
-void IFF_printCharField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
-void IFF_printByteField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
 IFF_FieldStatus IFF_readUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-
-void IFF_printUByteHexArrayField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
-
-void IFF_printTextField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 IFF_FieldStatus IFF_readUWordField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeUWordField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-void IFF_printUWordField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
 IFF_FieldStatus IFF_readWordField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeWordField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-
-void IFF_printWordField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
 
 IFF_FieldStatus IFF_readULongField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeULongField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-void IFF_printULongField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
 IFF_FieldStatus IFF_readLongField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeLongField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-void IFF_printLongField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
-
 IFF_FieldStatus IFF_readIdField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_writeIdField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-
-void IFF_printIdField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
 
 void IFF_printChunkField(FILE *file, const unsigned int indentLevel, const char *attributeName, const IFF_Chunk *chunk);
 

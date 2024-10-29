@@ -27,6 +27,8 @@
 
 typedef IFF_Bool (*IFF_readValueFunction) (FILE *file, void *value);
 typedef IFF_Bool (*IFF_writeValueFunction) (FILE *file, const void *value);
+typedef void (*IFF_clearValueFunction) (void *value);
+typedef IFF_Bool (*IFF_compareValueFunction) (const void *value1, const void *value2);
 typedef void (*IFF_printValueFunction) (FILE *file, const void *value, const unsigned int indentLevel);
 
 #ifdef __cplusplus

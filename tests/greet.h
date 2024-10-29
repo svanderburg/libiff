@@ -66,7 +66,7 @@ IFF_FieldStatus TEST_writeGreet(FILE *file, const IFF_Field *field, const void *
 
 IFF_Bool TEST_compareGreet(const void *value1, const void *value2);
 
-void TEST_printGreet(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
+void TEST_printGreet(FILE *file, const void *value, const unsigned int indentLevel);
 
 IFF_FieldStatus TEST_readGreetArray(FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
@@ -74,7 +74,7 @@ IFF_FieldStatus TEST_writeGreetArray(FILE *file, const IFF_Field *field, void *a
 
 IFF_Bool TEST_compareGreetArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
 
-void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, const IFF_Field *field, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
+void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 }

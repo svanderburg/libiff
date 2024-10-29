@@ -28,6 +28,7 @@
 #include "util.h"
 #include "error.h"
 #include "field.h"
+#include "structure.h"
 
 IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize, IFF_ChunkInterface *chunkInterface)
 {
@@ -107,20 +108,37 @@ void IFF_freeChunk(IFF_Chunk *chunk)
     }
 }
 
-static IFF_Field chunkIdField = { "chunkId", &IFF_Type_ID, IFF_CARDINALITY_SINGLE };
-static IFF_Field chunkSizeField = { "chunkSize", &IFF_Type_Long, IFF_CARDINALITY_SINGLE };
-
-static void printChunkIdField(FILE *file, const unsigned int indentLevel, const IFF_ID chunkId)
+static void *getFieldPointer(void *object, const unsigned int index)
 {
-    IFF_printField(file, indentLevel, &chunkIdField, &chunkId, IFF_printIdValue);
+    IFF_Chunk *chunk = (IFF_Chunk*)object;
+
+    switch(index)
+    {
+        case 0:
+            return &chunk->chunkId;
+        case 1:
+            return &chunk->chunkSize;
+        default:
+            return NULL;
+    }
 }
+
+static IFF_Field fields[] = {
+    { "chunkId", &IFF_Type_ID, IFF_CARDINALITY_SINGLE },
+    { "chunkSize", &IFF_Type_Long, IFF_CARDINALITY_SINGLE }
+};
+
+static IFF_Structure chunkHeaderStructure = {
+    2,
+    fields,
+    getFieldPointer,
+    NULL
+};
 
 void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)
 {
     fputs("{\n", file);
-    printChunkIdField(file, indentLevel + 1, chunk->chunkId);
-    fputs(",\n", file);
-    IFF_printLongField(file, indentLevel + 1, &chunkSizeField, &chunk->chunkSize);
+    IFF_printStructureFields(file, indentLevel + 1, &chunkHeaderStructure, (void*)chunk);
     chunk->chunkInterface->printChunkContents(file, chunk, indentLevel + 1);
     fputc('\n', file);
     IFF_printIndent(file, indentLevel, "}");
@@ -128,7 +146,7 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
 
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    if(chunk1->chunkId == chunk2->chunkId && chunk1->chunkSize == chunk2->chunkSize)
+    if(IFF_compareStructure(&chunkHeaderStructure, (void*)chunk1, (void*)chunk2))
         return chunk1->chunkInterface->compareChunkContents(chunk1, chunk2);
     else
         return FALSE;

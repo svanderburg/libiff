@@ -28,6 +28,8 @@
 
 typedef IFF_Bool (*IFF_readArrayFunction) (FILE *file, void *array, size_t arrayLength);
 typedef IFF_Bool (*IFF_writeArrayFunction) (FILE *file, void *array, size_t arrayLength);
+typedef void (*IFF_clearArrayFunction) (void *array, const unsigned int arrayLength);
+typedef IFF_Bool (*IFF_compareArrayFunction) (const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
 typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
