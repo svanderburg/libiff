@@ -21,8 +21,6 @@
 
 #include "greet.h"
 #include <structure.h>
-#include <array.h>
-#include <util.h>
 
 static IFF_Field fields[] = {
     { "opening", &IFF_Type_UByte, IFF_CARDINALITY_SINGLE },
@@ -89,76 +87,20 @@ void TEST_printGreet(FILE *file, const void *value, const unsigned int indentLev
 
 IFF_FieldStatus TEST_readGreetArray(FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Greet *greets = (TEST_Greet*)array;
-    unsigned int i;
-
-    for(i = 0; i < arrayLength; i++)
-    {
-        IFF_FieldStatus status;
-
-        if((status = TEST_readGreet(file, field, &greets[i], chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-            return status;
-    }
-
-    return IFF_FIELD_MORE;
+    return IFF_readArrayField(file, field, TEST_readGreet, array, arrayLength, chunk, attributePath, bytesProcessed, error);
 }
 
 IFF_FieldStatus TEST_writeGreetArray(FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Greet *greets = (TEST_Greet*)array;
-    unsigned int i;
-
-    for(i = 0; i < arrayLength; i++)
-    {
-        IFF_FieldStatus status;
-
-        if((status = TEST_writeGreet(file, field, &greets[i], chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-            return status;
-    }
-
-    return IFF_FIELD_MORE;
+    return IFF_writeArrayField(file, field, TEST_writeGreet, array, arrayLength, chunk, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool TEST_compareGreetArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length)
 {
-    if(array1Length == array2Length)
-    {
-        const TEST_Greet *greet1Array = (const TEST_Greet*)array1;
-        const TEST_Greet *greet2Array = (const TEST_Greet*)array2;
-
-        unsigned int i;
-
-        for(i = 0; i < array1Length; i++)
-        {
-            if(!TEST_compareGreet(&greet1Array[i], &greet2Array[i]))
-                return FALSE;
-        }
-
-        return TRUE;
-    }
-    else
-        return FALSE;
+    return IFF_compareArray(array1, sizeof(TEST_Greet), array1Length, array2, sizeof(TEST_Greet), array2Length, TEST_compareGreet);
 }
 
 void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
-    TEST_Greet *greetArray = (TEST_Greet*)array;
-    unsigned int i;
-
-    fputs("{\n", file);
-    IFF_printIndent(file, indentLevel + 1, "");
-
-    for(i = 0; i < arrayLength; i++)
-    {
-        if(i > 0)
-        {
-            fputs(",\n", file);
-            IFF_printIndent(file, indentLevel + 1, "");
-        }
-
-        TEST_printGreet(file, &greetArray[i], indentLevel + 1);
-    }
-
-    fputc('\n', file);
-    IFF_printIndent(file, indentLevel, "}");
+    IFF_printArray(file, indentLevel, array, sizeof(TEST_Greet), arrayLength, elementsPerRow, TEST_printGreet);
 }
