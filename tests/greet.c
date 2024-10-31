@@ -27,15 +27,22 @@ static IFF_Field fields[] = {
     { "closure", &IFF_Type_UByte, IFF_CARDINALITY_SINGLE }
 };
 
+typedef enum
+{
+    FIELD_INDEX_OPENING = 0,
+    FIELD_INDEX_CLOSURE = 1
+}
+FieldIndex;
+
 static void *getFieldPointer(void *object, const unsigned int index)
 {
     TEST_Greet *greet = (TEST_Greet*)object;
 
     switch(index)
     {
-        case 0:
+        case FIELD_INDEX_OPENING:
             return &greet->opening;
-        case 1:
+        case FIELD_INDEX_CLOSURE:
             return &greet->closure;
         default:
             return NULL;

@@ -315,9 +315,9 @@ void IFF_printGroupContents(FILE *file, const IFF_Group *group, const unsigned i
 
 IFF_Bool IFF_compareGroupContents(const IFF_Group *group1, const IFF_Group *group2)
 {
-    return (group1->groupType == group2->groupType &&
+    return group1->groupType == group2->groupType &&
         IFF_compareChunksArray(group1->chunks, group1->chunksLength, group2->chunks, group2->chunksLength) &&
-        IFF_compareGroupStructure(group1, group2));
+        IFF_compareGroupStructure(group1, group2);
 }
 
 IFF_Bool IFF_traverseGroupChunkHierarchy(IFF_Group *group, void *data, IFF_visitChunkFunction visitChunk)

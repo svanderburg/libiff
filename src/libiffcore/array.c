@@ -24,16 +24,9 @@
 #include <stdlib.h>
 #include "util.h"
 
-static size_t computeArraySize(size_t elementSize, size_t arrayLength)
-{
-    return arrayLength * elementSize;
-}
-
 static IFF_Bool readValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
 {
-    size_t arraySize = computeArraySize(elementSize, arrayLength);
-
-    return fread(array, elementSize, arrayLength, file) == arraySize;
+    return fread(array, elementSize, arrayLength, file) == arrayLength;
 }
 
 IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength)
@@ -43,9 +36,7 @@ IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength)
 
 static IFF_Bool writeValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
 {
-    size_t arraySize = computeArraySize(elementSize, arrayLength);
-
-    return fwrite(array, elementSize, arrayLength, file) == arraySize;
+    return fwrite(array, elementSize, arrayLength, file) == arrayLength;
 }
 
 IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
@@ -53,9 +44,14 @@ IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
     return writeValueArray(file, array, sizeof(IFF_UByte), arrayLength);
 }
 
-void IFF_clearValueArray(void *array, const unsigned int arrayLength)
+void IFF_clearValueArray(void *array, size_t arrayLength)
 {
     free(array);
+}
+
+static size_t computeArraySize(size_t elementSize, size_t arrayLength)
+{
+    return arrayLength * elementSize;
 }
 
 IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigned int array1Length, const void *array2, size_t element2Size, const unsigned int array2Length, IFF_compareValueFunction compareValue)
@@ -64,7 +60,7 @@ IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigne
     {
         const IFF_UByte *rawArray1 = (const IFF_UByte*)array1;
         const IFF_UByte *rawArray2 = (const IFF_UByte*)array2;
-        size_t arraySize = element1Size * array1Length;
+        size_t arraySize = computeArraySize(element1Size, array1Length);
         unsigned int i;
 
         for(i = 0; i < arraySize; i += element1Size)
@@ -93,7 +89,7 @@ void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, siz
 {
     size_t i;
     IFF_UByte *rawArray = (IFF_UByte*)array;
-    size_t arraySize = elementSize * arrayLength;
+    size_t arraySize = computeArraySize(elementSize, arrayLength);
 
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
@@ -117,7 +113,7 @@ void IFF_printValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *
 {
     size_t i;
     IFF_UByte *rawArray = (IFF_UByte*)array;
-    size_t arraySize = elementSize * arrayLength;
+    size_t arraySize = computeArraySize(elementSize, arrayLength);
 
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");

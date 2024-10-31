@@ -108,15 +108,22 @@ void IFF_freeChunk(IFF_Chunk *chunk)
     }
 }
 
+typedef enum
+{
+    FIELD_INDEX_CHUNK_ID = 0,
+    FIELD_INDEX_CHUNK_SIZE = 1
+}
+FieldIndex;
+
 static void *getFieldPointer(void *object, const unsigned int index)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)object;
 
     switch(index)
     {
-        case 0:
+        case FIELD_INDEX_CHUNK_ID:
             return &chunk->chunkId;
-        case 1:
+        case FIELD_INDEX_CHUNK_SIZE:
             return &chunk->chunkSize;
         default:
             return NULL;
@@ -146,18 +153,14 @@ void IFF_printChunk(FILE *file, const IFF_Chunk *chunk, const unsigned int inden
 
 IFF_Bool IFF_compareChunk(const IFF_Chunk *chunk1, const IFF_Chunk *chunk2)
 {
-    if(IFF_compareStructure(&chunkHeaderStructure, (void*)chunk1, (void*)chunk2))
-        return chunk1->chunkInterface->compareChunkContents(chunk1, chunk2);
-    else
-        return FALSE;
+    return IFF_compareStructure(&chunkHeaderStructure, (void*)chunk1, (void*)chunk2)
+        && chunk1->chunkInterface->compareChunkContents(chunk1, chunk2);
 }
 
 IFF_Bool IFF_traverseChunkHierarchy(IFF_Chunk *chunk, void *data, IFF_visitChunkFunction visitChunk)
 {
-    if(chunk->chunkInterface->traverseChunkHierarchy == NULL)
-        return TRUE;
-    else
-        return chunk->chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk);
+    return chunk->chunkInterface->traverseChunkHierarchy == NULL
+        || chunk->chunkInterface->traverseChunkHierarchy(chunk, data, visitChunk);
 }
 
 void IFF_recalculateChunkHierarchySizes(IFF_Chunk *chunk)

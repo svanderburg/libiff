@@ -70,13 +70,19 @@ IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, 
     return obsoleteChunkData;
 }
 
+typedef enum
+{
+    FIELD_INDEX_CHUNK_DATA = 0
+}
+FieldIndex;
+
 static IFF_Field fields[] = {
     { "chunkData", &IFF_Type_UByte, IFF_CARDINALITY_MULTIPLE }
 };
 
 void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
 {
-    if(index == 0)
+    if(index == FIELD_INDEX_CHUNK_DATA)
     {
         IFF_RawChunk *rawChunk = (IFF_RawChunk*)object;
         *arrayLength = rawChunk->chunkSize;

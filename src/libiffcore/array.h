@@ -28,7 +28,7 @@
 
 typedef IFF_Bool (*IFF_readArrayFunction) (FILE *file, void *array, size_t arrayLength);
 typedef IFF_Bool (*IFF_writeArrayFunction) (FILE *file, void *array, size_t arrayLength);
-typedef void (*IFF_clearArrayFunction) (void *array, const unsigned int arrayLength);
+typedef void (*IFF_clearArrayFunction) (void *array, size_t arrayLength);
 typedef IFF_Bool (*IFF_compareArrayFunction) (const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
 typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
 
@@ -40,7 +40,7 @@ IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength);
 
 IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength);
 
-void IFF_clearValueArray(void *array, const unsigned int arrayLength);
+void IFF_clearValueArray(void *array, size_t arrayLength);
 
 IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigned int array1Length, const void *array2, size_t element2Size, const unsigned int array2Length, IFF_compareValueFunction compareValue);
 

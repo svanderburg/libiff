@@ -39,7 +39,7 @@ IFF_FieldStatus IFF_readStructure(FILE *file, const IFF_Structure *structure, vo
             if((status = field->type->readField(file, field, value, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
                 return status;
         }
-        else
+        else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
             IFF_FieldStatus status;
             unsigned int arrayLength;
