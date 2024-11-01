@@ -200,6 +200,8 @@ void IFF_replaceSubChunkOfChunk(IFF_Chunk *chunk, IFF_Chunk *obsoleteChunk, IFF_
 
 void *IFF_addArrayElementToChunk(IFF_Chunk *chunk, void **array, size_t elementSize, unsigned int *arrayLength);
 
+void *IFF_removeArrayElementFromChunk(IFF_Chunk *chunk, void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength);
+
 #ifdef __cplusplus
 }
 #endif

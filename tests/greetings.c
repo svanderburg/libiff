@@ -48,6 +48,11 @@ TEST_Greet *TEST_addGreetToGreetings(TEST_Greetings *greetings)
     return (TEST_Greet*)IFF_addArrayElementToChunk((IFF_Chunk*)greetings, (void**)&greetings->greets, sizeof(TEST_Greet), &greetings->greetsLength);
 }
 
+void TEST_removeGreetFromGreetings(TEST_Greetings *greetings, const unsigned int index)
+{
+    greetings->greets = (TEST_Greet*)IFF_removeArrayElementFromChunk((IFF_Chunk*)greetings, greetings->greets, sizeof(TEST_Greet), index, &greetings->greetsLength);
+}
+
 static void **getArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
 {
     if(index == 0)

@@ -36,6 +36,10 @@ typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLev
 extern "C" {
 #endif
 
+void *IFF_addElementToArray(void **array, size_t elementSize, unsigned int *arrayLength);
+
+void *IFF_removeElementFromArrayByIndex(void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength);
+
 IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength);
 
 IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength);

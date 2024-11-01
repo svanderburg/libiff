@@ -216,6 +216,85 @@ static IFF_Bool removeMessageAndCheck(TEST_Conversation *conversation)
     return TRUE;
 }
 
+static TEST_Greetings *createGreetingsChunk(void)
+{
+    TEST_Greet *greet1, *greet2, *greet3;
+    TEST_Greetings *greetings = TEST_createGreetings();
+
+    greet1 = TEST_addGreetToGreetings(greetings);
+    greet1->opening = TEST_OPENING_HELLO;
+    greet1->closure = TEST_CLOSURE_BYE;
+
+    greet2 = TEST_addGreetToGreetings(greetings);
+    greet2->opening = TEST_OPENING_HI;
+    greet2->closure = TEST_CLOSURE_SEEYA;
+
+    greet3 = TEST_addGreetToGreetings(greetings);
+    greet3->opening = TEST_OPENING_GREETINGS;
+    greet3->closure = TEST_CLOSURE_GOOD_DAY;
+
+    return greetings;
+}
+
+static IFF_Bool addGreetingsAndCheck(TEST_Conversation *conversation)
+{
+    TEST_Greetings *greetings = createGreetingsChunk();
+    TEST_addChunkToConversation(conversation, (IFF_Chunk*)greetings);
+
+    if(greetings->greetsLength != 3)
+    {
+        fprintf(stderr, "There should be 3 greets attached, instead we have: %u\n", greetings->greetsLength);
+        return FALSE;
+    }
+
+    if(greetings->greets[0].opening != TEST_OPENING_HELLO)
+    {
+        fprintf(stderr, "The first opening greet should be: %u, instead it is: %u\n", TEST_OPENING_HELLO, greetings->greets[0].opening);
+        return FALSE;
+    }
+
+    if(greetings->greets[1].opening != TEST_OPENING_HI)
+    {
+        fprintf(stderr, "The second opening greet should be: %u, instead it is: %u\n", TEST_OPENING_HI, greetings->greets[1].opening);
+        return FALSE;
+    }
+
+    if(greetings->greets[2].opening != TEST_OPENING_GREETINGS)
+    {
+        fprintf(stderr, "The third opening greet should be: %u, instead it is: %u\n", TEST_OPENING_GREETINGS, greetings->greets[2].opening);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static IFF_Bool removeGreetAndCheck(TEST_Conversation *conversation)
+{
+    TEST_Greetings *greetings = conversation->greetings;
+
+    TEST_removeGreetFromGreetings(greetings, 1); /* Remove the middle greet */
+
+    if(greetings->greetsLength != 2)
+    {
+        fprintf(stderr, "There should be 2 greets attached, instead we have: %u\n", greetings->greetsLength);
+        return FALSE;
+    }
+
+    if(greetings->greets[0].opening != TEST_OPENING_HELLO)
+    {
+        fprintf(stderr, "The first opening greet should be: %u, instead it is: %u\n", TEST_OPENING_HELLO, greetings->greets[0].opening);
+        return FALSE;
+    }
+
+    if(greetings->greets[1].opening != TEST_OPENING_GREETINGS)
+    {
+        fprintf(stderr, "The second opening greet should be: %u, instead it is: %u\n", TEST_OPENING_GREETINGS, greetings->greets[1].opening);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 int main(int argc, char *argv[])
 {
     int status;
@@ -228,7 +307,9 @@ int main(int argc, char *argv[])
         removeTwoHelloChunksAndCheck(conversation) &&
         addMessageAndCheck(conversation) &&
         updateMessageAndCheck(conversation) &&
-        removeMessageAndCheck(conversation))
+        removeMessageAndCheck(conversation) &&
+        addGreetingsAndCheck(conversation) &&
+        removeGreetAndCheck(conversation))
         status = 0;
     else
         status = 1;

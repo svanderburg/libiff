@@ -24,6 +24,36 @@
 #include <stdlib.h>
 #include "util.h"
 
+static size_t computeArraySize(size_t elementSize, size_t arrayLength)
+{
+    return arrayLength * elementSize;
+}
+
+void *IFF_addElementToArray(void **array, size_t elementSize, unsigned int *arrayLength)
+{
+    size_t arraySize = computeArraySize(elementSize, *arrayLength);
+    void *newElement;
+    *array = realloc(*array, (*arrayLength + 1) * elementSize);
+    newElement = (IFF_UByte*)*array + arraySize;
+    *arrayLength = *arrayLength + 1;
+    return newElement;
+}
+
+void *IFF_removeElementFromArrayByIndex(void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength)
+{
+    IFF_UByte *rawArray = (IFF_UByte*)array;
+    unsigned int i;
+    size_t arraySize;
+
+    *arrayLength = *arrayLength - 1;
+    arraySize = computeArraySize(elementSize, *arrayLength);
+
+    for(i = index * elementSize; i < arraySize; i += elementSize)
+        rawArray[i] = rawArray[i + elementSize];
+
+    return realloc(array, arraySize);
+}
+
 static IFF_Bool readValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
 {
     return fread(array, elementSize, arrayLength, file) == arrayLength;
@@ -47,11 +77,6 @@ IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
 void IFF_clearValueArray(void *array, size_t arrayLength)
 {
     free(array);
-}
-
-static size_t computeArraySize(size_t elementSize, size_t arrayLength)
-{
-    return arrayLength * elementSize;
 }
 
 IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigned int array1Length, const void *array2, size_t element2Size, const unsigned int array2Length, IFF_compareValueFunction compareValue)
