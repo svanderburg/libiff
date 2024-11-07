@@ -46,15 +46,22 @@ TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
     return TEST_createByeChunk(TEST_ID_BYE, chunkSize);
 }
 
+typedef enum
+{
+    FIELD_INDEX_ONE = 0,
+    FIELD_INDEX_TWO = 1
+}
+FieldIndex;
+
 static void *getFieldPointer(void *object, const unsigned int index)
 {
     TEST_Bye *bye = (TEST_Bye*)object;
 
     switch(index)
     {
-        case 0:
+        case FIELD_INDEX_ONE:
             return &bye->one;
-        case 1:
+        case FIELD_INDEX_TWO:
             return &bye->two;
         default:
             return NULL;

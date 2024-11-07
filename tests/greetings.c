@@ -53,9 +53,15 @@ void TEST_removeGreetFromGreetings(TEST_Greetings *greetings, const unsigned int
     greetings->greets = (TEST_Greet*)IFF_removeArrayElementFromChunk((IFF_Chunk*)greetings, greetings->greets, sizeof(TEST_Greet), index, &greetings->greetsLength);
 }
 
+typedef enum
+{
+    FIELD_INDEX_GREETS = 0
+}
+FieldIndex;
+
 static void **getArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
 {
-    if(index == 0)
+    if(index == FIELD_INDEX_GREETS)
     {
         TEST_Greetings *greetings = (TEST_Greetings*)object;
         *arrayLength = greetings->chunkSize / sizeof(TEST_Greet);

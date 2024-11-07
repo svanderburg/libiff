@@ -47,17 +47,25 @@ TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
     return TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
 }
 
+typedef enum
+{
+    FIELD_INDEX_A = 0,
+    FIELD_INDEX_B = 1,
+    FIELD_INDEX_C = 2
+}
+FieldIndex;
+
 static void *getFieldPointer(void *object, const unsigned int index)
 {
     TEST_Hello *hello = (TEST_Hello*)object;
 
     switch(index)
     {
-        case 0:
+        case FIELD_INDEX_A:
             return &hello->a;
-        case 1:
+        case FIELD_INDEX_B:
             return &hello->b;
-        case 2:
+        case FIELD_INDEX_C:
             return &hello->c;
         default:
             return NULL;
