@@ -36,7 +36,7 @@ typedef IFF_Bool (*IFF_mapChunkIdToFieldIndexFunction) (const IFF_ID chunkId, un
 
 typedef IFF_Chunk **(*IFF_getFieldPointerFunction) (const IFF_Group *group, const unsigned int index);
 
-typedef IFF_Chunk ***(*IFF_getArrayFieldPointerFunction) (const IFF_Group *group, const unsigned int index, unsigned int **chunksLength);
+typedef IFF_Chunk ***(*IFF_getArrayFieldPointerFunction) (const IFF_Group *group, const unsigned int index, IFF_Long **chunksLength);
 
 typedef enum
 {
@@ -78,7 +78,7 @@ IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_
 
 IFF_Chunk *IFF_getPropertyFromGroupStructure(const IFF_Group *group, const unsigned int index);
 
-IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, unsigned int *propertiesLength);
+IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, IFF_Long *propertiesLength);
 
 void IFF_evaluateGroupStructure(const IFF_Group *group, IFF_Group *evaluatedGroup);
 

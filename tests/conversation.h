@@ -46,14 +46,14 @@ struct TEST_Conversation
     IFF_ID chunkId;
     IFF_Long chunkSize;
     IFF_ID formType;
-    unsigned int chunksLength;
+    IFF_Long chunksLength;
     IFF_Chunk **chunks;
     IFF_GroupStructure *groupStructure;
 
     TEST_Hello *hello;
     TEST_Bye *bye;
     TEST_Greetings *greetings;
-    unsigned int messagesLength;
+    IFF_Long messagesLength;
     IFF_TextChunk **messages;
 };
 
@@ -79,6 +79,6 @@ TEST_Hello *TEST_getHello(const TEST_Conversation *conversation);
 
 TEST_Bye *TEST_getBye(const TEST_Conversation *conversation);
 
-IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, unsigned int *messagesLength);
+IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, IFF_Long *messagesLength);
 
 #endif

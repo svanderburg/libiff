@@ -33,9 +33,9 @@ static IFF_Chunk *getFieldValue(const IFF_Group *group, const unsigned int index
     return *chunkPtr;
 }
 
-static IFF_Chunk **getArrayFieldValue(const IFF_Group *group, const unsigned int index, unsigned int *chunksLength)
+static IFF_Chunk **getArrayFieldValue(const IFF_Group *group, const unsigned int index, IFF_Long *chunksLength)
 {
-    unsigned int *chunksLengthPtr;
+    IFF_Long *chunksLengthPtr;
     IFF_Chunk ***chunksPtr = group->groupStructure->getArrayFieldPointer(group, index, &chunksLengthPtr);
 
     *chunksLength = *chunksLengthPtr;
@@ -66,7 +66,7 @@ IFF_Bool IFF_attachChunkToGroupStructure(IFF_Group *group, IFF_Chunk *chunk)
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int *chunksLength;
+                IFF_Long *chunksLength;
                 IFF_Chunk ***chunksPointer = group->groupStructure->getArrayFieldPointer(group, index, &chunksLength);
                 *chunksPointer = IFF_addChunkToChunksArray(*chunksPointer, chunksLength, chunk);
             }
@@ -140,7 +140,7 @@ IFF_Chunk *IFF_updateChunkInGroupStructureByIndex(IFF_Group *group, const unsign
 
     if(group->groupStructure->mapChunkIdToFieldIndex(chunk->chunkId, &groupMemberIndex))
     {
-        unsigned int *chunksLength;
+        IFF_Long *chunksLength;
         IFF_Chunk ***obsoleteChunkArrayPtr = group->groupStructure->getArrayFieldPointer(group, groupMemberIndex, &chunksLength);
 
         if(obsoleteChunkArrayPtr == NULL)
@@ -162,7 +162,7 @@ IFF_Chunk *IFF_removeChunkFromGroupStructureByIndex(IFF_Group *group, const IFF_
 
     if(group->groupStructure->mapChunkIdToFieldIndex(chunkId, &groupMemberIndex))
     {
-        unsigned int *chunksLength;
+        IFF_Long *chunksLength;
         IFF_Chunk ***chunkArrayPtr = group->groupStructure->getArrayFieldPointer(group, groupMemberIndex, &chunksLength);
 
         if(chunkArrayPtr == NULL)
@@ -206,7 +206,7 @@ IFF_Chunk *IFF_getPropertyFromGroupStructure(const IFF_Group *group, const unsig
     }
 }
 
-static IFF_Chunk **appendPropertiesToResult(const IFF_Group *group, const unsigned int index, IFF_Chunk **properties, unsigned int *propertiesLength)
+static IFF_Chunk **appendPropertiesToResult(const IFF_Group *group, const unsigned int index, IFF_Chunk **properties, IFF_Long *propertiesLength)
 {
     IFF_Group *parentGroup = (IFF_Group*)IFF_searchEnclosingProp((const IFF_Chunk*)group, group->groupType);
 
@@ -217,7 +217,7 @@ static IFF_Chunk **appendPropertiesToResult(const IFF_Group *group, const unsign
         return properties;
     else
     {
-        unsigned int *appendPropertiesLengthPtr;
+        IFF_Long *appendPropertiesLengthPtr;
         IFF_Chunk ***appendPropertiesPtr = group->groupStructure->getArrayFieldPointer(group, index, &appendPropertiesLengthPtr);
 
         if(**appendPropertiesPtr == NULL)
@@ -227,7 +227,7 @@ static IFF_Chunk **appendPropertiesToResult(const IFF_Group *group, const unsign
     }
 }
 
-IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, unsigned int *propertiesLength)
+IFF_Chunk **IFF_getPropertiesFromGroupStructure(const IFF_Group *group, const unsigned int index, IFF_Long *propertiesLength)
 {
     *propertiesLength = 0;
     return appendPropertiesToResult(group, index, NULL, propertiesLength);
@@ -252,9 +252,9 @@ void IFF_evaluateGroupStructure(const IFF_Group *group, IFF_Group *evaluatedGrou
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int appendChunksLength;
+                IFF_Long appendChunksLength;
                 IFF_Chunk **appendChunks = getArrayFieldValue(group, i, &appendChunksLength);
-                unsigned int *baseChunksLength;
+                IFF_Long *baseChunksLength;
                 IFF_Chunk ***baseChunks = evaluatedGroup->groupStructure->getArrayFieldPointer(evaluatedGroup, i, &baseChunksLength);
 
                 *baseChunks = IFF_mergeChunksArrayIntoGroup(evaluatedGroup, *baseChunks, *baseChunksLength, appendChunks, appendChunksLength, baseChunksLength);
@@ -275,7 +275,7 @@ void IFF_freeEvaluatedGroupStructure(IFF_Group *evaluatedGroup)
 
             if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(evaluatedGroup, i, &chunksLength);
                 free(chunks);
             }
@@ -300,7 +300,7 @@ void IFF_initGroupStructure(IFF_Group *group)
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int *chunksLength;
+                IFF_Long *chunksLength;
                 IFF_Chunk ***chunksPointer = group->groupStructure->getArrayFieldPointer(group, i, &chunksLength);
 
                 *chunksPointer = NULL;
@@ -337,7 +337,7 @@ IFF_Bool IFF_writeGroupStructure(FILE *file, const IFF_Group *group, IFF_Attribu
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 if(!IFF_writeChunksArray(file, chunks, chunksLength, attributePath, bytesProcessed, error))
@@ -370,7 +370,7 @@ IFF_Long IFF_addActualGroupStructureSize(const IFF_Group *group, IFF_Long chunkS
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 chunkSize = IFF_addChunksArraySize(chunks, chunksLength, chunkSize);
@@ -404,7 +404,7 @@ IFF_QualityLevel IFF_checkGroupStructure(const IFF_Group *group, IFF_AttributePa
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_checkChunksArray(chunks, chunksLength, attributePath, printCheckMessage, data));
@@ -436,7 +436,7 @@ void IFF_clearGroupStructure(IFF_Group *group)
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 IFF_freeChunksArray(chunks, chunksLength);
@@ -467,7 +467,7 @@ void IFF_printGroupStructure(FILE *file, const IFF_Group *group, const unsigned 
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 fputs(",\n", file);
@@ -502,7 +502,7 @@ IFF_Bool IFF_compareGroupStructure(const IFF_Group *group1, const IFF_Group *gro
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunks1Length, chunks2Length;
+                IFF_Long chunks1Length, chunks2Length;
                 IFF_Chunk **chunks1 = getArrayFieldValue(group1, i, &chunks1Length);
                 IFF_Chunk **chunks2 = getArrayFieldValue(group2, i, &chunks2Length);
 
@@ -537,7 +537,7 @@ IFF_Bool IFF_traverseGroupStructureHierarchy(const IFF_Group *group, void *data,
             }
             else if(groupMember->cardinality == IFF_GROUP_MEMBER_MULTIPLE)
             {
-                unsigned int chunksLength;
+                IFF_Long chunksLength;
                 IFF_Chunk **chunks = getArrayFieldValue(group, i, &chunksLength);
 
                 if(!IFF_traverseChunksArray(chunks, chunksLength, data, visitChunk))

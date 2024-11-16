@@ -24,29 +24,29 @@
 #include "pointerarray.h"
 #include "util.h"
 
-IFF_Chunk **IFF_addChunkToChunksArray(IFF_Chunk **chunks, unsigned int *chunksLength, IFF_Chunk *chunk)
+IFF_Chunk **IFF_addChunkToChunksArray(IFF_Chunk **chunks, IFF_Long *chunksLength, IFF_Chunk *chunk)
 {
     return (IFF_Chunk**)IFF_addElementToPointerArray((void**)chunks, (void*)chunk, chunksLength);
 }
 
-IFF_Chunk *IFF_replaceChunkInChunksArrayByIndex(IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int index, IFF_Chunk *chunk)
+IFF_Chunk *IFF_replaceChunkInChunksArrayByIndex(IFF_Chunk **chunks, const IFF_Long chunksLength, const unsigned int index, IFF_Chunk *chunk)
 {
     return (IFF_Chunk*)IFF_replaceElementInPointerArrayByIndex((void**)chunks, chunksLength, index, (void*)chunk);
 }
 
-IFF_Chunk **IFF_removeChunkFromChunksArrayByIndex(IFF_Chunk **chunks, unsigned int *chunksLength, const unsigned int index, IFF_Chunk **obsoleteChunk)
+IFF_Chunk **IFF_removeChunkFromChunksArrayByIndex(IFF_Chunk **chunks, IFF_Long *chunksLength, const unsigned int index, IFF_Chunk **obsoleteChunk)
 {
     return (IFF_Chunk**)IFF_removeElementFromPointerArrayByIndex((void**)chunks, index, chunksLength, (void**)obsoleteChunk);
 }
 
-IFF_Chunk **IFF_appendChunksArrayToChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength)
+IFF_Chunk **IFF_appendChunksArrayToChunksArray(IFF_Chunk **chunks, const IFF_Long chunksLength, IFF_Chunk **appendChunks, const IFF_Long appendChunksLength, IFF_Long *resultChunksLength)
 {
     return (IFF_Chunk**)IFF_appendPointerArrayToPointerArray((void**)chunks, chunksLength, (void**)appendChunks, appendChunksLength, resultChunksLength);
 }
 
-IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const IFF_Long chunksLength, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < chunksLength; i++)
     {
@@ -66,10 +66,10 @@ IFF_Bool IFF_writeChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int
     return TRUE;
 }
 
-IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const IFF_Long chunksLength, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < chunksLength; i++)
     {
@@ -81,9 +81,9 @@ IFF_QualityLevel IFF_checkChunksArray(IFF_Chunk **chunks, const unsigned int chu
     return qualityLevel;
 }
 
-void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength)
+void IFF_freeChunksArray(IFF_Chunk **chunks, const IFF_Long chunksLength)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < chunksLength; i++)
         IFF_freeChunk(chunks[i]);
@@ -91,9 +91,9 @@ void IFF_freeChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength)
     free(chunks);
 }
 
-void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chunksLength, const unsigned int indentLevel)
+void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const IFF_Long chunksLength, const unsigned int indentLevel)
 {
-    unsigned int i;
+    IFF_Long i;
 
     fputs("{\n", file);
 
@@ -110,11 +110,11 @@ void IFF_printChunksArray(FILE *file, IFF_Chunk **chunks, const unsigned int chu
     IFF_printIndent(file, indentLevel, "}");
 }
 
-IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1Length, IFF_Chunk **chunks2, const unsigned int chunks2Length)
+IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const IFF_Long chunks1Length, IFF_Chunk **chunks2, const IFF_Long chunks2Length)
 {
     if(chunks1Length == chunks2Length)
     {
-        unsigned int i;
+        IFF_Long i;
 
         for(i = 0; i < chunks1Length; i++)
         {
@@ -128,9 +128,9 @@ IFF_Bool IFF_compareChunksArray(IFF_Chunk **chunks1, const unsigned int chunks1L
         return FALSE;
 }
 
-IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLength, void *data, IFF_visitChunkFunction visitChunk)
+IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const IFF_Long chunksLength, void *data, IFF_visitChunkFunction visitChunk)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < chunksLength; i++)
     {
@@ -141,10 +141,10 @@ IFF_Bool IFF_traverseChunksArray(IFF_Chunk **chunks, const unsigned int chunksLe
     return TRUE;
 }
 
-IFF_Long IFF_addChunksArraySize(IFF_Chunk **chunks, const unsigned int chunksLength, const IFF_Long chunkSize)
+IFF_Long IFF_addChunksArraySize(IFF_Chunk **chunks, const IFF_Long chunksLength, const IFF_Long chunkSize)
 {
     IFF_Long result = chunkSize;
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < chunksLength; i++)
         result = IFF_addChunkSize(result, chunks[i]);

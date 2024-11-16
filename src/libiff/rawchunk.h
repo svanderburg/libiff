@@ -50,6 +50,8 @@ struct IFF_RawChunk
     /** Contains the size of the chunk data in bytes */
     IFF_Long chunkSize;
 
+    IFF_Long chunkDataLength;
+
     /** An array of bytes representing raw chunk data */
     IFF_UByte *chunkData;
 };
@@ -88,7 +90,9 @@ void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data);
  */
 IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, IFF_Long chunkSize, IFF_Long *obsoleteChunkDataSize);
 
-void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength);
+void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, IFF_Long **arrayLength);
+
+IFF_Long IFF_getSpecifiedRawChunkArrayFieldLengthFunction(void *object, const unsigned int index);
 
 /**
  * Reads a raw chunk with the given chunk id and chunk size from a file.

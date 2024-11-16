@@ -43,8 +43,8 @@ IFF_FieldStatus;
 typedef IFF_FieldStatus (*IFF_readFieldFunction) (FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 typedef IFF_FieldStatus (*IFF_writeFieldFunction) (FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-typedef IFF_FieldStatus (*IFF_readArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
-typedef IFF_FieldStatus (*IFF_writeArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+typedef IFF_FieldStatus (*IFF_readArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error);
+typedef IFF_FieldStatus (*IFF_writeArrayFieldFunction) (FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 struct IFF_Type
 {
@@ -106,9 +106,9 @@ IFF_Bool IFF_readChunkSizeField(FILE *file, void *value, const IFF_ID chunkId, I
 
 IFF_Bool IFF_writeChunkSizeField(FILE *file, const void *value, const IFF_ID chunkId, IFF_AttributePath *attributePath, char *attributeName, IFF_IOError **error);
 
-IFF_FieldStatus IFF_readArrayField(FILE *file, const IFF_Field *field, IFF_readFieldFunction readField, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_readArrayField(FILE *file, const IFF_Field *field, IFF_readFieldFunction readField, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_FieldStatus IFF_writeArrayField(FILE *file, const IFF_Field *field, IFF_writeFieldFunction writeField, void *array, size_t arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_writeArrayField(FILE *file, const IFF_Field *field, IFF_writeFieldFunction writeField, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 void IFF_printField(FILE *file, const unsigned int indentLevel, const IFF_Field *field, const void *value);
 
@@ -118,9 +118,9 @@ IFF_FieldStatus IFF_readUByteField(FILE *file, const IFF_Field *field, void *val
 
 IFF_FieldStatus IFF_writeUByteField(FILE *file, const IFF_Field *field, const void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_FieldStatus IFF_readUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_readUByteArrayField(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error);
 
-IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, const IFF_Field *field, void *array, size_t length, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_FieldStatus IFF_writeUByteArrayField(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_FieldStatus IFF_readUWordField(FILE *file, const IFF_Field *field, void *value, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

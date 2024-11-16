@@ -173,7 +173,7 @@ static IFF_Bool testListWithSharedMessages(void)
     IFF_List *list = createConversationList(sharedConversation, conversation);
 
     IFF_TextChunk **allMessages;
-    unsigned int allMessagesLength;
+    IFF_Long allMessagesLength;
 
     allMessages = TEST_getMessages(conversation, &allMessagesLength);
 

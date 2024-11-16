@@ -21,22 +21,23 @@
 
 #ifndef __IFF_POINTERARRAY_H
 #define __IFF_POINTERARRAY_H
+#include "ifftypes.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned int *pointerArrayLength);
+void **IFF_addElementToPointerArray(void **pointerArray, void *element, IFF_Long *pointerArrayLength);
 
-void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement);
+void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const IFF_Long index, IFF_Long *pointerArrayLength, void **obsoleteElement);
 
-void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength);
+void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, IFF_Long *pointerArrayLength);
 
-void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement);
+void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const IFF_Long pointerArrayLength, const IFF_Long index, void *newElement);
 
-void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement);
+void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const IFF_Long pointerArrayLength, void *oldElement, void *newElement);
 
-void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength);
+void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const IFF_Long basePointerArrayLength, void **appendPointerArray, const IFF_Long appendPointerArrayLength, IFF_Long *resultPointerArrayLength);
 
 #ifdef __cplusplus
 }

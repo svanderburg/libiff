@@ -77,6 +77,7 @@ static IFF_Structure byeStructure = {
     2,
     fields,
     getFieldPointer,
+    NULL,
     NULL
 };
 

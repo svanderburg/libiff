@@ -29,7 +29,9 @@
 
 typedef void *(*IFF_getFieldPointerFunction) (void *object, const unsigned int index);
 
-typedef void **(*IFF_getArrayFieldPointerFunction) (void *object, const unsigned int index, unsigned int *arrayLength);
+typedef void **(*IFF_getArrayFieldPointerFunction) (void *object, const unsigned int index, IFF_Long **arrayLength);
+
+typedef IFF_Long (*IFF_getSpecifiedArrayFieldLengthFunction) (void *object, const unsigned int index);
 
 typedef struct IFF_Structure IFF_Structure;
 
@@ -40,6 +42,7 @@ struct IFF_Structure
 
     IFF_getFieldPointerFunction getFieldPointer;
     IFF_getArrayFieldPointerFunction getArrayFieldPointer;
+    IFF_getSpecifiedArrayFieldLengthFunction getSpecifiedArrayFieldLength;
 };
 
 #ifdef __cplusplus
@@ -53,6 +56,8 @@ IFF_FieldStatus IFF_writeStructure(FILE *file, const IFF_Structure *structure, v
 void IFF_clearStructure(const IFF_Structure *structure, void *object);
 
 IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, void *object2);
+
+IFF_QualityLevel IFF_checkStructureArrayLengths(const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data);
 
 void IFF_printStructureFields(FILE *file, const unsigned int indentLevel, const IFF_Structure *structure, void *object);
 

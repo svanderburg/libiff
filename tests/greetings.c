@@ -31,7 +31,7 @@ TEST_Greetings *TEST_createGreetingsChunk(const IFF_ID chunkId, const IFF_Long c
 
     if(greetings != NULL)
     {
-        greetings->greetsLength = greetings->chunkSize / sizeof(TEST_Greet);
+        greetings->greetsLength = 0;
         greetings->greets = NULL;
     }
 
@@ -59,16 +59,27 @@ typedef enum
 }
 FieldIndex;
 
-static void **getArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
+static void **getArrayFieldPointer(void *object, const unsigned int index, IFF_Long **arrayLength)
 {
     if(index == FIELD_INDEX_GREETS)
     {
         TEST_Greetings *greetings = (TEST_Greetings*)object;
-        *arrayLength = greetings->chunkSize / sizeof(TEST_Greet);
+        *arrayLength = &greetings->greetsLength;
         return (void**)&greetings->greets;
     }
     else
         return NULL;
+}
+
+static IFF_Long getSpecifiedArrayFieldLengthFunction(void *object, const unsigned int index)
+{
+    if(index == FIELD_INDEX_GREETS)
+    {
+        TEST_Greetings *greetings = (TEST_Greetings*)object;
+        return greetings->chunkSize / sizeof(TEST_Greet);
+    }
+    else
+        return 0;
 }
 
 static IFF_Field fields[] = {
@@ -79,7 +90,8 @@ static IFF_Structure greetingsStructure = {
     1,
     fields,
     NULL,
-    getArrayFieldPointer
+    getArrayFieldPointer,
+    getSpecifiedArrayFieldLengthFunction
 };
 
 IFF_Chunk *TEST_parseGreetingsContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -98,7 +110,7 @@ IFF_Bool TEST_writeGreetingsContents(FILE *file, const IFF_Chunk *chunk, IFF_Att
 
 IFF_QualityLevel TEST_checkGreetingsContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_QUALITY_PERFECT;
+    return IFF_checkStructureArrayLengths(&greetingsStructure, (void*)chunk, chunk, attributePath, printCheckMessage, data);
 }
 
 void TEST_clearGreetingsContents(IFF_Chunk *chunk)

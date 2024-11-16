@@ -142,7 +142,7 @@ recalculatechunksizes2_CFLAGS = -I../src/libiffcore -I../src/libiff
 TESTS = writeform readform writeform-pad readform-pad writenestedform readnestedform writecat readcat writelist readlist \
     validform.sh validcat.sh validcat-wildcard.sh validlist.sh validlist-wildcard.sh invalidiff.sh \
     invalidid1.sh invalidid2.sh invalidformtype1.sh invalidformtype2.sh invalidformtype3.sh invalidformtype4.sh \
-    invalidform-prop.sh invalidform-size1.sh invalidform-size2.sh \
+    invalidform-prop.sh invalidform-size1.sh invalidform-size2.sh truncatedform.sh \
     invalidcat-raw.sh invalidcat-prop.sh invalidcat-contentstype.sh invalidcat-size.sh \
     invalidlist-raw.sh invalidlist-contentstype.sh invalidlist-size.sh \
     invalidprop.sh invalidprop-size.sh invalidlist-negsize.sh \
@@ -158,7 +158,7 @@ EXTRA_DIST = invalidcat-contentstype.sh invalidcat-prop.sh invalidcat-raw.sh inv
     invalid.IFF invalidiff.sh invalidlist-contentstype.sh invalidlist-raw.sh invalidlist-size.sh invalidprop.sh invalidprop-size.sh join-different.sh \
     join-identical.sh testcheck.sh testpp-c.sh testpp-otherform.sh pp-text.sh validcat.sh validcat-wildcard.sh validform.sh validlist.sh validlist-wildcard.sh \
     extension-otherform.TEST invalidcat-contentstype.TEST invalidcat-prop.TEST invalidcat-raw.TEST invalidcat-size.TEST invalidform-prop.TEST \
-    invalidform-size1.TEST invalidform-size2.TEST invalidformtype1.TEST invalidformtype2.TEST invalidformtype3.TEST invalidformtype4.TEST \
+    invalidform-size1.TEST invalidform-size2.TEST invalidformtype1.TEST invalidformtype2.TEST invalidformtype3.TEST invalidformtype4.TEST truncatedform.TEST truncatedform.sh \
     invalidid1.TEST invalidid2.TEST invalidlist-contentstype.TEST invalidlist-raw.TEST invalidlist-size.TEST invalidprop-size.TEST invalidprop.TEST \
     pp-text.TEST validcat-wildcard.TEST validlist-wildcard.TEST \
     join.HELO join.BYE invalidlist-negsize.sh invalidlist-negsize.TEST

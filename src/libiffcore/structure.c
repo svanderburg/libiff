@@ -42,12 +42,13 @@ IFF_FieldStatus IFF_readStructure(FILE *file, const IFF_Structure *structure, vo
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
             IFF_FieldStatus status;
-            unsigned int arrayLength;
-            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
+            IFF_Long arrayLength = structure->getSpecifiedArrayFieldLength(object, i);
+            IFF_Long *actualArrayLengthPtr;
+            void **arrayPtr = structure->getArrayFieldPointer(object, i, &actualArrayLengthPtr);
 
             *arrayPtr = (void**)malloc(arrayLength * field->type->elementSize);
 
-            if((status = field->type->readArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
+            if((status = field->type->readArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, actualArrayLengthPtr, bytesProcessed, error)) != IFF_FIELD_MORE)
                 return status;
         }
     }
@@ -74,10 +75,10 @@ IFF_FieldStatus IFF_writeStructure(FILE *file, const IFF_Structure *structure, v
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
             IFF_FieldStatus status;
-            unsigned int arrayLength;
-            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
+            IFF_Long *arrayLengthPtr;
+            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLengthPtr);
 
-            if((status = field->type->writeArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
+            if((status = field->type->writeArrayField(file, field, *arrayPtr, *arrayLengthPtr, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
                 return status;
         }
     }
@@ -100,12 +101,38 @@ void IFF_clearStructure(const IFF_Structure *structure, void *object)
         }
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
-            unsigned int arrayLength;
-            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
+            IFF_Long *arrayLengthPtr;
+            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLengthPtr);
 
-            field->type->clearArrayField(*arrayPtr, arrayLength);
+            field->type->clearArrayField(*arrayPtr, *arrayLengthPtr);
         }
     }
+}
+
+IFF_QualityLevel IFF_checkStructureArrayLengths(const IFF_Structure *structure, void *object, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
+{
+    IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
+    unsigned int i;
+
+    for(i = 0; i < structure->fieldsLength; i++)
+    {
+        IFF_Field *field = &structure->fields[i];
+
+        if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
+        {
+            IFF_Long arrayLength = structure->getSpecifiedArrayFieldLength(object, i);
+            IFF_Long *actualArrayLengthPtr;
+            structure->getArrayFieldPointer(object, i, &actualArrayLengthPtr);
+
+            if(arrayLength != *actualArrayLengthPtr)
+            {
+                printCheckMessage(attributePath, field->attributeName, chunk->chunkId, data, "is truncated. It should contain: %d elements, but it has: %d elements", arrayLength, *actualArrayLengthPtr);
+                qualityLevel = IFF_degradeQualityLevel(qualityLevel, IFF_QUALITY_TRUNCATED);
+            }
+        }
+    }
+
+    return qualityLevel;
 }
 
 IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, void *object2)
@@ -126,11 +153,11 @@ IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, voi
         }
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
-            unsigned int array1Length, array2Length;
-            void **array1Ptr = structure->getArrayFieldPointer(object1, i, &array1Length);
-            void **array2Ptr = structure->getArrayFieldPointer(object2, i, &array2Length);
+            IFF_Long *array1LengthPtr, *array2LengthPtr;
+            void **array1Ptr = structure->getArrayFieldPointer(object1, i, &array1LengthPtr);
+            void **array2Ptr = structure->getArrayFieldPointer(object2, i, &array2LengthPtr);
 
-            if(!field->type->compareArrayField(*array1Ptr, array1Length, *array2Ptr, array2Length))
+            if(!field->type->compareArrayField(*array1Ptr, *array1LengthPtr, *array2Ptr, *array2LengthPtr))
                 return FALSE;
         }
     }
@@ -157,10 +184,10 @@ void IFF_printStructureFields(FILE *file, const unsigned int indentLevel, const 
         }
         else if(field->cardinality == IFF_CARDINALITY_MULTIPLE)
         {
-            unsigned int arrayLength;
-            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLength);
+            IFF_Long *arrayLengthPtr;
+            void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLengthPtr);
 
-            IFF_printArrayField(file, field, indentLevel, *arrayPtr, arrayLength, 10);
+            IFF_printArrayField(file, field, indentLevel, *arrayPtr, *arrayLengthPtr, 10);
         }
     }
 }

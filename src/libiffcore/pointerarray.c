@@ -22,7 +22,7 @@
 #include "pointerarray.h"
 #include <stdlib.h>
 
-void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned int *pointerArrayLength)
+void **IFF_addElementToPointerArray(void **pointerArray, void *element, IFF_Long *pointerArrayLength)
 {
     void **result = (void**)realloc(pointerArray, (*pointerArrayLength + 1) * sizeof(void*));
     result[*pointerArrayLength] = element;
@@ -30,9 +30,9 @@ void **IFF_addElementToPointerArray(void **pointerArray, void *element, unsigned
     return result;
 }
 
-static void **decreasePointerArrayAndShiftLeft(void **pointerArray, const unsigned index, unsigned int *pointerArrayLength)
+static void **decreasePointerArrayAndShiftLeft(void **pointerArray, const unsigned index, IFF_Long *pointerArrayLength)
 {
-    unsigned int i;
+    IFF_Long i;
     *pointerArrayLength = *pointerArrayLength - 1;
 
     for(i = index; i < *pointerArrayLength; i++)
@@ -42,7 +42,7 @@ static void **decreasePointerArrayAndShiftLeft(void **pointerArray, const unsign
 }
 
 
-void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsigned int index, unsigned int *pointerArrayLength, void **obsoleteElement)
+void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const IFF_Long index, IFF_Long *pointerArrayLength, void **obsoleteElement)
 {
     if(index >= *pointerArrayLength)
     {
@@ -59,9 +59,9 @@ void **IFF_removeElementFromPointerArrayByIndex(void **pointerArray, const unsig
     }
 }
 
-void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, unsigned int *pointerArrayLength)
+void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsoleteElement, IFF_Long *pointerArrayLength)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < *pointerArrayLength; i++)
     {
@@ -72,7 +72,7 @@ void **IFF_removeElementFromPointerArrayByValue(void **pointerArray, void *obsol
     return NULL;
 }
 
-void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigned int pointerArrayLength, const unsigned int index, void *newElement)
+void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const IFF_Long pointerArrayLength, const IFF_Long index, void *newElement)
 {
     if(index >= pointerArrayLength)
         return NULL;
@@ -84,9 +84,9 @@ void *IFF_replaceElementInPointerArrayByIndex(void **pointerArray, const unsigne
     }
 }
 
-void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned int pointerArrayLength, void *oldElement, void *newElement)
+void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const IFF_Long pointerArrayLength, void *oldElement, void *newElement)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = 0; i < pointerArrayLength; i++)
     {
@@ -98,9 +98,9 @@ void IFF_replaceElementInPointerArrayByValue(void **pointerArray, const unsigned
     }
 }
 
-void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const unsigned int basePointerArrayLength, void **appendPointerArray, const unsigned int appendPointerArrayLength, unsigned int *resultPointerArrayLength)
+void **IFF_appendPointerArrayToPointerArray(void **basePointerArray, const IFF_Long basePointerArrayLength, void **appendPointerArray, const IFF_Long appendPointerArrayLength, IFF_Long *resultPointerArrayLength)
 {
-    unsigned int i;
+    IFF_Long i;
     basePointerArray = (void**)realloc(basePointerArray, (basePointerArrayLength + appendPointerArrayLength) * sizeof(void*));
 
     for(i = 0; i < appendPointerArrayLength; i++)

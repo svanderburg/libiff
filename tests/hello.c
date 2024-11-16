@@ -82,6 +82,7 @@ static IFF_Structure helloStructure = {
     3,
     fields,
     getFieldPointer,
+    NULL,
     NULL
 };
 

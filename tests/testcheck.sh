@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-./testcheck --level 3 extension.TEST
+./testcheck --level 4 extension.TEST

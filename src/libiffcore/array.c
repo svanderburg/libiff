@@ -24,14 +24,14 @@
 #include <stdlib.h>
 #include "util.h"
 
-static size_t computeArraySize(size_t elementSize, size_t arrayLength)
+static IFF_Long computeArraySize(const IFF_Long elementSize, const IFF_Long arrayLength)
 {
     return arrayLength * elementSize;
 }
 
-void *IFF_addElementToArray(void **array, size_t elementSize, unsigned int *arrayLength)
+void *IFF_addElementToArray(void **array, const IFF_Long elementSize, IFF_Long *arrayLength)
 {
-    size_t arraySize = computeArraySize(elementSize, *arrayLength);
+    IFF_Long arraySize = computeArraySize(elementSize, *arrayLength);
     void *newElement;
     *array = realloc(*array, (*arrayLength + 1) * elementSize);
     newElement = (IFF_UByte*)*array + arraySize;
@@ -39,11 +39,11 @@ void *IFF_addElementToArray(void **array, size_t elementSize, unsigned int *arra
     return newElement;
 }
 
-void *IFF_removeElementFromArrayByIndex(void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength)
+void *IFF_removeElementFromArrayByIndex(void *array, const IFF_Long elementSize, const unsigned int index, IFF_Long *arrayLength)
 {
     IFF_UByte *rawArray = (IFF_UByte*)array;
-    unsigned int i;
-    size_t arraySize;
+    IFF_Long i;
+    IFF_Long arraySize;
 
     *arrayLength = *arrayLength - 1;
     arraySize = computeArraySize(elementSize, *arrayLength);
@@ -54,39 +54,40 @@ void *IFF_removeElementFromArrayByIndex(void *array, size_t elementSize, const u
     return realloc(array, arraySize);
 }
 
-static IFF_Bool readValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
+static IFF_Bool readValueArray(FILE *file, void *array, const IFF_Long elementSize, const IFF_Long arrayLength, IFF_Long *actualArrayLength)
 {
-    return fread(array, elementSize, arrayLength, file) == arrayLength;
+    *actualArrayLength = fread(array, elementSize, arrayLength, file);
+    return *actualArrayLength == arrayLength;
 }
 
-IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength)
+IFF_Bool IFF_readUByteArray(FILE *file, void *array, const IFF_Long arrayLength, IFF_Long *actualArrayLength)
 {
-    return readValueArray(file, array, sizeof(IFF_UByte), arrayLength);
+    return readValueArray(file, array, sizeof(IFF_UByte), arrayLength, actualArrayLength);
 }
 
-static IFF_Bool writeValueArray(FILE *file, void *array, size_t elementSize, size_t arrayLength)
+static IFF_Bool writeValueArray(FILE *file, void *array, const IFF_Long elementSize, const IFF_Long arrayLength)
 {
     return fwrite(array, elementSize, arrayLength, file) == arrayLength;
 }
 
-IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength)
+IFF_Bool IFF_writeUByteArray(FILE *file, void *array, const IFF_Long arrayLength)
 {
     return writeValueArray(file, array, sizeof(IFF_UByte), arrayLength);
 }
 
-void IFF_clearValueArray(void *array, size_t arrayLength)
+void IFF_clearValueArray(void *array, const IFF_Long arrayLength)
 {
     free(array);
 }
 
-IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigned int array1Length, const void *array2, size_t element2Size, const unsigned int array2Length, IFF_compareValueFunction compareValue)
+IFF_Bool IFF_compareArray(const void *array1, const IFF_Long element1Size, const IFF_Long array1Length, const void *array2, const IFF_Long element2Size, const IFF_Long array2Length, IFF_compareValueFunction compareValue)
 {
     if(array1Length == array2Length && element1Size == element2Size)
     {
         const IFF_UByte *rawArray1 = (const IFF_UByte*)array1;
         const IFF_UByte *rawArray2 = (const IFF_UByte*)array2;
-        size_t arraySize = computeArraySize(element1Size, array1Length);
-        unsigned int i;
+        IFF_Long arraySize = computeArraySize(element1Size, array1Length);
+        IFF_Long i;
 
         for(i = 0; i < arraySize; i += element1Size)
         {
@@ -100,21 +101,21 @@ IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigne
         return FALSE;
 }
 
-static IFF_Bool compareValueArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length, size_t elementSize)
+static IFF_Bool compareValueArray(const void *array1, const IFF_Long array1Length, const void *array2, const IFF_Long array2Length, const IFF_Long elementSize)
 {
     return array1Length == array2Length && memcmp(array1, array2, array1Length * elementSize) == 0;
 }
 
-IFF_Bool IFF_compareUByteArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length)
+IFF_Bool IFF_compareUByteArray(const void *array1, const IFF_Long array1Length, const void *array2, const IFF_Long array2Length)
 {
     return compareValueArray(array1, array1Length, array2, array2Length, sizeof(IFF_UByte));
 }
 
-void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, size_t elementSize, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue)
+void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long elementSize, const IFF_Long arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue)
 {
-    size_t i;
+    IFF_Long i;
     IFF_UByte *rawArray = (IFF_UByte*)array;
-    size_t arraySize = computeArraySize(elementSize, arrayLength);
+    IFF_Long arraySize = computeArraySize(elementSize, arrayLength);
 
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
@@ -134,11 +135,11 @@ void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, siz
     IFF_printIndent(file, indentLevel, "}");
 }
 
-void IFF_printValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, size_t elementSize, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue)
+void IFF_printValueArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long elementSize, const IFF_Long arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue)
 {
-    size_t i;
+    IFF_Long i;
     IFF_UByte *rawArray = (IFF_UByte*)array;
-    size_t arraySize = computeArraySize(elementSize, arrayLength);
+    IFF_Long arraySize = computeArraySize(elementSize, arrayLength);
 
     fputs("{\n", file);
     IFF_printIndent(file, indentLevel + 1, "");
@@ -163,15 +164,15 @@ void IFF_printValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *
     IFF_printIndent(file, indentLevel, "}");
 }
 
-void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
+void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow)
 {
     IFF_printValueArray(file, indentLevel, array, sizeof(IFF_UByte), arrayLength, elementsPerRow, IFF_printUByteHex);
 }
 
-void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
+void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow)
 {
     IFF_UByte *ubyteArray = (IFF_UByte*)array;
-    unsigned int i;
+    IFF_Long i;
 
     fputc('"', file);
 

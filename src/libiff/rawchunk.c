@@ -34,23 +34,20 @@ IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Lo
 {
     IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk), chunkInterface);
 
-    if(rawChunk != NULL)
-    {
-        rawChunk->chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
-
-        if(rawChunk->chunkData == NULL)
-        {
-            free(rawChunk);
-            return NULL;
-        }
-    }
+    rawChunk->chunkDataLength = 0;
+    rawChunk->chunkData = NULL;
 
     return rawChunk;
 }
 
 IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    return IFF_createRawChunkWithInterface(chunkId, chunkSize, &IFF_rawChunkInterface);
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk), &IFF_rawChunkInterface);
+
+    rawChunk->chunkDataLength = chunkSize;
+    rawChunk->chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
+
+    return rawChunk;
 }
 
 void IFF_copyDataToRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *data)
@@ -64,6 +61,7 @@ IFF_UByte *IFF_updateRawChunkData(IFF_RawChunk *rawChunk, IFF_UByte *chunkData, 
     *obsoleteChunkDataSize = rawChunk->chunkSize;
     IFF_decreaseChunkSizeByValue((IFF_Chunk*)rawChunk, *obsoleteChunkDataSize);
 
+    rawChunk->chunkDataLength = chunkSize;
     rawChunk->chunkData = chunkData;
     IFF_increaseChunkSizeByValue((IFF_Chunk*)rawChunk, chunkSize);
 
@@ -80,23 +78,35 @@ static IFF_Field fields[] = {
     { "chunkData", &IFF_Type_UByte, IFF_CARDINALITY_MULTIPLE }
 };
 
-void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, unsigned int *arrayLength)
+void **IFF_getRawChunkArrayFieldPointer(void *object, const unsigned int index, IFF_Long **arrayLength)
 {
     if(index == FIELD_INDEX_CHUNK_DATA)
     {
         IFF_RawChunk *rawChunk = (IFF_RawChunk*)object;
-        *arrayLength = rawChunk->chunkSize;
+        *arrayLength = &rawChunk->chunkDataLength;
         return (void**)&rawChunk->chunkData;
     }
     else
         return NULL;
 }
 
+IFF_Long IFF_getSpecifiedRawChunkArrayFieldLengthFunction(void *object, const unsigned int index)
+{
+    if(index == FIELD_INDEX_CHUNK_DATA)
+    {
+        IFF_RawChunk *rawChunk = (IFF_RawChunk*)object;
+        return rawChunk->chunkSize;
+    }
+    else
+        return 0;
+}
+
 static IFF_Structure rawChunkStructure = {
     1,
     fields,
     NULL,
-    IFF_getRawChunkArrayFieldPointer
+    IFF_getRawChunkArrayFieldPointer,
+    IFF_getSpecifiedRawChunkArrayFieldLengthFunction
 };
 
 IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
@@ -116,7 +126,7 @@ IFF_Bool IFF_writeRawChunkContents(FILE *file, const IFF_Chunk *chunk, IFF_Attri
 
 IFF_QualityLevel IFF_checkRawChunkContents(const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
-    return IFF_QUALITY_PERFECT;
+    return IFF_checkStructureArrayLengths(&rawChunkStructure, (void*)chunk, chunk, attributePath, printCheckMessage, data);
 }
 
 void IFF_clearRawChunkContents(IFF_Chunk *chunk)

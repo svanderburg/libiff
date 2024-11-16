@@ -85,9 +85,9 @@ IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int in
     return obsoleteChunk;
 }
 
-IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const unsigned int baseChunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength)
+IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const IFF_Long baseChunksLength, IFF_Chunk **appendChunks, const IFF_Long appendChunksLength, IFF_Long *resultChunksLength)
 {
-    unsigned int i;
+    IFF_Long i;
 
     baseChunks = (IFF_Chunk**)realloc(baseChunks, ((baseChunksLength + appendChunksLength) * sizeof(IFF_Chunk*)));
 
@@ -252,7 +252,7 @@ static IFF_QualityLevel checkGroupChunkSize(const IFF_Group *group, const IFF_Lo
 static IFF_QualityLevel checkGroupSubChunks(const IFF_Group *group, IFF_subChunkCheckFunction subChunkCheck, IFF_AttributePath *attributePath, IFF_printCheckMessageFunction printCheckMessage, void *data)
 {
     IFF_QualityLevel qualityLevel = IFF_QUALITY_PERFECT;
-    unsigned int i;
+    IFF_Long i;
 
     IFF_visitAttributeByName(attributePath, "chunks");
 
@@ -335,7 +335,7 @@ void IFF_recalculateGroupChunkSize(IFF_Group *group)
 
 IFF_Bool IFF_searchLastChunkIndexInGroup(const IFF_Group *group, const IFF_ID chunkId, unsigned int *index)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = group->chunksLength; i-- > 0; )
     {

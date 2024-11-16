@@ -238,13 +238,13 @@ void IFF_replaceSubChunkOfChunk(IFF_Chunk *chunk, IFF_Chunk *obsoleteChunk, IFF_
     IFF_attachSubChunkToChunk(chunk, subChunk);
 }
 
-void *IFF_addArrayElementToChunk(IFF_Chunk *chunk, void **array, size_t elementSize, unsigned int *arrayLength)
+void *IFF_addArrayElementToChunk(IFF_Chunk *chunk, void **array, const IFF_Long elementSize, IFF_Long *arrayLength)
 {
     chunk->chunkSize += elementSize;
     return IFF_addElementToArray(array, elementSize, arrayLength);
 }
 
-void *IFF_removeArrayElementFromChunk(IFF_Chunk *chunk, void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength)
+void *IFF_removeArrayElementFromChunk(IFF_Chunk *chunk, void *array, const IFF_Long elementSize, const unsigned int index, IFF_Long *arrayLength)
 {
     chunk->chunkSize -= elementSize;
     return IFF_removeElementFromArrayByIndex(array, elementSize, index, arrayLength);

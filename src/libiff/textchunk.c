@@ -37,7 +37,11 @@ IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *tex
     IFF_TextChunk *textChunk = IFF_createRawChunkWithInterface(chunkId, textLength, &IFF_textChunkInterface);
 
     if(textChunk != NULL)
+    {
+        textChunk->chunkDataLength = textLength;
+        textChunk->chunkData = (IFF_UByte*)malloc(textLength * sizeof(IFF_UByte));
         memcpy(textChunk->chunkData, text, textLength);
+    }
 
     return textChunk;
 }
@@ -58,7 +62,8 @@ static IFF_Structure textChunkStructure = {
     1,
     fields,
     NULL,
-    IFF_getRawChunkArrayFieldPointer
+    IFF_getRawChunkArrayFieldPointer,
+    IFF_getSpecifiedRawChunkArrayFieldLengthFunction
 };
 
 void IFF_printTextChunkContents(FILE *file, const IFF_Chunk *chunk, const unsigned int indentLevel)

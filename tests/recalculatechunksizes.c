@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
     /* Intentionally increase the size of the ABCD chunk */
 
     abcdChunk->chunkData = (IFF_UByte*)realloc(abcdChunk->chunkData, (ABCD_BYTES_SIZE + 1) * sizeof(IFF_UByte));
+    abcdChunk->chunkDataLength++;
     abcdChunk->chunkSize++;
 
     /* The IFF file should be invalid now as the form chunk size is too small */

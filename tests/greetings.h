@@ -37,7 +37,7 @@ typedef struct
     IFF_ID chunkId;
     IFF_Long chunkSize;
 
-    unsigned int greetsLength;
+    IFF_Long greetsLength;
     TEST_Greet *greets;
 }
 TEST_Greetings;

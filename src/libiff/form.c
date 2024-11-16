@@ -229,7 +229,7 @@ typedef struct
     const IFF_ID *formTypes;
     unsigned int formTypesLength;
     IFF_Form **forms;
-    unsigned int formsLength;
+    IFF_Long formsLength;
 }
 SearchFormsResult;
 

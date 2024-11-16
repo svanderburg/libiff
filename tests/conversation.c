@@ -78,7 +78,7 @@ static IFF_Chunk **getFieldPointer(const IFF_Group *group, const unsigned int in
     }
 }
 
-static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned int index, unsigned int **chunksLength)
+static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned int index, IFF_Long **chunksLength)
 {
     TEST_Conversation *conversation = (TEST_Conversation*)group;
 
@@ -157,7 +157,7 @@ TEST_Bye *TEST_getBye(const TEST_Conversation *conversation)
     return (TEST_Bye*)IFF_getPropertyFromGroupStructure((const IFF_Group*)conversation, FIELD_INDEX_BYE);
 }
 
-IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, unsigned int *messagesLength)
+IFF_TextChunk **TEST_getMessages(const TEST_Conversation *conversation, IFF_Long *messagesLength)
 {
     return (IFF_TextChunk**)IFF_getPropertiesFromGroupStructure((const IFF_Group*)conversation, FIELD_INDEX_MESSAGES, messagesLength);
 }

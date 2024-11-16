@@ -26,37 +26,37 @@
 #include "ifftypes.h"
 #include "value.h"
 
-typedef IFF_Bool (*IFF_readArrayFunction) (FILE *file, void *array, size_t arrayLength);
-typedef IFF_Bool (*IFF_writeArrayFunction) (FILE *file, void *array, size_t arrayLength);
-typedef void (*IFF_clearArrayFunction) (void *array, size_t arrayLength);
-typedef IFF_Bool (*IFF_compareArrayFunction) (const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
-typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
+typedef IFF_Bool (*IFF_readArrayFunction) (FILE *file, void *array, const IFF_Long arrayLength, IFF_Long *actualArrayLength);
+typedef IFF_Bool (*IFF_writeArrayFunction) (FILE *file, void *array, const IFF_Long arrayLength);
+typedef void (*IFF_clearArrayFunction) (void *array, const IFF_Long arrayLength);
+typedef IFF_Bool (*IFF_compareArrayFunction) (const void *array1, const IFF_Long array1Length, const void *array2, const IFF_Long array2Length);
+typedef void (*IFF_printArrayFunction) (FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void *IFF_addElementToArray(void **array, size_t elementSize, unsigned int *arrayLength);
+void *IFF_addElementToArray(void **array, const IFF_Long elementSize, IFF_Long *arrayLength);
 
-void *IFF_removeElementFromArrayByIndex(void *array, size_t elementSize, const unsigned int index, unsigned int *arrayLength);
+void *IFF_removeElementFromArrayByIndex(void *array, const IFF_Long elementSize, const unsigned int index, IFF_Long *arrayLength);
 
-IFF_Bool IFF_readUByteArray(FILE *file, void *array, size_t arrayLength);
+IFF_Bool IFF_readUByteArray(FILE *file, void *array, const IFF_Long arrayLength, IFF_Long *actualArrayLength);
 
-IFF_Bool IFF_writeUByteArray(FILE *file, void *array, size_t arrayLength);
+IFF_Bool IFF_writeUByteArray(FILE *file, void *array, const IFF_Long arrayLength);
 
-void IFF_clearValueArray(void *array, size_t arrayLength);
+void IFF_clearValueArray(void *array, const IFF_Long arrayLength);
 
-IFF_Bool IFF_compareArray(const void *array1, size_t element1Size, const unsigned int array1Length, const void *array2, size_t element2Size, const unsigned int array2Length, IFF_compareValueFunction compareValue);
+IFF_Bool IFF_compareArray(const void *array1, const IFF_Long element1Size, const IFF_Long array1Length, const void *array2, const IFF_Long element2Size, const IFF_Long array2Length, IFF_compareValueFunction compareValue);
 
-IFF_Bool IFF_compareUByteArray(const void *array1, const unsigned int array1Length, const void *array2, const unsigned int array2Length);
+IFF_Bool IFF_compareUByteArray(const void *array1, const IFF_Long array1Length, const void *array2, const IFF_Long array2Length);
 
-void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, size_t elementSize, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue);
+void IFF_printArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long elementSize, const IFF_Long arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue);
 
-void IFF_printValueArray(FILE *file, const unsigned int indentLevel, IFF_UByte *array, size_t elementSize, const unsigned int arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue);
+void IFF_printValueArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long elementSize, const IFF_Long arrayLength, const unsigned int elementsPerRow, IFF_printValueFunction printValue);
 
-void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
+void IFF_printUByteHexArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow);
 
-void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow);
+void IFF_printText(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow);
 
 #ifdef __cplusplus
 }

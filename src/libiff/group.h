@@ -56,7 +56,7 @@ struct IFF_Group
     IFF_ID groupType;
 
     /** Contains the number of sub chunks stored in this group chunk */
-    unsigned int chunksLength;
+    IFF_Long chunksLength;
 
     /** An array of chunk pointers referring to the sub chunks */
     IFF_Chunk **chunks;
@@ -128,7 +128,7 @@ IFF_Chunk *IFF_removeChunkFromGroupByIndex(IFF_Group *group, const unsigned int 
  */
 IFF_Chunk *IFF_updateChunkInGroupByIndex(IFF_Group *group, const unsigned int index, IFF_Chunk *chunk);
 
-IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const unsigned int baseChunksLength, IFF_Chunk **appendChunks, const unsigned int appendChunksLength, unsigned int *resultChunksLength);
+IFF_Chunk **IFF_mergeChunksArrayIntoGroup(IFF_Group *group, IFF_Chunk **baseChunks, const IFF_Long baseChunksLength, IFF_Chunk **appendChunks, const IFF_Long appendChunksLength, IFF_Long *resultChunksLength);
 
 IFF_Group *IFF_evaluateGroup(IFF_Group *group);
 

@@ -57,7 +57,7 @@ static IFF_Chunk **getFieldPointer(const IFF_Group *group, const unsigned index)
     return NULL;
 }
 
-static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned index, unsigned int **chunksLength)
+static IFF_Chunk ***getArrayFieldPointer(const IFF_Group *group, const unsigned index, IFF_Long **chunksLength)
 {
     if(index == 0)
     {
@@ -173,7 +173,7 @@ void IFF_recalculateListChunkSize(IFF_Chunk *chunk)
 
 static IFF_Prop *searchPropInList(const IFF_List *list, const IFF_ID formType)
 {
-    unsigned int i;
+    IFF_Long i;
 
     for(i = list->propsLength; i-- > 0; )
     {

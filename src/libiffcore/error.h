@@ -38,12 +38,14 @@ typedef enum
     IFF_QUALITY_PERFECT = 0,
     /** The file is parsable and usable, but non-critical violations have been found */
     IFF_QUALITY_OK = 1,
-    /** The file contains errors, but the parser was able to recover from it. The resulting file is usable. */
+    /** The file contains errors, but the parser was able to recover from it. The resulting file is usable */
     IFF_QUALITY_RECOVERED = 2,
+    /** The file contains errors as it is truncated. You may still be able to partially inspect the file */
+    IFF_QUALITY_TRUNCATED = 3,
     /** The file was parsed (may be with recovery) but contains violations to the IFF and application file format standards making the file impossible to be viewed/used */
-    IFF_QUALITY_INCONSISTENT = 3,
+    IFF_QUALITY_INCONSISTENT = 4,
     /** The file is completely unusable and cannot even be partially inspected */
-    IFF_QUALITY_GARBAGE = 4
+    IFF_QUALITY_GARBAGE = 5
 }
 IFF_QualityLevel;
 
