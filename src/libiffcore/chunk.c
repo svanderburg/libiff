@@ -30,7 +30,7 @@
 #include "field.h"
 #include "structure.h"
 
-IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize, IFF_ChunkInterface *chunkInterface)
+IFF_Chunk *IFF_createChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize, size_t structSize)
 {
     IFF_Chunk *chunk = (IFF_Chunk*)malloc(structSize);
 

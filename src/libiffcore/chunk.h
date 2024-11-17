@@ -62,7 +62,7 @@ extern "C" {
  * @param structSize The size of the struct that provides the data in bytes
  * @return A generic chunk with the given chunk Id and size, or NULL if the memory can't be allocated.
  */
-IFF_Chunk *IFF_createChunk(const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize, IFF_ChunkInterface *chunkInterface);
+IFF_Chunk *IFF_createChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize);
 
 /**
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()

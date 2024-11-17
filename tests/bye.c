@@ -28,9 +28,9 @@
 
 IFF_ChunkInterface TEST_byeInterface = {&TEST_parseByeContents, &TEST_writeByeContents, &TEST_checkByeContents, &TEST_clearByeContents, &TEST_printByeContents, &TEST_compareByeContents, NULL, NULL};
 
-TEST_Bye *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+TEST_Bye *TEST_createByeChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Bye), &TEST_byeInterface);
+    TEST_Bye *bye = (TEST_Bye*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(TEST_Bye));
 
     if(bye != NULL)
     {
@@ -43,7 +43,7 @@ TEST_Bye *TEST_createByeChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 
 TEST_Bye *TEST_createBye(const IFF_Long chunkSize)
 {
-    return TEST_createByeChunk(TEST_ID_BYE, chunkSize);
+    return TEST_createByeChunk(&TEST_byeInterface, TEST_ID_BYE, chunkSize);
 }
 
 typedef enum
@@ -83,7 +83,7 @@ static IFF_Structure byeStructure = {
 
 IFF_Chunk *TEST_parseByeContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Bye *bye = TEST_createByeChunk(chunkId, chunkSize);
+    TEST_Bye *bye = TEST_createByeChunk(chunkInterface, chunkId, chunkSize);
 
     IFF_readStructure(file, &byeStructure, bye, (IFF_Chunk*)bye, attributePath, bytesProcessed, error);
 

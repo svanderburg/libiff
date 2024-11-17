@@ -83,7 +83,7 @@ IFF_GroupStructure listStructure = {
 
 IFF_List *IFF_createList(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    return (IFF_List*)IFF_createGroup(IFF_ID_LIST, chunkSize, contentsType, &listStructure, &IFF_listInterface);
+    return (IFF_List*)IFF_createGroup(&IFF_listInterface, IFF_ID_LIST, chunkSize, contentsType, &listStructure);
 }
 
 IFF_List *IFF_createEmptyListWithContentsType(const IFF_ID contentsType)

@@ -28,13 +28,13 @@ IFF_ChunkInterface IFF_textChunkInterface = {&IFF_parseRawChunkContents, &IFF_wr
 
 IFF_TextChunk *IFF_createTextChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    return (IFF_TextChunk*)IFF_createRawChunkWithInterface(chunkId, chunkSize, &IFF_textChunkInterface);
+    return (IFF_TextChunk*)IFF_createRawChunkWithInterface(&IFF_textChunkInterface, chunkId, chunkSize);
 }
 
 IFF_TextChunk *IFF_createTextChunkFromText(const IFF_ID chunkId, const char *text)
 {
     size_t textLength = strlen(text);
-    IFF_TextChunk *textChunk = IFF_createRawChunkWithInterface(chunkId, textLength, &IFF_textChunkInterface);
+    IFF_TextChunk *textChunk = IFF_createRawChunkWithInterface(&IFF_textChunkInterface, chunkId, textLength);
 
     if(textChunk != NULL)
     {

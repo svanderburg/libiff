@@ -28,9 +28,9 @@
 
 IFF_ChunkInterface TEST_helloInterface = {&TEST_parseHelloContents, &TEST_writeHelloContents, &TEST_checkHelloContents, &TEST_clearHelloContents, &TEST_printHelloContents, &TEST_compareHelloContents, NULL, NULL};
 
-TEST_Hello *TEST_createHelloChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+TEST_Hello *TEST_createHelloChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Hello), &TEST_helloInterface);
+    TEST_Hello *hello = (TEST_Hello*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(TEST_Hello));
 
     if(hello != NULL)
     {
@@ -44,7 +44,7 @@ TEST_Hello *TEST_createHelloChunk(const IFF_ID chunkId, const IFF_Long chunkSize
 
 TEST_Hello *TEST_createHello(const IFF_Long chunkSize)
 {
-    return TEST_createHelloChunk(TEST_ID_HELO, chunkSize);
+    return TEST_createHelloChunk(&TEST_helloInterface, TEST_ID_HELO, chunkSize);
 }
 
 typedef enum
@@ -88,7 +88,7 @@ static IFF_Structure helloStructure = {
 
 IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Hello *hello = TEST_createHelloChunk(chunkId, chunkSize);
+    TEST_Hello *hello = TEST_createHelloChunk(chunkInterface, chunkId, chunkSize);
 
     IFF_readStructure(file, &helloStructure, hello, (IFF_Chunk*)hello, attributePath, bytesProcessed, error);
 

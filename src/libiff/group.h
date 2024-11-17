@@ -78,7 +78,7 @@ extern "C" {
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface);
+IFF_Group *IFF_createGroup(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure);
 
 /**
  * Creates a new empty group chunk instance with the chunk id and group type.
@@ -89,7 +89,7 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const
  * @param groupType Type describing the purpose of the sub chunks.
  * @return Group chunk or NULL, if the memory for the struct can't be allocated
  */
-IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface);
+IFF_Group *IFF_createEmptyGroup(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure);
 
 /**
  * Attaches a chunk to the body of the given group.

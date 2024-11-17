@@ -30,9 +30,9 @@
 
 IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
-IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ChunkInterface *chunkInterface)
+IFF_RawChunk *IFF_createRawChunkWithInterface(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk), chunkInterface);
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(IFF_RawChunk));
 
     rawChunk->chunkDataLength = 0;
     rawChunk->chunkData = NULL;
@@ -42,7 +42,7 @@ IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Lo
 
 IFF_RawChunk *IFF_createRawChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_RawChunk), &IFF_rawChunkInterface);
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(&IFF_rawChunkInterface, chunkId, chunkSize, sizeof(IFF_RawChunk));
 
     rawChunk->chunkDataLength = chunkSize;
     rawChunk->chunkData = (IFF_UByte*)malloc(chunkSize * sizeof(IFF_UByte));
@@ -111,7 +111,7 @@ static IFF_Structure rawChunkStructure = {
 
 IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_RawChunk *rawChunk = IFF_createRawChunkWithInterface(chunkId, chunkSize, chunkInterface);
+    IFF_RawChunk *rawChunk = IFF_createRawChunkWithInterface(chunkInterface, chunkId, chunkSize);
 
     if(rawChunk != NULL)
         IFF_readStructure(file, &rawChunkStructure, rawChunk, (IFF_Chunk*)rawChunk, attributePath, bytesProcessed, error);

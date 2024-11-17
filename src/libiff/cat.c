@@ -31,12 +31,12 @@ IFF_ChunkInterface IFF_catInterface = {&IFF_parseCATContents, &IFF_writeCATConte
 
 IFF_CAT *IFF_createCAT(const IFF_Long chunkSize, const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createGroup(IFF_ID_CAT, chunkSize, contentsType, NULL, &IFF_catInterface);
+    return (IFF_CAT*)IFF_createGroup(&IFF_catInterface, IFF_ID_CAT, chunkSize, contentsType, NULL);
 }
 
 IFF_CAT *IFF_createEmptyCATWithContentsType(const IFF_ID contentsType)
 {
-    return (IFF_CAT*)IFF_createEmptyGroup(IFF_ID_CAT, contentsType, NULL, &IFF_catInterface);
+    return (IFF_CAT*)IFF_createEmptyGroup(&IFF_catInterface, IFF_ID_CAT, contentsType, NULL);
 }
 
 IFF_CAT *IFF_createEmptyCAT(void)

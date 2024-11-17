@@ -42,7 +42,7 @@ typedef struct
 }
 TEST_Greetings;
 
-TEST_Greetings *TEST_createGreetingsChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+TEST_Greetings *TEST_createGreetingsChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
 
 TEST_Greetings *TEST_createGreetings(void);
 

@@ -25,9 +25,9 @@
 
 IFF_ChunkInterface TEST_greetingsInterface = {&TEST_parseGreetingsContents, &TEST_writeGreetingsContents, &TEST_checkGreetingsContents, &TEST_clearGreetingsContents, &TEST_printGreetingsContents, &TEST_compareGreetingsContents, NULL, NULL};
 
-TEST_Greetings *TEST_createGreetingsChunk(const IFF_ID chunkId, const IFF_Long chunkSize)
+TEST_Greetings *TEST_createGreetingsChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
 {
-    TEST_Greetings *greetings = (TEST_Greetings*)IFF_createChunk(chunkId, chunkSize, sizeof(TEST_Greetings), &TEST_greetingsInterface);
+    TEST_Greetings *greetings = (TEST_Greetings*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(TEST_Greetings));
 
     if(greetings != NULL)
     {
@@ -40,7 +40,7 @@ TEST_Greetings *TEST_createGreetingsChunk(const IFF_ID chunkId, const IFF_Long c
 
 TEST_Greetings *TEST_createGreetings(void)
 {
-    return TEST_createGreetingsChunk(TEST_ID_GRTS, 0);
+    return TEST_createGreetingsChunk(&TEST_greetingsInterface, TEST_ID_GRTS, 0);
 }
 
 TEST_Greet *TEST_addGreetToGreetings(TEST_Greetings *greetings)
@@ -96,7 +96,7 @@ static IFF_Structure greetingsStructure = {
 
 IFF_Chunk *TEST_parseGreetingsContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Greetings *greetings = TEST_createGreetingsChunk(chunkId, chunkSize);
+    TEST_Greetings *greetings = TEST_createGreetingsChunk(chunkInterface, chunkId, chunkSize);
 
     IFF_readStructure(file, &greetingsStructure, greetings, (IFF_Chunk*)greetings, attributePath, bytesProcessed, error);
 

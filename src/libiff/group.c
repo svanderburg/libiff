@@ -29,14 +29,14 @@
 #include "pointerarray.h"
 #include "chunksarray.h"
 
-IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface)
+IFF_Group *IFF_createGroup(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
 {
     IFF_Group *group;
 
     if(groupStructure == NULL)
-        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, sizeof(IFF_Group), chunkInterface);
+        group = (IFF_Group*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(IFF_Group));
     else
-        group = (IFF_Group*)IFF_createChunk(chunkId, chunkSize, groupStructure->groupSize, chunkInterface);
+        group = (IFF_Group*)IFF_createChunk(chunkInterface, chunkId, chunkSize, groupStructure->groupSize);
 
     if(group != NULL)
     {
@@ -51,9 +51,9 @@ IFF_Group *IFF_createGroup(const IFF_ID chunkId, const IFF_Long chunkSize, const
     return group;
 }
 
-IFF_Group *IFF_createEmptyGroup(const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure, IFF_ChunkInterface *chunkInterface)
+IFF_Group *IFF_createEmptyGroup(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
 {
-    return IFF_createGroup(chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType, groupStructure, chunkInterface);
+    return IFF_createGroup(chunkInterface, chunkId, IFF_ID_SIZE /* We have a group ID so the minimum size is bigger than 0 */, groupType, groupStructure);
 }
 
 void IFF_attachChunkToGroup(IFF_Group *group, IFF_Chunk *chunk)
@@ -116,7 +116,7 @@ static void evaluateGroupSubChunks(IFF_Group *group, IFF_Group *evaluatedGroup)
 
 IFF_Group *IFF_evaluateGroup(IFF_Group *group)
 {
-    IFF_Group *evaluatedGroup = IFF_createEmptyGroup(group->chunkId, group->groupType, group->groupStructure, group->chunkInterface);
+    IFF_Group *evaluatedGroup = IFF_createEmptyGroup(group->chunkInterface, group->chunkId, group->groupType, group->groupStructure);
     evaluateGroupSubChunks(group, evaluatedGroup);
     return evaluatedGroup;
 }
@@ -186,11 +186,11 @@ IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction l
     initGroupTypeField(&groupTypeField, groupTypeName);
 
     if((status = groupTypeField.type->readField(file, &groupTypeField, &groupType, &chunk, attributePath, bytesProcessed, error)) == IFF_FIELD_FAILURE)
-        return IFF_createGroup(chunkId, chunkSize, 0, NULL, chunkInterface);
+        return IFF_createGroup(chunkInterface, chunkId, chunkSize, 0, NULL);
     else
     {
         IFF_GroupStructure *groupStructure = lookupGroupStructure(registry, groupType);
-        IFF_Group *group = IFF_createGroup(chunkId, chunkSize, groupType, groupStructure, chunkInterface);
+        IFF_Group *group = IFF_createGroup(chunkInterface, chunkId, chunkSize, groupType, groupStructure);
 
         if(group != NULL)
             readGroupSubChunks(file, group, registry, chunkInterface, attributePath, bytesProcessed, error);

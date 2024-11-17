@@ -46,7 +46,7 @@ typedef struct
 }
 TEST_Hello;
 
-TEST_Hello *TEST_createHelloChunk(const IFF_ID chunkId, const IFF_Long chunkSize);
+TEST_Hello *TEST_createHelloChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
 
 TEST_Hello *TEST_createHello(const IFF_Long chunkSize);
 

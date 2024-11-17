@@ -60,7 +60,7 @@ struct IFF_RawChunk
 extern "C" {
 #endif
 
-IFF_RawChunk *IFF_createRawChunkWithInterface(const IFF_ID chunkId, const IFF_Long chunkSize, IFF_ChunkInterface *chunkInterface);
+IFF_RawChunk *IFF_createRawChunkWithInterface(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
 
 /**
  * Creates a raw chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().

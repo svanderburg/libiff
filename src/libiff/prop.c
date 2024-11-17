@@ -35,12 +35,12 @@ IFF_ChunkInterface IFF_propInterface = {&IFF_parseFormContents, &IFF_writeFormCo
 
 IFF_Prop *IFF_createProp(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Prop*)IFF_createGroup(IFF_ID_PROP, chunkSize, formType, formStructure, &IFF_propInterface);
+    return (IFF_Prop*)IFF_createGroup(&IFF_propInterface, IFF_ID_PROP, chunkSize, formType, formStructure);
 }
 
 IFF_Prop *IFF_createEmptyProp(const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Prop*)IFF_createEmptyGroup(IFF_ID_PROP, formType, formStructure, &IFF_propInterface);
+    return (IFF_Prop*)IFF_createEmptyGroup(&IFF_propInterface, IFF_ID_PROP, formType, formStructure);
 }
 
 void IFF_addChunkToProp(IFF_Prop *prop, IFF_Chunk *chunk)

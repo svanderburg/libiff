@@ -67,12 +67,12 @@ IFF_ChunkInterface IFF_formInterface = {&IFF_parseFormContents, &IFF_writeFormCo
 
 IFF_Form *IFF_createForm(const IFF_Long chunkSize, const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Form*)IFF_createGroup(IFF_ID_FORM, chunkSize, formType, formStructure, &IFF_formInterface);
+    return (IFF_Form*)IFF_createGroup(&IFF_formInterface, IFF_ID_FORM, chunkSize, formType, formStructure);
 }
 
 IFF_Form *IFF_createEmptyForm(const IFF_ID formType, IFF_GroupStructure *formStructure)
 {
-    return (IFF_Form*)IFF_createEmptyGroup(IFF_ID_FORM, formType, formStructure, &IFF_formInterface);
+    return (IFF_Form*)IFF_createEmptyGroup(&IFF_formInterface, IFF_ID_FORM, formType, formStructure);
 }
 
 void IFF_addChunkToForm(IFF_Form *form, IFF_Chunk *chunk)
