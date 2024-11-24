@@ -42,7 +42,7 @@ typedef struct
 }
 TEST_Greetings;
 
-TEST_Greetings *TEST_createGreetingsChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
+TEST_Greetings *TEST_deriveGreetingsChunk(const IFF_Chunk *chunk);
 
 TEST_Greetings *TEST_createGreetings(void);
 
@@ -50,7 +50,7 @@ TEST_Greet *TEST_addGreetToGreetings(TEST_Greetings *greetings);
 
 void TEST_removeGreetFromGreetings(TEST_Greetings *greetings, const unsigned int index);
 
-IFF_Chunk *TEST_parseGreetingsContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *TEST_parseGreetingsContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_Bool TEST_writeGreetingsContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

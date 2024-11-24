@@ -23,17 +23,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    if(bytesProcessed < chunkSize)
+    if(bytesProcessed < chunk->chunkSize)
     {
-        long bytesToSkip = chunkSize - bytesProcessed;
+        long bytesToSkip = chunk->chunkSize - bytesProcessed;
 
         if(fseek(file, bytesToSkip, SEEK_CUR) == 0)
             return TRUE;
         else
         {
-            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunkId);
+            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunk->chunkId);
             return FALSE;
         }
     }
@@ -41,16 +41,16 @@ IFF_Bool IFF_skipUnknownBytes(FILE *file, const IFF_ID chunkId, const IFF_Long c
         return TRUE;
 }
 
-IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_Chunk *chunk, const IFF_Long bytesProcessed, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    if(bytesProcessed < chunkSize)
+    if(bytesProcessed < chunk->chunkSize)
     {
-        size_t bytesToSkip = chunkSize - bytesProcessed;
+        size_t bytesToSkip = chunk->chunkSize - bytesProcessed;
         IFF_UByte *emptyData = (IFF_UByte*)calloc(bytesToSkip, sizeof(IFF_UByte));
         IFF_Bool status = fwrite(emptyData, sizeof(IFF_UByte), bytesToSkip, file) == bytesToSkip;
 
         if(!status)
-            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunkId);
+            *error = IFF_createDataIOError(file, bytesToSkip, attributePath, NULL, "unknown bytes", chunk->chunkId);
 
         free(emptyData);
         return status;
@@ -59,15 +59,15 @@ IFF_Bool IFF_writeZeroFillerBytes(FILE *file, const IFF_ID chunkId, const IFF_Lo
         return TRUE;
 }
 
-IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_readOptionalPaddingByte(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
+    if(chunk->chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
         int byte = fgetc(file); /* Read padding byte */
 
         if(byte == EOF) /* We shouldn't have reached the EOF yet */
         {
-            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunkId);
+            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunk->chunkId);
             return FALSE;
         }
     }
@@ -75,13 +75,13 @@ IFF_Bool IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID 
     return TRUE;
 }
 
-IFF_Bool IFF_writePaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId, IFF_AttributePath *attributePath, IFF_IOError **error)
+IFF_Bool IFF_writeOptionalPaddingByte(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
+    if(chunk->chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
         if(fputc('\0', file) == EOF)
         {
-            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunkId);
+            *error = IFF_createDataIOError(file, 1, attributePath, NULL, "padding byte", chunk->chunkId);
             return FALSE;
         }
         else

@@ -30,12 +30,18 @@
 
 IFF_ChunkInterface IFF_rawChunkInterface = {&IFF_parseRawChunkContents, &IFF_writeRawChunkContents, &IFF_checkRawChunkContents, &IFF_clearRawChunkContents, &IFF_printRawChunkContents, &IFF_compareRawChunkContents, NULL, NULL};
 
-IFF_RawChunk *IFF_createRawChunkWithInterface(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
+void IFF_clearRawChunk(IFF_RawChunk *rawChunk)
 {
-    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(IFF_RawChunk));
-
     rawChunk->chunkDataLength = 0;
     rawChunk->chunkData = NULL;
+}
+
+IFF_RawChunk *IFF_deriveRawChunk(const IFF_Chunk *chunk)
+{
+    IFF_RawChunk *rawChunk = (IFF_RawChunk*)IFF_createDerivedChunk(chunk, sizeof(IFF_RawChunk));
+
+    if(rawChunk != NULL)
+        IFF_clearRawChunk(rawChunk);
 
     return rawChunk;
 }
@@ -109,9 +115,9 @@ static IFF_Structure rawChunkStructure = {
     IFF_getSpecifiedRawChunkArrayFieldLengthFunction
 };
 
-IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_RawChunk *rawChunk = IFF_createRawChunkWithInterface(chunkInterface, chunkId, chunkSize);
+    IFF_RawChunk *rawChunk = IFF_deriveRawChunk(chunk);
 
     if(rawChunk != NULL)
         IFF_readStructure(file, &rawChunkStructure, rawChunk, (IFF_Chunk*)rawChunk, attributePath, bytesProcessed, error);

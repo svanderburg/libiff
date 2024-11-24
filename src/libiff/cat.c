@@ -95,9 +95,9 @@ static IFF_GroupStructure *lookupNullStructure(const IFF_Registry *registry, con
     return NULL;
 }
 
-IFF_Chunk *IFF_parseCATContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *IFF_parseCATContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupNullStructure, chunkId, chunkSize, CAT_GROUPTYPENAME, registry, chunkInterface, attributePath, bytesProcessed, error);
+    return (IFF_Chunk*)IFF_parseGroupContents(file, lookupNullStructure, chunk, CAT_GROUPTYPENAME, registry, attributePath, bytesProcessed, error);
 }
 
 IFF_Bool IFF_writeCATContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)

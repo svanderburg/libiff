@@ -46,11 +46,11 @@ typedef struct
 }
 TEST_Hello;
 
-TEST_Hello *TEST_createHelloChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
+TEST_Hello *TEST_deriveHelloChunk(const IFF_Chunk *chunk);
 
 TEST_Hello *TEST_createHello(const IFF_Long chunkSize);
 
-IFF_Chunk *TEST_parseHelloContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *TEST_parseHelloContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 IFF_Bool TEST_writeHelloContents(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 

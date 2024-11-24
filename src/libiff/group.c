@@ -29,6 +29,31 @@
 #include "pointerarray.h"
 #include "chunksarray.h"
 
+static IFF_Group *deriveGroupChunk(IFF_Chunk *chunk, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
+{
+    IFF_Group *group;
+    size_t groupSize;
+
+    if(groupStructure == NULL)
+        groupSize = sizeof(IFF_Group);
+    else
+        groupSize = groupStructure->groupSize;
+
+    group = (IFF_Group*)IFF_createDerivedChunk(chunk, groupSize);
+
+    if(group != NULL)
+    {
+        group->groupType = groupType;
+        group->chunksLength = 0;
+        group->chunks = NULL;
+        group->groupStructure = groupStructure;
+
+        IFF_initGroupStructure(group);
+    }
+
+    return group;
+}
+
 IFF_Group *IFF_createGroup(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID groupType, IFF_GroupStructure *groupStructure)
 {
     IFF_Group *group;
@@ -128,7 +153,7 @@ void IFF_freeEvaluatedGroup(IFF_Group *evaluatedGroup)
     free(evaluatedGroup);
 }
 
-static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Registry *registry, const IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+static IFF_Bool readGroupSubChunks(FILE *file, IFF_Group *group, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     unsigned int index = 0;
 
@@ -173,27 +198,23 @@ static void initGroupTypeField(IFF_Field *groupTypeField, char *groupTypeName)
     groupTypeField->cardinality = IFF_CARDINALITY_SINGLE;
 }
 
-IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, const IFF_ID chunkId, const IFF_Long chunkSize, char *groupTypeName, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Group *IFF_parseGroupContents(FILE *file, IFF_lookupGroupStructureFunction lookupGroupStructure, IFF_Chunk *chunk, char *groupTypeName, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
     IFF_Field groupTypeField;
     IFF_ID groupType;
     IFF_FieldStatus status;
 
-    IFF_Chunk chunk;
-    chunk.chunkId = chunkId;
-    chunk.chunkSize = chunkSize;
-
     initGroupTypeField(&groupTypeField, groupTypeName);
 
-    if((status = groupTypeField.type->readField(file, &groupTypeField, &groupType, &chunk, attributePath, bytesProcessed, error)) == IFF_FIELD_FAILURE)
-        return IFF_createGroup(chunkInterface, chunkId, chunkSize, 0, NULL);
+    if((status = groupTypeField.type->readField(file, &groupTypeField, &groupType, chunk, attributePath, bytesProcessed, error)) == IFF_FIELD_FAILURE)
+        return deriveGroupChunk(chunk, 0, NULL);
     else
     {
         IFF_GroupStructure *groupStructure = lookupGroupStructure(registry, groupType);
-        IFF_Group *group = IFF_createGroup(chunkInterface, chunkId, chunkSize, groupType, groupStructure);
+        IFF_Group *group = deriveGroupChunk(chunk, groupType, groupStructure);
 
         if(group != NULL)
-            readGroupSubChunks(file, group, registry, chunkInterface, attributePath, bytesProcessed, error);
+            readGroupSubChunks(file, group, registry, attributePath, bytesProcessed, error);
 
         return group;
     }

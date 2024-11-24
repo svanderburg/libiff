@@ -64,6 +64,8 @@ extern "C" {
  */
 IFF_Chunk *IFF_createChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, IFF_Long chunkSize, size_t structSize);
 
+IFF_Chunk *IFF_createDerivedChunk(const IFF_Chunk *chunk, size_t structSize);
+
 /**
  * Reads a chunk hierarchy from a given file descriptor. The resulting chunk must be freed using IFF_free()
  *

@@ -25,22 +25,30 @@
 
 IFF_ChunkInterface TEST_greetingsInterface = {&TEST_parseGreetingsContents, &TEST_writeGreetingsContents, &TEST_checkGreetingsContents, &TEST_clearGreetingsContents, &TEST_printGreetingsContents, &TEST_compareGreetingsContents, NULL, NULL};
 
-TEST_Greetings *TEST_createGreetingsChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize)
+static void initGreetings(TEST_Greetings *greetings)
 {
-    TEST_Greetings *greetings = (TEST_Greetings*)IFF_createChunk(chunkInterface, chunkId, chunkSize, sizeof(TEST_Greetings));
+    greetings->greetsLength = 0;
+    greetings->greets = NULL;
+}
+
+TEST_Greetings *TEST_deriveGreetingsChunk(const IFF_Chunk *chunk)
+{
+    TEST_Greetings *greetings = (TEST_Greetings*)IFF_createDerivedChunk(chunk, sizeof(TEST_Greetings));
 
     if(greetings != NULL)
-    {
-        greetings->greetsLength = 0;
-        greetings->greets = NULL;
-    }
+        initGreetings(greetings);
 
     return greetings;
 }
 
 TEST_Greetings *TEST_createGreetings(void)
 {
-    return TEST_createGreetingsChunk(&TEST_greetingsInterface, TEST_ID_GRTS, 0);
+    TEST_Greetings *greetings = (TEST_Greetings*)IFF_createChunk(&TEST_greetingsInterface, TEST_ID_GRTS, 0, sizeof(TEST_Greetings));
+
+    if(greetings != NULL)
+        initGreetings(greetings);
+
+    return greetings;
 }
 
 TEST_Greet *TEST_addGreetToGreetings(TEST_Greetings *greetings)
@@ -94,9 +102,9 @@ static IFF_Structure greetingsStructure = {
     getSpecifiedArrayFieldLengthFunction
 };
 
-IFF_Chunk *TEST_parseGreetingsContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_Chunk *TEST_parseGreetingsContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    TEST_Greetings *greetings = TEST_createGreetingsChunk(chunkInterface, chunkId, chunkSize);
+    TEST_Greetings *greetings = TEST_deriveGreetingsChunk(chunk);
 
     IFF_readStructure(file, &greetingsStructure, greetings, (IFF_Chunk*)greetings, attributePath, bytesProcessed, error);
 

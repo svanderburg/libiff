@@ -45,32 +45,50 @@ IFF_Chunk *IFF_createChunk(IFF_ChunkInterface *chunkInterface, const IFF_ID chun
     return chunk;
 }
 
-static IFF_Chunk *readChunkBody(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error)
+static IFF_Chunk *readChunkBody(FILE *file, IFF_Chunk *chunk, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(registry, scopeId, chunkId);
+    IFF_ChunkInterface *chunkInterface = IFF_findChunkInterface(registry, scopeId, chunk->chunkId);
     IFF_Long bytesProcessed = 0;
-    IFF_Chunk *chunk = chunkInterface->parseChunkContents(file, chunkId, chunkSize, registry, chunkInterface, attributePath, &bytesProcessed, error);
+    IFF_Chunk *result;
+
+    chunk->chunkInterface = chunkInterface;
+    result = chunkInterface->parseChunkContents(file, chunk, registry, attributePath, &bytesProcessed, error);
 
     if(*error == NULL && chunk != NULL)
     {
-        if(IFF_skipUnknownBytes(file, chunk->chunkId, chunkSize, bytesProcessed, attributePath, error) &&
-            IFF_readPaddingByte(file, chunkSize, chunk->chunkId, attributePath, error))
+        if(IFF_skipUnknownBytes(file, chunk, bytesProcessed, attributePath, error) &&
+            IFF_readOptionalPaddingByte(file, chunk, attributePath, error))
             ;
     }
 
-    return chunk;
+    return result;
+}
+
+static void initEmptyChunk(IFF_Chunk *chunk)
+{
+    memset(chunk, '\0', sizeof(IFF_Chunk));
+}
+
+IFF_Chunk *IFF_createDerivedChunk(const IFF_Chunk *chunk, size_t structSize)
+{
+    IFF_Chunk *derived = (IFF_Chunk*)malloc(structSize);
+
+    if(derived != NULL)
+        memcpy(derived, chunk, sizeof(IFF_Chunk));
+
+    return derived;
 }
 
 IFF_Chunk *IFF_parseChunk(FILE *file, const IFF_ID scopeId, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_IOError **error)
 {
-    IFF_ID chunkId;
-    IFF_Long chunkSize;
+    IFF_Chunk chunk;
+    initEmptyChunk(&chunk);
 
-    if(!IFF_readChunkIdField(file, &chunkId, 0, attributePath, "chunkId", error)
-        || !IFF_readChunkSizeField(file, &chunkSize, chunkId, attributePath, "chunkSize", error))
+    if(!IFF_readChunkIdField(file, &chunk.chunkId, 0, attributePath, "chunkId", error)
+        || !IFF_readChunkSizeField(file, &chunk.chunkSize, chunk.chunkId, attributePath, "chunkSize", error))
         return NULL;
 
-    return readChunkBody(file, chunkId, chunkSize, scopeId, registry, attributePath, error);
+    return readChunkBody(file, &chunk, scopeId, registry, attributePath, error);
 }
 
 static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)
@@ -78,8 +96,8 @@ static IFF_Bool writeChunkBody(FILE *file, const IFF_Chunk *chunk, IFF_Attribute
     IFF_Long bytesProcessed = 0;
 
     return chunk->chunkInterface->writeChunkContents(file, chunk, attributePath, &bytesProcessed, error)
-        && IFF_writeZeroFillerBytes(file, chunk->chunkId, chunk->chunkSize, bytesProcessed, attributePath, error)
-        && IFF_writePaddingByte(file, chunk->chunkSize, chunk->chunkId, attributePath, error);
+        && IFF_writeZeroFillerBytes(file, chunk, bytesProcessed, attributePath, error)
+        && IFF_writeOptionalPaddingByte(file, chunk, attributePath, error);
 }
 
 IFF_Bool IFF_writeChunk(FILE *file, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_IOError **error)

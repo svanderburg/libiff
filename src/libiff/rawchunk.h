@@ -60,7 +60,9 @@ struct IFF_RawChunk
 extern "C" {
 #endif
 
-IFF_RawChunk *IFF_createRawChunkWithInterface(IFF_ChunkInterface *chunkInterface, const IFF_ID chunkId, const IFF_Long chunkSize);
+void IFF_clearRawChunk(IFF_RawChunk *rawChunk);
+
+IFF_RawChunk *IFF_deriveRawChunk(const IFF_Chunk *chunk);
 
 /**
  * Creates a raw chunk with the given chunk ID and size. The resulting chunk must be freed using IFF_free().
@@ -104,7 +106,7 @@ IFF_Long IFF_getSpecifiedRawChunkArrayFieldLengthFunction(void *object, const un
  * @param bytesProcessed Indicates how many bytes in the chunk body were processed
  * @return TRUE if the chunk has been successfully read, else FALSE
  */
-IFF_Chunk *IFF_parseRawChunkContents(FILE *file, const IFF_ID chunkId, const IFF_Long chunkSize, const IFF_Registry *registry, IFF_ChunkInterface *chunkInterface, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
+IFF_Chunk *IFF_parseRawChunkContents(FILE *file, IFF_Chunk *chunk, const IFF_Registry *registry, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error);
 
 /**
  * Writes the given raw chunk to a file descriptor.
