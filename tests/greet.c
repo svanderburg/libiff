@@ -65,11 +65,11 @@ IFF_Type TEST_Type_Greet = {
     IFF_clearValue,
     TEST_compareGreet,
     TEST_printGreet,
-    TEST_readGreetArray,
-    TEST_writeGreetArray,
-    IFF_clearValueArray,
-    TEST_compareGreetArray,
-    TEST_printGreetArray
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 
@@ -91,24 +91,4 @@ IFF_Bool TEST_compareGreet(const void *value1, const void *value2)
 void TEST_printGreet(FILE *file, const void *value, const unsigned int indentLevel)
 {
     IFF_printStructure(file, indentLevel, &greetStructure, (void*)value);
-}
-
-IFF_FieldStatus TEST_readGreetArray(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return IFF_readArrayField(file, field, TEST_readGreet, array, arrayLength, chunk, attributePath, actualArrayLength, bytesProcessed, error);
-}
-
-IFF_FieldStatus TEST_writeGreetArray(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
-{
-    return IFF_writeArrayField(file, field, TEST_writeGreet, array, arrayLength, chunk, attributePath, bytesProcessed, error);
-}
-
-IFF_Bool TEST_compareGreetArray(const void *array1, const IFF_Long array1Length, const void *array2, const IFF_Long array2Length)
-{
-    return IFF_compareArray(array1, sizeof(TEST_Greet), array1Length, array2, sizeof(TEST_Greet), array2Length, TEST_compareGreet);
-}
-
-void TEST_printGreetArray(FILE *file, const unsigned int indentLevel, void *array, const IFF_Long arrayLength, const unsigned int elementsPerRow)
-{
-    IFF_printArray(file, indentLevel, array, sizeof(TEST_Greet), arrayLength, elementsPerRow, TEST_printGreet);
 }

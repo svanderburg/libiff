@@ -48,7 +48,7 @@ IFF_FieldStatus IFF_readStructure(FILE *file, const IFF_Structure *structure, vo
 
             *arrayPtr = (void**)malloc(arrayLength * field->type->elementSize);
 
-            if((status = field->type->readArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, actualArrayLengthPtr, bytesProcessed, error)) != IFF_FIELD_MORE)
+            if((status = IFF_readArrayField(file, field, *arrayPtr, arrayLength, chunk, attributePath, actualArrayLengthPtr, bytesProcessed, error)) != IFF_FIELD_MORE)
                 return status;
         }
     }
@@ -78,12 +78,20 @@ IFF_FieldStatus IFF_writeStructure(FILE *file, const IFF_Structure *structure, v
             IFF_Long *arrayLengthPtr;
             void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLengthPtr);
 
-            if((status = field->type->writeArrayField(file, field, *arrayPtr, *arrayLengthPtr, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
+            if((status = IFF_writeArrayField(file, field, *arrayPtr, *arrayLengthPtr, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
                 return status;
         }
     }
 
     return IFF_FIELD_MORE;
+}
+
+static void clearArrayField(const IFF_Field *field, void *array, const IFF_Long arrayLength)
+{
+    if(field->type->clearArrayField == NULL)
+        IFF_clearValueArray(array, arrayLength);
+    else
+        field->type->clearArrayField(array, arrayLength);
 }
 
 void IFF_clearStructure(const IFF_Structure *structure, void *object)
@@ -104,7 +112,7 @@ void IFF_clearStructure(const IFF_Structure *structure, void *object)
             IFF_Long *arrayLengthPtr;
             void **arrayPtr = structure->getArrayFieldPointer(object, i, &arrayLengthPtr);
 
-            field->type->clearArrayField(*arrayPtr, *arrayLengthPtr);
+            clearArrayField(field, *arrayPtr, *arrayLengthPtr);
         }
     }
 }
@@ -157,7 +165,7 @@ IFF_Bool IFF_compareStructure(const IFF_Structure *structure, void *object1, voi
             void **array1Ptr = structure->getArrayFieldPointer(object1, i, &array1LengthPtr);
             void **array2Ptr = structure->getArrayFieldPointer(object2, i, &array2LengthPtr);
 
-            if(!field->type->compareArrayField(*array1Ptr, *array1LengthPtr, *array2Ptr, *array2LengthPtr))
+            if(!IFF_compareArrayField(field, *array1Ptr, *array1LengthPtr, *array2Ptr, *array2LengthPtr))
                 return FALSE;
         }
     }

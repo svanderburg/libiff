@@ -160,49 +160,71 @@ static IFF_FieldStatus writeValueArrayField(FILE *file, const IFF_Field *field, 
     }
 }
 
-IFF_FieldStatus IFF_readArrayField(FILE *file, const IFF_Field *field, IFF_readFieldFunction readField, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_FieldStatus IFF_readArrayField(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *actualArrayLength, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_UByte *rawArray = (IFF_UByte*)array;
-    IFF_Long arraySize = field->type->elementSize * arrayLength;
-    IFF_Long i;
-
-    *actualArrayLength = 0;
-
-    for(i = 0; i < arraySize; i += field->type->elementSize)
+    if(field->type->readArrayField == NULL)
     {
-        IFF_FieldStatus status = readField(file, field, rawArray + i, chunk, attributePath, bytesProcessed, error);
+        IFF_UByte *rawArray = (IFF_UByte*)array;
+        IFF_Long arraySize = field->type->elementSize * arrayLength;
+        IFF_Long i;
 
-        if(status != IFF_FIELD_FAILURE)
-            *actualArrayLength = *actualArrayLength + 1;
+        *actualArrayLength = 0;
 
-        if(status != IFF_FIELD_MORE)
-            return status;
+        for(i = 0; i < arraySize; i += field->type->elementSize)
+        {
+            IFF_FieldStatus status = field->type->readField(file, field, rawArray + i, chunk, attributePath, bytesProcessed, error);
+
+            if(status != IFF_FIELD_FAILURE)
+                *actualArrayLength = *actualArrayLength + 1;
+
+            if(status != IFF_FIELD_MORE)
+                return status;
+        }
+
+        return IFF_FIELD_MORE;
     }
-
-    return IFF_FIELD_MORE;
+    else
+        return field->type->readArrayField(file, field, array, arrayLength, chunk, attributePath, actualArrayLength, bytesProcessed, error);
 }
 
-IFF_FieldStatus IFF_writeArrayField(FILE *file, const IFF_Field *field, IFF_writeFieldFunction writeField, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
+IFF_FieldStatus IFF_writeArrayField(FILE *file, const IFF_Field *field, void *array, const IFF_Long arrayLength, const IFF_Chunk *chunk, IFF_AttributePath *attributePath, IFF_Long *bytesProcessed, IFF_IOError **error)
 {
-    IFF_UByte *rawArray = (IFF_UByte*)array;
-    IFF_Long arraySize = field->type->elementSize * arrayLength;
-    IFF_Long i;
-
-    for(i = 0; i < arraySize; i += field->type->elementSize)
+    if(field->type->writeArrayField == NULL)
     {
-        IFF_FieldStatus status;
+        IFF_UByte *rawArray = (IFF_UByte*)array;
+        IFF_Long arraySize = field->type->elementSize * arrayLength;
+        IFF_Long i;
 
-        if((status = writeField(file, field, rawArray + i, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
-            return status;
+        for(i = 0; i < arraySize; i += field->type->elementSize)
+        {
+            IFF_FieldStatus status;
+
+            if((status = field->type->writeField(file, field, rawArray + i, chunk, attributePath, bytesProcessed, error)) != IFF_FIELD_MORE)
+                return status;
+        }
+
+        return IFF_FIELD_MORE;
     }
+    else
+        return field->type->writeArrayField(file, field, array, arrayLength, chunk, attributePath, bytesProcessed, error);
+}
 
-    return IFF_FIELD_MORE;
+IFF_Bool IFF_compareArrayField(const IFF_Field *field, void *array1, const IFF_Long array1Length, void *array2, const IFF_Long array2Length)
+{
+    if(field->type->compareArrayField == NULL)
+        return IFF_compareArray(array1, field->type->elementSize, array1Length, array2, field->type->elementSize, array2Length, field->type->compareField);
+    else
+        return field->type->compareArrayField(array1, array1Length, array2, array2Length);
 }
 
 void IFF_printArrayField(FILE *file, const IFF_Field *field, const unsigned int indentLevel, void *array, const unsigned int arrayLength, const unsigned int elementsPerRow)
 {
     printAttributeName(file, indentLevel, field->attributeName);
-    field->type->printArrayField(file, indentLevel, array, arrayLength, elementsPerRow);
+
+    if(field->type->printArrayField == NULL)
+        IFF_printArray(file, indentLevel, array, field->type->elementSize, arrayLength, elementsPerRow, field->type->printField);
+    else
+        field->type->printArrayField(file, indentLevel, array, arrayLength, elementsPerRow);
 }
 
 IFF_Type IFF_Type_UByte = {
