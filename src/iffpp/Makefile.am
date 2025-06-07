@@ -8,7 +8,9 @@ noinst_HEADERS = pp.h
 man1_MANS = iffpp.1
 
 iffpp_SOURCES = main.c pp.c
-iffpp_LDADD = ../libiff/libiff.la
-iffpp_CFLAGS = -I../libiff
+iffpp_LDADD = $(top_builddir)/src/libiff/libiff.la
+iffpp_CFLAGS =  \
+    -I${top_srcdir}/src/libiff \
+    -I${top_builddir}/src/libiff
 
 EXTRA_DIST = iffpp.1
