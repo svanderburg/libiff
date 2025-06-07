@@ -8,7 +8,9 @@ noinst_HEADERS = join.h
 man1_MANS = iffjoin.1
 
 iffjoin_SOURCES = main.c join.c
-iffjoin_LDADD = ../libiff/libiff.la
-iffjoin_CFLAGS = -I../libiff
+iffjoin_LDADD = $(top_builddir)/src/libiff/libiff.la
+iffjoin_CFLAGS = \
+    -I${top_srcdir}/src/libiff \
+    -I${top_builddir}/src/libiff
 
 EXTRA_DIST = iffjoin.1
