@@ -18,12 +18,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -75,8 +75,10 @@
   <ItemGroup>
     <ClCompile Include="cat.c" />
     <ClCompile Include="chunk.c" />
+    <ClCompile Include="chunkregistry.c" />
+    <ClCompile Include="defaultregistry.c" />
     <ClCompile Include="error.c" />
-    <ClCompile Include="extension.c" />
+    <ClCompile Include="field.c" />
     <ClCompile Include="form.c" />
     <ClCompile Include="group.c" />
     <ClCompile Include="id.c" />
@@ -90,8 +92,10 @@
   <ItemGroup>
     <ClInclude Include="cat.h" />
     <ClInclude Include="chunk.h" />
+    <ClInclude Include="chunkregistry.h" />
+    <ClInclude Include="defaultregistry.h" />
     <ClInclude Include="error.h" />
-    <ClInclude Include="extension.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="form.h" />
     <ClInclude Include="group.h" />
     <ClInclude Include="id.h" />

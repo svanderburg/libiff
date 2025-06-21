@@ -35,7 +35,6 @@ EXPORTS
 	IFF_errorId               @33
 	IFF_readError             @34
 	IFF_writeError            @35
-	IFF_findFormExtension     @36
 	IFF_createForm            @37
 	IFF_addToForm             @38
 	IFF_readForm              @39
@@ -117,3 +116,26 @@ EXPORTS
 	IFF_printRawChunk         @115
 	IFF_compareRawChunk       @116
 	IFF_printIndent           @117
+	IFF_readFile              @118
+	IFF_writeFile             @119
+	IFF_createEmptyCATWithContentsType @120
+	IFF_createEmptyCAT        @121
+	IFF_createUnparsedCAT     @122
+	IFF_addToCATAndUpdateContentsType @123
+	IFF_deriveSuccess         @124
+	IFF_readUByteField        @125
+	IFF_writeUByteField       @126
+	IFF_readUWordField        @127
+	IFF_writeUWordField       @128
+	IFF_readWordField         @129
+	IFF_writeWordField        @130
+	IFF_readULongField        @131
+	IFF_writeULongField       @132
+	IFF_readLongField         @133
+	IFF_writeLongField        @134
+	IFF_readIdField           @135
+	IFF_writeIdField          @136
+	IFF_createEmptyForm       @137
+	IFF_createUnparsedForm    @138
+	IFF_globalChunkTypesNode
+	IFF_defaultChunkType

@@ -24,9 +24,6 @@
     <ClCompile Include="error.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="extension.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="form.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,6 +51,15 @@
     <ClCompile Include="util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="chunkregistry.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="defaultregistry.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="field.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cat.h">
@@ -63,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="error.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extension.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="form.h">
@@ -96,6 +99,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ifftypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chunkregistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="defaultregistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="field.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
